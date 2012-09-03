@@ -1,9 +1,9 @@
 /*
-		>Ver	:	0.0.1
-		>Date	:	2012.08.29
+		>Ver	:	0.0.2
+		>Date	:	2012.09.03
 		>Hist:
 		>Desc:
-			Основной блок сопровождения ордера.
+			Main lib to manage convoy methods
 */
 
 //..	//=== CONVOY DEFINES	============================
@@ -30,13 +30,17 @@
 double	libCY.array_dParents[];								//Тикеты родительских ордеров.
 //.
 
-#include <libSTOPTRAL.mqh>									//libSOTr
+//#include <libSTOPTRAL.mqh>									//libSOTr
 //#include <libLIMITGRID.mqh>									//libLG
+#include <libTrendHarvester.mqh>							//libTH
 
 int libCY.Main(int PARENT = -1){//..
 	//=== LIMIT GRID ---------------------------------------
 	//libLG.Main(PARENT);										//
 	
 	//------------------------------------------------------
-	libSOTr.Main(PARENT);
+	//libSOTr.Main(PARENT);
+	
+	//------------------------------------------------------
+	libTH.Main(PARENT);
 }//.

@@ -1,7 +1,8 @@
 /*
-		>Ver	:	0.0.8
-		>Date	:	2012.08.16
+		>Ver	:	0.0.9
+		>Date	:	2012.09.03
 		>Hist:
+			@0.0.9@2012.09.03@artamir	[]
 			@0.0.7@2012.08.16@artamir	[+] libA.double_addFilter2()
 			@0.0.6@2012.08.15@artamir	[]
 			@0.0.5@2012.08.15@artamir	[]
@@ -98,7 +99,8 @@ void libA.double_PrintArray2(double &a[][], int d = 4, string fn = "PrintArray_"
 #define	libA.SAF.COL		0
 #define	libA.SAF.MAX		1
 #define	libA.SAF.MIN		2
-#define libA.SAF.MAXCOLS	3
+#define	libA.SAF.OP			3
+#define libA.SAF.MAXCOLS	4
 
 double libA.array_Filter[][libA.SAF.MAXCOLS];
 
@@ -106,7 +108,7 @@ void libA.double_eraseFilter2(){//..
 	ArrayResize(libA.array_Filter, 0);
 }//.
 
-void libA.double_addFilter2(int COL, double max, double min){//..
+void libA.double_addFilter2(int COL, double max, double min , int op = 1){//..
 	/*
 		>Ver	:	0.0.1
 		>Date	:	2012.08.16
@@ -122,15 +124,17 @@ void libA.double_addFilter2(int COL, double max, double min){//..
 	libA.array_Filter[f.COLS][libA.SAF.COL] = COL;
 	libA.array_Filter[f.COLS][libA.SAF.MAX] = max;
 	libA.array_Filter[f.COLS][libA.SAF.MIN] = min;
+	libA.array_Filter[f.COLS][libA.SAF.MIN] = op;
 }//.
 
 #define libA.SOP.AND 	1 //Select operation AND
-#define libA.SOP.OR		1 //Select operation OR
+#define libA.SOP.OR		2 //Select operation OR
 void libA.double_SelectArray2(double &a[][], double &d[][], int op = 1){//..
 	/*
-		>Ver:0.0.0
-		>Date:
+		>Ver	:	0.0.1
+		>Date	:	2012.09.03
 		>Hist:
+			@0.0.1@2012.09.03@artamir	[*] opperation of assertion is stored in filter.
 		>Desc:
 			Fill array d[][] with rows from array a[][]
 			which have value in range from f[][]
@@ -161,15 +165,23 @@ void libA.double_SelectArray2(double &a[][], double &d[][], int op = 1){//..
 			double f.min = NormalizeDouble(libA.array_Filter[f.idx][libA.SAF.MIN], f.DIGITS);
 			
 			int		f.COL = libA.array_Filter[f.idx][libA.SAF.COL];					// number of column in a[][].
-			//----------------------------------------------
 			
+			//----------------------------------------------
 			double	a.val = NormalizeDouble(a[a.idx][f.COL], a.DIGITS);
+			
+			//----------------------------------------------
+			int		f.OP  = libA.array_Filter[f.idx][libA.SAF.OP]; 
+			
+			//----------------------------------------------
+			if(op != libA.SOP.AND){							//Заглушка, на случай, если где-то использовался метод до 2012.09.03
+				f.OP = op;
+			}
 			
 			//----------------------------------------------
 			if(f.min <= a.val && a.val <= f.max){//..
 				assert = true;
 			}else{
-				if(op == libA.SOP.AND){//..					// if op = OR, than we do not change assertion while false.
+				if(f.OP == libA.SOP.AND){//..					// if op = OR, than we do not change assertion while false.
 					assert = false;
 				}//.	
 			}//.

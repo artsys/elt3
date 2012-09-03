@@ -1,55 +1,20 @@
 /*
-		>Ver	:	0.0.28
-		>Date	:	2012.08.30
+		>Ver	:	0.0.1
+		>Date	:	2012.09.03
 		>History:
-			@0.0.28@2012.08.30@artamir	[*] corect calc of sending price for open stop order.
-			@0.0.27@2012.08.30@artamir	[*] changes to right sets of STOPORDERS TRAL
-		
-			@0.0.20@2012.08.30@artamir	[+]	libSignalManager, libSigMAZZ600
-										[-] checkZZMA
-			@0.0.19@2012.08.29@artamir	[*] libSOTRAL, libTerminal
-			@0.0.16@2012.08.28@artamir	[*] libSOTRAL, libOrders, libTerminal
-											libSOTRAL lerned to pull stoporder for the price.
-			@0.0.15@2012.08.28@artamir	[+] libSOTRAL
-			@0.0.13@2012.08.23@artamir	[]
-			@0.0.12@2012.08.20@artamir	[+] libTP.mqh
-			@0.0.11@2012.08.16@artamir	[+] libLIMITGRID.BLOCKS.TP 
-			@0.0.10@2012.08.14@artamir	[*] libTerminal, libLIMITGRID.BLOCKS
-			@0.0.9@2012.08.13@artamir	[-] libLIMITGRID
-			@0.0.9@2012.08.13@artamir	[+] libCONVOY
-			@0.0.8@2012.08.13@artamir	[+] Добавлена библиотека libLIMITGRID
-			@0.0.7@2012.08.11@artamir	[+] добавлена библиотека libInfo
-			@0.0.6@2012.08.11@artamir	[*] тестирование скрипта Version
-			@0.0.5@2012.08.10@artamir	[*] libArray, libEvents, libTerminal
-			@0.0.4@2012.08.03@artamir	[+] checkZZMA
-			@0.0.3@2012.06.25@artamir	[*] тестирование скрипта изменения версии.
+			@0.0.1@2012.09.03@artamir	[+] libTrendHarvester.mqh
+			
 		>Description:
 			Помошник реализации различных стратегий сопровождения открытых позиций
 */	
 
 /*
-		>Ver	:	0.0.17
-		>Date	:	2012.08.30
-		
-			@0.0.17@2012.08.30@artamir	[]
-			@0.0.16@2012.08.30@artamir	[]
-			@0.0.15@2012.08.30@artamir	[]
-			@0.0.14@2012.08.30@artamir	[]
-			@0.0.13@2012.08.30@artamir	[]
-			@0.0.12@2012.08.30@artamir	[]
-			@0.0.11@2012.08.30@artamir	[]
-			@0.0.10@2012.08.30@artamir	[]
-			@0.0.9@2012.08.29@artamir	[]
-			@0.0.8@2012.08.28@artamir	[]
-			@0.0.7@2012.08.28@artamir	[]
-			@0.0.6@2012.08.23@artamir	[]
-			@0.0.5@2012.08.20@artamir	[]
-			@0.0.4@2012.08.16@artamir	[]
-			@0.0.3@2012.08.14@artamir	[]
-			@0.0.2@2012.08.13@artamir	[]
-			@0.0.1@2012.08.13@artamir	[]
+		>Ver	:	0.0.18
+		>Date	:	2012.09.03
+
+			@0.0.18@2012.09.03@artamir	[]
 */			
-#define	VER	"0.0.28_2012.08.30"
+#define	VER	"0.0.1_2012.09.03"
 //==================================================================================================
 // VARS:
 //

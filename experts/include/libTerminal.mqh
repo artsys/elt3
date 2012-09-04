@@ -1,5 +1,5 @@
 /*
-		>Ver	:	0.0.15
+		>Ver	:	0.0.16
 		>Date	:	2012.08.29
 		>Hist:
 			@0.0.15@2012.08.29@artamir	[+] info about order lot.
@@ -549,6 +549,20 @@ int libT.getExtraTypeByTicket(int ticket){//..
 	//------------------------------------------------------
 	return(type);
 }//.
+
+//==========================================================
+double libT.getExtraOPByTicket(int ticket){//..
+	
+	//------------------------------------------------------
+	int idx = libT.getExtraIndexByTicket(ticket);
+	
+	//------------------------------------------------------
+	double op = libT.getExtraPropByIndex(idx, libT.OE_OP);
+	
+	//------------------------------------------------------
+	return(op);
+}//.
+
 //.
 
 //..	//=== SET ==========================================

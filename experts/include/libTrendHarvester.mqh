@@ -68,7 +68,15 @@ int libTH.Main(int parent.ticket){//..
 	libA.double_SelectArray2(libT.array_dExtraOrders, d);	//Выборка ордеров селл и селлстоп с ценой открытия меньше Аск
 	
 	//------------------------------------------------------
-	libA.double_PrintArray2(libT.array_dExtraOrders, 4, "TH_ExtraRAW_");
 	libA.double_PrintArray2(d, 4, "TH_SelectSELL_SELLSTOP_");
 	
+	//------------------------------------------------------
+	libA.double_SaveToFile2(d, "test_save");
+	
+	//------------------------------------------------------
+	double t[][libT.OE_MAX];
+	libA.double_ReadFromFile2(t, "test_save");
+	
+	//------------------------------------------------------
+	libA.double_PrintArray2(t, 4, "test_read_from_file");
 }//.

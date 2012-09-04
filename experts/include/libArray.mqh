@@ -1,7 +1,8 @@
 /*
-		>Ver	:	0.0.11
+		>Ver	:	0.0.12
 		>Date	:	2012.09.04
 		>Hist:
+			@0.0.12@2012.09.04@artamir	[]
 			@0.0.11@2012.09.04@artamir	[]
 			@0.0.10@2012.09.04@artamir	[]
 			@0.0.9@2012.09.03@artamir	[]
@@ -229,6 +230,100 @@ void libA.double_SelectArray2(double &a[][], double &d[][], int op = 1){//..
 			ArrayCopy(d, a, (d.idx-1)*a.COLS, a.idx*a.COLS, a.COLS);
 		}//.
 	}
+}//.
+
+//==========================================================
+void libA.double_SaveToFile2(double &a[][], string fn, int d = 4){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.09.04
+		>Hist:
+			@0.0.1@2012.09.04@artamir	[]
+		>Desc:
+			Save array to file.
+			format string for store:
+			@idx1_valIdx1@idx2_valIdx2@val_val
+			
+			exemple: a[43][5] = 20.77
+			@idx1_43@idx2_5@val_20.77
+		>VARS:
+			a[][]	- array
+			fn		- filename
+			d		- количество знаков после запятой.
+	*/	
+	
+	int ROWS = ArrayRange(a, 0);
+	int COLS = ArrayRange(a, 1);
+	
+	int H = FileOpen(fn, FILE_CSV|FILE_WRITE);
+	
+	//------------------------------------------------------
+	for(int idx1 = 0; idx1 < ROWS; idx1++){//..
+		
+		//--------------------------------------------------
+		for(int idx2 = 0; idx2 < COLS; idx2++){//..
+			
+			//----------------------------------------------
+			string str = "@idx1_"+idx1
+						+"@idx2_"+idx2
+						+"@val_"+DoubleToStr(a[idx1][idx2], d);
+						
+			//----------------------------------------------
+			FileWrite(H, str);
+		}//.
+	}//.
+	
+	//------------------------------------------------------
+	FileFlush(H);
+	
+	//------------------------------------------------------
+	FileClose(H);
+	
+}//.
+
+//==========================================================
+void libA.double_ReadFromFile2(double &a[][], string fn){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.09.04
+		>Hist:
+			@0.0.1@2012.09.04@artamir	[]
+		>Desc:
+			Read array from file.
+			format string for read:
+			@idx1_valIdx1@idx2_valIdx2@val_val
+			
+			exemple: a[43][5] = 20.77
+			@idx1_43@idx2_5@val_20.77
+		>VARS:
+			a[][]	- array
+			fn		- filename
+	*/	
+	
+	//------------------------------------------------------
+	ArrayResize(a, 0);
+	
+	//------------------------------------------------------
+	int H = FileOpen(fn, FILE_CSV|FILE_READ);
+	
+	//------------------------------------------------------
+	while(!FileIsEnding(H)){//..
+		string str = FileReadString(H);
+		int idx1 = libStruc.KeyValue_int(str, "@idx1_");
+		int idx2 = libStruc.KeyValue_int(str, "@idx2_");
+		double val = libStruc.KeyValue_double(str, "@val_");
+		
+		//--------------------------------------------------
+		int ROWS = ArrayRange(a, 0);
+		
+		//--------------------------------------------------
+		if(idx1 >= ROWS){
+			ArrayResize(a, idx1+1);
+		}
+		
+		//--------------------------------------------------
+		a[idx1][idx2] = val;
+	}//.
 }//.
 
 //+------------------------------------------------------------------+

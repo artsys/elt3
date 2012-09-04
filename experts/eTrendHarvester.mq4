@@ -1,7 +1,8 @@
 /*
-		>Ver	:	0.0.2
+		>Ver	:	0.0.3
 		>Date	:	2012.09.04
 		>History:
+			@0.0.3@2012.09.04@artamir	[+] libStructure.mqh
 			@0.0.2@2012.09.04@artamir	[*] libArray.mqh
 			@0.0.1@2012.09.03@artamir	[+] libTrendHarvester.mqh
 			
@@ -10,13 +11,14 @@
 */	
 
 /*
-		>Ver	:	0.0.19
+		>Ver	:	0.0.20
 		>Date	:	2012.09.04
 
+			@0.0.20@2012.09.04@artamir	[]
 			@0.0.19@2012.09.04@artamir	[]
 			@0.0.18@2012.09.03@artamir	[]
 */			
-#define	VER	"0.0.2_2012.09.04"
+#define	VER	"0.0.3_2012.09.04"
 //==================================================================================================
 // VARS:
 //
@@ -26,6 +28,7 @@ bool isStart = true;
 //==================================================================================================
 #include <WinUser32.mqh>
 #include <libDebug.mqh>
+#include <libStructure.mqh>
 #include <libInfo.mqh>
 #include <libArray.mqh>
 #include <libNormalize.mqh>

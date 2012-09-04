@@ -1,7 +1,8 @@
 /*
-		>Ver	:	0.0.9
-		>Date	:	2012.09.03
+		>Ver	:	0.0.10
+		>Date	:	2012.09.04
 		>Hist:
+			@0.0.10@2012.09.04@artamir	[]
 			@0.0.9@2012.09.03@artamir	[]
 			@0.0.7@2012.08.16@artamir	[+] libA.double_addFilter2()
 			@0.0.6@2012.08.15@artamir	[]
@@ -104,10 +105,12 @@ void libA.double_PrintArray2(double &a[][], int d = 4, string fn = "PrintArray_"
 
 double libA.array_Filter[][libA.SAF.MAXCOLS];
 
+//==========================================================
 void libA.double_eraseFilter2(){//..
 	ArrayResize(libA.array_Filter, 0);
 }//.
 
+//==========================================================
 void libA.double_addFilter2(int COL, double max, double min , int op = 1){//..
 	/*
 		>Ver	:	0.0.1
@@ -124,16 +127,20 @@ void libA.double_addFilter2(int COL, double max, double min , int op = 1){//..
 	libA.array_Filter[f.COLS][libA.SAF.COL] = COL;
 	libA.array_Filter[f.COLS][libA.SAF.MAX] = max;
 	libA.array_Filter[f.COLS][libA.SAF.MIN] = min;
-	libA.array_Filter[f.COLS][libA.SAF.MIN] = op;
+	libA.array_Filter[f.COLS][libA.SAF.OP ] = op;
 }//.
 
+//==========================================================
 #define libA.SOP.AND 	1 //Select operation AND
 #define libA.SOP.OR		2 //Select operation OR
+
+//==========================================================
 void libA.double_SelectArray2(double &a[][], double &d[][], int op = 1){//..
 	/*
-		>Ver	:	0.0.1
-		>Date	:	2012.09.03
+		>Ver	:	0.0.2
+		>Date	:	2012.09.04
 		>Hist:
+			@0.0.2@2012.09.04@artamir	[*] changes in assertion module.
 			@0.0.1@2012.09.03@artamir	[*] opperation of assertion is stored in filter.
 		>Desc:
 			Fill array d[][] with rows from array a[][]
@@ -158,6 +165,8 @@ void libA.double_SelectArray2(double &a[][], double &d[][], int op = 1){//..
 	for(int a.idx = 0; a.idx < a.ROWS; a.idx++){
 		bool assert = false;								// результат сравнения;
 		
+		int iAssert = -1;
+		
 		//--------------------------------------------------
 		for(int f.idx = 0; f.idx < f.ROWS; f.idx++){//..	// circle on count of conditions
 			//----------------------------------------------//
@@ -178,17 +187,40 @@ void libA.double_SelectArray2(double &a[][], double &d[][], int op = 1){//..
 			}
 			
 			//----------------------------------------------
+			
 			if(f.min <= a.val && a.val <= f.max){//..
-				assert = true;
+				
+				//------------------------------------------
+				if(f.OP == libA.SOP.AND){//..
+					
+					//--------------------------------------
+					if(iAssert == -1){//..					// it is first assertion
+						iAssert = 1;
+					}//.	
+				}//.
+				
+				//------------------------------------------
+				if(f.OP == libA.SOP.OR){//..
+					iAssert = 1;
+				}//.
 			}else{
-				if(f.OP == libA.SOP.AND){//..					// if op = OR, than we do not change assertion while false.
-					assert = false;
+				
+				//------------------------------------------
+				if(f.OP == libA.SOP.AND){//..				// if op = OR, than we do not change assertion while false.
+					iAssert = 0;
 				}//.	
+				
+				//------------------------------------------
+				if(f.OP == libA.SOP.OR){//..
+					if(iAssert == -1){//..
+						iAssert = 0;
+					}//.
+				}//.
 			}//.
 			
 		}//.
 	
-		if(assert){//..
+		if(iAssert >= 1){//..
 			d.idx++;
 			ArrayResize(d, (d.idx));
 			ArrayCopy(d, a, (d.idx-1)*a.COLS, a.idx*a.COLS, a.COLS);

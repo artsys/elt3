@@ -1,7 +1,8 @@
 /*
-		>Ver	:	0.0.10
+		>Ver	:	0.0.11
 		>Date	:	2012.09.04
 		>Hist:
+			@0.0.11@2012.09.04@artamir	[]
 			@0.0.10@2012.09.04@artamir	[]
 			@0.0.9@2012.09.03@artamir	[]
 			@0.0.7@2012.08.16@artamir	[+] libA.double_addFilter2()
@@ -137,9 +138,10 @@ void libA.double_addFilter2(int COL, double max, double min , int op = 1){//..
 //==========================================================
 void libA.double_SelectArray2(double &a[][], double &d[][], int op = 1){//..
 	/*
-		>Ver	:	0.0.2
+		>Ver	:	0.0.3
 		>Date	:	2012.09.04
 		>Hist:
+			@0.0.3@2012.09.04@artamir	[*] changes in filter.
 			@0.0.2@2012.09.04@artamir	[*] changes in assertion module.
 			@0.0.1@2012.09.03@artamir	[*] opperation of assertion is stored in filter.
 		>Desc:
@@ -149,6 +151,7 @@ void libA.double_SelectArray2(double &a[][], double &d[][], int op = 1){//..
 			f[][] : filter array.	[Number of condition][0] = Number of COL from à[][]
 									[Number of condition][1] = Min value from à[][]
 									[Number of condition][2] = Max value from à[][]
+									[Number of condition][3] = Operation of assertion (AND OR)
 	*/
 	
 	

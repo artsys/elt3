@@ -11,6 +11,8 @@
 
 extern bool libTH.Use			=	false;					//использовать стратегию сопровождения Trend Harvester
 extern int	libTH.BackStepPip	=	10;						//расстояние до ордера противоположного направления.
+extern int	libTH.MaxLevels		=	5;						//5 уровней от родителя.
+extern int	libTH.StepPip		=	10;						//расстояние между ордерами одного направления.
 
 int libTH.Main(int parent.ticket){//..
 	/*
@@ -31,6 +33,7 @@ int libTH.Main(int parent.ticket){//..
 	libA.double_eraseFilter2();						//обнуляем фильтр
 	
 	//------------------------------------------------------
+	//..	//ВЫОРКА БАЙ ОРДЕРОВ
 	int f.COL = libT.OE_TY;
 	double f.MAX = OP_BUY;
 	double f.MIN = OP_BUY;
@@ -48,11 +51,16 @@ int libTH.Main(int parent.ticket){//..
 	
 	//------------------------------------------------------
 	libTH.checkReversOrders(d);								//проверим на существование противоположных ордеров.
+	
+	//------------------------------------------------------
+	libTH.checkCOOrders(d);									//проверка сонаправленных ордеров.
+	//.
 		
 	//------------------------------------------------------
 	libA.double_eraseFilter2();								//очистка фильтра
 	
 	//------------------------------------------------------
+	//..	//ВЫОРКА СЕЛЛ ОРДЕРОВ
 	f.COL	= libT.OE_TY;
 	f.MIN	= OP_SELL;
 	f.MAX	= OP_SELL;
@@ -70,16 +78,19 @@ int libTH.Main(int parent.ticket){//..
 	libA.double_SelectArray2(libT.array_dExtraOrders, d);	//Выборка ордеров селл c ценой открытия > Аск
 
 	libTH.checkReversOrders(d);
+	//.
 	
 	//------------------------------------------------------
+	//..	//ПРОВЕРКА РАБОТЫ СОХРАНЕНИЯ И ЧТЕНИЯ МАССИВА
 	libA.double_SaveToFile2(d, "test_save");
 	
 	//------------------------------------------------------
 	double t[][libT.OE_MAX];
 	libA.double_ReadFromFile2(t, "test_save");
-	
+	//.
 }//.
 
+//..	//ПРОВЕРКА РАЗНОНАПРАВЛЕННЫХ ОРДЕРОВ
 //==========================================================
 void libTH.checkReversOrders(double &aParents[][]){//..
 	/*
@@ -109,6 +120,7 @@ void libTH.checkReversOrders(double &aParents[][]){//..
 	}//.	
 }//.
 
+//==========================================================
 void libTH.checkReversOrdersByParent(int parent.ticket){//..
 	int parent.type = libT.getExtraTypeByTicket(parent.ticket);
 	
@@ -223,3 +235,70 @@ double libTH.getReversPriceByParent(int parent.ticket){//..
 	
 	return(-1);
 }//.
+//.
+
+//..	//ПРОВЕРКА СОНАПАРВЛЕННЫХ ОРДЕРОВ
+void libTH.checkCOOrders(double &aParents[][]){//..
+	/*
+		>Ver	:	0.0.0
+		>Date	:	2012.09.05
+		>Hist:
+		>Desc:
+			Проверка ордеров обратного направления.
+		>VARS:
+	*/
+	
+	//------------------------------------------------------
+	int ROWS = ArrayRange(aParents, 0);
+	
+	//------------------------------------------------------
+	if(ROWS <= 0){//..
+		return;
+	}//.
+	
+	//------------------------------------------------------
+	for(int idx = 0; idx < ROWS; idx++){//..
+		int parent.ticket = aParents[idx][libT.OE_TI];
+
+		//--------------------------------------------------
+		libTH.checkCOOrdersByParent(parent.ticket);
+	}//.
+}//.
+
+//==========================================================
+void libTH.checkCOOrdersByParent(int parent.ticket){//..
+	
+	int parent.type = libT.getExtraTypeByTicket(parent.ticket);
+	double parent.op = libT.getExtraOPByTicket(parent.ticket);
+	
+	for(int thisLevel = 1; thisLevel <= libTH.MaxLevels; thisLevel++){//..
+		double co.price = libTH.getCOPriceByParentLevel(parent.ticket, thisLevel);
+		
+		//--------------------------------------------------
+		if(parent.type == OP_BUY || parent.type == OP_BUYSTOP){//..
+			
+		}//.
+	}//.
+}//.
+
+//==========================================================
+double libTH.getCOPriceByParentLevel(int parent.ticket, int level){//..
+	int parent.type = libT.gerExtraTypeByTicket(parent.ticket);
+	double parent.op = libT.getExtraOPByTicket(parent.ticket);
+	
+	//------------------------------------------------------
+	if(parent.type == OP_BUY || parent.type == OP_BUYSTOP){//..
+		double co.price = parent.op + libTH.StepPip*Point*level;
+	}//.
+	
+	//------------------------------------------------------
+	if(parent.type == OP_SELL || parent.type == OP_SELLSTOP){//..
+		co.price = parent.op - libTH.StepPip*Point*level;
+	}//.
+	
+	co.price = libNormalize.Digits(co.price);
+	
+	//------------------------------------------------------
+	return(co.price);
+}//.
+//.

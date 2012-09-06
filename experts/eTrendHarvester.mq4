@@ -1,6 +1,6 @@
 /*
-		>Ver	:	0.0.4
-		>Date	:	2012.09.05
+		>Ver	:	0.0.5
+		>Date	:	2012.09.06
 		>History:
 			@0.0.4@2012.09.05@artamir	[*] libTrendHarvester.mqh
 			@0.0.3@2012.09.04@artamir	[+] libStructure.mqh

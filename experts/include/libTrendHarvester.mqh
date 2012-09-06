@@ -1,6 +1,6 @@
 /*
-		>Ver	:	0.0.3
-		>Date	:	2012.09.05
+		>Ver	:	0.0.4
+		>Date	:	2012.09.06
 		>Hist:
 			@0.0.3@2012.09.05@artamir	[*] убрано отладочное печатание массивов
 			@0.0.2@2012.09.05@artamir	[]
@@ -267,7 +267,17 @@ void libTH.checkCOOrders(double &aParents[][]){//..
 
 //==========================================================
 void libTH.checkCOOrdersByParent(int parent.ticket){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.09.05
+		>Hist:
+		>Desc:
+			Проверка ордеров обратного направления
+			по заданному родителю.
+		>VARS:
+	*/
 	
+	int SPREAD = MarketInfo(Symbol(), MODE_SPREAD);
 	int parent.type = libT.getExtraTypeByTicket(parent.ticket);
 	double parent.op = libT.getExtraOPByTicket(parent.ticket);
 	
@@ -277,13 +287,41 @@ void libTH.checkCOOrdersByParent(int parent.ticket){//..
 		//--------------------------------------------------
 		if(parent.type == OP_BUY || parent.type == OP_BUYSTOP){//..
 			
+			//----------------------------------------------
+			libA.double_eraseFilter2();
+			
+			//----------------------------------------------
+			int		f.COL = libT.OE_TY;
+			double	f.MAX = OP_SELL;
+			double	f.MIN = OP_SELL;
+			
+			libA.double_addFilter2(f.COL, f.MAX, f.MIN, libA.SOP.OR);
+			
+			//----------------------------------------------
+			f.COL = libT.OE_TY;
+			f.MAX = OP_SELLSTOP;
+			f.MIN = OP_SELLSTOP;
+			
+			libA.double_addFilter2(f.COL, f.MAX, f.MIN, libA.SOP.OR);
+			
+			//----------------------------------------------
+			f.COL = libT.OE_OP;
+			f.MAX = co.price + SPREAD*Point;
+			f.MIN = co.price - SPREAD*Point;
+			
+			libA.double_addFilter2(f.COL, f.MAX, f.MIN, libA.SOP.AND);
+			
+			//----------------------------------------------
+			double d[][libT.OE_MAX];
+			
+			libA.double_SelectArray2(libT.array_dExtraOrders, d);
 		}//.
 	}//.
 }//.
 
 //==========================================================
 double libTH.getCOPriceByParentLevel(int parent.ticket, int level){//..
-	int parent.type = libT.gerExtraTypeByTicket(parent.ticket);
+	int parent.type = libT.getExtraTypeByTicket(parent.ticket);
 	double parent.op = libT.getExtraOPByTicket(parent.ticket);
 	
 	//------------------------------------------------------

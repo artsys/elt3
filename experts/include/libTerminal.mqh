@@ -1,7 +1,8 @@
 /*
-		>Ver	:	0.0.21
-		>Date	:	2012.09.07
+		>Ver	:	0.0.22
+		>Date	:	2012.09.10
 		>Hist:
+			@0.0.22@2012.09.10@artamir	[]
 			@0.0.21@2012.09.07@artamir	[+] checkExtraIsClosedStatuses()
 			@0.0.20@2012.09.07@artamir	[]
 			@0.0.19@2012.09.07@artamir	[+] getExtraIsClosedTicket()
@@ -765,6 +766,7 @@ int libT.checkExtraIsClosedStatuses(){//..
 	}
 }//.
 //.
+//.
 
 //==================================================================================================
 bool libT.OrderSelectByIndex(int idx = 0){//..
@@ -827,7 +829,7 @@ void libT.FillArrayCurOrders(){//..
 		>Hist:
 			@0.0.1@2012.08.08@artamir	[]
 		>Descr:
-			«аполнение массива текущих ордеров.
+			filling array of current orders
 	*/
 	
 	//----------------------------------------------------------------------------------------------
@@ -847,7 +849,7 @@ void libT.FillArrayCurOrders(){//..
 			idxCO++			){//..
 			
 			//--------------------------------------------------------------------------------------
-			// ѕроверим, что ордер предназначен дл€ этого советника
+			// Select order by index.
 			if(!libT.OrderSelectByIndex(idxCO)) continue;
 			
 			//-------------------------------------------
@@ -897,9 +899,10 @@ void libT.FillArrayRowWithSelOrder(int idxROW){//..
 //==================================================================================================
 void libT.End(){//..
 	/*
-		>Ver	:	0.0.1
-		>Date	:	2012.08.10
+		>Ver	:	0.0.2
+		>Date	:	2012.09.10
 		>Hist:
+			@0.0.2@2012.09.10@artamir	[]
 			@0.0.1@2012.08.10@artamir	[]
 		>Descr:
 			 опирование массива текущих ордеров в массив старых ордеров.
@@ -908,22 +911,6 @@ void libT.End(){//..
 	//----------------------------------------------------------------------------------------------
 	ArrayCopy(libT.array_dOldOrders, libT.array_dCurOrders, 0, 0, WHOLE_ARRAY);
 	ArrayCopy(libT.array_sOldOrders, libT.array_sCurOrders, 0, 0, WHOLE_ARRAY);
-	
-	//------------------------------------------------------
-	int h = FileOpen("testWriteArray", FILE_BIN|FILE_WRITE);
-	if(h > 0){
-		FileWriteArray(h, libT.array_dExtraOrders, 0, ArrayRange(libT.array_dExtraOrders,0)*libT.OE_MAX);
-		FileFlush(h);
-		FileClose(h);
-	}
-
-	double t[10000][libT.OE_MAX];
-	h = FileOpen("testWriteArray", FILE_BIN|FILE_READ);
-	if(h > 0){
-		FileReadArray(h, t, 0, 10000*libT.OE_MAX);
-		FileFlush(h);
-		FileClose(h);
-	}
 	
 }//.
 

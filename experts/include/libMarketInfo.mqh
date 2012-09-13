@@ -20,12 +20,12 @@ double libMI.GetMarketPriceByCMD(int cmd, string sy = ""){//..
 	
 	//------------------------------------------------------
 	if(cmd == OP_BUY){
-		return(MarketInfo(sy, MODE_BID));
+		return(MarketInfo(sy, MODE_ASK));
 	}
 	
 	//------------------------------------------------------
 	if(cmd == OP_SELL){
-		return(MarketInfo(sy, MODE_ASK));
+		return(MarketInfo(sy, MODE_BID));
 	}
 }//.
 

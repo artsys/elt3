@@ -1,7 +1,9 @@
 /* 
-		>Ver	:	0.0.9
-		>Date	:	2012.08.28
+		>Ver	:	0.0.11
+		>Date	:	2012.09.10
 		>History:
+			@0.0.11@2012.09.10@artamir	[+] libO.SendBUY
+			@0.0.10@2012.09.10@artamir	[+] libO.SendSELL
 			@0.0.9@2012.08.20@artamir	[+] ModifyPrice()
 			@0.0.7@2012.08.03@artamir	[*] Добавлены аргументы к функциям SendSELLSTOP и SendSELLLIMIT
 			@0.0.6@2012.08.03@artamir	[+] libO.SendSELLLIMIT
@@ -174,6 +176,36 @@ int libO.SendSELLLIMIT(double StartPrice, int AddPips = 0, double Vol = 0.01, in
 		ticket = _OrderSend("", OP_SELLLIMIT, Vol, SendPrice, 0, SLPrice, TPPrice, Comm, Magic);
 	
 	//----------------------------------------------------
+	return(ticket);
+}//.
+
+//==========================================================
+int libO.SendBUY(double vol = 0.01){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.09.10
+		>Hist:
+			@0.0.1@2012.09.10@artamir	[]
+	*/
+
+	int ticket = _OrderSend(Symbol(), OP_BUY, vol);
+	
+	//------------------------------------------------------
+	return(ticket);
+}//.
+
+//==========================================================
+int libO.SendSELL(double vol = 0.01){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.09.10
+		>Hist:
+			@0.0.1@2012.09.10@artamir	[]
+	*/
+
+	int ticket = _OrderSend(Symbol(), OP_SELL, vol);
+	
+	//------------------------------------------------------
 	return(ticket);
 }//.
 

@@ -1,7 +1,14 @@
 /*
-		>Ver	:	0.0.22
-		>Date	:	2012.09.10
+		>Ver	:	0.0.30
+		>Date	:	2012.09.11
 		>Hist:
+			@0.0.30@2012.09.11@artamir	[]
+			@0.0.28@2012.09.10@artamir	[]
+			@0.0.27@2012.09.10@artamir	[]
+			@0.0.26@2012.09.10@artamir	[]
+			@0.0.25@2012.09.10@artamir	[]
+			@0.0.24@2012.09.10@artamir	[]
+			@0.0.23@2012.09.10@artamir	[+] SelectExtraAOM()
 			@0.0.22@2012.09.10@artamir	[]
 			@0.0.21@2012.09.07@artamir	[+] checkExtraIsClosedStatuses()
 			@0.0.20@2012.09.07@artamir	[]
@@ -511,13 +518,13 @@ int libT.getTicketByGTAndIndex(int GT, int index){//..
 	
 }//.
 
-
 //==========================================================
 int libT.SelectExtraParents(double& d[][]){//..
 	/*
-		>Ver	:	0.0.1
-		>Date	:	2012.09.07
+		>Ver	:	0.0.2
+		>Date	:	2012.09.11
 		>Hist:
+			@0.0.2@2012.09.11@artamir	[]
 			@0.0.1@2012.09.07@artamir	[]
 		>Desc:
 	*/
@@ -540,6 +547,12 @@ int libT.SelectExtraParents(double& d[][]){//..
 	
 	libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);
 	
+	f.COL = libT.OE_ISCLOSED;
+	f.MAX = 0;
+	f.MIN = -1;
+	f.OP = libA.SOP.AND;
+	
+	libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);
 	//------------------------------------------------------
 	libA.double_SelectArray2(libT.array_dExtraOrders, d);
 }//.
@@ -599,6 +612,63 @@ int libT.getExtraIsClosedTicket(int ticket){//..
 	}else{
 		return(0);
 	}
+}//.
+
+//==========================================================
+int libT.SelectExtraAOM(double& d[][], int AOM){//..
+	/*
+		>Ver	:	0.0.2
+		>Date	:	2012.09.10
+		>Hist:
+			@0.0.2@2012.09.10@artamir	[]
+			@0.0.1@2012.09.10@artamir	[]
+	*/
+	
+	//------------------------------------------------------
+	int f.COL = libT.OE_AOM;
+	double f.MAX = AOM;
+	double f.MIN = AOM;
+	int f.OP = libA.SOP.AND;
+	
+	libA.double_eraseFilter2();
+	
+	//------------------------------------------------------
+	libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);
+	
+	//------------------------------------------------------
+	f.COL = libT.OE_ISCLOSED;
+	f.MAX = 0;
+	f.MIN = -1;
+	f.OP = libA.SOP.AND;
+	
+	libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);
+	
+	//------------------------------------------------------
+	libA.double_SelectArray2(libT.array_dExtraOrders, d);
+	
+	//------------------------------------------------------
+	int ROWS = ArrayRange(d, 0);
+	
+	//------------------------------------------------------
+	return(ROWS);
+}//.
+
+//==========================================================
+int libT.getExtraAOMByTicket(int ticket){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.09.10
+		>Hist:
+			@0.0.1@2012.09.10@artamir	[]
+	*/
+	
+	int idx = libT.getExtraIndexByTicket(ticket);
+	
+	//------------------------------------------------------
+	int aom = libT.getExtraPropByIndex(idx, libT.OE_AOM);
+	
+	//------------------------------------------------------
+	return(aom);
 }//.
 
 //.
@@ -735,7 +805,31 @@ int libT.setExtraTypeByTicket(int ticket, int type){//..
 	
 	libT.setExtraPropByIndex(idx, libT.OE_TY, type);
 }//.
+
+//==========================================================
+int libT.setExtraOPByTicket(int ticket, double op){//..
+	int idx = libT.getExtraIndexByTicket(ticket);
+	
+	//------------------------------------------------------
+	libT.setExtraPropByIndex(idx, libT.OE_OP, op);
+}//.
 //.
+
+//==========================================================
+int libT.setExtraAOMByTicket(int ticket, int aom){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.09.10
+		>Hist:
+			@0.0.1@2012.09.10@artamir	[]
+	*/
+	
+	//------------------------------------------------------
+	int idx = libT.getExtraIndexByTicket(ticket);
+	
+	//------------------------------------------------------
+	libT.setExtraPropByIndex(idx, libT.OE_AOM, aom);
+}//.
 
 //..	//=== Checking Statuses ============================
 
@@ -801,14 +895,17 @@ int libT.OrderIsClosed(int ticket){//..
 //==================================================================================================
 void libT.Start(){//..
 	/*
-		>Ver	:	0.0.1
-		>Date	:	2012.08.08
+		>Ver	:	0.0.2
+		>Date	:	2012.09.10
 			>Hist:
+			@0.0.2@2012.09.10@artamir	[]
 			@0.0.1@2012.08.08@artamir	[]
 			>Descr:
 				Функция менеджер модуля
 	*/	
-		
+	
+	libT.checkExtraIsClosedStatuses();
+	
 	//----------------------------------------------------------------------------------------------
 	libT.FillArrayCurOrders();
 	
@@ -862,12 +959,6 @@ void libT.FillArrayCurOrders(){//..
 			// Заполним текущую строку выбранным ордером
 			libT.FillArrayRowWithSelOrder(idxCO);
 			
-			/** BreakPoint
-			BP("libT.FillArrayCurOrders"
-				,"idxCO = ", idxCO
-				, "O_TI = ",libT.array_dCurOrders[idxCO][libT.O_TI]
-				, "O_SY = ",libT.array_sCurOrders[idxCO][libT.O_SY]);
-			*/	
 	}//.
 
 	
@@ -899,9 +990,10 @@ void libT.FillArrayRowWithSelOrder(int idxROW){//..
 //==================================================================================================
 void libT.End(){//..
 	/*
-		>Ver	:	0.0.2
+		>Ver	:	0.0.3
 		>Date	:	2012.09.10
 		>Hist:
+			@0.0.3@2012.09.10@artamir	[]
 			@0.0.2@2012.09.10@artamir	[]
 			@0.0.1@2012.08.10@artamir	[]
 		>Descr:
@@ -909,6 +1001,11 @@ void libT.End(){//..
 	*/
 	
 	//----------------------------------------------------------------------------------------------
+	if(ArrayRange(libT.array_dCurOrders, 0) <= 0){
+		return;
+	}	
+	
+	//------------------------------------------------------
 	ArrayCopy(libT.array_dOldOrders, libT.array_dCurOrders, 0, 0, WHOLE_ARRAY);
 	ArrayCopy(libT.array_sOldOrders, libT.array_sCurOrders, 0, 0, WHOLE_ARRAY);
 	

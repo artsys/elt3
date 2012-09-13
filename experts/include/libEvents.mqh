@@ -1,7 +1,8 @@
 /*
-		>Ver	:	0.0.6
-		>Date	:	2012.09.07
+		>Ver	:	0.0.7
+		>Date	:	2012.09.11
 		>Hist:
+			@0.0.7@2012.09.11@artamir	[]
 			@0.0.6@2012.09.07@artamir	[]
 			@0.0.4@2012.08.28@artamir	[]
 			@0.0.3@2012.08.11@artamir	[*] libE.FillEvetnByCurIndex()
@@ -70,9 +71,10 @@ void libE.FillEventsArray(){//..
 //==================================================================================================
 void libE.FillEvetnByCurIndex(int idxCUR){//..
 	/*
-		>Ver	:	0.0.4
-		>Date	:	2012.09.07
+		>Ver	:	0.0.5
+		>Date	:	2012.09.11
 		>Hist:
+			@0.0.5@2012.09.11@artamir	[]
 			@0.0.4@2012.09.07@artamir	[*] Added set New type in extra array if type changed.
 			@0.0.3@2012.08.28@artamir	[]
 			@0.0.2@2012.08.11@artamir	[+] Добавлена обработка изменения типа ордера и изменения цены открытия. 
@@ -121,6 +123,7 @@ void libE.FillEvetnByCurIndex(int idxCUR){//..
 		//--------------------------------------------------
 		if(curOP != oldOP){
 			thisRow = libE.setNewEventOnIndex(thisRow, curTicket, libE.EVENT_CHOP);
+			libT.setExtraOPByTicket(curTicket, curOP);
 		}
 		//.
 	

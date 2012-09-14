@@ -1,7 +1,9 @@
 /* 
-		>Ver	:	0.0.11
-		>Date	:	2012.09.10
+		>Ver	:	0.0.13
+		>Date	:	2012.09.14
 		>History:
+			@0.0.13@2012.09.14@artamir	[]
+			@0.0.12@2012.09.14@artamir	[]
 			@0.0.11@2012.09.10@artamir	[+] libO.SendBUY
 			@0.0.10@2012.09.10@artamir	[+] libO.SendSELL
 			@0.0.9@2012.08.20@artamir	[+] ModifyPrice()
@@ -26,9 +28,10 @@
 
 int libO.SendBUYSTOP(double StartPrice, int AddPips = 0, double Vol = 0.01, int TPPip = 0, int SLPip = 0, string Comm = "", int Magic = 0){//..
 	/*
-		>Ver	:	0.0.2
-		>Date	:	2012.07.31
+		>Ver	:	0.0.3
+		>Date	:	2012.09.14
 		>History:
+			@0.0.3@2012.09.14@artamir	[+] libT.Start()
 			@0.0.2@2012.07.31@artamir	[*] Исправил расчет стоплосса 
 			@0.0.1@2012.07.31@artamir	[*]	Добавлен расчет цены тп и сл исходя из цены выставления ордера.
 		>Description:
@@ -57,7 +60,12 @@ int libO.SendBUYSTOP(double StartPrice, int AddPips = 0, double Vol = 0.01, int 
 	int ticket = -1;
 		ticket = _OrderSend("", OP_BUYSTOP, Vol, SendPrice, 0, SLPrice, TPPrice, Comm, Magic);
 	
-	//----------------------------------------------------
+	//------------------------------------------------------
+	if(ticket > 0){
+		libT.Start();
+	}
+	
+	//------------------------------------------------------
 	return(ticket);
 }//.
 
@@ -103,9 +111,10 @@ int libO.SendBUYLIMIT(double StartPrice, int AddPips = 0, double Vol = 0.01, int
 //-------------------------------------------------------
 int libO.SendSELLSTOP(double StartPrice, int AddPips = 0, double Vol = 0.01, int TPPip = 0, int SLPip = 0, string Comm = "", int Magic = 0){//..
 	/*
-		>Ver	:	0.0.3
-		>Date	:	2012.08.03
+		>Ver	:	0.0.4
+		>Date	:	2012.09.14
 		>History:
+			@0.0.4@2012.09.14@artamir	[+] libT.Start()
 			@0.0.3@2012.08.03@artamir	[*] добавил аргументы функцц
 			@0.0.2@2012.08.03@artamir	[]
 			@0.0.2@2012.07.31@artamir	[*] Исправил расчет стоплосса 
@@ -135,6 +144,10 @@ int libO.SendSELLSTOP(double StartPrice, int AddPips = 0, double Vol = 0.01, int
 	//----------------------------------------------------
 	int ticket = -1;
 		ticket = _OrderSend("", OP_SELLSTOP, Vol, SendPrice, 0, SLPrice, TPPrice, Comm, Magic);
+	
+	if(ticket > 0){
+		libT.Start();
+	}
 	
 	//----------------------------------------------------
 	return(ticket);

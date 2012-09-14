@@ -1,7 +1,8 @@
 /*
-		>Ver	:	0.0.8
+		>Ver	:	0.0.9
 		>Date	:	2012.09.14
 		>Hist:
+			@0.0.9@2012.09.14@artamir	[*] проверка сетки противонаправленного ордера.
 			@0.0.8@2012.09.14@artamir	[]
 			@0.0.7@2012.09.14@artamir	[]
 			@0.0.6@2012.09.14@artamir	[]
@@ -97,9 +98,10 @@ int libTH.Main(int parent.ticket){//..
 //==========================================================
 void libTH.checkReversOrders(double &aParents[][]){//..
 	/*
-		>Ver	:	0.0.2
-		>Date	:	2012.09.05
+		>Ver	:	0.0.3
+		>Date	:	2012.09.14
 		>Hist:
+			@0.0.3@2012.09.14@artamir	[*] Проверка сетки противонаправленного ордера.
 			@0.0.2@2012.09.05@artamir	[]
 		>Desc:
 			Проверка ордеров обратного направления.
@@ -167,7 +169,24 @@ void libTH.checkReversOrdersByParent(int parent.ticket){//..
 		
 		//--------------------------------------------------
 		if(ROWS <= 0){
-			libO.SendSELLSTOP(revers.price);
+			int ticket = libO.SendSELLSTOP(revers.price);
+			
+			libA.double_eraseFilter2();
+			
+			//----------------------------------------------
+			f.COL = libT.OE_TI;
+			f.MAX = ticket;
+			f.MIN = ticket;
+			f.OP = libA.SOP.AND;
+			
+			libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);
+			
+			ArrayResize(d, 0);
+			libA.double_SelectArray2(libT.array_dExtraOrders, d);
+			//----------------------------------------------
+			if(ArrayRange(d,0) > 0){
+				libTH.checkCOOrders(d);
+			}
 		}
 	}//.
 	
@@ -202,7 +221,24 @@ void libTH.checkReversOrdersByParent(int parent.ticket){//..
 		ROWS = ArrayRange(d, 0);
 		
 		if(ROWS <= 0){
-			libO.SendBUYSTOP(revers.price);
+			ticket = libO.SendBUYSTOP(revers.price);
+			
+			libA.double_eraseFilter2();
+			
+			//----------------------------------------------
+			f.COL = libT.OE_TI;
+			f.MAX = ticket;
+			f.MIN = ticket;
+			f.OP = libA.SOP.AND;
+			
+			libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);
+			
+			ArrayResize(d, 0);
+			libA.double_SelectArray2(libT.array_dExtraOrders, d);
+			//----------------------------------------------
+			if(ArrayRange(d,0) > 0){
+				libTH.checkCOOrders(d);
+			}
 		}
 	}//.
 }//.

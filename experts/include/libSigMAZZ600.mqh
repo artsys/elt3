@@ -9,7 +9,7 @@
 			#include <libInd_MA.mqh>
 */
 
-extern bool		libSM.MAZZ600.Use	= false;
+bool		libSM.MAZZ600.Use	= false;
 
 int libSM.MAZZ600.Main(){//..
 

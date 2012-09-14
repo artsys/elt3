@@ -1,7 +1,11 @@
 /*
-		>Ver	:	0.0.4
-		>Date	:	2012.09.06
+		>Ver	:	0.0.8
+		>Date	:	2012.09.14
 		>Hist:
+			@0.0.8@2012.09.14@artamir	[]
+			@0.0.7@2012.09.14@artamir	[]
+			@0.0.6@2012.09.14@artamir	[]
+			@0.0.5@2012.09.14@artamir	[*] изменения в связи с переходом на elt3 0.0.45 
 			@0.0.3@2012.09.05@artamir	[*] убрано отладочное печатание массивов
 			@0.0.2@2012.09.05@artamir	[]
 			@0.0.1@2012.09.03@artamir	[]
@@ -16,9 +20,11 @@ extern int	libTH.StepPip		=	10;						//расстояние между ордерами одного направле
 
 int libTH.Main(int parent.ticket){//..
 	/*
-		>Ver	:	0.0.2
-		>Date	:	2012.09.05
+		>Ver	:	0.0.4
+		>Date	:	2012.09.14
 		>Hist:
+			@0.0.4@2012.09.14@artamir	[]
+			@0.0.3@2012.09.14@artamir	[]
 			@0.0.2@2012.09.05@artamir	[*] изменены максимальные и минимальные цены открытия.
 			@0.0.1@2012.09.03@artamir	[+] тестирование выборки бай ордеров.
 		>Desc:
@@ -30,22 +36,24 @@ int libTH.Main(int parent.ticket){//..
 	double d[][libT.OE_MAX];
 	
 	//------------------------------------------------------
-	libA.double_eraseFilter2();						//обнуляем фильтр
+	libA.double_eraseFilter2();								//обнуляем фильтр
 	
 	//------------------------------------------------------
 	//..	//ВЫОРКА БАЙ ОРДЕРОВ
 	int f.COL = libT.OE_TY;
 	double f.MAX = OP_BUY;
 	double f.MIN = OP_BUY;
-	libA.double_addFilter2(f.COL, f.MAX, f.MIN);			//Добавили фильтр с условием AND
+	int f.OP = libA.SOP.AND;
+	libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);			//Добавили фильтр с условием AND
 	
+	/*
 	//------------------------------------------------------
 	f.COL = libT.OE_OP;
 	f.MAX = Ask;											//Максимальная цена открытия ордера = Ask
-	f.MIN = 0;												//Минимальная цена = 0;
+	f.MIN = 0;												//Минимальная цена = 0;\
 															//т.е. цена открытия Бай <= БИД
-	libA.double_addFilter2(f.COL, f.MAX, f.MIN);
-	
+	libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);
+	*/
 	//------------------------------------------------------
 	libA.double_SelectArray2(libT.array_dExtraOrders, d);	//Выборка Бай ордеров
 	
@@ -67,27 +75,22 @@ int libTH.Main(int parent.ticket){//..
 	
 	libA.double_addFilter2(f.COL, f.MAX, f.MIN, libA.SOP.OR);
 	
+	/*
 	//------------------------------------------------------
 	f.COL	= libT.OE_OP;
 	f.MIN	= Bid;
 	f.MAX	= 10000;
 	
 	libA.double_addFilter2(f.COL, f.MAX, f.MIN, libA.SOP.AND);
-	
+	*/
 	//------------------------------------------------------
 	libA.double_SelectArray2(libT.array_dExtraOrders, d);	//Выборка ордеров селл c ценой открытия > Аск
 
 	libTH.checkReversOrders(d);
+	
+	libTH.checkCOOrders(d);
 	//.
 	
-	//------------------------------------------------------
-	//..	//ПРОВЕРКА РАБОТЫ СОХРАНЕНИЯ И ЧТЕНИЯ МАССИВА
-	libA.double_SaveToFile2(d, "test_save");
-	
-	//------------------------------------------------------
-	double t[][libT.OE_MAX];
-	libA.double_ReadFromFile2(t, "test_save");
-	//.
 }//.
 
 //..	//ПРОВЕРКА РАЗНОНАПРАВЛЕННЫХ ОРДЕРОВ
@@ -244,7 +247,7 @@ void libTH.checkCOOrders(double &aParents[][]){//..
 		>Date	:	2012.09.05
 		>Hist:
 		>Desc:
-			Проверка ордеров обратного направления.
+			Проверка ордеров того же направления.
 		>VARS:
 	*/
 	
@@ -259,7 +262,8 @@ void libTH.checkCOOrders(double &aParents[][]){//..
 	//------------------------------------------------------
 	for(int idx = 0; idx < ROWS; idx++){//..
 		int parent.ticket = aParents[idx][libT.OE_TI];
-
+		BP("ibTH.checkCOOrders","parent.ticket = ",parent.ticket);
+		
 		//--------------------------------------------------
 		libTH.checkCOOrdersByParent(parent.ticket);
 	}//.
@@ -268,9 +272,13 @@ void libTH.checkCOOrders(double &aParents[][]){//..
 //==========================================================
 void libTH.checkCOOrdersByParent(int parent.ticket){//..
 	/*
-		>Ver	:	0.0.1
-		>Date	:	2012.09.05
+		>Ver	:	0.0.3
+		>Date	:	2012.09.14
 		>Hist:
+			@0.0.3@2012.09.14@artamir	[+] Добавлена проверка на существование 
+											ордеров в заданном количестве,
+											на заданных уровнях.
+			@0.0.2@2012.09.14@artamir	[]
 		>Desc:
 			Проверка ордеров обратного направления
 			по заданному родителю.
@@ -292,8 +300,49 @@ void libTH.checkCOOrdersByParent(int parent.ticket){//..
 			
 			//----------------------------------------------
 			int		f.COL = libT.OE_TY;
-			double	f.MAX = OP_SELL;
-			double	f.MIN = OP_SELL;
+			double	f.MAX = OP_BUY;
+			double	f.MIN = OP_BUY;
+			
+			libA.double_addFilter2(f.COL, f.MAX, f.MIN, libA.SOP.OR);
+			
+			//----------------------------------------------
+			f.COL = libT.OE_TY;
+			f.MAX = OP_BUYSTOP;
+			f.MIN = OP_BUYSTOP;
+			
+			libA.double_addFilter2(f.COL, f.MAX, f.MIN, libA.SOP.OR);
+			
+			//----------------------------------------------
+			f.COL = libT.OE_OP;
+			f.MAX = co.price + SPREAD*Point;
+			f.MIN = co.price - SPREAD*Point;
+			
+			libA.double_addFilter2(f.COL, f.MAX, f.MIN, libA.SOP.AND);
+			
+			//----------------------------------------------
+			double d[][libT.OE_MAX];
+			
+			libA.double_SelectArray2(libT.array_dExtraOrders, d);
+			
+			//----------------------------------------------
+			int ROWS = ArrayRange(d, 0);
+			
+			//----------------------------------------------
+			if(ROWS <= 0){//..
+				libO.SendBUYSTOP(co.price);
+			}//.
+		}//.
+	
+		//--------------------------------------------------
+		if(parent.type == OP_SELL || parent.type == OP_SELLSTOP){//..
+			
+			//----------------------------------------------
+			libA.double_eraseFilter2();
+			
+			//----------------------------------------------
+			f.COL = libT.OE_TY;
+			f.MAX = OP_SELL;
+			f.MIN = OP_SELL;
 			
 			libA.double_addFilter2(f.COL, f.MAX, f.MIN, libA.SOP.OR);
 			
@@ -312,9 +361,17 @@ void libTH.checkCOOrdersByParent(int parent.ticket){//..
 			libA.double_addFilter2(f.COL, f.MAX, f.MIN, libA.SOP.AND);
 			
 			//----------------------------------------------
-			double d[][libT.OE_MAX];
+			ArrayResize(d,0);
 			
 			libA.double_SelectArray2(libT.array_dExtraOrders, d);
+			
+			//----------------------------------------------
+			ROWS = ArrayRange(d, 0);
+			
+			//----------------------------------------------
+			if(ROWS <= 0){//..
+				libO.SendSELLSTOP(co.price);
+			}//.
 		}//.
 	}//.
 }//.

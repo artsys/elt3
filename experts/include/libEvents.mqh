@@ -2,7 +2,7 @@
 		>Ver	:	0.0.8
 		>Date	:	2012.09.17
 		>Hist:
-			@0.0.8@2012.09.17@artamir	[+] add circle on old index
+			@0.0.8@2012.09.17@artamir	[*] add circle on old index.
 			@0.0.7@2012.09.11@artamir	[]
 			@0.0.6@2012.09.07@artamir	[]
 			@0.0.4@2012.08.28@artamir	[]

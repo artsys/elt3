@@ -1,7 +1,10 @@
 /*
-		>Ver	:	0.0.30
-		>Date	:	2012.09.11
+		>Ver	:	0.0.33
+		>Date	:	2012.09.19
 		>Hist:
+			@0.0.33@2012.09.19@artamir	[]
+			@0.0.32@2012.09.19@artamir	[]
+			@0.0.31@2012.09.19@artamir	[]
 			@0.0.30@2012.09.11@artamir	[]
 			@0.0.28@2012.09.10@artamir	[]
 			@0.0.27@2012.09.10@artamir	[]
@@ -223,9 +226,10 @@ double libT.getCurLotByTicket(int ticket){//..
 //==================================================================================================
 int libT.getOldIndexByTicket(int ticket){//..
 	/*
-		>Ver	:	0.0.1
-		>Date	:	2012.08.10
+		>Ver	:	0.0.2
+		>Date	:	2012.09.19
 		>Hist:
+			@0.0.2@2012.09.19@artamir	[*] changed direction
 			@0.0.1@2012.08.10@artamir	[]
 		>Descr:
 			return index by ticket from old array of orders.
@@ -235,7 +239,7 @@ int libT.getOldIndexByTicket(int ticket){//..
 	int res = -1;											//Initial value
 	
 	//==============================================================================================
-	for(int idx = 0; idx < MAX; idx++){
+	for(int idx = MAX; idx >= 0; idx--){//..
 		if(res >= 0) continue;								//if we find ticket
 	
 		int OldTicket = libT.OldTicketByIndex(idx);			//get ticket by index.
@@ -245,7 +249,7 @@ int libT.getOldIndexByTicket(int ticket){//..
 		
 		//------------------------------------------------------------------------------------------
 		res = idx;
-	}
+	}//.
 	
 	//----------------------------------------------------------------------------------------------
 	return(res);
@@ -254,9 +258,10 @@ int libT.getOldIndexByTicket(int ticket){//..
 //==================================================================================================
 int libT.getCurIndexByTicket(int ticket){//..
 	/*
-		>Ver	:	0.0.1
-		>Date	:	2012.08.10
+		>Ver	:	0.0.2
+		>Date	:	2012.09.19
 		>Hist:
+			@0.0.2@2012.09.19@artamir	[*] changed direction in array circle
 			@0.0.1@2012.08.10@artamir	[]
 		>Descr:
 			¬озвращает индекс из текущего массива по тикету.
@@ -266,7 +271,7 @@ int libT.getCurIndexByTicket(int ticket){//..
 	int res = -1;											//«начение, возвращаемое по умолчанию
 	
 	//==============================================================================================
-	for(int idx = 0; idx < MAX; idx++){
+	for(int idx = MAX-1; idx >= 0; idx--){//..
 		if(res >= 0) continue;								//если мы уже нашли нужный тикет
 	
 		int OldTicket = libT.CurTicketByIndex(idx);			//ѕолучаем значение тикета по индексу.
@@ -276,7 +281,7 @@ int libT.getCurIndexByTicket(int ticket){//..
 		
 		//------------------------------------------------------------------------------------------
 		res = idx;
-	}
+	}//.
 	
 	//----------------------------------------------------------------------------------------------
 	return(res);
@@ -302,9 +307,10 @@ int libT.getExtraTicketByIndex(int idx){//..
 //==================================================================================================
 int libT.getExtraIndexByTicket(int ticket, int flAddIfNotFind = 0){//..
 	/*
-		>Ver	:	0.0.0
-		>Date	:	2012.08.10
+		>Ver	:	0.0.1
+		>Date	:	2012.09.19
 		>Hist:
+			@0.0.1@2012.09.19@artamir	[*] changed direction
 			@0.0.1@2012.08.10@artamir	[]
 		>Descr:
 			¬озвращает индекс из экстра массива по тикету.
@@ -319,7 +325,7 @@ int libT.getExtraIndexByTicket(int ticket, int flAddIfNotFind = 0){//..
 	int		idx_find	= -1;
 	
 	//------------------------------------------------------
-	for(int idx = 0; idx < ROWS; idx++){//..
+	for(int idx = ROWS-1; idx >= 0; idx--){//..
 		
 		//--------------------------------------------------
 		if(isFind){
@@ -849,7 +855,7 @@ int libT.checkExtraIsClosedStatuses(){//..
 	}//.
 	
 	//------------------------------------------------------
-	for(int idx = 0; idx < ROWS; idx++){
+	for(int idx = ROWS; idx >= 0; idx--){
 		int ticket = libT.getExtraTicketByIndex(idx);
 		
 		//-------------------------------------------

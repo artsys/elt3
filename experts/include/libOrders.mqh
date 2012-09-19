@@ -1,7 +1,8 @@
 /* 
-		>Ver	:	0.0.13
-		>Date	:	2012.09.14
+		>Ver	:	0.0.14
+		>Date	:	2012.09.17
 		>History:
+			@0.0.14@2012.09.17@artamir	[]
 			@0.0.13@2012.09.14@artamir	[]
 			@0.0.12@2012.09.14@artamir	[]
 			@0.0.11@2012.09.10@artamir	[+] libO.SendBUY
@@ -340,9 +341,10 @@ bool _OrderModify(int ticket, double price, double stoploss, double takeprofit, 
 
 bool libO.ModifyTP(int ticket, double tp, int mode = 1){//..
 	/*
-		>Ver	:	0.0.1
-		>Date	:	2012.08.20
+		>Ver	:	0.0.2
+		>Date	:	2012.09.17
 		>History:
+			@0.0.2@2012.09.17@artamir	[*] add ability to use MODE_PIP
 			@0.0.1@2012.08.20@artamir	[]
 		>Description:
 			Modify TP
@@ -351,7 +353,28 @@ bool libO.ModifyTP(int ticket, double tp, int mode = 1){//..
 			libNormalize
 	*/
 	
-	return(_OrderModify(ticket, -1, -1, tp, -1, CLR_NONE));
+	//------------------------------------------------------
+	if(!OrderSelect(ticket, SELECT_BY_TICKET)) return(false);
+	
+	//------------------------------------------------------
+	if(mode == libO.MODE_PIP){//..
+		int type = OrderType();
+		double op = OrderOpenPrice();
+		double tp.newprice = -1;
+		//--------------------------------------------------
+		if(type == OP_BUY || type == OP_BUYSTOP){//..
+			tp.newprice = op+tp*Point;
+		}//.
+		
+		//--------------------------------------------------
+		if(type == OP_SELL || type == OP_SELLSTOP){//..
+			tp.newprice = op-tp*Point;
+		}//.
+	}else{
+		tp.newprice = tp;
+	}//.
+	
+	return(_OrderModify(ticket, -1, -1, tp.newprice, -1, CLR_NONE));
 }//.
 
 bool libO.ModifyPrice(int ticket, double price, int mode = 1){//..

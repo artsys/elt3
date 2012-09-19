@@ -1,7 +1,11 @@
 /*
-		>Ver	:	0.0.9
-		>Date	:	2012.09.14
+		>Ver	:	0.0.13
+		>Date	:	2012.09.19
 		>Hist:
+			@0.0.13@2012.09.19@artamir	[]
+			@0.0.12@2012.09.19@artamir	[]
+			@0.0.11@2012.09.17@artamir	[]
+			@0.0.10@2012.09.17@artamir	[]
 			@0.0.9@2012.09.14@artamir	[*] проверка сетки противонаправленного ордера.
 			@0.0.8@2012.09.14@artamir	[]
 			@0.0.7@2012.09.14@artamir	[]
@@ -19,11 +23,16 @@ extern int	libTH.BackStepPip	=	10;						//расстояние до ордера противоположного 
 extern int	libTH.MaxLevels		=	5;						//5 уровней от родителя.
 extern int	libTH.StepPip		=	10;						//расстояние между ордерами одного направления.
 
+#include <mngTrendHarvester.TP.mqh>
+
 int libTH.Main(int parent.ticket){//..
 	/*
-		>Ver	:	0.0.4
-		>Date	:	2012.09.14
+		>Ver	:	0.0.7
+		>Date	:	2012.09.19
 		>Hist:
+			@0.0.7@2012.09.19@artamir	[]
+			@0.0.6@2012.09.17@artamir	[]
+			@0.0.5@2012.09.17@artamir	[]
 			@0.0.4@2012.09.14@artamir	[]
 			@0.0.3@2012.09.14@artamir	[]
 			@0.0.2@2012.09.05@artamir	[*] изменены максимальные и минимальные цены открытия.
@@ -47,15 +56,15 @@ int libTH.Main(int parent.ticket){//..
 	int f.OP = libA.SOP.AND;
 	libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);			//Добавили фильтр с условием AND
 	
-	/*
 	//------------------------------------------------------
-	f.COL = libT.OE_OP;
-	f.MAX = Ask;											//Максимальная цена открытия ордера = Ask
-	f.MIN = 0;												//Минимальная цена = 0;\
-															//т.е. цена открытия Бай <= БИД
+	f.COL = libT.OE_ISCLOSED;
+	f.MAX = 0;											//Ордер живой
+	f.MIN = -1000;												//
+															//
 	libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);
-	*/
+	
 	//------------------------------------------------------
+	ArrayResize(d,0);
 	libA.double_SelectArray2(libT.array_dExtraOrders, d);	//Выборка Бай ордеров
 	
 	//------------------------------------------------------
@@ -74,23 +83,26 @@ int libTH.Main(int parent.ticket){//..
 	f.MIN	= OP_SELL;
 	f.MAX	= OP_SELL;
 	
-	libA.double_addFilter2(f.COL, f.MAX, f.MIN, libA.SOP.OR);
+	libA.double_addFilter2(f.COL, f.MAX, f.MIN, libA.SOP.AND);
 	
-	/*
+	
 	//------------------------------------------------------
-	f.COL	= libT.OE_OP;
-	f.MIN	= Bid;
-	f.MAX	= 10000;
+	f.COL	= libT.OE_ISCLOSED;
+	f.MIN	= -1000;
+	f.MAX	= 0;
 	
 	libA.double_addFilter2(f.COL, f.MAX, f.MIN, libA.SOP.AND);
-	*/
+	
 	//------------------------------------------------------
+	ArrayResize(d,0);
 	libA.double_SelectArray2(libT.array_dExtraOrders, d);	//Выборка ордеров селл c ценой открытия > Аск
 
 	libTH.checkReversOrders(d);
 	
 	libTH.checkCOOrders(d);
 	//.
+
+	mngTHTP.Main();
 	
 }//.
 
@@ -98,9 +110,10 @@ int libTH.Main(int parent.ticket){//..
 //==========================================================
 void libTH.checkReversOrders(double &aParents[][]){//..
 	/*
-		>Ver	:	0.0.3
-		>Date	:	2012.09.14
+		>Ver	:	0.0.4
+		>Date	:	2012.09.19
 		>Hist:
+			@0.0.4@2012.09.19@artamir	[]
 			@0.0.3@2012.09.14@artamir	[*] Проверка сетки противонаправленного ордера.
 			@0.0.2@2012.09.05@artamir	[]
 		>Desc:
@@ -162,6 +175,14 @@ void libTH.checkReversOrdersByParent(int parent.ticket){//..
 		libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);
 		
 		//--------------------------------------------------
+		f.COL = libT.OE_ISCLOSED;
+		f.MAX = 0;
+		f.MIN = -1;
+		f.OP = libA.SOP.AND;
+		
+		libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);
+		
+		//--------------------------------------------------
 		libA.double_SelectArray2(libT.array_dExtraOrders, d);
 		
 		//--------------------------------------------------
@@ -210,6 +231,14 @@ void libTH.checkReversOrdersByParent(int parent.ticket){//..
 		f.COL = libT.OE_OP;
 		f.MAX = revers.price + SPREAD*Point;
 		f.MIN = revers.price - SPREAD*Point;
+		f.OP = libA.SOP.AND;
+		
+		libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);
+		
+		//--------------------------------------------------
+		f.COL = libT.OE_ISCLOSED;
+		f.MAX = 0;
+		f.MIN = -1;
 		f.OP = libA.SOP.AND;
 		
 		libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);
@@ -298,7 +327,6 @@ void libTH.checkCOOrders(double &aParents[][]){//..
 	//------------------------------------------------------
 	for(int idx = 0; idx < ROWS; idx++){//..
 		int parent.ticket = aParents[idx][libT.OE_TI];
-		BP("ibTH.checkCOOrders","parent.ticket = ",parent.ticket);
 		
 		//--------------------------------------------------
 		libTH.checkCOOrdersByParent(parent.ticket);

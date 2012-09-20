@@ -1,8 +1,11 @@
 /* 
-		>Ver	:	0.0.14
-		>Date	:	2012.09.17
+		>Ver	:	0.0.17
+		>Date	:	2012.09.20
 		>History:
-			@0.0.14@2012.09.17@artamir	[]
+			@0.0.17@2012.09.20@artamir	[]
+			@0.0.16@2012.09.20@artamir	[]
+			@0.0.15@2012.09.20@artamir	[]
+			@0.0.14@2012.09.14@artamir	[]
 			@0.0.13@2012.09.14@artamir	[]
 			@0.0.12@2012.09.14@artamir	[]
 			@0.0.11@2012.09.10@artamir	[+] libO.SendBUY
@@ -302,9 +305,11 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 
 bool _OrderModify(int ticket, double price, double stoploss, double takeprofit, datetime expiration, color clr=CLR_NONE){//..
 	/*
-		>Ver:0.0.0
-		>Date: 2012.07.18
+		>Ver	:	0.0.2
+		>Date	:	2012.09.20
 		>History:
+			@0.0.2@2012.09.20@artamir	[]
+			@0.0.1@2012.09.20@artamir	[+] add chicking needModify
 		>Description:
 			Modify orders parameters
 		>Зависимости заголовков:
@@ -335,16 +340,48 @@ bool _OrderModify(int ticket, double price, double stoploss, double takeprofit, 
 	}
 	
 	//------------------------------------------------------
-	bool res = OrderModify(ticket, price, stoploss, takeprofit, expiration, clr);
-	return(res);
+	bool needModify = false;//..
+	if(price != OrderOpenPrice()){//..
+		needModify = true;
+	}//.
+	
+	//------------------------------------------------------
+	if(stoploss != OrderStopLoss()){//..
+		needModify = true;
+	}//.
+	
+	//------------------------------------------------------
+	if(takeprofit != OrderTakeProfit()){//..
+		needModify = true;
+	}//.
+	
+	//.
+	
+	//------------------------------------------------------
+	if(needModify){//..
+		bool res = OrderModify(ticket, price, stoploss, takeprofit, expiration, clr);
+		
+		//--------------------------------------------------
+		int err = GetLastError();
+		
+		//--------------------------------------------------
+		if(err == 130){
+			Print("p = ",price," s = ",stoploss, "t = ",takeprofit);
+		}
+		
+		//--------------------------------------------------
+		return(res);
+	}else{
+		return(true);
+	}//.	
 }//.
 
 bool libO.ModifyTP(int ticket, double tp, int mode = 1){//..
 	/*
 		>Ver	:	0.0.2
-		>Date	:	2012.09.17
+		>Date	:	2012.09.20
 		>History:
-			@0.0.2@2012.09.17@artamir	[*] add ability to use MODE_PIP
+			@0.0.2@2012.09.20@artamir	[]
 			@0.0.1@2012.08.20@artamir	[]
 		>Description:
 			Modify TP
@@ -352,29 +389,25 @@ bool libO.ModifyTP(int ticket, double tp, int mode = 1){//..
 			libMarketInfo
 			libNormalize
 	*/
-	
-	//------------------------------------------------------
 	if(!OrderSelect(ticket, SELECT_BY_TICKET)) return(false);
 	
-	//------------------------------------------------------
+	double newtp = tp;
+	
 	if(mode == libO.MODE_PIP){//..
 		int type = OrderType();
 		double op = OrderOpenPrice();
-		double tp.newprice = -1;
 		//--------------------------------------------------
-		if(type == OP_BUY || type == OP_BUYSTOP){//..
-			tp.newprice = op+tp*Point;
+		if(type == OP_BUY || type == OP_BUYSTOP || type == OP_BUYLIMIT){//..
+			newtp = op+tp*Point;
 		}//.
 		
 		//--------------------------------------------------
-		if(type == OP_SELL || type == OP_SELLSTOP){//..
-			tp.newprice = op-tp*Point;
+		if(type == OP_SELL || type == OP_SELLSTOP || type == OP_SELLLIMIT){//..
+			newtp = op - tp*Point;
 		}//.
-	}else{
-		tp.newprice = tp;
 	}//.
 	
-	return(_OrderModify(ticket, -1, -1, tp.newprice, -1, CLR_NONE));
+	return(_OrderModify(ticket, -1, -1, newtp, -1, CLR_NONE));
 }//.
 
 bool libO.ModifyPrice(int ticket, double price, int mode = 1){//..
@@ -383,5 +416,35 @@ bool libO.ModifyPrice(int ticket, double price, int mode = 1){//..
 	if(mode == libO.MODE_PRICE){
 		return(_OrderModify(ticket, price, -1, -1, -1, CLR_NONE));
 	}	
+}//.
+//.
+
+//=== CLOSE ================================================
+//..
+bool libO.CloseByTicket(int ticket){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.09.14
+		>Hist:
+			@0.0.1@2012.09.14@artamir	[]
+		>Desc:
+	*/
+	
+	//------------------------------------------------------
+	if(!OrderSelect(ticket, SELECT_BY_TICKET)) return(false);
+	
+	//------------------------------------------------------
+	if(OrderType() != OP_BUY && OrderType() != OP_SELL){//..
+		return(false);
+	}//.
+	
+	//------------------------------------------------------
+	double price = libMI.getMarketClosePriceByCMD(OrderType());
+	
+	//------------------------------------------------------
+	double lot = OrderLots();
+	
+	//------------------------------------------------------
+	OrderClose(ticket, lot, price, 0, CLR_NONE);
 }//.
 //.

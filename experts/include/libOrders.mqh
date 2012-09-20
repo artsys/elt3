@@ -1,7 +1,9 @@
 /* 
-		>Ver	:	0.0.17
+		>Ver	:	0.0.19
 		>Date	:	2012.09.20
 		>History:
+			@0.0.19@2012.09.20@artamir	[]
+			@0.0.18@2012.09.20@artamir	[]
 			@0.0.17@2012.09.20@artamir	[*] add normalizing for order modify.
 			@0.0.16@2012.09.20@artamir	[]
 			@0.0.15@2012.09.20@artamir	[]
@@ -232,9 +234,11 @@ int libO.SendSELL(double vol = 0.01){//..
 
 int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double price = 0.0, int slippage = 0, double stoploss = 0.0, double takeprofit = 0.0, string comment="", int magic=0, datetime expiration=0, color arrow_color=CLR_NONE){//..
 	/*
-		>Ver:0.0.0
-		>Date: 2012.07.18
+		>Ver	:	0.0.2
+		>Date	:	2012.09.20
 		>History:
+			@0.0.2@2012.09.20@artamir	[+] checking price for sending order.
+			@0.0.1@2012.09.20@artamir	[]
 		>Description:
 			Функция отправки закроса на открытие ордера на сервер.
 		>Зависимости заголовков:
@@ -250,50 +254,79 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 	//-----------------------------------------------------------
 	
 	//=============================================
-	// Определение инструмента
+	// Check symbol
 	//=============================================
 	if(symbol == ""){//..
 					//если не задан нструмент, тогда используем текущий
 		symbol = Symbol();
 	}//.
 	
+	//------------------------------------------------------
+	double dBid = MarketInfo(symbol, MODE_BID);
+	double dAsk = MarketInfo(symbol, MODE_ASK);
+	
 	//=============================================
-	// Определение объема
+	// Check volume
 	//=============================================
 	double MINLOT = MarketInfo(symbol, MODE_MINLOT);
 	double MAXLOT = MarketInfo(symbol, MODE_MAXLOT);
 	
+	//------------------------------------------------------
 	if(volume < MINLOT){//..
 		volume = MINLOT;
 	}//.
-	//------------------
+	
+	//------------------------------------------------------
 	if(volume > MAXLOT){//..
 		volume = MAXLOT;
 	}//.
 	
-	//============================================
-	//Определение цены
-	//============================================
+	//------------------------------------------------------
 	if(price <= 0){//..
 		price = libMI.GetMarketPriceByCMD(cmd);
 	}//.
 	
-	//============================================
-	// Определение проскальзывания
-	//============================================
+	//------------------------------------------------------
 	if(slippage == 0){//..
 		slippage = 0;
 	}//.
 	
-	//===========================================
-	// Нормализация дробных переменных
-	//===========================================
+	//======================================================
+	// Normalizing
+	//======================================================
 	volume		= libNormalize.Volume(volume);
 	price		= libNormalize.Digits(price);
 	stoploss	= libNormalize.Digits(stoploss);
 	takeprofit	= libNormalize.Digits(takeprofit);
-	//-----------------------------------------------------------
+	
+	//------------------------------------------------------
+	//..	//Checking ability to send order
+	
+		//--------------------------------------------------
+		if(cmd == OP_BUYSTOP){//..
+			if(price <= dBid){
+				return(-1);
+			}
+		}//.
+		
+		//--------------------------------------------------
+		if(cmd == OP_SELLSTOP){//..
+			if(price >= dAsk){
+				return(-1);
+			}
+		}//.
+	//.
+	
+	//------------------------------------------------------
 	int res = OrderSend(symbol, cmd, volume, price, slippage, stoploss, takeprofit, comment, magic, expiration, arrow_color);
+	
+	//------------------------------------------------------
+	int err = GetLastError();
+	
+	//------------------------------------------------------
+	if(err == 130){
+		Print("Bad stop", " cmd = ", cmd, " price = ", price, "stoploss = ", stoploss, "takeprofit = ", takeprofit, " Ask = ",Ask, " Bid = ", Bid);
+	}
 	
 	return(res);
 }//.

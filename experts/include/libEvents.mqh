@@ -173,7 +173,7 @@ void libE.FillEvetnByOldIndex(int idxOLD){//..
 	int oldTicket = libT.OldTicketByIndex(idxOLD);			//get ticket of current order by index
 	int idxCUR = libT.getCurIndexByTicket(oldTicket);		//find index in array of old orders
 	
-	if(idxCUR <= -1){//..									//this is a new placed order.
+	if(idxCUR <= -1){//..									//this is a Closed order.
 		thisRow = libE.setNewEventOnIndex(thisRow,	oldTicket, libE.EVENT_CO); //Возвращает новое количество строк
 		
 		libT.setExtraIsClosedByTicket(oldTicket);

@@ -2,12 +2,12 @@
 
 ; Define your application name
 !define APPNAME "eTrendHarvester"
-!define APPNAMEANDVERSION " eTrendHarvester.0.0.28_2012.09.20"
+!define APPNAMEANDVERSION " eTrendHarvester.0.0.32_2012.09.20"
 
 ; Main Install settings
 Name "${APPNAMEANDVERSION}"
 InstallDir "$PROGRAMFILES"
-OutFile "C:\Setup\eLTv3\eTrendHarvester.0.0.28_2012.09.20.exe"
+OutFile "C:\Setup\eLTv3\eTrendHarvester.0.0.32_2012.09.20.exe"
 
 ; Use compression
 SetCompressor LZMA
@@ -33,7 +33,7 @@ Section "eLT" Section1
 
 	; Set Section Files and Shortcuts
 	SetOutPath "$INSTDIR\experts\"
-	File /oname=eTrendHarvester.0.0.28_2012.09.20.ex4 "eTrendHarvester.ex4"
+	File /oname=eTrendHarvester.0.0.32_2012.09.20.ex4 "eTrendHarvester.ex4"
 	SetOutPath "$INSTDIR\experts\indicators\"
 	File "indicators\ZigZag.ex4"
 

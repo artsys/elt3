@@ -1,7 +1,11 @@
 /*
-		>Ver	:	0.0.28
+		>Ver	:	0.0.32
 		>Date	:	2012.09.20
 		>History:
+			@0.0.32@2012.09.20@artamir	[!] libTerminal, libTrendHarvester.
+			@0.0.31@2012.09.20@artamir	[]
+			@0.0.30@2012.09.20@artamir	[]
+			@0.0.29@2012.09.20@artamir	[]
 			@0.0.28@2012.09.20@artamir	[]
 			@0.0.27@2012.09.20@artamir	[]
 			@0.0.26@2012.09.20@artamir	[]
@@ -37,9 +41,12 @@
 */	
 
 /*
-		>Ver	:	0.0.36
+		>Ver	:	0.0.39
 		>Date	:	2012.09.20
 
+			@0.0.39@2012.09.20@artamir	[]
+			@0.0.38@2012.09.20@artamir	[]
+			@0.0.37@2012.09.20@artamir	[]
 			@0.0.36@2012.09.20@artamir	[]
 			@0.0.35@2012.09.20@artamir	[]
 			@0.0.34@2012.09.20@artamir	[]
@@ -62,7 +69,7 @@
 */	
 
 #define	EXP "eLT3.TH"		
-#define	VER	"0.0.28c_2012.09.20"
+#define	VER	"0.0.32_2012.09.20"
 //==================================================================================================
 // VARS:
 //
@@ -130,9 +137,10 @@ int deinit(){//..
 //==================================================================================================
 int start(){//..
 	/*
-		>Ver	:	0.0.5
-		>Date	:	2012.09.19
+		>Ver	:	0.0.6
+		>Date	:	2012.09.20
 		>History:
+			@0.0.6@2012.09.20@artamir	[]
 			@0.0.5@2012.09.19@artamir	[]
 			@0.0.4@2012.09.17@artamir	[]
 			@0.0.3@2012.09.17@artamir	[+] Добавил автооткрытие бай ордера, если нет ни одного ордера на счете.
@@ -142,7 +150,7 @@ int start(){//..
 	*/
 	//if(!isStart) return;
 	
-	libT.checkExtraIsClosedStatuses();
+	//libT.checkExtraIsClosedStatuses();
 	
 	if(OrdersTotal() == 0){
 		libO.SendBUY(0.1);
@@ -150,12 +158,31 @@ int start(){//..
 	
 	Comment(VER,"\n"
 			,"NO = ", OrdersTotal(), "\n"
-			,"AR = ", ArrayRange(libT.array_dExtraOrders,0));
+			,"AR = ", ArrayRange(libT.array_dExtraOrders,0),"\n"
+			,"CurProfit = ",DoubleToStr(libA.double_Sum2(libT.array_dCurOrders, libT.O_PROFIT),2), "\n"
+			,"OrdProfit = ",DoubleToStr(getOrdersProfit(),2),"\n"
+			,"AE = ",AccountEquity(),"\n"
+			,"CO profit = ", DoubleToStr(libA.double_Sum2(libT.array_dExtraOrders, libT.OE_PROFIT),2));
 	if(isStart) isStart = false;
-
+	
+	//libA.double_PrintArray2(libT.array_dExtraOrders, 4, "EO_");
 	//------------------------------------------------------
 	libT.Start();
 	libT.End();	
+	
+	if(ArrayRange(libE.array_dOrdersEvents,0) <= 0){
+		return(0);
+	}
+	//------------------------------------------------------
+	
+	
+	//if(ArrayRange(libT.array_dExtraOrders, 0)>=95){//..
+	//	libA.double_PrintArray2(libE.array_dOrdersEvents, 4, "libE.Events_");
+	//	libA.double_PrintArray2(libT.array_dCurOrders, 4, "libT.Cur_");
+	//	libA.double_PrintArray2(libT.array_dOldOrders, 4, "libT.Old_");
+	//}//.
+	
+	
 	//------------------------------------------------------
 	int ticket = libT.CurTicketByIndex();
 	
@@ -177,3 +204,20 @@ double iif( bool condition, double ifTrue, double ifFalse ){
 	//---
 	return( ifFalse );
 }
+
+double getOrdersProfit(){//..
+	int t = OrdersTotal();
+	double sum = 0;
+	
+	for(int i = 0; i <= t; i++){
+		
+		//--------------------------------------------------
+		if(!OrderSelect(i, SELECT_BY_POS, MODE_TRADES)) continue;
+		
+		//--------------------------------------------------
+		sum = sum + OrderProfit();
+	}
+	
+	//------------------------------------------------------
+	return(sum);
+}//.

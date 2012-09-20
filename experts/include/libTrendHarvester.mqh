@@ -1,7 +1,8 @@
 /*
-		>Ver	:	0.0.13
-		>Date	:	2012.09.19
+		>Ver	:	0.0.14
+		>Date	:	2012.09.20
 		>Hist:
+			@0.0.14@2012.09.20@artamir	[]
 			@0.0.13@2012.09.19@artamir	[]
 			@0.0.12@2012.09.19@artamir	[]
 			@0.0.11@2012.09.17@artamir	[]
@@ -54,12 +55,12 @@ int libTH.Main(int parent.ticket){//..
 	double f.MAX = OP_BUY;
 	double f.MIN = OP_BUY;
 	int f.OP = libA.SOP.AND;
-	libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);			//Добавили фильтр с условием AND
+	libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);		//Добавили фильтр с условием AND
 	
 	//------------------------------------------------------
 	f.COL = libT.OE_ISCLOSED;
-	f.MAX = 0;											//Ордер живой
-	f.MIN = -1000;												//
+	f.MAX = 0;												//Ордер живой
+	f.MIN = -1;												//
 															//
 	libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);
 	
@@ -110,9 +111,10 @@ int libTH.Main(int parent.ticket){//..
 //==========================================================
 void libTH.checkReversOrders(double &aParents[][]){//..
 	/*
-		>Ver	:	0.0.4
-		>Date	:	2012.09.19
+		>Ver	:	0.0.5
+		>Date	:	2012.09.20
 		>Hist:
+			@0.0.5@2012.09.20@artamir	[]
 			@0.0.4@2012.09.19@artamir	[]
 			@0.0.3@2012.09.14@artamir	[*] Проверка сетки противонаправленного ордера.
 			@0.0.2@2012.09.05@artamir	[]
@@ -153,6 +155,8 @@ void libTH.checkReversOrdersByParent(int parent.ticket){//..
 	libA.double_eraseFilter2();
 	//------------------------------------------------------
 	if(parent.type == OP_BUY || parent.type == OP_BUYSTOP){//..
+		
+		//--------------------------------------------------
 		int f.COL = libT.OE_TY;
 		double f.MAX = OP_SELL;
 		double f.MIN = OP_SELL;
@@ -192,6 +196,13 @@ void libTH.checkReversOrdersByParent(int parent.ticket){//..
 		if(ROWS <= 0){
 			int ticket = libO.SendSELLSTOP(revers.price);
 			
+			//----------------------------------------------
+			if(ticket <= 0) return;							// если не можем выставить ордер
+			
+			//----------------------------------------------
+			libT.setExtraStandartData(ticket);
+			
+			//----------------------------------------------
 			libA.double_eraseFilter2();
 			
 			//----------------------------------------------
@@ -205,6 +216,7 @@ void libTH.checkReversOrdersByParent(int parent.ticket){//..
 			ArrayResize(d, 0);
 			libA.double_SelectArray2(libT.array_dExtraOrders, d);
 			//----------------------------------------------
+			
 			if(ArrayRange(d,0) > 0){
 				libTH.checkCOOrders(d);
 			}

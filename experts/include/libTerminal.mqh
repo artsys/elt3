@@ -1,7 +1,14 @@
 /*
-		>Ver	:	0.0.33
-		>Date	:	2012.09.19
+		>Ver	:	0.0.40
+		>Date	:	2012.09.20
 		>Hist:
+			@0.0.40@2012.09.20@artamir	[]
+			@0.0.39@2012.09.20@artamir	[]
+			@0.0.38@2012.09.20@artamir	[]
+			@0.0.37@2012.09.20@artamir	[+] setExtraProfitByTicket
+			@0.0.36@2012.09.20@artamir	[]
+			@0.0.35@2012.09.20@artamir	[+] OrderProfit
+			@0.0.34@2012.09.20@artamir	[!] Critical	ERASE ARRAY OLD ORDERS.
 			@0.0.33@2012.09.19@artamir	[]
 			@0.0.32@2012.09.19@artamir	[]
 			@0.0.31@2012.09.19@artamir	[]
@@ -48,7 +55,8 @@
 	#define libT.O_COMM		9	//Comment
 	#define	libT.O_WASTY	11	//Initial type.
 	#define	libT.O_SY		12	//Symbol
-	#define	libT.O_MAX		13	//Max count of column, to initialize in array of orders
+	#define libT.O_PROFIT	13	//OrderProfit in curency of deposit
+	#define	libT.O_MAX		14	//Max count of column, to initialize in array of orders
 	//------------------------------------------------------
 	// Arrays of current orders.
 	double libT.array_dCurOrders[][libT.O_MAX];
@@ -71,7 +79,8 @@
 	#define libT.OE_ISPARENT	10							//=1 if is parent order
 	#define libT.OE_ISCLOSED	11							//flag = 1 if order is closed.
 	#define libT.OE_AOM			12							//ID of autoopen method. Inherited from MAINPARENT
-	#define	libT.OE_MAX			13							//Count of properties.
+	#define libT.OE_PROFIT		13							//OrderProfit. 
+	#define	libT.OE_MAX			14							//Count of properties.
 	//------------------------------------------------------
 	double libT.array_dExtraOrders[][libT.OE_MAX];
 	//.
@@ -773,9 +782,26 @@ int libT.setExtraIsParentByIndex(int idx, int IsParent = 0){//..
 
 //==========================================================
 int libT.setExtraIsClosedByTicket(int ticket, int status = 1){//..
+	/*
+		>Ver	:	0.0.2
+		>Date	:	2012.09.20
+		>Hist:
+			@0.0.2@2012.09.20@artamir	[]
+			@0.0.1@2012.09.20@artamir	[]
+		>Desc:
+			set IsClosed status to 1.
+			set OrderProfit(), if OrderType == OP_BUY || OP_SELL
+	*/
+	
 	int idx = libT.getExtraIndexByTicket(ticket);
 	
 	libT.setExtraPropByIndex(idx, libT.OE_ISCLOSED, status);
+	
+	//------------------------------------------------------
+	double profit = libT.OrderProfitByTicket(ticket);
+	
+	//------------------------------------------------------
+	libT.setExtraProfitByTicket(idx, ticket, 2);			//set by index
 }//.
 
 //==========================================================
@@ -785,10 +811,13 @@ int libT.setExtraStandartData(int ticket){//..
 	int idx = libT.getExtraIndexByTicket(ticket, 1);
 	
 	//------------------------------------------------------
-	int		type	= libT.getCurTypeByTicket(ticket);
-	int		mn		= libT.CurMNByTicket(ticket);
-	double	op		= libT.getCurOPByTicket(ticket);
-	double	lot		= libT.getCurLotByTicket(ticket);
+	if(!libT.OrderSelectByTicket(ticket)) return(-1);
+	
+	//------------------------------------------------------
+	int		type	= libT.OrderTypeByTicket(ticket, 1);
+	int		mn		= libT.OrderMNByTicket(ticket, 1);
+	double	op		= libT.OrderOPByTicket(ticket, 1);
+	double	lot		= libT.OrderLotByTicket(ticket, 1);
 	
 	//------------------------------------------------------
 	libT.setExtraPropByIndex(idx, libT.OE_TY, type);
@@ -819,6 +848,31 @@ int libT.setExtraOPByTicket(int ticket, double op){//..
 	//------------------------------------------------------
 	libT.setExtraPropByIndex(idx, libT.OE_OP, op);
 }//.
+
+//==========================================================
+int libT.setExtraProfitByTicket(int ticket, double profit=0.0, int mode = 1){
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.09.20
+		>Hist:
+			@0.0.1@2012.09.20@artamir	[]
+		>Desc:
+			set profit to order.
+			mode = 1 - set by ticket
+			mode = 2 - set by index
+	*/
+	
+	//------------------------------------------------------
+	int idx = ticket;
+	
+	//------------------------------------------------------
+	if(mode == 1){//..
+		idx = libT.getExtraIndexByTicket(ticket);
+	}//.
+	
+	//------------------------------------------------------
+	libT.setExtraPropByIndex(idx, libT.OE_PROFIT, profit);
+}
 //.
 
 //==========================================================
@@ -898,6 +952,103 @@ int libT.OrderIsClosed(int ticket){//..
 	}//.
 }//.
 
+//==========================================================
+double libT.OrderProfitByTicket(int ticket, int flSelected = 0){//..
+	/*
+		>Ver	:	0.0.2
+		>Date	:	2012.09.20
+		>Hist:
+			@0.0.2@2012.09.20@artamir	[+] flSelected, when was order select
+			@0.0.1@2012.09.20@artamir	[]
+		>Desc:
+			return order profit in deposit curency.
+	*/
+	
+	if(flSelected == 0){//..
+		if(!libT.OrderSelectByTicket(ticket)) return(0.0);
+	}//.	
+	
+	//------------------------------------------------------
+	return(OrderProfit());
+}//.
+
+//==========================================================
+int libT.OrderTypeByTicket(int ticket, int flSelected = 0){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.09.20
+		>Hist:
+			@0.0.1@2012.09.20@artamir	[]
+		>Desc:
+			return order type
+	*/
+	
+	if(flSelected == 0) {
+		if(!libT.OrderSelectByTicket(ticket)) return(0.0);
+	}	
+	
+	//------------------------------------------------------
+	return(OrderType());
+}//.
+
+//==========================================================
+int libT.OrderMNByTicket(int ticket, int flSelected = 0){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.09.20
+		>Hist:
+			@0.0.1@2012.09.20@artamir	[]
+		>Desc:
+			return order type
+	*/
+	
+	if(flSelected == 0) {
+		if(!libT.OrderSelectByTicket(ticket)) return(0.0);
+	}	
+	
+	//------------------------------------------------------
+	return(OrderMagicNumber());
+}//.
+
+//==========================================================
+double libT.OrderOPByTicket(int ticket, int flSelected = 0){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.09.20
+		>Hist:
+			@0.0.1@2012.09.20@artamir	[]
+		>Desc:
+			return order type
+	*/
+	
+	if(flSelected == 0) {
+		if(!libT.OrderSelectByTicket(ticket)) return(0.0);
+	}	
+	
+	//------------------------------------------------------
+	return(OrderOpenPrice());
+}//.
+
+//==========================================================
+double libT.OrderLotByTicket(int ticket, int flSelected = 0){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.09.20
+		>Hist:
+			@0.0.1@2012.09.20@artamir	[]
+		>Desc:
+			return order type
+	*/
+	
+	if(flSelected == 0) {
+		if(!libT.OrderSelectByTicket(ticket)) return(0.0);
+	}	
+	
+	//------------------------------------------------------
+	return(OrderLots());
+}//.
+
+
 //==================================================================================================
 void libT.Start(){//..
 	/*
@@ -947,9 +1098,7 @@ void libT.FillArrayCurOrders(){//..
 	ArrayResize(libT.array_dCurOrders, iOT);
 	ArrayResize(libT.array_sCurOrders, iOT);
 	
-	for(int idxCO	=	0;	//индекс текущего ордера
-			idxCO	<=	iOT;
-			idxCO++			){//..
+	for(int idxCO = 0;	idxCO <= iOT; idxCO++){//..
 			
 			//--------------------------------------------------------------------------------------
 			// Select order by index.
@@ -973,38 +1122,44 @@ void libT.FillArrayCurOrders(){//..
 //==================================================================================================
 void libT.FillArrayRowWithSelOrder(int idxROW){//..
 	/*
-		>Ver	:	0.0.2
-		>Date	:	2012.08.29
+		>Ver	:	0.0.3
+		>Date	:	2012.09.20
 		>Hist:
+			@0.0.3@2012.09.20@artamir	[+] OrderProfit
 			@0.0.2@2012.08.29@artamir	[+] OrderLots
 			@0.0.1@2012.08.08@artamir	[]
 		>Descr:
 			Заполнение текущей строки массивов выбранным ордером.
 	*/
 	
-	//----------------------------------------------------------------------------------------------
-	libT.array_dCurOrders[idxROW][libT.O_TI]	= OrderTicket();
-	libT.array_dCurOrders[idxROW][libT.O_TY]	= OrderType();
-	libT.array_dCurOrders[idxROW][libT.O_OP]	= OrderOpenPrice();
-	libT.array_dCurOrders[idxROW][libT.O_MN]	= OrderMagicNumber();
-	libT.array_dCurOrders[idxROW][libT.O_LO]	= OrderLots();
-	//---------------------------------------------------------------
-	libT.array_sCurOrders[idxROW][libT.O_COMM]	= OrderComment();
-	libT.array_sCurOrders[idxROW][libT.O_SY]	= OrderSymbol();
+	//------------------------------------------------------
+	libT.array_dCurOrders[idxROW][libT.O_TI]		= OrderTicket();
+	libT.array_dCurOrders[idxROW][libT.O_TY]		= OrderType();
+	libT.array_dCurOrders[idxROW][libT.O_OP]		= OrderOpenPrice();
+	libT.array_dCurOrders[idxROW][libT.O_MN]		= OrderMagicNumber();
+	libT.array_dCurOrders[idxROW][libT.O_LO]		= OrderLots();
+	//------------------------------------------------------
+	libT.array_sCurOrders[idxROW][libT.O_COMM]		= OrderComment();
+	libT.array_sCurOrders[idxROW][libT.O_SY]		= OrderSymbol();
+	//------------------------------------------------------
+	libT.array_dCurOrders[idxROW][libT.O_PROFIT]	= OrderProfit();
 }//.
 
-//==================================================================================================
+//==========================================================
 void libT.End(){//..
 	/*
-		>Ver	:	0.0.3
-		>Date	:	2012.09.10
+		>Ver	:	0.0.4
+		>Date	:	2012.09.20
 		>Hist:
+			@0.0.4@2012.09.20@artamir	[!] Critical Erase array old orders.
 			@0.0.3@2012.09.10@artamir	[]
 			@0.0.2@2012.09.10@artamir	[]
 			@0.0.1@2012.08.10@artamir	[]
 		>Descr:
 			Копирование массива текущих ордеров в массив старых ордеров.
 	*/
+	
+	ArrayResize(libT.array_dOldOrders,0);					//erase array old orders.
 	
 	//----------------------------------------------------------------------------------------------
 	if(ArrayRange(libT.array_dCurOrders, 0) <= 0){

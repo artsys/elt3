@@ -2,7 +2,7 @@
 		>Ver	:	0.0.17
 		>Date	:	2012.09.20
 		>History:
-			@0.0.17@2012.09.20@artamir	[]
+			@0.0.17@2012.09.20@artamir	[*] add normalizing for order modify.
 			@0.0.16@2012.09.20@artamir	[]
 			@0.0.15@2012.09.20@artamir	[]
 			@0.0.14@2012.09.14@artamir	[]
@@ -308,7 +308,7 @@ bool _OrderModify(int ticket, double price, double stoploss, double takeprofit, 
 		>Ver	:	0.0.2
 		>Date	:	2012.09.20
 		>History:
-			@0.0.2@2012.09.20@artamir	[]
+			@0.0.2@2012.09.20@artamir	[+] add normalizing for double values
 			@0.0.1@2012.09.20@artamir	[+] add chicking needModify
 		>Description:
 			Modify orders parameters
@@ -341,17 +341,19 @@ bool _OrderModify(int ticket, double price, double stoploss, double takeprofit, 
 	
 	//------------------------------------------------------
 	bool needModify = false;//..
-	if(price != OrderOpenPrice()){//..
+	if(libNormalize.Digits(price) != libNormalize.Digits(OrderOpenPrice())){//..
 		needModify = true;
 	}//.
 	
 	//------------------------------------------------------
-	if(stoploss != OrderStopLoss()){//..
+	if(libNormalize.Digits(stoploss) != libNormalize.Digits(OrderStopLoss())){//..
 		needModify = true;
 	}//.
 	
 	//------------------------------------------------------
-	if(takeprofit != OrderTakeProfit()){//..
+	if(libNormalize.Digits(takeprofit) != libNormalize.Digits(OrderTakeProfit())){//..
+			
+		//--------------------------------------------------	
 		needModify = true;
 	}//.
 	
@@ -369,6 +371,10 @@ bool _OrderModify(int ticket, double price, double stoploss, double takeprofit, 
 			Print("p = ",price," s = ",stoploss, "t = ",takeprofit);
 		}
 		
+		//--------------------------------------------------
+		if(err == 1){
+			Print(" ti = ", ticket, " takeprofit = ", DoubleToStr(takeprofit, Digits), " needModify = ",needModify);
+		}
 		//--------------------------------------------------
 		return(res);
 	}else{

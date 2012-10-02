@@ -1,0 +1,177 @@
+	/*
+		>Ver	:	0.0.5
+		>Date	:	2012.10.02
+		>Hist	:
+			@0.0.5@2012.10.02@artamir	[]
+			@0.0.4@2012.10.02@artamir	[]
+			@0.0.3@2012.10.02@artamir	[]
+			@0.0.2@2012.10.02@artamir	[]
+			@0.0.1@2012.10.02@artamir	[]
+		>Author	:	Morochin <artamir> Artiom
+		>Desc	:	
+	*/
+
+//==========================================================
+//..	//=== ORDERS ARRAY	================================ 
+
+#define	O_TI	0
+#define	O_TY	1
+#define	O_OP	2
+#define	O_OT	3
+#define	O_TP	5
+#define	O_SL	6
+#define	O_MN	7
+
+#define	O_MAX	8
+
+//----------------------------------------------------------
+double	aCurOrders[][O_MAX];
+
+//----------------------------------------------------------
+double aOldOrders[][O_MAX];
+//.
+	
+//==========================================================
+int T.Start(){//..
+	/*
+		>Ver	:	0.0.2
+		>Date	:	2012.10.02
+		>Hist	:
+			@0.0.2@2012.10.02@artamir	[]
+			@0.0.1@2012.10.02@artamir	[]
+		>Author	:	Morochin <artamir> Artiom
+		>Desc	:
+	*/
+	
+	//------------------------------------------------------
+	A.d.eraseArray2(aCurOrders);
+	
+	//------------------------------------------------------
+	T.FillArrayCurOrders();
+	
+	//------------------------------------------------------
+	//E.Start();
+}//.
+
+//==========================================================
+int T.End(){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.10.02
+		>Hist	:
+			@0.0.1@2012.10.02@artamir	[]
+		>Author	:	Morochin <artamir> Artiom
+		>Desc	:	Copying Cur orders to old orders.
+	*/
+	
+	A.d.eraseArray2(aOldOrders);
+	
+	//------------------------------------------------------
+	ArrayCopy(aOldOrders, aCurOrders, 0, 0, WHOLE_ARRAY);
+}//.
+
+//==========================================================
+//..	//=== TRADING FUNCTIONS ============================
+
+//==========================================================
+bool	T.SelOrderByIndex(int idx = 0){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.10.02
+		>Hist	:
+			@0.0.1@2012.10.02@artamir	[]
+		>Author	:	Morochin <artamir> Artiom
+		>Desc	:	return true, if can select in trades orders
+	*/
+	
+	//------------------------------------------------------
+	return(OrderSelect(idx, SELECT_BY_POS, MODE_TRADES));
+}//.
+
+//.
+
+//==========================================================
+//..	//=== PRIVATE FUNCTIONS	============================
+	
+//==========================================================
+int T.FillArrayCurOrders(){//..
+	/*
+		>Ver	:	0.0.0
+		>Date	:
+		>Hist	:
+		>Author	:	Morochin <artamir> Artiom
+		>Desc	:	«аполнение массива текущих ордеров.
+			по текущей валютной паре
+			«аполн€ютс€ только числовые данные.
+	*///----------------------------------------------------	
+	
+	string fn = "T.FillArrayCurOrders";
+	
+	//------------------------------------------------------
+	int t = OrdersTotal();
+		
+	//------------------------------------------------------
+	for(int idx = 0; idx <= t; idx++){//..					
+		
+		//--------------------------------------------------
+		if(!T.SelOrderByIndex(idx))	continue;
+		
+		//--------------------------------------------------
+		if(OrderSymbol() != Symbol()) continue;
+		
+		//--------------------------------------------------
+		T.FillRow();
+	}//.
+	
+	//******************************************************
+	//..	//*** DEBUGGING	********************************
+	
+	if(Debug){//..
+		
+		//--------------------------------------------------
+		//A.d.PrintArray2(aCurOrders, 4, "CurOrders_FillArray");
+		
+	}//.
+	
+	//.
+}//.
+
+//==========================================================
+int T.FillRow(){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.10.02
+		>Hist	:
+			@0.0.1@2012.10.02@artamir	[]
+		>Author	:	Morochin <artamir> Artiom
+		>Desc	:
+	*/
+	
+	//------------------------------------------------------
+	string fn = "T.FillRow";
+	
+	//------------------------------------------------------
+	A.d.setArray(aCurOrders);	//setting temporar array to work with
+	
+	//------------------------------------------------------
+	int idx = A.d.addRow();		//add new row to temporar array
+	
+	//------------------------------------------------------
+	A.d.setPropByIndex(idx, O_TI, OrderTicket());			// set prop. by index in temporar array
+	A.d.setPropByIndex(idx, O_TY, OrderType());
+	A.d.setPropByIndex(idx, O_OP, OrderOpenPrice());
+	A.d.setPropByIndex(idx, O_OT, OrderOpenTime());
+	A.d.setPropByIndex(idx, O_TP, OrderTakeProfit());
+	A.d.setPropByIndex(idx, O_SL, OrderStopLoss());
+	A.d.setPropByIndex(idx, O_MN, OrderMagicNumber());
+	
+	//------------------------------------------------------
+	A.d.releaseArray(aCurOrders);	// release temporar array and copy temporar array to 
+
+	//------------------------------------------------------
+	if(Debug){//..
+		//A.d.PrintArray2(aCurOrders, 4, fn);
+	}//.
+}//.
+	
+//.

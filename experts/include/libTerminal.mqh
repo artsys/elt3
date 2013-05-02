@@ -1,0 +1,1385 @@
+/*
+		>Ver	:	0.0.53
+		>Date	:	2012.11.12
+		>Hist:
+			@0.0.53@2012.11.12@artamir	[]
+			@0.0.52@2012.10.25@artamir	[]
+			@0.0.51@2012.10.25@artamir	[]
+			@0.0.50@2012.10.25@artamir	[]
+			@0.0.49@2012.10.25@artamir	[]
+			@0.0.48@2012.10.25@artamir	[]
+			@0.0.47@2012.10.15@artamir	[]
+			@0.0.46@2012.10.15@artamir	[]
+			@0.0.45@2012.10.01@artamir	[]
+			@0.0.44@2012.10.01@artamir	[]
+			@0.0.43@2012.10.01@artamir	[]
+			@0.0.42@2012.10.01@artamir	[]
+			@0.0.41@2012.09.20@artamir	[]
+			@0.0.40@2012.09.20@artamir	[]
+			@0.0.39@2012.09.20@artamir	[]
+			@0.0.38@2012.09.20@artamir	[]
+			@0.0.37@2012.09.20@artamir	[+] setExtraProfitByTicket
+			@0.0.36@2012.09.20@artamir	[]
+			@0.0.35@2012.09.20@artamir	[+] OrderProfit
+			@0.0.34@2012.09.20@artamir	[!] Critical	ERASE ARRAY OLD ORDERS.
+			@0.0.33@2012.09.19@artamir	[]
+			@0.0.32@2012.09.19@artamir	[]
+			@0.0.31@2012.09.19@artamir	[]
+			@0.0.30@2012.09.11@artamir	[]
+			@0.0.28@2012.09.10@artamir	[]
+			@0.0.27@2012.09.10@artamir	[]
+			@0.0.26@2012.09.10@artamir	[]
+			@0.0.25@2012.09.10@artamir	[]
+			@0.0.24@2012.09.10@artamir	[]
+			@0.0.23@2012.09.10@artamir	[+] SelectExtraAOM()
+			@0.0.22@2012.09.10@artamir	[]
+			@0.0.21@2012.09.07@artamir	[+] checkExtraIsClosedStatuses()
+			@0.0.20@2012.09.07@artamir	[]
+			@0.0.19@2012.09.07@artamir	[+] getExtraIsClosedTicket()
+			@0.0.18@2012.09.07@artamir	[+] setExtraTypeByTicket()
+			@0.0.17@2012.09.07@artamir	[]
+			@0.0.15@2012.08.29@artamir	[+] info about order lot.
+			@0.0.12@2012.08.28@artamir	[+] add some function in extra array block
+			@0.0.10@2012.08.13@artamir	[+] Блок установочных функций для экстра массива.
+			@0.0.9@2012.08.13@artamir	[+] libT.getCurOPByTicket(), libT.getCurTypeByTicket()
+			@0.0.8@2012.08.13@artamir	[+] libT.getExtraMAINPARENTByTicket()
+			@0.0.7@2012.08.10@artamir	[+] libT.getOldIndexByTicket()
+			@0.0.5@2012.08.10@artamir	[+] libT.End()
+			@0.0.4@2012.08.08@artamir	[*] Изменил максимальную размерность массивов
+			@0.0.2@2012.08.08@artamir	[*] libT.FillArrayCurOrders()
+			@0.0.1@2012.08.08@artamir	[+] libT.FillArrayRowWithSelOrder()
+		>Descr:
+			Библиотека работы с массивами ордеров.
+		>Зависимости:
+			#include <libArray.mqh>
+			#include <libEvents.mqh>
+*/
+
+//.. //=== Global variables
+	//.. //=== arrays
+	#define	libT.O_TI		1	//Ticket
+	#define	libT.O_OP		2	//OpenPrice
+	#define	libT.O_SL		3	//Stoploss
+	#define	libT.O_TP		4	//Takeprofit
+	#define	libT.O_TY		5	//Type
+	#define	libT.O_LO		6	//Lot
+	#define	libT.O_MN		7	//Magic
+	#define	libT.O_HASH		8	//Hash
+	#define libT.O_COMM		9	//Comment
+	#define	libT.O_WASTY	11	//Initial type.
+	#define	libT.O_SY		12	//Symbol
+	#define libT.O_PROFIT	13	//OrderProfit in curency of deposit
+	#define	libT.O_MAX		14	//Max count of column, to initialize in array of orders
+	//------------------------------------------------------
+	// Arrays of current orders.
+	double libT.array_dCurOrders[][libT.O_MAX];
+	string libT.array_sCurOrders[][libT.O_MAX];
+	//------------------------------------------------------
+	// arrays of orders on prev. tick
+	double libT.array_dOldOrders[][libT.O_MAX];
+	string libT.array_sOldOrders[][libT.O_MAX];
+	//------------------------------------------------------
+	// Extra order description (Order Extra)
+	#define	libT.OE_TI			1							//Ticket
+	#define	libT.OE_OP			2							//Open price
+	#define	libT.OE_MN			3							//Magic number
+	#define	libT.OE_TY			4							//Type
+	#define libT.OE_LOT			5							//Lot
+	#define	libT.OE_WASTY		6							//first sending type
+	#define	libT.OE_MAINPARENT	7							//Ticket of main parent
+	#define	libT.OE_PARENT		8							//Ticket of current parent
+	#define	libT.OE_GRIDTYPE	9							//Type of grid
+	#define libT.OE_ISPARENT	10							//=1 if is parent order
+	#define libT.OE_ISCLOSED	11							//flag = 1 if order is closed.
+	#define libT.OE_AOM			12							//ID of autoopen method. Inherited from MAINPARENT
+	#define libT.OE_PROFIT		13							//OrderProfit. 
+	#define libT.OE_GL			14							//GridLevel. 
+	#define libT.OE_TP			15							//TP
+	#define libT.OE_SL			16							//SL
+	#define	libT.OE_MAX			17							//Count of properties.
+	//------------------------------------------------------
+	double libT.array_dExtraOrders[][libT.OE_MAX];
+	//.
+//.
+
+//==================================================================================================
+int	libT.CurTicketByIndex(int idx = 0){//..
+	return(libT.array_dCurOrders[idx][libT.O_TI]);
+}//.
+
+//==================================================================================================
+int	libT.OldTicketByIndex(int idx = 0){//..
+	return(libT.array_dOldOrders[idx][libT.O_TI]);
+}//.
+
+//..	//=== ORDER TYPE ===================================
+//==========================================================
+int libT.CurTypeByIndex(int idx = 0){//..
+	return(libT.array_dCurOrders[idx][libT.O_TY]);
+}//.
+
+//==========================================================
+int libT.OldTypeByIndex(int idx = 0){//..
+	return(libT.array_dOldOrders[idx][libT.O_TY]);
+}//.
+
+//==========================================================
+int libT.getCurTypeByTicket(int ticket){//..
+	int idx = libT.getCurIndexByTicket(ticket);
+	
+	//------------------------------------------------------
+	return(libT.CurTypeByIndex(idx));
+}//.
+
+//==========================================================
+int libT.isMarketCurTicket(int ticket){//..
+	int thisType = libT.getCurTypeByTicket(ticket);
+	
+	//------------------------------------------------------
+	if(thisType == OP_BUY || thisType == OP_SELL){//..
+		return(1);
+	}else{
+		return(0);
+	}//.
+}//.
+//.
+
+//..	//=== OPEN PRICE ===================================
+//==========================================================
+double libT.CurOPByIndex(int idx = 0){//..
+	return(libNormalize.Digits(libT.array_dCurOrders[idx][libT.O_OP]));
+}//.
+
+//==========================================================
+double libT.OldOPByIndex(int idx = 0){//..
+	return(libNormalize.Digits(libT.array_dOldOrders[idx][libT.O_OP]));
+}//.
+
+//==========================================================
+double libT.getCurOPByTicket(int ticket){//..
+	int idx = libT.getCurIndexByTicket(ticket);
+	
+	//------------------------------------------------------
+	return(libNormalize.Digits(libT.CurOPByIndex(idx)));
+}//.
+
+//.
+
+//..	//=== SL	========================================
+//==========================================================
+double libT.CurSLByIndex(int idx = 0){//..
+	return(libNormalize.Digits(libT.array_dCurOrders[idx][libT.O_SL]));
+}//.
+
+//==================================================================================================
+double libT.OldSLByIndex(int idx = 0){//..
+	return(libNormalize.Digits(libT.array_dOldOrders[idx][libT.O_SL]));
+}//.
+
+//==========================================================
+double libT.CurSLByTicket(int ticket){//..
+	int index = libT.getCurIndexByTicket(ticket);
+	
+	//------------------------------------------------------
+	double sl = libT.CurSLByIndex(index);
+	
+	//------------------------------------------------------
+	return(sl);
+}//.
+//.
+
+//..	//=== TP	========================================
+//==========================================================
+double libT.CurTPByIndex(int idx = 0){//..
+	return(libNormalize.Digits(libT.array_dCurOrders[idx][libT.O_TP]));
+}//.
+
+//==========================================================
+double libT.OldTPByIndex(int idx = 0){//..
+	return(libNormalize.Digits(libT.array_dOldOrders[idx][libT.O_TP]));
+}//.
+
+//==========================================================
+double libT.CurTPByTicket(int ticket){//..
+	int index = libT.getCurIndexByTicket(ticket);
+	
+	//------------------------------------------------------
+	double tp = libT.CurTPByIndex(index);
+	
+	//------------------------------------------------------
+	return(tp);
+}//.
+//.
+
+//..	//=== MN	========================================
+
+//==========================================================
+int libT.CurMNByIndex(int idx = 0){//..
+	return(libT.array_dCurOrders[idx][libT.O_MN]);
+}//.
+
+//==========================================================
+int libT.CurMNByTicket(int ticket){//..
+	int index = libT.getCurIndexByTicket(ticket);
+	
+	//------------------------------------------------------
+	int mn = libT.CurMNByIndex(index);
+	
+	//------------------------------------------------------
+	return(mn);
+}//.
+//.
+
+//..	//=== Lot	========================================
+//==========================================================
+double libT.CurLotByIndex(int idx = 0){//..
+	return(libT.array_dCurOrders[idx][libT.O_LO]);
+}//.
+
+//==========================================================
+double libT.getCurLotByTicket(int ticket){//..
+	int index = libT.getCurIndexByTicket(ticket);
+	
+	//------------------------------------------------------
+	double lot = libT.CurLotByIndex(index);
+	
+	//------------------------------------------------------
+	return(lot);
+}//.
+//.
+
+//==================================================================================================
+int libT.getOldIndexByTicket(int ticket){//..
+	/*
+		>Ver	:	0.0.2
+		>Date	:	2012.09.19
+		>Hist:
+			@0.0.2@2012.09.19@artamir	[*] changed direction
+			@0.0.1@2012.08.10@artamir	[]
+		>Descr:
+			return index by ticket from old array of orders.
+	*/
+	
+	int MAX = ArrayRange(libT.array_dOldOrders, 0); 		//Count of ROWS
+	int res = -1;											//Initial value
+	
+	//==============================================================================================
+	for(int idx = MAX; idx >= 0; idx--){//..
+		if(res >= 0) continue;								//if we find ticket
+	
+		int OldTicket = libT.OldTicketByIndex(idx);			//get ticket by index.
+		
+		//------------------------------------------------------------------------------------------
+		if(OldTicket != ticket) continue;
+		
+		//------------------------------------------------------------------------------------------
+		res = idx;
+	}//.
+	
+	//----------------------------------------------------------------------------------------------
+	return(res);
+}//.
+
+//==================================================================================================
+int libT.getCurIndexByTicket(int ticket){
+	/*
+		>Ver	:	0.0.2
+		>Date	:	2012.09.19
+		>Hist:
+			@0.0.2@2012.09.19@artamir	[*] changed direction in array circle
+			@0.0.1@2012.08.10@artamir	[]
+		>Descr:
+			Возвращает индекс из текущего массива по тикету.
+	*/
+	
+	int MAX = ArrayRange(libT.array_dCurOrders, 0); 		//Текущее количество строк в массиве
+	int res = -1;											//Значение, возвращаемое по умолчанию
+	
+	//==============================================================================================
+	for(int idx = MAX-1; idx >= 0; idx--){//..
+		if(res >= 0) continue;								//если мы уже нашли нужный тикет
+	
+		int OldTicket = libT.CurTicketByIndex(idx);			//Получаем значение тикета по индексу.
+		
+		//------------------------------------------------------------------------------------------
+		if(OldTicket != ticket) continue;
+		
+		//------------------------------------------------------------------------------------------
+		res = idx;
+	}//.
+	
+	//----------------------------------------------------------------------------------------------
+	return(res);
+}
+
+//.. //=== EXTRA ARRAY =====================================
+
+//.. 	//=== GET ==========================================
+
+double libT.getExtraPropByIndex(int Index = 0, int Prop = 1){
+	double val = libT.array_dExtraOrders[Index][Prop];
+	
+	//------------------------------------------------------
+	return(val);
+}
+
+int libT.getExtraTicketByIndex(int idx){
+	return(libT.array_dExtraOrders[idx][libT.OE_TI]);
+}
+
+int libT.getExtraIndexByTicket(int ticket, int flAddIfNotFind = 0){
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.09.19
+		>Hist:
+			@0.0.1@2012.09.19@artamir	[*] changed direction
+			@0.0.1@2012.08.10@artamir	[]
+		>Descr:
+			Возвращает индекс из экстра массива по тикету.
+		>VARS:
+			flAddIfNotFind = 1 : флаг установки нового элемента. (1-установить, 0-не устанавливать)
+	*/
+	
+	int	ROWS	= ArrayRange(libT.array_dExtraOrders, 0);	//Получили количество строк в экстра массиве
+	
+	//------------------------------------------------------
+	bool	isFind		= false;
+	int		idx_find	= -1;
+	
+	//------------------------------------------------------
+	for(int idx = ROWS-1; idx >= 0; idx--){
+		
+		//--------------------------------------------------
+		if(isFind){
+			continue;
+		}
+		
+		//--------------------------------------------------
+		if(libT.getExtraTicketByIndex(idx) == ticket){
+			isFind = true;
+			idx_find = idx;
+		}
+	}
+	
+	//------------------------------------------------------
+	if(!isFind && flAddIfNotFind == 1){						//Если не нашли тикет в экстра массиве
+		idx_find = libT.addExtraTicket(ticket);
+		libT.setExtraStandartData(ticket);
+	}
+	
+	//------------------------------------------------------
+	return(idx_find);
+}
+
+int	libT.getExtraMAINPARENTByTicket(int ticket){
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.08.13
+		>Hist:
+			@0.0.1@2012.08.13@artamir	[]
+			@0.0.1@2012.08.10@artamir	[]
+		>Descr:
+			Возвращает MAINPARENT из экстра массива по тикету.
+	*/
+	
+	int	idx	=	libT.getExtraIndexByTicket(ticket, 1);			//Получаем индекс по тикету экстра массива.
+	
+	//------------------------------------------------------
+	if(idx <= -1){
+		return(-1);
+	}else{
+		return(libT.getExtraPropByIndex(idx, libT.OE_MAINPARENT));
+	}
+	
+}
+
+int	libT.getExtraPARENTByTicket(int ticket){
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.08.13
+		>Hist:
+			@0.0.1@2012.08.13@artamir	[]
+			@0.0.1@2012.08.10@artamir	[]
+		>Descr:
+			Возвращает MAINPARENT из экстра массива по тикету.
+	*/
+	
+	int	idx	=	libT.getExtraIndexByTicket(ticket, 1);			//Получаем индекс по тикету экстра массива.
+	
+	//------------------------------------------------------
+	if(idx <= -1){
+		return(-1);
+	}else{
+		return(libT.getExtraPropByIndex(idx, libT.OE_PARENT));
+	}
+	
+}
+
+int libT.getOrdersByParent(int ticket, double &d[][]){
+	/*
+		>Ver	:	0.0.2
+		>Date	:	2012.09.20
+		>Hist:
+			@0.0.2@2012.09.20@artamir	[]
+			@0.0.1@2012.08.13@artamir	[]
+			@0.0.1@2012.08.10@artamir	[]
+		>Descr:
+			return count of orders, which has propertie 
+			PARENT = ticket
+	*/
+	
+	int f.COL = libT.OE_PARENT;								//Number of column which store property PARENT
+	int f.MAX = ticket;
+	int f.MIN = ticket;
+	
+	//------------------------------------------------------//set filter
+	libA.double_eraseFilter2();
+	libA.double_addFilter2(f.COL, f.MAX, f.MIN);
+	
+	//------------------------------------------------------								// create array with number of colums equal with array of extra order information
+	libA.double_SelectArray2(libT.array_dExtraOrders, d);	//return array of selected rows by filter.
+	
+	//------------------------------------------------------
+	return (ArrayRange(d, 0));								//Number of ROWS in array d[][]
+}
+
+int libT.getTicketByParentAndIndex(int parent, int index){
+	/*
+		>Ver	:	0.0.2
+		>Date	:	2012.08.28
+		>Hist:
+			@0.0.2@2012.08.28@artamir	[]
+			@0.0.1@2012.08.13@artamir	[]
+			@0.0.1@2012.08.10@artamir	[]
+		>Descr:
+			return ticket of order by parent ticket and index in result array
+	*/
+	int f.COL = libT.OE_PARENT;								//Number of column which store property PARENT
+	int f.MAX = parent;
+	int f.MIN = parent;
+	
+	//------------------------------------------------------//set filter
+	libA.double_eraseFilter2();
+	libA.double_addFilter2(f.COL, f.MAX, f.MIN);
+	
+	//------------------------------------------------------
+	double d[][libT.OE_MAX];								// create array with number of colums equal with array of extra order information
+	libA.double_SelectArray2(libT.array_dExtraOrders, d);	//return array of selected rows by filter.
+	
+	//------------------------------------------------------
+	return (d[index][libT.OE_TI]);							//Number of ROWS in array d[][]
+	
+}
+
+int libT.getIsParentByIndex(int index){
+	return(libT.getExtraPropByIndex(index, libT.OE_ISPARENT));
+}
+
+int libT.getIsParentByTicket(int ticket){
+	int idx = libT.getExtraIndexByTicket(ticket);
+	
+	//------------------------------------------------------
+	return(libT.getExtraPropByIndex(idx, libT.OE_ISPARENT));
+}
+
+int libT.getCountOrdersByGT(int GT){
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.08.13
+		>Hist:
+			@0.0.1@2012.08.13@artamir	[]
+			@0.0.1@2012.08.10@artamir	[]
+		>Descr:
+			return count of orders, which has propertie 
+			GridType = GT
+	*/
+	
+	int f.COL = libT.OE_GRIDTYPE;							//Number of column which store property PARENT
+	int f.MAX = GT;
+	int f.MIN = GT;
+	
+	//------------------------------------------------------//set filter
+	libA.double_eraseFilter2();
+	libA.double_addFilter2(f.COL, f.MAX, f.MIN);
+	
+	//------------------------------------------------------
+	double d[][libT.OE_MAX];								// create array with number of colums equal with array of extra order information
+	libA.double_SelectArray2(libT.array_dExtraOrders, d);	//return array of selected rows by filter.
+	
+	//------------------------------------------------------
+	return (ArrayRange(d, 0));								//Number of ROWS in array d[][]
+}//.
+
+int libT.getTicketByGTAndIndex(int GT, int index){
+	/*
+		>Ver	:	0.0.2
+		>Date	:	2012.08.28
+		>Hist:
+			@0.0.2@2012.08.28@artamir	[]
+			@0.0.1@2012.08.13@artamir	[]
+			@0.0.1@2012.08.10@artamir	[]
+		>Descr:
+			return ticket of order by parent ticket and index in result array
+	*/
+	int f.COL = libT.OE_GRIDTYPE;							//Number of column which store property GridType
+	int f.MAX = GT;
+	int f.MIN = GT;
+	
+	//------------------------------------------------------//set filter
+	libA.double_eraseFilter2();
+	libA.double_addFilter2(f.COL, f.MAX, f.MIN);
+	
+	//------------------------------------------------------
+	double d[][libT.OE_MAX];								// create array with number of colums equal with array of extra order information
+	libA.double_SelectArray2(libT.array_dExtraOrders, d);	//return array of selected rows by filter.
+	
+	//------------------------------------------------------
+	return (d[index][libT.OE_TI]);							//Number of ROWS in array d[][]
+	
+}
+
+int libT.SelectExtraParents(double& d[][]){
+	/*
+		>Ver	:	0.0.4
+		>Date	:	2012.11.12
+		>Hist:
+			@0.0.4@2012.11.12@artamir	[]
+			@0.0.3@2012.10.01@artamir	[]
+			@0.0.2@2012.09.11@artamir	[]
+			@0.0.1@2012.09.07@artamir	[]
+		>Desc:
+	*/
+	
+	libA.double_eraseFilter2();
+	
+	//--- Select if IsParent = 1 ---------------------------
+	int f.COL = libT.OE_ISPARENT;
+	double f.MAX = 1;
+	double f.MIN = 1;
+	int		f.OP = libA.SOP.OR;
+	
+	libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);
+	
+	//--- OR
+	//--- Select if Parent <= 0 ---------------------------
+	f.COL = libT.OE_PARENT;
+	f.MAX = 0;
+	f.MIN = -1;
+	
+	libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);
+	
+	f.COL = libT.OE_ISCLOSED;
+	f.MAX = 0;
+	f.MIN = -1;
+	f.OP = libA.SOP.AND;
+	
+	libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);
+	
+	//--- AND
+	//--- Select if type == 0 or 1
+	
+	f.COL = libT.OE_TY;
+	f.MIN = 0;
+	f.MAX = 1;
+	f.OP = libA.SOP.AND;
+	
+	libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);
+	//------------------------------------------------------
+	libA.double_SelectArray2(libT.array_dExtraOrders, d);
+	
+	//------------------------------------------------------
+	return(ArrayRange(d, 0));
+}
+
+double libT.getExtraLotByTicket(int ticket){
+	int idx = libT.getExtraIndexByTicket(ticket);
+	
+	//------------------------------------------------------
+	return(libT.getExtraPropByIndex(idx, libT.OE_LOT));
+}
+
+int libT.getExtraTypeByTicket(int ticket){//..
+	
+	//------------------------------------------------------
+	int idx = libT.getExtraIndexByTicket(ticket);
+	
+	//------------------------------------------------------
+	int type = libT.getExtraPropByIndex(idx, libT.OE_TY);
+	
+	//------------------------------------------------------
+	return(type);
+}//.
+
+double libT.getExtraOPByTicket(int ticket){//..
+	
+	//------------------------------------------------------
+	int idx = libT.getExtraIndexByTicket(ticket);
+	
+	//------------------------------------------------------
+	double op = libT.getExtraPropByIndex(idx, libT.OE_OP);
+	
+	//------------------------------------------------------
+	return(op);
+}//.
+
+int libT.getExtraIsClosedTicket(int ticket){//..
+/*
+		>Ver	:	0.0.1
+		>Date	:	2012.09.07
+	>Hist:
+			@0.0.1@2012.09.07@artamir	[]
+	>Desc:
+*/
+
+	int idx = libT.getExtraIndexByTicket(ticket);
+	
+	//------------------------------------------------------
+	int isClosed = libT.getExtraPropByIndex(idx, libT.OE_ISCLOSED);
+	
+	//------------------------------------------------------
+	if(isClosed > 0){
+		return(1);
+	}else{
+		return(0);
+	}
+}//.
+
+int libT.SelectExtraAOM(double& d[][], int AOM){//..
+	/*
+		>Ver	:	0.0.2
+		>Date	:	2012.09.10
+		>Hist:
+			@0.0.2@2012.09.10@artamir	[]
+			@0.0.1@2012.09.10@artamir	[]
+	*/
+	
+	//------------------------------------------------------
+	int f.COL = libT.OE_AOM;
+	double f.MAX = AOM;
+	double f.MIN = AOM;
+	int f.OP = libA.SOP.AND;
+	
+	libA.double_eraseFilter2();
+	
+	//------------------------------------------------------
+	libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);
+	
+	//------------------------------------------------------
+	f.COL = libT.OE_ISCLOSED;
+	f.MAX = 0;
+	f.MIN = -1;
+	f.OP = libA.SOP.AND;
+	
+	libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);
+	
+	//------------------------------------------------------
+	libA.double_SelectArray2(libT.array_dExtraOrders, d);
+	
+	//------------------------------------------------------
+	int ROWS = ArrayRange(d, 0);
+	
+	//------------------------------------------------------
+	return(ROWS);
+}//.
+
+int libT.getExtraAOMByTicket(int ticket){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.09.10
+		>Hist:
+			@0.0.1@2012.09.10@artamir	[]
+	*/
+	
+	int idx = libT.getExtraIndexByTicket(ticket);
+	
+	//------------------------------------------------------
+	int aom = libT.getExtraPropByIndex(idx, libT.OE_AOM);
+	
+	//------------------------------------------------------
+	return(aom);
+}//.
+
+int libT.getExtraGLByTicket(int t){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.10.15
+		>Hist	:
+			@0.0.1@2012.10.15@artamir	[]
+		>Author	:	Morochin <artamir> Artiom
+		>Desc	:
+	*/
+	
+	//------------------------------------------------------
+	int idx = libT.getExtraIndexByTicket(t);
+	
+	//------------------------------------------------------
+	if(idx <= -1){
+		return(-1);
+	}
+	
+	//------------------------------------------------------
+	return(libT.getExtraPropByIndex(idx, libT.OE_GL));
+}//.
+
+//.
+
+//..	//=== SELECT =======================================
+
+int libT.SelectExtraWOTP(double &d[][]){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.10.25
+		>Hist	:
+			@0.0.1@2012.10.25@artamir	[]
+		>Author	:	Morochin <artamir> Artiom
+		>Desc	:	Select orders without tp
+		>return	:	Count of orders in selection
+	*/
+	
+	//------------------------------------------------------
+	libA.double_eraseFilter2();
+	
+	int f.COL = libT.OE_TP;
+	double f.MAX = 0;
+	double f.MIN = -1;
+	int f.OP = libA.SOP.AND;
+	
+	libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);
+	
+	//------------------------------------------------------
+	f.COL = libT.OE_ISCLOSED;
+	f.MAX = 0;
+	f.MIN = -1;
+	f.OP = libA.SOP.AND;
+	
+	libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);
+	
+	libA.double_SelectArray2(libT.array_dExtraOrders, d);
+	
+	//------------------------------------------------------
+	int ROWS = ArrayRange(d, 0);
+	//------------------------------------------------------
+	return(ROWS);
+}//.
+
+int libT.SelectExtraWOSL(double &d[][]){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.10.25
+		>Hist	:
+			@0.0.1@2012.10.25@artamir	[]
+		>Author	:	Morochin <artamir> Artiom
+		>Desc	:	Select order without sl
+		>return	:	count of orders in selection
+	*/
+	
+	//------------------------------------------------------
+	libA.double_eraseFilter2();
+	
+	int f.COL = libT.OE_SL;
+	double f.MAX = 0;
+	double f.MIN = -1;
+	int f.OP = libA.SOP.AND;
+	
+	libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);
+	
+	//------------------------------------------------------
+	f.COL = libT.OE_ISCLOSED;
+	f.MAX = 0;
+	f.MIN = -1;
+	f.OP = libA.SOP.AND;
+	
+	libA.double_addFilter2(f.COL, f.MAX, f.MIN, f.OP);
+	
+	libA.double_SelectArray2(libT.array_dExtraOrders, d);
+	
+	//------------------------------------------------------
+	int ROWS = ArrayRange(d, 0);
+	//------------------------------------------------------
+	return(ROWS);
+}//.
+
+//.
+
+//..	//=== SET ==========================================
+
+int libT.addExtraTicket(int ticket){//..
+	/*
+		>Ver	:	0.0.0
+		>Date	:	2012.08.10
+		>Hist:
+			@0.0.1@2012.08.10@artamir	[]
+		>Descr:
+			Добавляет новую строку в экстра массив с заданным тикетом
+			Возвращает индекс добавленной строки.
+	*/
+	
+	int ROWS	=	ArrayRange(libT.array_dExtraOrders, 0);	//Получаем количество строк в экстра массиве.
+	int	thisIDX	=	ROWS;
+	
+	//------------------------------------------------------
+	ArrayResize(libT.array_dExtraOrders, (ROWS+1));			//Увеличили количество строк
+	
+	//------------------------------------------------------
+	libT.array_dExtraOrders[thisIDX][libT.OE_TI] = ticket;	//Задали тикет.
+	
+	//------------------------------------------------------
+	return(thisIDX);										// Вернули индекс нового элемента.	
+}//.
+
+int libT.setExtraPropByIndex(int IDX, int PROP, double VAL){//..
+	libT.array_dExtraOrders[IDX][PROP] = VAL;
+}//.
+
+int libT.setExtraMAINPARENTByIndex(int idx, int mainparent = -1){//..
+	if(idx <= -1){
+		return(-1);
+	}
+	
+	//------------------------------------------------------
+	if(mainparent <= -1){
+		return(-1);
+	}
+	
+	//------------------------------------------------------
+	libT.setExtraPropByIndex(idx, libT.OE_MAINPARENT, mainparent);
+}//.
+
+int libT.setExtraMainParentByTicket(int ticket, int mainparent = -1){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.10.01
+		>Hist:
+			@0.0.1@2012.10.01@artamir	[]
+		>Desc:
+	*/
+	
+	int idx = libT.getExtraIndexByTicket(ticket);
+	
+	//------------------------------------------------------
+	libT.setExtraPropByIndex(idx, libT.OE_MAINPARENT, mainparent);
+}//.
+
+int libT.setExtraPARENTByIndex(int idx, int parent = -1){//..
+	if(idx <= -1){
+		return(-1);
+	}
+	
+	//------------------------------------------------------
+	if(parent <= -1){
+		return(-1);
+	}
+	
+	//------------------------------------------------------
+	libT.setExtraPropByIndex(idx, libT.OE_PARENT, parent);
+}//.
+
+int libT.setExtraParentByTicket(int ticket, int parent = -1){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.10.01
+		>Hist:
+			@0.0.1@2012.10.01@artamir	[]
+		>Desc:
+	*/
+	
+	//------------------------------------------------------
+	int idx = libT.getExtraIndexByTicket(ticket);
+	
+	//------------------------------------------------------
+	libT.setExtraPropByIndex(idx, libT.OE_PARENT, parent);
+}//.
+
+int libT.setExtraGridTypeByIndex(int idx, int GT = -1){//..
+	if(idx <= -1){
+		return(-1);
+	}
+	
+	//------------------------------------------------------
+	if(GT <= -1){
+		return(-1);
+	}
+	
+	//------------------------------------------------------
+	libT.setExtraPropByIndex(idx, libT.OE_GRIDTYPE, GT);
+}//.
+
+int libT.setExtraGridTypeByTicket(int ticket, int GT = -1){//..
+	/*
+		>Ver:0.0.0
+		>Date:
+		>Hist:
+		>Desc:
+	*/
+	
+	//------------------------------------------------------
+	int idx = libT.getExtraIndexByTicket(ticket);
+	
+	//------------------------------------------------------
+	libT.setExtraPropByIndex(idx, libT.OE_GRIDTYPE, GT);
+}//.
+
+int libT.setExtraIsParentByIndex(int idx, int IsParent = 0){//..
+	if(idx <= -1){
+		return(-1);
+	}
+	
+	//------------------------------------------------------
+	if(IsParent <= -1){
+		return(-1);
+	}
+	
+	//------------------------------------------------------
+	libT.setExtraPropByIndex(idx, libT.OE_ISPARENT, IsParent);
+}//.
+
+int libT.setExtraIsParentByTicket(int ticket, int status = 0){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.10.01
+		>Hist:
+			@0.0.1@2012.10.01@artamir	[]
+		>Desc:
+	*/
+	
+	//------------------------------------------------------
+	int idx = libT.getExtraIndexByTicket(ticket);
+	
+	//------------------------------------------------------
+	libT.setExtraPropByIndex(idx, libT.OE_ISPARENT, status);
+}//.
+
+int libT.setExtraIsClosedByTicket(int ticket, int status = 1){//..
+	/*
+		>Ver	:	0.0.2
+		>Date	:	2012.09.20
+		>Hist:
+			@0.0.2@2012.09.20@artamir	[]
+			@0.0.1@2012.09.20@artamir	[]
+		>Desc:
+			set IsClosed status to 1.
+			set OrderProfit(), if OrderType == OP_BUY || OP_SELL
+	*/
+	
+	int idx = libT.getExtraIndexByTicket(ticket);
+	
+	libT.setExtraPropByIndex(idx, libT.OE_ISCLOSED, status);
+	
+	//------------------------------------------------------
+	double profit = libT.OrderProfitByTicket(ticket);
+	
+	//------------------------------------------------------
+	libT.setExtraProfitByTicket(idx, ticket, 2);			//set by index
+}//.
+
+int libT.setExtraStandartData(int ticket){//..
+	
+	//------------------------------------------------------
+	int idx = libT.getExtraIndexByTicket(ticket, 1);
+	
+	//------------------------------------------------------
+	if(!libT.OrderSelectByTicket(ticket)) return(-1);
+	
+	//------------------------------------------------------
+	int		type	= libT.OrderTypeByTicket(ticket, 1);
+	int		mn		= libT.OrderMNByTicket(ticket, 1);
+	double	op		= libT.OrderOPByTicket(ticket, 1);
+	double	lot		= libT.OrderLotByTicket(ticket, 1);
+	
+	//------------------------------------------------------
+	libT.setExtraPropByIndex(idx, libT.OE_TY, type);
+	libT.setExtraPropByIndex(idx, libT.OE_MN, mn);
+	libT.setExtraPropByIndex(idx, libT.OE_OP, op);
+	libT.setExtraPropByIndex(idx, libT.OE_LOT, lot);
+	
+}//.
+
+int libT.setExtraTypeByTicket(int ticket, int type){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.09.07
+		>Hist:
+			@0.0.1@2012.09.07@artamir	[]
+	*/
+	
+	int idx = libT.getExtraIndexByTicket(ticket);
+	
+	libT.setExtraPropByIndex(idx, libT.OE_TY, type);
+}//.
+
+int libT.setExtraOPByTicket(int ticket, double op){//..
+	int idx = libT.getExtraIndexByTicket(ticket);
+	
+	//------------------------------------------------------
+	libT.setExtraPropByIndex(idx, libT.OE_OP, op);
+}//.
+
+int libT.setExtraProfitByTicket(int ticket, double profit=0.0, int mode = 1){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.09.20
+		>Hist:
+			@0.0.1@2012.09.20@artamir	[]
+		>Desc:
+			set profit to order.
+			mode = 1 - set by ticket
+			mode = 2 - set by index
+	*/
+	
+	//------------------------------------------------------
+	int idx = ticket;
+	
+	//------------------------------------------------------
+	if(mode == 1){//..
+		idx = libT.getExtraIndexByTicket(ticket);
+	}//.
+	
+	//------------------------------------------------------
+	libT.setExtraPropByIndex(idx, libT.OE_PROFIT, profit);
+}//.
+
+int libT.setExtraGLByTicket(int t, int gl = 0){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.10.15
+		>Hist	:
+			@0.0.1@2012.10.15@artamir	[]
+		>Author	:	Morochin <artamir> Artiom
+		>Desc	:	set grid level
+	*/
+	
+	//------------------------------------------------------
+	if(t <= 0){//..
+		return(-1);
+	}//.
+	
+	//------------------------------------------------------
+	int idx = libT.getExtraIndexByTicket(t);
+	
+	//------------------------------------------------------
+	if(idx <= -1){//..
+		return(-1);
+	}//.
+	
+	//------------------------------------------------------
+	libT.setExtraPropByIndex(idx, libT.OE_GL, gl);
+	
+	//------------------------------------------------------
+	return(idx);
+}//.--------------------------------------------------------
+
+
+//.
+
+int libT.setExtraAOMByTicket(int ticket, int aom){//..
+	/*
+		>Ver	:	0.0.2
+		>Date	:	2012.10.25
+		>Hist:
+			@0.0.2@2012.10.25@artamir	[]
+			@0.0.1@2012.09.10@artamir	[]
+	*/
+	
+	//------------------------------------------------------
+	int idx = libT.getExtraIndexByTicket(ticket);
+	
+	//------------------------------------------------------
+	libT.setExtraPropByIndex(idx, libT.OE_AOM, aom);
+}//.
+
+
+int libT.setExtraTPByTicket(int ticket, double tp){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.10.25
+		>Hist	:
+			@0.0.1@2012.10.25@artamir	[]
+		>Author	:	Morochin <artamir> Artiom
+		>Desc	:
+	*/
+	
+	//------------------------------------------------------
+	int idx = libT.getExtraIndexByTicket(ticket);
+	
+	//------------------------------------------------------
+	if(idx >= 0){
+		libT.setExtraPropByIndex(idx, libT.OE_TP, tp);
+	}
+	
+	//------------------------------------------------------
+	return(idx);
+}//.
+
+//..	//=== Checking Statuses ============================
+
+int libT.checkExtraIsClosedStatuses(){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.09.07
+		>Hist:
+			@0.0.1@2012.09.07@artamir	[]
+	*/
+	
+	int ROWS = ArrayRange(libT.array_dExtraOrders,0);
+	
+	//------------------------------------------------------
+	if(ROWS <= 0){//..
+		return(-1);
+	}//.
+	
+	//------------------------------------------------------
+	for(int idx = ROWS; idx >= 0; idx--){
+		int ticket = libT.getExtraTicketByIndex(idx);
+		
+		//-------------------------------------------
+		int IsClosed = libT.OrderIsClosed(ticket);
+		
+		//-------------------------------------------
+		libT.setExtraIsClosedByTicket(ticket, IsClosed);
+	}
+}//.
+
+//.
+
+//.
+
+//.
+
+bool libT.OrderSelectByIndex(int idx = 0){//..
+	return(OrderSelect(idx, SELECT_BY_POS, MODE_TRADES));
+}//.
+
+bool libT.OrderSelectByTicket(int ticket = 0){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.09.07
+		>Hist:
+			@0.0.1@2012.09.07@artamir	[]
+	*/
+	
+	return(OrderSelect(ticket, SELECT_BY_TICKET));
+}//.
+
+int libT.OrderIsClosed(int ticket){//..
+	if(!libT.OrderSelectByTicket(ticket)){//..
+		return(1);
+	}else{
+		if(OrderCloseTime() > 0){//..
+			return(1);
+		}else{
+			return(0);
+		}//.
+	}//.
+}//.
+
+double libT.OrderProfitByTicket(int ticket, int flSelected = 0){//..
+	/*
+		>Ver	:	0.0.2
+		>Date	:	2012.09.20
+		>Hist:
+			@0.0.2@2012.09.20@artamir	[+] flSelected, when was order select
+			@0.0.1@2012.09.20@artamir	[]
+		>Desc:
+			return order profit in deposit curency.
+	*/
+	
+	if(flSelected == 0){//..
+		if(!libT.OrderSelectByTicket(ticket)) return(0.0);
+	}//.	
+	
+	//------------------------------------------------------
+	return(OrderProfit());
+}//.
+
+int libT.OrderTypeByTicket(int ticket, int flSelected = 0){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.09.20
+		>Hist:
+			@0.0.1@2012.09.20@artamir	[]
+		>Desc:
+			return order type
+	*/
+	
+	if(flSelected == 0) {
+		if(!libT.OrderSelectByTicket(ticket)) return(0.0);
+	}	
+	
+	//------------------------------------------------------
+	return(OrderType());
+}//.
+
+int libT.OrderMNByTicket(int ticket, int flSelected = 0){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.09.20
+		>Hist:
+			@0.0.1@2012.09.20@artamir	[]
+		>Desc:
+			return order type
+	*/
+	
+	if(flSelected == 0) {
+		if(!libT.OrderSelectByTicket(ticket)) return(0.0);
+	}	
+	
+	//------------------------------------------------------
+	return(OrderMagicNumber());
+}//.
+
+double libT.OrderOPByTicket(int ticket, int flSelected = 0){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.09.20
+		>Hist:
+			@0.0.1@2012.09.20@artamir	[]
+		>Desc:
+			return order type
+	*/
+	
+	if(flSelected == 0) {
+		if(!libT.OrderSelectByTicket(ticket)) return(0.0);
+	}	
+	
+	//------------------------------------------------------
+	return(OrderOpenPrice());
+}//.
+
+double libT.OrderLotByTicket(int ticket, int flSelected = 0){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.09.20
+		>Hist:
+			@0.0.1@2012.09.20@artamir	[]
+		>Desc:
+			return order type
+	*/
+	
+	if(flSelected == 0) {
+		if(!libT.OrderSelectByTicket(ticket)) return(0.0);
+	}	
+	
+	//------------------------------------------------------
+	return(OrderLots());
+}//.
+
+
+void libT.Start(){//..
+	/*
+		>Ver	:	0.0.2
+		>Date	:	2012.09.10
+			>Hist:
+			@0.0.2@2012.09.10@artamir	[]
+			@0.0.1@2012.08.08@artamir	[]
+			>Descr:
+				Функция менеджер модуля
+	*/	
+	
+	libT.checkExtraIsClosedStatuses();
+	
+	//----------------------------------------------------------------------------------------------
+	libT.FillArrayCurOrders();
+	
+	//----------------------------------------------------------------------------------------------
+	//Events
+	libE.Start();
+	
+	//----------------------------------------------------------------------------------------------
+	//End
+	//libT.End();
+}//.
+
+void libT.FillArrayCurOrders(){//..
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.08.08
+		>Hist:
+			@0.0.1@2012.08.08@artamir	[]
+		>Descr:
+			filling array of current orders
+	*/
+	
+	//----------------------------------------------------------------------------------------------
+	libA.double_eraseArray2(libT.array_dCurOrders);
+	
+	//---------------------------------------------
+	libA.string_eraseArray2(libT.array_sCurOrders);
+	
+	int iOT = OrdersTotal();
+	//----------------------------------------------------------------------------------------------
+	// изменяем размерность массива = количеству ордеров.
+	ArrayResize(libT.array_dCurOrders, iOT);
+	ArrayResize(libT.array_sCurOrders, iOT);
+	
+	for(int idxCO = 0;	idxCO <= iOT; idxCO++){//..
+			
+			//--------------------------------------------------------------------------------------
+			// Select order by index.
+			if(!libT.OrderSelectByIndex(idxCO)) continue;
+			
+			//-------------------------------------------
+			if(Symbol() != OrderSymbol()) continue;
+			
+			//-------------------------------------------
+			//if(MN != OrderMagicNumber) continue;
+			
+			//--------------------------------------------------------------------------------------
+			// Заполним текущую строку выбранным ордером
+			libT.FillArrayRowWithSelOrder(idxCO);
+			
+	}//.
+
+	
+}//. 
+
+void libT.FillArrayRowWithSelOrder(int idxROW){//..
+	/*
+		>Ver	:	0.0.3
+		>Date	:	2012.09.20
+		>Hist:
+			@0.0.3@2012.09.20@artamir	[+] OrderProfit
+			@0.0.2@2012.08.29@artamir	[+] OrderLots
+			@0.0.1@2012.08.08@artamir	[]
+		>Descr:
+			Заполнение текущей строки массивов выбранным ордером.
+	*/
+	
+	//------------------------------------------------------
+	libT.array_dCurOrders[idxROW][libT.O_TI]		= OrderTicket();
+	libT.array_dCurOrders[idxROW][libT.O_TY]		= OrderType();
+	libT.array_dCurOrders[idxROW][libT.O_OP]		= OrderOpenPrice();
+	libT.array_dCurOrders[idxROW][libT.O_MN]		= OrderMagicNumber();
+	libT.array_dCurOrders[idxROW][libT.O_LO]		= OrderLots();
+	//------------------------------------------------------
+	libT.array_sCurOrders[idxROW][libT.O_COMM]		= OrderComment();
+	libT.array_sCurOrders[idxROW][libT.O_SY]		= OrderSymbol();
+	//------------------------------------------------------
+	libT.array_dCurOrders[idxROW][libT.O_PROFIT]	= OrderProfit();
+}//.
+
+void libT.End(){//..
+	/*
+		>Ver	:	0.0.4
+		>Date	:	2012.09.20
+		>Hist:
+			@0.0.4@2012.09.20@artamir	[!] Critical Erase array old orders.
+			@0.0.3@2012.09.10@artamir	[]
+			@0.0.2@2012.09.10@artamir	[]
+			@0.0.1@2012.08.10@artamir	[]
+		>Descr:
+			Копирование массива текущих ордеров в массив старых ордеров.
+	*/
+	
+	ArrayResize(libT.array_dOldOrders,0);					//erase array old orders.
+	
+	//----------------------------------------------------------------------------------------------
+	if(ArrayRange(libT.array_dCurOrders, 0) <= 0){//..
+		return;
+	}//.	
+	
+	//------------------------------------------------------
+	ArrayCopy(libT.array_dOldOrders, libT.array_dCurOrders, 0, 0, WHOLE_ARRAY);
+	ArrayCopy(libT.array_sOldOrders, libT.array_sCurOrders, 0, 0, WHOLE_ARRAY);
+	
+}//.
+

@@ -1,0 +1,74 @@
+/*
+		>Ver	:	0.0.1
+		>Date	:	2012.09.04
+		>Hist:
+			@0.0.1@2012.09.03@artamir	[]
+		>Desc:
+			functions to work with Structure
+			функции для работы со структурой
+*/
+
+//==========================================================
+int libStruc.KeyValue_int(string str, string key = "@p"){
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.04.05
+		>History:	
+		>Description:
+			return int value by key from format string
+	*/
+	
+	return(StrToInteger(libStruc.StringKeyValue(str,key)));
+}
+
+//==========================================================
+double libStruc.KeyValue_double(string str, string key = "@p"){
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.04.05
+		>History:	
+		>Description:
+			return double value by key from format string
+	*/
+	
+	return(StrToDouble(libStruc.StringKeyValue(str,key)));
+}
+
+//==========================================================
+string libStruc.KeyValue_string(string str, string key = "@p"){
+	return(libStruc.StringKeyValue(str,key));
+}
+
+//==========================================================
+string libStruc.StringKeyValue(string str = "", string key = "@p", string def = "-1", string delimeter = "@"){
+	/*
+		>Ver	:	0.0.2
+		>Date	:	2012.04.04
+		>History:
+		>Description:
+			@str = incoming string of the form "@p123456@l5@w3@d1"; p,l,w,d - name of keys
+			@key = <@x>; where @-separator, x-name of key 
+			on default return parent ticket
+			if key not found, return default value
+	*/
+	int lPosStart = -1;		//start position of key name
+	int lPosEnd = -1;		//end position of key name
+	string d = delimeter;   //разделитель
+	//---
+	if(StringFind(key,d,0) == -1){
+		key = d + key;
+	}
+	//---
+	lPosStart	= StringFind(str,key,0);
+	
+	if(lPosStart == -1){
+		return(def);
+	}
+	//---
+	int lKeyLen	= StringLen(key);
+	lPosEnd		= StringFind(str,d,lPosStart+1);	// find position of "@" in str after lPosStart 
+	lPosStart	= lPosStart + lKeyLen;
+	int	len		= iif(lPosEnd == -1, -1, lPosEnd - lPosStart);
+	//---
+	return(StringSubstr(str, lPosStart, len));
+}

@@ -6,7 +6,7 @@
 		>Desc	:
 	*/
 	
-double Norm.symb(double d, string sy = "", int add = 0){//..
+double Norm_symb(double d, string sy = "", int add = 0){//..
 	/*
 		>Ver	:	0.0.2
 		>Date	:	2012.07.18
@@ -33,7 +33,7 @@ double Norm.symb(double d, string sy = "", int add = 0){//..
 	return(NormalizeDouble(d, di+add));
 }//.
 
-double Norm.vol(double v, string sy = ""){//..
+double Norm_vol(double v, string sy = ""){//..
 	/*
 		>Ver	:	0.0.2
 		>Date	:	2012.07.31

@@ -402,7 +402,7 @@
                                 // SW_SHOWMINIMIZED   Активизирует окно и отображает его как свернутое окно.
                                 // SW_SHOWMINNOACTIVE Отображает окно как свернутое окно. Активное окно остается активным. Эта величина подобная SW_SHOWMINIMIZED, за исключением того окно не активизировано.
                                 // SW_SHOWNA          Отображает окно в его текущем состоянии. Активное окно остается активным. Эта величина подобная SW_SHOW, за исключением того окно не активизировано.
-                                // SW_SHOWNOACTIVATE  Отображает окно в его самом современном размере и позиции. Активное окно остается активным. Эта величина подобная SW_SHOWNORMAL, за исключением того окно - не actived.
+                                // SW_SHOWNOACTIVATE  Отображает окно в его самом современном размере и позиции. Активное окно остается активным. Эта величина подобная SW_SHOWNORMAL, за исключением того окно - не actived_
                                 // SW_SHOWNORMAL      Активизирует и отображает окно. Если окно свернуто или развернуто, Windows восстанавливает его в первоначальном размере и позиции. 
                                 //                    Прикладная программа должна установить этот флажок при отображении окна впервые.
  
@@ -415,7 +415,7 @@
  bool ExitWindowsEx(int uFlags,    // EWX_LOGOFF        0           // Отключает все процессы работая на сеансе ввода процесса.
                                    // EWX_POWEROFF      0x00000008  // Отключает систему и выключает мощность. 
                                    // EWX_REBOOT        0x00000002  // Отключает систему затем перезапускает систему.
-                                   // EWX_RESTARTAPPS   0x00000040  // Отключает систему затем перезапускает это, а также любые приложения, которые зарегистрированы для перезапуска, использовавшего функцию RegisterApplicationRestart.
+                                   // EWX_RESTARTAPPS   0x00000040  // Отключает систему затем перезапускает это, а также любые приложения, которые зарегистрированы для перезапуска, использовавшего функцию RegisterApplicationRestarT_
                                    // EWX_SHUTDOWN      0x00000001  // Отключает систему в безопасный момент.
                     int dwReason); // EWX_FORCE         0x00000004  // Этот флаг не имеет эффект если терминальные услуги приспособлены. В противном случае, система не посылает сообщение WM_QUERYENDSESSION.
                                                                     // Это может заставить, чтобы терять данные. Следовательно, Вы должны использовать этот флаг только в аварийной ситуации.
@@ -457,12 +457,12 @@
 #define EWX_LOGOFF                     0x00000000  // Отключает все процессы работая на сеансе ввода процесса, который был назван функция ExitWindowsEx. Затем это регистрирует потребителя.
                                                    // Этот флаг может использоваться только процессами, работающими на сеансе ввода диалогового потребителя.
 #define EWX_POWEROFF                   0x00000008  // Отключает систему и выключает мощность. Система должна поддержать силовую-характеристику. 
-                                                   // Вызов процесса должен иметь привилегию SE_SHUTDOWN_NAME. Более подробно, смотри секцию Замечаний следующего.
+                                                   // Вызов процесса должен иметь привилегию SE_SHUTDOWN_NAME_ Более подробно, смотри секцию Замечаний следующего.
 #define EWX_REBOOT                     0x00000002  // Отключает систему затем перезапускает систему.
-                                                   // Вызов процесса должен иметь привилегию SE_SHUTDOWN_NAME. Более подробно, смотри секцию Замечаний следующего.
-#define EWX_RESTARTAPPS                0x00000040  // Отключает систему затем перезапускает это, а также любые приложения, которые зарегистрированы для перезапуска, использовавшего функцию RegisterApplicationRestart.
+                                                   // Вызов процесса должен иметь привилегию SE_SHUTDOWN_NAME_ Более подробно, смотри секцию Замечаний следующего.
+#define EWX_RESTARTAPPS                0x00000040  // Отключает систему затем перезапускает это, а также любые приложения, которые зарегистрированы для перезапуска, использовавшего функцию RegisterApplicationRestarT_
                                                    // Этот прикладной приемник сообщение WM_QUERYENDSESSION с lParam было установлено в величину ENDSESSION_CLOSEAPP. Более подробно, смотри Руководящие принципы для Приложений.
-#define EWX_SHUTDOWN                   0x00000001  // Отключает систему в безопасный момент. Все файловые буферы сброшены на диск, и весь прогон процессов прекратился. Приоритет процесса должен иметь привилегию SE_SHUTDOWN_NAME.
+#define EWX_SHUTDOWN                   0x00000001  // Отключает систему в безопасный момент. Все файловые буферы сброшены на диск, и весь прогон процессов прекратился. Приоритет процесса должен иметь привилегию SE_SHUTDOWN_NAME_
                                                    // Определение этого флага не выключит мощность даже если бы система поддерживает силовую-характеристику. Вы должны определить EWX_POWEROFF, чтобы делать это.
 //---- Параметр "dwReason" может дополнительно включить одну из следующих величин. -------------------------------------------------------------------------------------------------------------------------------------------------------
 #define EWX_FORCE                      0x00000004  // Этот флаг не имеет эффект если терминальные услуги приспособлены. В противном случае, система не посылает сообщение WM_QUERYENDSESSION.
@@ -533,7 +533,7 @@
 #define MB_YESNO                     	0x00000004         //	Окно сообщения содержит две командных кнопки: Да (Yes) и Нет (No).
 #define MB_RETRYCANCEL               	0x00000005         //	Окно сообщения содержит две командных кнопки: Поторить (Retry) и Отменить (Cancel).
 #define MB_CANCELTRYCONTINUE          0x00000006	        // Microsoft® Windows® 2000/XP: Окно сообщения содержит три командных кнопки: Отменить (Cancel), Попытаться снова (Try Again), Продолжить (Continue).
-                                                         // Используйте этот тип окна сообщения вместо типа MB_ABORTRETRYIGNORE. 
+                                                         // Используйте этот тип окна сообщения вместо типа MB_ABORTRETRYIGNORE_ 
 #define MB_ICONHAND                  	0x00000010         //	В окне сообщения появляется значок стоп-сигнала.
 #define MB_ICONQUESTION              	0x00000020         //	В окне сообщения появляется иконка знака вопроса.
 #define MB_ICONEXCLAMATION           	0x00000030         //	В окне сообщения появляется иконка знака восклицания.
@@ -547,12 +547,12 @@
 #define MB_DEFBUTTON2                	0x00000100         //	Вторая кнопка - основная кнопка.
 #define MB_DEFBUTTON3                	0x00000200         //	Третья кнопка - основная кнопка.
 #define MB_DEFBUTTON4                	0x00000300         //	Четвертая кнопка - основная кнопка.
-#define MB_APPLMODAL                 	0x00000000         //	Пользователь должен ответить окну сообщения перед продолжением работы в окне, идентифицированном параметром hWnd.
+#define MB_APPLMODAL                 	0x00000000         //	Пользователь должен ответить окну сообщения перед продолжением работы в окне, идентифицированном параметром hWnd_
                                                          // При этом, пользователь может перемещаться в окна других потоков и работать в этих окнах. 
-#define MB_SYSTEMMODAL               	0x00001000         //	То же самое, что и  MB_APPLMODAL за исключением того, что окно сообщения имеет стиль WS_EX_TOPMOST.
+#define MB_SYSTEMMODAL               	0x00001000         //	То же самое, что и  MB_APPLMODAL за исключением того, что окно сообщения имеет стиль WS_EX_TOPMOST_
                                                          // Используйте работающие в системном режиме (недоступном для пользователя) окна сообщения, чтобы уведомить пользователя о серьезных, потенциально разрушительных ошибках,
                                                          // которые требуют немедленного внимания (например, выход за пределы объема памяти). Этот флажок не имеет никакого влияния на способность пользователя взаимодействовать
-                                                         // с другими окнами , а не только связанными с hWnd.
+                                                         // с другими окнами , а не только связанными с hWnd_
 #define MB_TASKMODAL                 	0x00002000         //	То же самое, что и  MB_APPLMODAL за исключением того, что все окна верхнего уровня, принадлежащие текущему потоку блокируются, если параметр  hWnd равен ПУСТО (NULL).
                                                          // Используйте этот флажок тогда, когда вызывающая программа или библиотека не имеют доступного дескриптора окна, но тем не менее должны воспрепятствовать вводу данных
                                                          // в другие окна в вызывающем потоке, не приостанавливая работу других потоков.
@@ -562,7 +562,7 @@
 #define MB_SETFOREGROUND            	 0x00010000         //	Окно сообщения становится высокоприоритетным окном. Внутренне, система вызывает функцию SetForegroundWindow для окна сообщения.
 #define MB_DEFAULT_DESKTOP_ONLY     	 0x00020000         //	Windows NT/2000/XP: То же самое, что и MB_SERVICE_NOTIFICATION за исключением того, что система показывает на экране окно сообщения только на заданном по умолчанию
                                                          // рабочем столе взаимодействующей оконной станции. Дополнительную информацию, см. в статье  Оконные станции и Рабочие столы.
-#define MB_TOPMOST                  	 0x00040000         //	Окно сообщения создается со стилем окна WS_EX_TOPMOST.
+#define MB_TOPMOST                  	 0x00040000         //	Окно сообщения создается со стилем окна WS_EX_TOPMOST_
 #define MB_RIGHT                    	 0x00080000         //	Текст выравнивается по правому краю.
 #define MB_RTLREADING                 0x00100000         //	Выведенный на экран текст сообщения  и заголовка, использует порядок чтения справа налево как в системах на еврейском и арабских языках.
 #define MB_SERVICE_NOTIFICATION 	     0x00200000         // Windows NT/2000/XP: Вызывающая программа - сервисный модуль, уведомляющий о событии пользователя.
@@ -867,7 +867,7 @@
 #define VK_OEM_5	                     0xDC	// Windows 2000/XP/2003/Vista/2008: For the US standard keyboard, the '\|' key
 #define VK_OEM_6	                     0xDD	// Windows 2000/XP/2003/Vista/2008: For the US standard keyboard, the ']}' key
 #define VK_OEM_7	                     0xDE	// Windows 2000/XP/2003/Vista/2008: For the US standard keyboard, the 'single-quote/double-quote' key
-#define VK_OEM_8	                     0xDF	// Used for miscellaneous characters; it can vary by keyboard.
+#define VK_OEM_8	                     0xDF	// Used for miscellaneous characters; it can vary by keyboard_
                                    //	0xE0	// Зарезервировано
                                    //	0xE1	// OEM specific
 #define VK_OEM_102	                   0xE2	// Windows 2000/XP/2003/Vista/2008: Either the angle bracket key or the backslash key on the RT 102-key keyboard
@@ -878,26 +878,26 @@
                                             // The VK_PACKET key is the low word of a 32-bit Virtual Key value used for non-keyboard input methods.
                                             // For more information, see Remark in KEYBDINPUT , SendInput , WM_KEYDOWN , and WM_KEYUP.
                                    //	0xE8	// Не используется
-#define VK_OEM_RESET	                 0xE9	// Only used by Nokia.
-#define VK_OEM_JUMP	                  0xEA	// Only used by Nokia.
-#define VK_OEM_PA1	                   0xEB	// Only used by Nokia.
-#define VK_OEM_PA2	                   0xEC	// Only used by Nokia.
-#define VK_OEM_PA3	                   0xED	// Only used by Nokia.
-#define VK_OEM_WSCTRL 	               0xEE	// Only used by Nokia.
-#define VK_OEM_CUSEL  	               0xEF	// Only used by Nokia.
-#define VK_OEM_ATTN  	                0xF0	// Only used by Nokia.
-#define VK_OEM_FINNISH 	              0xF1	// Only used by Nokia.
-#define VK_OEM_COPY 	                 0xF2	// Only used by Nokia.
-#define VK_OEM_AUTO 	                 0xF3	// Only used by Nokia.
-#define VK_OEM_ENLW 	                 0xF4	// Only used by Nokia.
-#define VK_OEM_BACKTAB 	              0xF5	// Only used by Nokia.
+#define VK_OEM_RESET	                 0xE9	// Only used by NokiA_
+#define VK_OEM_JUMP	                  0xEA	// Only used by NokiA_
+#define VK_OEM_PA1	                   0xEB	// Only used by NokiA_
+#define VK_OEM_PA2	                   0xEC	// Only used by NokiA_
+#define VK_OEM_PA3	                   0xED	// Only used by NokiA_
+#define VK_OEM_WSCTRL 	               0xEE	// Only used by NokiA_
+#define VK_OEM_CUSEL  	               0xEF	// Only used by NokiA_
+#define VK_OEM_ATTN  	                0xF0	// Only used by NokiA_
+#define VK_OEM_FINNISH 	              0xF1	// Only used by NokiA_
+#define VK_OEM_COPY 	                 0xF2	// Only used by NokiA_
+#define VK_OEM_AUTO 	                 0xF3	// Only used by NokiA_
+#define VK_OEM_ENLW 	                 0xF4	// Only used by NokiA_
+#define VK_OEM_BACKTAB 	              0xF5	// Only used by NokiA_
 #define VK_ATTN	                      0xF6	// Attn key
 #define VK_CRSEL	                     0xF7	// CrSel key
 #define VK_EXSEL	                     0xF8	// ExSel key
 #define VK_EREOF	                     0xF9	// Erase EOF key
 #define VK_PLAY	                      0xFA	// Play key
 #define VK_ZOOM	                      0xFB	// Zoom key
-#define VK_NONAME	                    0xFC	// Reserved for future use. 
+#define VK_NONAME	                    0xFC	// Reserved for future usE_ 
 #define VK_PA1	                       0xFD	// PA1 key
 #define VK_OEM_CLEAR	                 0xFE	// Clear key
 //==== Window Messages. ==================================================================================================================================================================================================================

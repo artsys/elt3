@@ -1,27 +1,16 @@
-	/*
-		>Ver	:	0.0.13
-		>Date	:	2012.10.03
-		>Hist	:
-			@0.0.13@2012.10.03@artamir	[]
-			@0.0.12@2012.10.03@artamir	[]
-			@0.0.11@2012.10.03@artamir	[]
-			@0.0.10@2012.10.03@artamir	[]
-			@0.0.9@2012.10.03@artamir	[]
-			@0.0.8@2012.10.02@artamir	[]
-			@0.0.7@2012.10.02@artamir	[]
-			@0.0.6@2012.10.02@artamir	[]
-			@0.0.5@2012.10.02@artamir	[]
-			@0.0.4@2012.10.02@artamir	[]
-			@0.0.3@2012.10.02@artamir	[]
-			@0.0.2@2012.10.02@artamir	[]
-			@0.0.1@2012.10.02@artamir	[]
+ 	/*
+		>Ver	:	0.0.17
+		>Date	:	2013.02.15
+		>Hist	:		
+					@0.0.17@2013.02.15@artamir	[]	T_CurOPByIndex
+					@0.0.16@2013.02.15@artamir	[]	T_OldOPByIndex
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:
 		>Pendings	:
 					#include <sysArray.mqh>
 	*/
 
-//==========================================================
+
 //..	//=== ORDERS ARRAY	================================ 
 
 #define	O_TI	0
@@ -41,9 +30,9 @@ double	aCurOrders[][O_MAX];
 //----------------------------------------------------------
 double	aOldOrders[][O_MAX];
 //.
-	
-//==========================================================
-int T.Start(){//..
+
+
+int T_Start(){
 	/*
 		>Ver	:	0.0.2
 		>Date	:	2012.10.02
@@ -51,21 +40,20 @@ int T.Start(){//..
 			@0.0.2@2012.10.02@artamir	[]
 			@0.0.1@2012.10.02@artamir	[]
 		>Author	:	Morochin <artamir> Artiom
-		>Desc	:
+		>Desc	:	
 	*/
 	
 	//------------------------------------------------------
-	A.d.eraseArray2(aCurOrders);
+	A_d_eraseArray2(aCurOrders);
 	
 	//------------------------------------------------------
-	T.FillArrayCurOrders();
+	T_FillArrayCurOrders();
 	
 	//------------------------------------------------------
-	E.Start();
-}//.
+	E_Start();
+}
 
-//==========================================================
-int T.End(){//..
+int T_End(){
 	/*
 		>Ver	:	0.0.1
 		>Date	:	2012.10.02
@@ -75,16 +63,15 @@ int T.End(){//..
 		>Desc	:	Copying Cur orders to old orders.
 	*/
 	
-	A.d.eraseArray2(aOldOrders);
+	A_d_eraseArray2(aOldOrders);
 	
 	//------------------------------------------------------
 	ArrayCopy(aOldOrders, aCurOrders, 0, 0, WHOLE_ARRAY);
-}//.
+}
 
-//==========================================================
 //..	//=== PUBLIC FUNCTIONS	============================
 
-int T.CurRows(){//..
+int T_CurRows(){
 	/*
 		>Ver	:	0.0.1
 		>Date	:	2012.10.02
@@ -96,9 +83,9 @@ int T.CurRows(){//..
 	
 	//------------------------------------------------------
 	return(ArrayRange(aCurOrders, 0));
-}//.--------------------------------------------------------
+}
 
-int T.OldRows(){//..
+int T_OldRows(){
 	/*
 		>Ver	:	0.0.1
 		>Date	:	2012.10.02
@@ -110,13 +97,12 @@ int T.OldRows(){//..
 	
 	//------------------------------------------------------
 	return(ArrayRange(aOldOrders, 0));
-}//.--------------------------------------------------------
+}
 
 //..	//=== GET FROM ARRAY	============================
-
 //..	//====== CURRENT		============================
 
-int T.CurTicketByIndex(int idx = 0){//..
+int T_CurTicketByIndex(int idx = 0){
 	/*
 		>Ver	:	0.0.1
 		>Date	:	2012.10.02
@@ -128,9 +114,9 @@ int T.CurTicketByIndex(int idx = 0){//..
 	
 	//------------------------------------------------------
 	return(aCurOrders[idx][O_TI]);
-}//.--------------------------------------------------------
+}
 
-int T.CurIndexByTicket(int ticket){//..
+int T_CurIndexByTicket(int ticket){
 	/*
 		>Ver	:	0.0.1
 		>Date	:	2012.10.03
@@ -141,13 +127,13 @@ int T.CurIndexByTicket(int ticket){//..
 	*/
 	
 	//------------------------------------------------------
-	int idx = A.d.getIndexByProp2(aCurOrders, O_TI, ticket);
+	int idx = A_d_getIndexByProp2(aCurOrders, O_TI, ticket);
 	
 	//------------------------------------------------------
 	return(idx);
-}//.--------------------------------------------------------
+}
 
-int	T.CurTypeByIndex(int idx = 0){//..
+int	T_CurTypeByIndex(int idx = 0){
 	/*
 		>Ver	:	0.0.1
 		>Date	:	2012.10.03
@@ -162,13 +148,45 @@ int	T.CurTypeByIndex(int idx = 0){//..
 	
 	//------------------------------------------------------
 	return(val);
-}//.--------------------------------------------------------
+}
 
-//.---------------------------------------------------------
+double T_CurOPByIndex(int idx = 0){
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2013.02.15
+		>Hist	:
+		>Author	:	Morochin <artamir> Artiom
+		>Desc	:
+	*/
+	
+	//------------------------------------------------------
+	double val = Norm_symb(aCurOrders[idx][O_OP]);
+	
+	//------------------------------------------------------
+	return(val);
+}
+
+double T_CurSLByIndex(int idx = 0){
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2013.02.15
+		>Hist	:
+		>Author	:	Morochin <artamir> Artiom
+		>Desc	:
+	*/
+	
+	//------------------------------------------------------
+	double val = Norm_symb(aCurOrders[idx][O_SL]);
+	
+	//------------------------------------------------------
+	return(val);
+}
+
+//.
 
 //..	//====== OLD			============================
 
-int T.OldTicketByIndex(int idx = 0){//..
+int T_OldTicketByIndex(int idx = 0){
 	/*
 		>Ver	:	0.0.1
 		>Date	:	2012.10.03
@@ -180,9 +198,9 @@ int T.OldTicketByIndex(int idx = 0){//..
 	
 	//------------------------------------------------------
 	return(aOldOrders[idx][O_TI]);
-}//.--------------------------------------------------------
+}
 
-int T.OldIndexByTicket(int ticket){//..
+int T_OldIndexByTicket(int ticket){
 	/*
 		>Ver	:	0.0.2
 		>Date	:	2012.10.03
@@ -194,13 +212,13 @@ int T.OldIndexByTicket(int ticket){//..
 	*/
 	
 	//------------------------------------------------------
-	int idx = A.d.getIndexByProp2(aOldOrders, O_TI, ticket);
+	int idx = A_d_getIndexByProp2(aOldOrders, O_TI, ticket);
 	
 	//------------------------------------------------------
 	return(idx);
-}//.--------------------------------------------------------
+}
 
-int	T.OldTypeByIndex(int idx = 0){//..
+int	T_OldTypeByIndex(int idx = 0){
 	/*
 		>Ver	:	0.0.1
 		>Date	:	2012.10.03
@@ -215,16 +233,47 @@ int	T.OldTypeByIndex(int idx = 0){//..
 	
 	//------------------------------------------------------
 	return(val);
-}//.--------------------------------------------------------
+}
 
-//.---------------------------------------------------------
+double T_OldOPByIndex(int idx = 0){
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2013.02.15
+		>Hist	:
+		>Author	:	Morochin <artamir> Artiom
+		>Desc	:
+	*/
+	
+	//------------------------------------------------------
+	double val = Norm_symb(aOldOrders[idx][O_OP]);
+	
+	//------------------------------------------------------
+	return(val);
+}
 
-//.---------------------------------------------------------
+double T_OldSLByIndex(int idx = 0){
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2013.02.15
+		>Hist	:
+		>Author	:	Morochin <artamir> Artiom
+		>Desc	:
+	*/
+	
+	//------------------------------------------------------
+	double val = Norm_symb(aOldOrders[idx][O_SL]);
+	
+	//------------------------------------------------------
+	return(val);
+}
+
+//.
+
+//.
 
 //..	//=== TRADING FUNCTIONS ============================
 
-//==========================================================
-bool	T.SelOrderByIndex(int idx = 0){//..
+bool	T_SelOrderByIndex(int idx = 0){
 	/*
 		>Ver	:	0.0.1
 		>Date	:	2012.10.02
@@ -236,16 +285,30 @@ bool	T.SelOrderByIndex(int idx = 0){//..
 	
 	//------------------------------------------------------
 	return(OrderSelect(idx, SELECT_BY_POS, MODE_TRADES));
-}//.
+}
+
+bool	T_SelOrderByTicket(int ti){
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.10.03
+		>Hist	:
+			@0.0.1@2012.10.03@artamir	[]
+		>Author	:	Morochin <artamir> Artiom
+		>Desc	:
+	*/
+	
+	//------------------------------------------------------
+	return(OrderSelect(ti, SELECT_BY_TICKET));
+}
 
 //.
 
-//.---------------------------------------------------------
+//.
 
 //..	//=== PRIVATE FUNCTIONS	============================
-	
+
 //==========================================================
-int T.FillArrayCurOrders(){//..
+int T_FillArrayCurOrders(){
 	/*
 		>Ver	:	0.0.0
 		>Date	:
@@ -256,39 +319,39 @@ int T.FillArrayCurOrders(){//..
 			Заполняются только числовые данные.
 	*///----------------------------------------------------	
 	
-	string fn = "T.FillArrayCurOrders";
+	string fn = "T_FillArrayCurOrders";
 	
 	//------------------------------------------------------
 	int t = OrdersTotal();
 		
 	//------------------------------------------------------
-	for(int idx = 0; idx <= t; idx++){//..					
+	for(int idx = 0; idx <= t; idx++){				
 		
 		//--------------------------------------------------
-		if(!T.SelOrderByIndex(idx))	continue;
+		if(!T_SelOrderByIndex(idx))	continue;
 		
 		//--------------------------------------------------
 		if(OrderSymbol() != Symbol()) continue;
 		
 		//--------------------------------------------------
-		T.FillRow();
-	}//.
+		T_FillRow();
+	}
 	
 	//******************************************************
 	//..	//*** DEBUGGING	********************************
 	
-	if(Debug){//..
+	if(Debug){
 		
 		//--------------------------------------------------
-		//A.d.PrintArray2(aCurOrders, 4, "CurOrders_FillArray");
+		//A_d_PrintArray2(aCurOrders, 4, "CurOrders_FillArray");
 		
-	}//.
+	}
 	
 	//.
-}//.
+}
 
 //==========================================================
-int T.FillRow(){//..
+int T_FillRow(){
 	/*
 		>Ver	:	0.0.1
 		>Date	:	2012.10.02
@@ -299,30 +362,30 @@ int T.FillRow(){//..
 	*/
 	
 	//------------------------------------------------------
-	string fn = "T.FillRow";
+	string fn = "T_FillRow";
 	
 	//------------------------------------------------------
-	A.d.setArray(aCurOrders);	//setting temporar array to work with
+	A_d_setArray(aCurOrders);	//setting temporar array to work with
 	
 	//------------------------------------------------------
-	int idx = A.d.addRow();		//add new row to temporar array
+	int idx = A_d_addRow();		//add new row to temporar array
 	
 	//------------------------------------------------------
-	A.d.setPropByIndex(idx, O_TI, OrderTicket());			// set prop. by index in temporar array
-	A.d.setPropByIndex(idx, O_TY, OrderType());
-	A.d.setPropByIndex(idx, O_OP, OrderOpenPrice());
-	A.d.setPropByIndex(idx, O_OT, OrderOpenTime());
-	A.d.setPropByIndex(idx, O_TP, OrderTakeProfit());
-	A.d.setPropByIndex(idx, O_SL, OrderStopLoss());
-	A.d.setPropByIndex(idx, O_MN, OrderMagicNumber());
+	A_d_setPropByIndex(idx, O_TI, OrderTicket());			// set prop. by index in temporar array
+	A_d_setPropByIndex(idx, O_TY, OrderType());
+	A_d_setPropByIndex(idx, O_OP, OrderOpenPrice());
+	A_d_setPropByIndex(idx, O_OT, OrderOpenTime());
+	A_d_setPropByIndex(idx, O_TP, OrderTakeProfit());
+	A_d_setPropByIndex(idx, O_SL, OrderStopLoss());
+	A_d_setPropByIndex(idx, O_MN, OrderMagicNumber());
 	
 	//------------------------------------------------------
-	A.d.releaseArray(aCurOrders);	// release temporar array and copy temporar array to 
+	A_d_releaseArray(aCurOrders);	// release temporar array and copy temporar array to 
 
 	//------------------------------------------------------
-	if(Debug){//..
-		//A.d.PrintArray2(aCurOrders, 4, fn);
-	}//.
-}//.
+	if(Debug && BP_Terminal){
+		A_d_PrintArray2(aCurOrders, 4, fn);
+	}
+}
 	
 //.

@@ -1,28 +1,19 @@
 /*
-		>Ver	:	0.1.2
-		>Date	:	2012.10.02
+		>Ver	:	0.1.4
+		>Date	:	2012.10.05
 		>History:
-			@0.1.2@2012.10.02@artamir	[]
-			@0.1.1@2012.10.02@artamir	[]
 		>Description:
 			ѕомошник реализации различных стратегий сопровождени€ открытых позиций
 			»м€ файла дл€ сохранени€ массива array_dExtraOrders[][]:
 			»м€Ёксперта.—чет.ѕара.extra.arr
 */	
 
-/*
-		>Ver	:	0.1.2
-		>Date	:	2012.10.02
-		>Hist	:
-			@0.1.1@2012.10.02@artamir	[]
-*/			
-
 #define	EXP	"eLT3"
-#define	VER	"0.1.2_2012.10.02"
+#define	VER	"0.1.4_2012.10.05"
 
-//==========================================================
-// VARS:
-//..	//--------------------------------------------------
+
+
+//...	@VARS
 string	fnExtra	= ""	;
 bool 	Debug	= false	;
 
@@ -35,23 +26,22 @@ bool	isStart = true	;
 
 
 //==========================================================
-int init(){//..
+int init(){
 	
-	//fnExtra = libMain.getExtraFN();
+	fnExtra = getExtraFN();
 
-	//libA.double_ReadFromFile2(libT.array_dExtraOrders, fnExtra);
 	
 	//------------------------------------------------------
-	//libT.checkExtraIsClosedStatuses();
-}//.
+	ELT.init(fnExtra);
+}
 
 //==========================================================
-int deinit(){//..
-	//libA.double_SaveToFile2(libT.array_dExtraOrders, fnExtra,8);
-}//.
+int deinit(){
+	ELT.deinit(fnExtra);
+}
 
 //==========================================================
-int start(){//..
+int start(){
 	/*
 		>Ver	:	0.0.1
 		>Date	:	2012.10.02
@@ -61,8 +51,8 @@ int start(){//..
 			start function of EA.
 	*/
 	
-	Comment("EXP ver: "	,VER	,"\n"
-			,"sys ver: "	,ELTVER	,"\n");
+	Comment(	"EXP ver: "	,VER	,"\n"
+			,	"Sys ver: "	,ELTVER	,"\n");
 	
 	//------------------------------------------------------
 	if(isStart) isStart = false;
@@ -76,11 +66,13 @@ int start(){//..
 	//------------------------------------------------------
 	//libCY.Main();											//Main function of convoys manager.
 
-}//.
+	//------------------------------------------------------
+	return(0);
+}
 
 
 //==========================================================
-string getExtraFN(){//..
+string getExtraFN(){
 	/*
 		>Ver	:	0.0.3
 		>Date	:	2012.09.10
@@ -95,7 +87,7 @@ string getExtraFN(){//..
 
 	//------------------------------------------------------
 	return(fn);
-}//.
+}
 
 double iif( bool condition, double ifTrue, double ifFalse ){
 	/*

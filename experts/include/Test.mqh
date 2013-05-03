@@ -1,7 +1,14 @@
 	/*
-		\version	0.1.16 $WCREV$
-		>Date	:	2013.04.30			
-		>Hist	:																																																																																																													
+		\version	0.1.5.20
+		\date	:	2013.05.02			
+		\author	:	Morochin <artamir> Artiom		
+		>template: Mj.Mn.rev.local_inc
+		>Rev: lastrevision //if this rev > lastrevision, local_inc = 1 + lastrevision = thisrev + rev = thisrev
+		>Hist	:																																																																																																																	
+					@0.1.5.20@2013.05.02@artamir	[]	
+					@0.1.0.19@2013.05.02@artamir	[]	
+					@0.1..018@2013.05.02@artamir	[]	
+					@0.1..017@2013.05.02@artamir	[]	
 					@0.1.16@2013.04.30@artamir	[]	CNV_Main
 					@0.1.15@2013.04.30@artamir	[]	CNV_Main
 					@0.1.14@2013.04.30@artamir	[]	CNV_Main
@@ -15,12 +22,12 @@
 					@0.1.6@2013.04.30@artamir	[]	FuncReturnInt
 					@0.1.5@2013.04.30@artamir	[]	CNV_Main
 					@0.1.4@2013.04.30@artamir	[]	CNV_Main
-		>Author	:	Morochin <artamir> Artiom
+
 		>Desc	:	Менеджер аглоритмов сопровождения ордеров
 		>Prefix	:	CNV
 	*/
 
-#define ELTVER "0.1.16_2013.04.30"	
+#define ELTVER "0.1.5.20_2013.05.02"	
 	
 #include <cOIW.mqh>											//OrdersInWindow Pref: OIW
 	
@@ -64,7 +71,8 @@ void MyFunc(){
 							 @0.0.8@2013.04.30@artamir	[]	MyFunc
 							 @0.0.7@2013.04.30@artamir	[]	MyFunc
 							 @0.0.6@2013.04.30@artamir	[]	MyFunc
-							 @0.0.5@2013.04.17@artamir	[]	MyFunc
+							 @0.0.5@2013.04.17@artamir	[]	MyFuncf
+							 
 	*/
 }
 

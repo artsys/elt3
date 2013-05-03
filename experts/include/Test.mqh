@@ -2,6 +2,7 @@
 		\version	0.1.5.20
 		\date	:	2013.05.02			
 		\author	:	Morochin <artamir> Artiom		
+		>Rev:0
 		>template: Mj.Mn.rev.local_inc
 		>Rev: lastrevision //if this rev > lastrevision, local_inc = 1 + lastrevision = thisrev + rev = thisrev
 		>Hist	:																																																																																																																	
@@ -89,6 +90,8 @@ int FuncReturnInt(int IntVar /** Description of the param*/){
 					 @0.0.3@2013.04.30@artamir	[]	FuncReturnInt
 					 @0.0.2@2013.04.30@artamir	[]	FuncReturnInt
 					 @0.0.1@2013.04.17@artamir	[]	FuncReturnInt
+			>Rev:209M
+		 
 	*/
 
 }

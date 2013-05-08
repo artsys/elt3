@@ -2,13 +2,12 @@
 		\version	0.1.5.20
 		\date	:	2013.05.02			
 		\author	:	Morochin <artamir> Artiom		
-		>Rev:0
+		>Rev:10
 		>template: Mj.Mn.rev.local_inc
 		>Rev: lastrevision //if this rev > lastrevision, local_inc = 1 + lastrevision = thisrev + rev = thisrev
 		>Hist	:																																																																																																																	
 					@0.1.5.20@2013.05.02@artamir	[]	
 					@0.1.0.19@2013.05.02@artamir	[]	
-					
 					@0.1..018@2013.05.02@artamir	[]	
 					@0.1..017@2013.05.02@artamir	[]	
 					@0.1.16@2013.04.30@artamir	[]	CNV_Main

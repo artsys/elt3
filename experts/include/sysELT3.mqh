@@ -1,10 +1,11 @@
 	/*
-		>Ver	:	0.1.37
-		>Date	:	2013.04.25
-		>Hist:														
+		>Ver	:	0.1.0.38
+		>Date	:	2013.05.07
+		>Hist:															
+				 @0.1.0.38@2013.05.07@artamir	[]	Main
 				 @0.1.37@2013.04.25@artamir	[]	
 				 @0.1.36@2013.04.25@artamir	[*] sysTrades	
-				@0.1.34@2013.04.16@artamir	[*] sysELT3	
+				 @0.1.34@2013.04.16@artamir	[*] sysELT3	
 				 @0.1.32@2013.03.06@artamir	[*] sysEvents	
 				 @0.1.31@2013.03.06@artamir	[*] sysArray	
 				 @0.1.30@2013.03.04@artamir	[]	
@@ -34,7 +35,7 @@
 			DO NOT CHANGE!!!!
 	*/
 
-#define	ELTVER	"0.1.39_2013.04.25"
+#define	ELTVER	"0.1.0.38_2013.05.07"
 #define ELTREV	"$rev$"	
 //...	//Include	========================================
 
@@ -48,6 +49,7 @@
 #include	<sysArray.mqh>									//Pref:	A
 #include	<sysDebug.mqh>
 #include	<sysOrdersExtra.mqh>							//Pref:	OE
+#include	<sysSQLite.mqh>									//Pref: SQL
 #include	<sysTerminal.mqh>								//Pref: T
 #include	<sysEvents.mqh>									//Pref:	E
 //.. 	@Trades	--------------------------------------------
@@ -59,15 +61,17 @@
 int Main(){
 	/**
 		\brief		Основная функция 
-		\version	0.0.1
-		\date		2012.10.04
+		\version	0.0.0.2
+		\date		2013.05.07
 		\author		Morochin <artamir> Artiom
 		\details		Must be called in begining of "start()" 
 		\internal
-					>Hist:
+					>Hist:	
+							 @0.0.0.2@2013.05.07@artamir	[]	Main
 						@0.0.1@2012.10.04@artamir	[]
 	*/
 	
+	SQL_Main();
 	//------------------------------------------------------
 	T_Start();
 	T_End();

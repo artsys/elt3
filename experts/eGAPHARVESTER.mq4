@@ -186,6 +186,7 @@ int startext(){
 
 	//------------------------------------------------------
 	Main();													//called from sysELT3
+	SQL_TESTS();
 	
 	//------------------------------------------------------
 	//mngAO.Main();											//Main function of autoopen manager.

@@ -1,10 +1,11 @@
 /**
-	\version	0.0.0.13
+	\version	0.0.0.14
 	\date		2013.05.08
 	\author		Morochin <artamir> Artiom
 	\details	Detailed description
 	\internal
-		>Hist:													
+		>Hist:														
+				 @0.0.0.14@2013.05.08@artamir	[]	SQL_CheckTable
 				 @0.0.0.13@2013.05.08@artamir	[]	SQL_Exec
 				 @0.0.0.12@2013.05.08@artamir	[]	SQL_Main
 				 @0.0.0.11@2013.05.08@artamir	[]	SQL_Insert
@@ -97,12 +98,13 @@ int		SQL_Query(string db, string sql, int& cols[]){
 
 void	SQL_CheckTable(string db){
 	/**
-		\version	0.0.0.1
-		\date		2013.05.07
+		\version	0.0.0.2
+		\date		2013.05.08
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2013.05.08@artamir	[]	SQL_CheckTable
 					 @0.0.0.1@2013.05.07@artamir	[]	SQL_CheckTable
 			>Rev:0
 	*/
@@ -120,6 +122,7 @@ void	SQL_CheckTable(string db){
 	q = q + ",	OOT INTEGER";
 	q = q + ",	TP	REAL";
 	q = q + ",	SL	REAL";
+	q = q + ",	SY	TEXT";
 	q = q + ")";
 	
 	SQL_Exec(db, q);
@@ -193,6 +196,37 @@ int	SQL_Insert(string& aKeyVal[][], string select = ""){
 	return(SQL_Exec(SQL_DB, q));	
 }
 
+int SQL_Update(string& aKeyVal[][], string where = ""){
+	/**
+		\version	0.0.0.0
+		\date		2013.05.08
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+	string q = "UPDATE OE SET ";
+	string exp = "";
+	
+	int ROWS = ArrayRange(aKeyVal,0);
+	
+	for(int idx = 0; idx < ROWS; idx++){
+		
+		if(StringLen(aKeyVal[idx][0]) == 0) continue;
+		
+		if(idx > 0){
+			exp = exp + ",";
+		}
+		
+		exp = exp + aKeyVal[idx][0] +"="+ aKeyVal[idx][1];
+	}
+	
+	q = q + exp + " WHERE " + where;
+	
+	return(SQL_Exec(SQL_DB, q));
+}
+
 //{	=== TESTS
 void	SQL_TESTS(){
 	/**
@@ -207,7 +241,18 @@ void	SQL_TESTS(){
 	*/
 
 	//=== INSERT OR REPLACE
-	SQL_TEST_INSERT();
+	static int test_insert;
+	
+	if(test_insert <= 0){
+		SQL_TEST_INSERT();
+		test_insert++;
+	}
+
+	static int test_update;
+	if(test_update <= 0){
+		SQL_TEST_UPDATE();
+		test_update++;
+	}
 }
 
 int SQL_TEST_INSERT(){
@@ -229,13 +274,30 @@ int SQL_TEST_INSERT(){
 		a[0][0] = "TI";
 		a[0][1] = OrderTicket();
 		
-		string select = "'SELECT * FROM OE'";
-		a[1][0] = "select";
-		a[1][1] = select;
 		//a[1][0] = "TY";
 		//a[1][1] = OrderType();
 		
 		int res = SQL_Insert(a);
 	}
 }	
+
+int SQL_TEST_UPDATE(){
+	for(int i = 0; i <= OrdersTotal(); i++){
+		if(!OrderSelect(i, SELECT_BY_POS, MODE_TRADES)) continue;
+		
+		string a[10][2];
+		a[0][0] = "TY";
+		a[0][1] = OrderType();
+		
+		a[1][0] = "LOT";
+		a[1][1] = OrderLots();
+		
+		a[2][0] = "SY";
+		a[2][1] = "'"+OrderSymbol()+"'";
+		
+		string where = "TI="+OrderTicket();
+		
+		int res = SQL_Update(a, where);
+	}
+}
 //}

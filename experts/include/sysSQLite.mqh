@@ -1,10 +1,11 @@
 /**
-	\version	0.0.0.24
+	\version	0.0.0.25
 	\date		2013.05.10
 	\author		Morochin <artamir> Artiom
 	\details	Detailed description
 	\internal
-		>Hist:																								
+		>Hist:																									
+				 @0.0.0.25@2013.05.10@artamir	[]	SQL_getColName
 				 @0.0.0.24@2013.05.10@artamir	[]	SQL_getColName
 				 @0.0.0.23@2013.05.10@artamir	[]	SQL_Query
 				 @0.0.0.22@2013.05.10@artamir	[]	SQL_AddHandle
@@ -45,7 +46,7 @@ void sqlite_set_busy_timeout (int ms);
 void sqlite_set_journal_mode (string mode);
 #import	//}
 
-#define SQLVER	"0.0.0.24_2013.05.10"
+#define SQLVER	"0.0.0.25_2013.05.10"
 
 #define SQLSTRUC_HA		0	//Handle
 #define SQLSTRUC_COLS	1	//COUNT COLS
@@ -75,7 +76,7 @@ string	SQL_DB = "";
 int	SQL_Handles[];
 string SQL_ColsDesc[];
 
-string 	SQL_getColName(int col){
+string 	SQL_getColName_v1(int col){
 	/**
 		\version	0.0.0.2
 		\date		2013.05.10
@@ -153,6 +154,23 @@ string 	SQL_getColName(int col){
 		return("CP");
 	}
 	
+}
+
+string SQL_getColName(int col){
+	/**
+		\version	0.0.0.1
+		\date		2013.05.10
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.05.10@artamir	[]	SQL_getColName
+			>Rev:0
+	*/
+
+	string name = Struc_KeyValue_string(SQL_ColsDesc[col], "@n");
+	
+	return(name);
 }
 
 void	SQL_InitColsArray(){

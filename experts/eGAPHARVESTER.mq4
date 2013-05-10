@@ -176,6 +176,7 @@ int startext(){
 	Comment(	"EXP ver: "	,VER		,"\n"
 			,	"REV: " ,EXPREV			,"\n"
 			,	"Sys ver: "	,ELTVER		,"\n"
+			,	"SQL ver: " ,SQLVER		,"\n"
 			,	"DOW = "	,DayOfWeek(),"\n"
 			,	"GTBS_S = ", getTimeByShift(0, THS_Ph1, TMS_Ph1), "\n"
 			,	"GTBS_S(0,21,50) = ", getTimeByShift(0, 21, 50), "\n"

@@ -56,7 +56,7 @@
 #include	<sysTrades.mqh>									//Pref:	TR
 //..	@Indicators
 #include	<iMA.mqh>										//Pref: iMA
-//.
+//}
 
 int Main(){
 	/**
@@ -70,8 +70,6 @@ int Main(){
 							 @0.0.0.2@2013.05.07@artamir	[]	Main
 						@0.0.1@2012.10.04@artamir	[]
 	*/
-	
-	SQL_Main();
 	//------------------------------------------------------
 	T_Start();
 	T_End();
@@ -89,6 +87,8 @@ int ELT_init(string fn){
 	*/
 	
 	//------------------------------------------------------
+	SQL_Init();
+	
 	A_d_ReadFromFile2(aOE, fn);
 	
 	OE_RecheckStatuses();
@@ -104,6 +104,8 @@ int ELT_deinit(string fn){
 			>Hist:
 				@0.0.2 - changed name
 	*/
+	
+	SQL_Deinit();
 	
 	//------------------------------------------------------
 	A_d_SaveToFile2(aOE, fn, 8);

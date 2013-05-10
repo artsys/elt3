@@ -753,7 +753,7 @@ void A_d_PrintArray2(double &a[][], int d = 4, string fn = "PrintArray_"){
 	
 }
 
-void A_d_PrintArray1(double &a[], int d = 4, string fn = "PrintArray_"){
+void A_d_PrintArray1(int& a[], int d = 4, string fn = "PrintArray_"){
 	/*
 		>Ver	:	0.0.3
 		>Date	:	2012.08.15

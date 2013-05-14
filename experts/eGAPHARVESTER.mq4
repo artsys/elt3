@@ -1,10 +1,11 @@
 	/**
-		\version	0.1.0.18
+		\version	0.1.0.19
 		\date		2013.05.14
 		\author		Morochin <artamir> Artiom
 		\details	Must be called in begining of "start()" 
 		\internal
-			>Hist:																	
+			>Hist:																		
+					 @0.1.0.19@2013.05.14@artamir	[]	isOrdersByMN
 					 @0.1.0.18@2013.05.14@artamir	[+]	isOrdersByMN - rewrite under sqlite
 					 @0.0.17@2013.04.30@artamir	[]	startext
 					 @0.0.16@2013.04.29@artamir	[]	OpenBSSS
@@ -24,7 +25,7 @@
 	*/
 
 #define	EXP		"eGH"
-#define	VER		"0.1.0.18_2013.05.14"
+#define	VER		"0.1.0.19_2013.05.14"
 #define EXPREV	""
 
 //{	=== Extern 
@@ -147,7 +148,7 @@ int startext(){
 		CommAdd = CommAdd + "FREEZE = "+ MarketInfo(Symbol(), MODE_FREEZELEVEL)+"\n";
 		CommAdd = CommAdd + "STOP = "+ MarketInfo(Symbol(), MODE_STOPLEVEL)+"\n";
 		CommAdd = CommAdd + "IsExpertEnabled = "+ IsExpertEnabled()+"\n"; 
-		CommAdd = CommAdd + "IsTradeAllowed	= "+ IsTradeAllowed() +"\n"; 
+		CommAdd = CommAdd + "IsTradeAllowed = "+ IsTradeAllowed() +"\n"; 
 	
 		//.. === Настройки советника
 		CommAdd = CommAdd + "----------SETUP ---------------"+"\n";
@@ -520,12 +521,13 @@ bool isOrdersByMN_v0(int mn = -1){
 //{ === v1
 bool isOrdersByMN(int mn = -1){
 	/**
-		\version	0.0.0.1
+		\version	0.0.0.2
 		\date		2013.05.14
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2013.05.14@artamir	[]	isOrdersByMN
 					 @0.0.0.1@2013.05.14@artamir	[]	isOrdersByMN
 			>Rev:0
 	*/
@@ -535,7 +537,7 @@ bool isOrdersByMN(int mn = -1){
 	ArrayResize(SQL_aKeyVal,0);				//Чистим Массив
 	int struc[SQLSTRUC_MAX];
 	SQL_AddKeyValOp(SQL_getColName(SQL_MN), magic);
-	SQL_AddKeyValOp(SQL_getColName(SQL_IW), true);
+	SQL_AddKeyValOp(SQL_getColName(SQL_IW), true,"AND");
 	if(SQL_Select("OE", SQL_aKeyVal, struc) >= 1){
 		return(true);
 	}

@@ -1,7 +1,8 @@
 /*
-		>Ver	:	0.0.0.15
+		>Ver	:	0.0.0.16
 		>Date	:	2013.05.14
-		>Hist:											
+		>Hist:												
+				 @0.0.0.16@2013.05.14@artamir	[]	onCloseOrder
 				 @0.0.0.15@2013.05.14@artamir	[]	onNewOrder
 				 @0.0.14@2013.03.06@artamir	[]	onChangeType
 				 @0.0.13@2013.02.24@artamir	[]	onChangeType
@@ -20,6 +21,8 @@
 			#include	<libTerminal.mqh>
 		>Pref:	E	
 */
+
+#define EVER	"0.0.0.16_2013.05.14"
 
 //{	//=== GLOBAL VARIABLES
 	//{	@МАССИВ ОРДЕРОВ/СОБЫТИЙ
@@ -179,7 +182,7 @@ void onNewOrder(int ticket){
 		BP("onNewOrder", "ti = ", ticket);
 	}
 	
-	//OE_setStandartDataByTicket(ticket);
+	OE_setStandartDataByTicket(ticket);
 	SQL_setStandartDataByTI(ticket);
 	if(Debug && BP_Events_NEW){
 		A_d_PrintArray2(aOE, 4, "aOE_NewOrder");
@@ -250,9 +253,10 @@ void onChangeSL(int ticket, double sl.new, double sl.old = -1){
 
 void onCloseOrder(int ticket){
 	/*
-		>Ver	:	0.0.3
-		>Date	:	2013.02.21
-		>Hist	:
+		>Ver	:	0.0.0.4
+		>Date	:	2013.05.14
+		>Hist	:	
+					@0.0.0.4@2013.05.14@artamir	[]	onCloseOrder
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:
 	*/
@@ -261,7 +265,9 @@ void onCloseOrder(int ticket){
 	//TODO: написать обработчик закрытого ордера.
 	//1.обновление статуса IsClosed массива экстраордеров.
 	//2.добавление нового события в массив событий
+	SQL_setStandartCloseDataByTI(ticket);
 	OE_setCloseByTicket(ticket);
+	
 	if(Debug && BP_Events_CL){
 		A_d_PrintArray2(aOE, 4, "aOE_Close");
 		A_d_PrintArray2(aCurOrders, 4, "aCUR_Close");

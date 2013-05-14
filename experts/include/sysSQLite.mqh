@@ -1,10 +1,11 @@
 /**
-	\version	0.0.0.34
+	\version	0.0.0.35
 	\date		2013.05.14
 	\author		Morochin <artamir> Artiom
 	\details	Detailed description
 	\internal
-		>Hist:																																		
+		>Hist:																																			
+				 @0.0.0.35@2013.05.14@artamir	[]	SQL_setStandartCloseDataByTI
 				 @0.0.0.34@2013.05.14@artamir	[]	SQL_Select
 				 @0.0.0.33@2013.05.14@artamir	[]	SQL_AddKeyVal
 				 @0.0.0.32@2013.05.14@artamir	[]	SQL_AddKeyValOP
@@ -30,7 +31,7 @@ void sqlite_set_busy_timeout (int ms);
 void sqlite_set_journal_mode (string mode);
 #import	//}
 
-#define SQLVER		"0.0.0.34_2013.05.14"
+#define SQLVER		"0.0.0.35_2013.05.14"
 
 #define SQLSTRUC_HA		0	//Handle
 #define SQLSTRUC_COLS	1	//COUNT COLS
@@ -771,7 +772,28 @@ void SQL_UpdateOrInsertByTI(int ti){
 	
 }
 
+//{ === SET STANDART CLOSE DATA
+void SQL_setStandartCloseDataByTI(int ti){
+	/**
+		\version	0.0.0.1
+		\date		2013.05.14
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.05.14@artamir	[]	SQL_setStandartCloseDataByTI
+			>Rev:0
+	*/
 
+	SQL_setStandartDataByTI(ti);
+	
+	//Предыдущей процедурой был выбран ордер, его и используем
+	ArrayResize(SQL_aKeyVal, 0);
+	SQL_AddKeyVal(SQL_getColName(SQL_CP), DoubleToStr(OrderClosePrice(), Digits));
+	SQL_AddKeyVal(SQL_getColName(SQL_CT), OrderCloseTime());
+	SQL_AddKeyVal(SQL_getColName(SQL_CM), OI_CloseMethodBySelected());
+}
+//}
 
 //{	=== TESTS
 void	SQL_TESTS(){

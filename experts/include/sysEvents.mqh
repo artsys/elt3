@@ -1,7 +1,8 @@
 /*
-		>Ver	:	0.0.14
-		>Date	:	2013.03.06
-		>Hist:										
+		>Ver	:	0.0.0.15
+		>Date	:	2013.05.14
+		>Hist:											
+				 @0.0.0.15@2013.05.14@artamir	[]	onNewOrder
 				 @0.0.14@2013.03.06@artamir	[]	onChangeType
 				 @0.0.13@2013.02.24@artamir	[]	onChangeType
 				 @0.0.12@2013.02.23@artamir	[]	onChangeOP
@@ -158,9 +159,10 @@ void E_FillEventsArray(){
 
 void onNewOrder(int ticket){
 	/*
-		>Ver	:	0.0.3
-		>Date	:	2013.02.21
-		>Hist	:
+		>Ver	:	0.0.0.4
+		>Date	:	2013.05.14
+		>Hist	:	
+					@0.0.0.4@2013.05.14@artamir	[]	onNewOrder
 			@0.0.2@2012.10.03@artamir	[]
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:
@@ -177,7 +179,8 @@ void onNewOrder(int ticket){
 		BP("onNewOrder", "ti = ", ticket);
 	}
 	
-	OE_setStandartDataByTicket(ticket);
+	//OE_setStandartDataByTicket(ticket);
+	SQL_setStandartDataByTI(ticket);
 	if(Debug && BP_Events_NEW){
 		A_d_PrintArray2(aOE, 4, "aOE_NewOrder");
 	}

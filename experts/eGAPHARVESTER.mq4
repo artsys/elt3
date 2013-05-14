@@ -1,10 +1,11 @@
 	/**
-		\version	0.0.17
-		\date		2013.04.30
+		\version	0.1.0.18
+		\date		2013.05.14
 		\author		Morochin <artamir> Artiom
 		\details	Must be called in begining of "start()" 
 		\internal
-			>Hist:																
+			>Hist:																	
+					 @0.1.0.18@2013.05.14@artamir	[+]	isOrdersByMN - rewrite under sqlite
 					 @0.0.17@2013.04.30@artamir	[]	startext
 					 @0.0.16@2013.04.29@artamir	[]	OpenBSSS
 					 @0.0.15@2013.04.29@artamir	[]	startext
@@ -23,7 +24,7 @@
 	*/
 
 #define	EXP		"eGH"
-#define	VER		"0.0.17_2013.04.30"
+#define	VER		"0.1.0.18_2013.05.14"
 #define EXPREV	""
 
 //{	=== Extern 
@@ -160,6 +161,7 @@ int startext(){
 		CommAdd = CommAdd + "OPEN_SLPips   = "+OPEN_SLPips+"\n";
 		CommAdd = CommAdd + "OPEN_TPPips   = "+OPEN_TPPips+"\n";
 		
+		CommAdd = CommAdd + "isOrdersByMN = "+isOrdersByMN()+"\n";
 		//.. === Проверка на закрытый рынок
 		CommAdd = CommAdd + "\n\n";
 		if(GetLastError() == 132){
@@ -187,14 +189,8 @@ int startext(){
 
 	//------------------------------------------------------
 	Main();													//called from sysELT3
-	SQL_TESTS();
+	//SQL_TESTS();
 	
-	//------------------------------------------------------
-	//mngAO.Main();											//Main function of autoopen manager.
-	
-	//------------------------------------------------------
-	//libCY.Main();											//Main function of convoys manager.
-
 	if(isPhase1()){
 		eGH_Phase1();
 	}
@@ -460,6 +456,7 @@ int MinutesToSeconds(int m){
 
 //{	=== AOM
 
+//{ === v0
 //==========================================================
 int getOrdersByMethod(		double	&d[][]		/**	destination array*/
 						,	int		method = -1	/**	method of opening*/
@@ -499,7 +496,7 @@ int getOrdersByMethod(		double	&d[][]		/**	destination array*/
 }
 
 //==========================================================
-bool isOrdersByMN(int mn = -1){
+bool isOrdersByMN_v0(int mn = -1){
 	/**
 		\version	0.0.0
 		\date		2013.04.25
@@ -518,4 +515,33 @@ bool isOrdersByMN(int mn = -1){
 		return(false);
 	}
 }
+//}
+
+//{ === v1
+bool isOrdersByMN(int mn = -1){
+	/**
+		\version	0.0.0.1
+		\date		2013.05.14
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.05.14@artamir	[]	isOrdersByMN
+			>Rev:0
+	*/
+
+	int magic = iif(mn<= -1, TR_MN, mn);
+	
+	ArrayResize(SQL_aKeyVal,0);				//Чистим Массив
+	int struc[SQLSTRUC_MAX];
+	SQL_AddKeyValOp(SQL_getColName(SQL_MN), magic);
+	SQL_AddKeyValOp(SQL_getColName(SQL_IW), true);
+	if(SQL_Select("OE", SQL_aKeyVal, struc) >= 1){
+		return(true);
+	}
+	
+	return(false);
+}	
+//}
+
 //}

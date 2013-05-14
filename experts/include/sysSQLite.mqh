@@ -1,10 +1,14 @@
 /**
-	\version	0.0.0.30
+	\version	0.0.0.34
 	\date		2013.05.14
 	\author		Morochin <artamir> Artiom
 	\details	Detailed description
 	\internal
-		>Hist:																														
+		>Hist:																																		
+				 @0.0.0.34@2013.05.14@artamir	[]	SQL_Select
+				 @0.0.0.33@2013.05.14@artamir	[]	SQL_AddKeyVal
+				 @0.0.0.32@2013.05.14@artamir	[]	SQL_AddKeyValOP
+				 @0.0.0.31@2013.05.14@artamir	[]	sqlite_set_journal_mode
 				 @0.0.0.30@2013.05.14@artamir	[]	SQL_UPDATEORINSERT
 				 @0.0.0.29@2013.05.14@artamir	[+]	SQL_UpdateOrInsertByTI
 				 @0.0.0.28@2013.05.14@artamir	[+]	SQL_Update v1
@@ -26,7 +30,7 @@ void sqlite_set_busy_timeout (int ms);
 void sqlite_set_journal_mode (string mode);
 #import	//}
 
-#define SQLVER	"0.0.0.28_2013.05.14"
+#define SQLVER		"0.0.0.34_2013.05.14"
 
 #define SQLSTRUC_HA		0	//Handle
 #define SQLSTRUC_COLS	1	//COUNT COLS
@@ -47,15 +51,20 @@ void sqlite_set_journal_mode (string mode);
 #define	SQL_IM	11	//IsMarket() if order type is OP_BUY || OP_SELL
 #define	SQL_IP	12	//IsPending() if order type >= 2
 #define SQL_IC	13	//IsClosed()
+
+//{ === Close data
 #define SQL_CT	14	//CloseTime()
 #define SQL_CP	15	//ClosePrice()
-#define SQL_MAX 16	//MAX COLS
+#define SQL_CM	16	//CloseMethod()
+//}
+
+#define SQL_MAX 17	//MAX COLS
 
 
 string	SQL_DB = "";
 int	SQL_Handles[];
 string SQL_ColsDesc[];
-string aKeyVal[];
+string SQL_aKeyVal[];
 
 string 	SQL_getColName_v1(int col){
 	/**
@@ -64,7 +73,8 @@ string 	SQL_getColName_v1(int col){
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:		
+			>Hist:			
+					 @0.0.0.29@2013.05.14@artamir	[]	sqlite_set_journal_mode
 					 @0.0.0.2@2013.05.10@artamir	[]	SQL_getColName
 					 @0.0.0.1@2013.05.10@artamir	[]	SQL_getColName
 			>Rev:0
@@ -166,10 +176,10 @@ void	SQL_InitColsArray(){
 	*/
 
 	ArrayResize(SQL_ColsDesc, SQL_MAX);
-	SQL_ColsDesc[0] = "@nTI@tINTEGER";
-	SQL_ColsDesc[1] = "@nTY@tINTEGER";
-	SQL_ColsDesc[2] = "@nOOP@tREAL";
-	SQL_ColsDesc[3] = "@nOOT@tINTEGER";
+	SQL_ColsDesc[SQL_TI]	= "@nTI@tINTEGER";
+	SQL_ColsDesc[SQL_TY]	= "@nTY@tINTEGER";
+	SQL_ColsDesc[SQL_OOP]	= "@nOOP@tREAL";
+	SQL_ColsDesc[SQL_OOT]	= "@nOOT@tINTEGER";
 	SQL_ColsDesc[4] = "@nTP@tREAL";
 	SQL_ColsDesc[5] = "@nSL@tREAL";
 	SQL_ColsDesc[6] = "@nMN@tINTEGER";
@@ -182,6 +192,7 @@ void	SQL_InitColsArray(){
 	SQL_ColsDesc[13] = "@nIC@tINTEGER";
 	SQL_ColsDesc[14] = "@nCT@tINTEGER";
 	SQL_ColsDesc[15] = "@nCP@tREAL";
+	SQL_ColsDesc[SQL_CM] = "@nCM@tINTEGER";
 	
 }
 
@@ -205,22 +216,44 @@ void 	SQL_AddHandle(int h){
 
 void	SQL_AddKeyVal(string key, string val){
 	/**
-		\version	0.0.0.0
-		\date		2013.05.10
+		\version	0.0.0.1
+		\date		2013.05.14
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:
+			>Hist:	
+					 @0.0.0.1@2013.05.14@artamir	[]	SQL_AddKeyVal
 			>Rev:0
 	*/
 
-	int ROWS = ArrayRange(aKeyVal,0);
+	int ROWS = ArrayRange(SQL_aKeyVal,0);
 	int NewROWS = ROWS+1;
 	int LastRow = NewROWS-1;
-	ArrayResize(aKeyVal, NewROWS);
+	ArrayResize(SQL_aKeyVal, NewROWS);
 	
-	aKeyVal[LastRow] = "@n"+key+"@v"+val;
+	SQL_aKeyVal[LastRow] = "@n"+key+"@v"+val;
 }
+
+void	SQL_AddKeyValOp(string key, string val, string op = ""){
+	/**
+		\version	0.0.0.1
+		\date		2013.05.14
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.05.14@artamir	[]	SQL_AddKeyValOP
+			>Rev:0
+	*/
+
+	int ROWS = ArrayRange(SQL_aKeyVal,0);
+	int NewROWS = ROWS+1;
+	int LastRow = NewROWS-1;
+	ArrayResize(SQL_aKeyVal, NewROWS);
+	
+	SQL_aKeyVal[LastRow] = "@n"+key+"@v"+val+"@o"+op;
+}
+
 
 bool	SQL_IsTableExist(string db, string table){
 	/**
@@ -527,6 +560,49 @@ int SQL_Update(string& aKeyVal[], string where = ""){
 	return(SQL_Exec(SQL_DB, q));
 }
 
+int SQL_Select(string table_name, string& awhere[], int& struc[]){
+	/**
+		\version	0.0.0.1
+		\date		2013.05.14
+		\author		Morochin <artamir> Artiom
+		\details	Открывает запрос по заданным параметрам
+					По умолчанию возвращает все строки таблицы.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.05.14@artamir	[]	SQL_Select
+			>Rev:0
+	*/
+	
+	string select = "";
+	select = select + "SELECT * FROM "+table_name+" ";
+	
+	int ROWS = ArrayRange(awhere, 0);
+	
+	if(ROWS >= 1){
+		select = select + "WHERE"+" ";
+		
+		for(int i = 0; i < ROWS; i++){
+			select = select + Struc_KeyValue_string(awhere[i], "@o")+" ";
+			select = select + Struc_KeyValue_string(awhere[i], "@n")+"=";
+			select = select + Struc_KeyValue_string(awhere[i], "@v")+" ";
+		}
+	}
+	
+	int cols[1];
+	Print(select);
+	int handle = SQL_Query(SQL_DB, select, cols);
+	
+	ROWS = 0;
+	while(sqlite_next_row(handle) == 1){
+		ROWS++;
+	}
+	
+	struc[0] = handle;
+	struc[1] = cols[0];
+	struc[2] = ROWS;
+	
+	return(ROWS);
+}
 
 int SQL_SelectByTI(int ti /** ticket*/, int& struc[]	/** array 0 - handle 1 - row counts	*/){
 	/**
@@ -637,37 +713,34 @@ int SQL_setStandartDataByTI(int ti){
 	
 	int ROWS = SQL_SelectByTI(ti, struc);
 	
-	ArrayResize(aKeyVal, 0);
+	ArrayResize(SQL_aKeyVal, 0);
 	
 	int r = -1;
 	
-	r++;
 	SQL_AddKeyVal(SQL_getColName(SQL_TI), OrderTicket());
-	r++;
 	SQL_AddKeyVal(SQL_getColName(SQL_TY), OrderType());
-	r++;
 	SQL_AddKeyVal(SQL_getColName(SQL_OOP), Norm_symb(OrderOpenPrice(), Symbol(), 2));
-	r++;
 	SQL_AddKeyVal(SQL_getColName(SQL_OOT), OrderOpenTime());
-	r++;
 	SQL_AddKeyVal(SQL_getColName(SQL_TP), Norm_symb(OrderTakeProfit(), Symbol(), 2));
-	r++;
 	SQL_AddKeyVal(SQL_getColName(SQL_SL), Norm_symb(OrderStopLoss(), Symbol(), 2));
-	r++;
 	SQL_AddKeyVal(SQL_getColName(SQL_MN), OrderMagicNumber());
-	r++;
 	SQL_AddKeyVal(SQL_getColName(SQL_LOT), Norm_symb(OrderLots(), Symbol(), 2));
-	r++;
 	SQL_AddKeyVal(SQL_getColName(SQL_SY), "'"+OrderSymbol()+"'");
-	r++;
 	SQL_AddKeyVal(SQL_getColName(SQL_OP), Norm_symb(OrderProfit(), Symbol(), 2));
+	
+	//{ === Extra data
+	SQL_AddKeyVal(SQL_getColName(SQL_IP), OI_isPendingByType(OrderType()));
+	SQL_AddKeyVal(SQL_getColName(SQL_IM), OI_isMarketByType(OrderType()));
+	SQL_AddKeyVal(SQL_getColName(SQL_IW), OI_isWorkedBySelected());
+	SQL_AddKeyVal(SQL_getColName(SQL_IC), OI_isClosedBySelected());
+	//}
 	
 	int res = -1;
 	
 	if(ROWS >= 1){
-		res = SQL_Update(aKeyVal, "TI="+ti);
+		res = SQL_Update(SQL_aKeyVal, "TI="+ti);
 	}else{
-		res = SQL_Insert(aKeyVal);
+		res = SQL_Insert(SQL_aKeyVal);
 	}
 	
 	Print("SQL_setStandartDataByTI res = "+res);
@@ -693,10 +766,11 @@ void SQL_UpdateOrInsertByTI(int ti){
 		SQL_setStandartDataByTI(ti);
 	}
 	
-	SQL_Update(aKeyVal, "TI="+ti);
+	SQL_Update(SQL_aKeyVal, "TI="+ti);
 	
 	
 }
+
 
 
 //{	=== TESTS
@@ -890,7 +964,7 @@ int SQL_TEST_UPDATEORINSERT(){
 	for(int i = 0; i <= OrdersTotal(); i++){
 		if(!OrderSelect(i, SELECT_BY_POS, MODE_TRADES)) continue;
 		
-		ArrayResize(aKeyVal,0);
+		ArrayResize(SQL_aKeyVal,0);
 		
 		SQL_AddKeyVal("IP", OI_isPendingByType(OrderType()));
 		SQL_UpdateOrInsertByTI(OrderTicket());

@@ -1,34 +1,14 @@
 /**
-	\version	0.0.0.25
-	\date		2013.05.10
+	\version	0.0.0.30
+	\date		2013.05.14
 	\author		Morochin <artamir> Artiom
 	\details	Detailed description
 	\internal
-		>Hist:																									
-				 @0.0.0.25@2013.05.10@artamir	[]	SQL_getColName
-				 @0.0.0.24@2013.05.10@artamir	[]	SQL_getColName
-				 @0.0.0.23@2013.05.10@artamir	[]	SQL_Query
-				 @0.0.0.22@2013.05.10@artamir	[]	SQL_AddHandle
-				 @0.0.0.21@2013.05.10@artamir	[]	SQL_setStandartDataByTI
-				 @0.0.0.20@2013.05.10@artamir	[]	SQL_setStandartDataByTI
-				 @0.0.0.19@2013.05.10@artamir	[]	SQL_TEST_SETSTANDARTDATA
-				 @0.0.0.18@2013.05.10@artamir	[]	SQL_getColName
-				 @0.0.0.17@2013.05.10@artamir	[]	SQL_TEST_SELECTBYTI
-				 @0.0.0.16@2013.05.10@artamir	[]	SQL_TEST_SELECTBYTI
-				 @0.0.0.15@2013.05.10@artamir	[]	SQL_SelectByTI
-				 @0.0.0.14@2013.05.08@artamir	[]	SQL_CheckTable
-				 @0.0.0.13@2013.05.08@artamir	[]	SQL_Exec
-				 @0.0.0.12@2013.05.08@artamir	[]	SQL_Main
-				 @0.0.0.11@2013.05.08@artamir	[]	SQL_Insert
-				 @0.0.0.10@2013.05.08@artamir	[]	SQL_TESTS
-				 @0.0.0.9@2013.05.08@artamir	[]	SQL_TEST_INSERT
-				 @0.0.0.8@2013.05.08@artamir	[]	SQL_Insert
-				 @0.0.0.7@2013.05.08@artamir	[]	SQL_Query
-				 @0.0.0.6@2013.05.07@artamir	[]	SQL_Main
-				 @0.0.0.5@2013.05.07@artamir	[]	SQL_CheckTable
-				 @0.0.0.4@2013.05.07@artamir	[]	SQL_Exec
-				 @0.0.0.3@2013.05.07@artamir	[]	SQL_Exec
-				 @0.0.0.2@2013.05.07@artamir	[]	SQL_IsTableExist
+		>Hist:																														
+				 @0.0.0.30@2013.05.14@artamir	[]	SQL_UPDATEORINSERT
+				 @0.0.0.29@2013.05.14@artamir	[+]	SQL_UpdateOrInsertByTI
+				 @0.0.0.28@2013.05.14@artamir	[+]	SQL_Update v1
+				 @0.0.0.27@2013.05.14@artamir	[+]	SQL_Insert v1
 		>Rev:0
 */
 
@@ -46,7 +26,7 @@ void sqlite_set_busy_timeout (int ms);
 void sqlite_set_journal_mode (string mode);
 #import	//}
 
-#define SQLVER	"0.0.0.25_2013.05.10"
+#define SQLVER	"0.0.0.28_2013.05.14"
 
 #define SQLSTRUC_HA		0	//Handle
 #define SQLSTRUC_COLS	1	//COUNT COLS
@@ -75,6 +55,7 @@ void sqlite_set_journal_mode (string mode);
 string	SQL_DB = "";
 int	SQL_Handles[];
 string SQL_ColsDesc[];
+string aKeyVal[];
 
 string 	SQL_getColName_v1(int col){
 	/**
@@ -222,6 +203,25 @@ void 	SQL_AddHandle(int h){
 	SQL_Handles[New_ROWS-1] = h;
 }
 
+void	SQL_AddKeyVal(string key, string val){
+	/**
+		\version	0.0.0.0
+		\date		2013.05.10
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	int ROWS = ArrayRange(aKeyVal,0);
+	int NewROWS = ROWS+1;
+	int LastRow = NewROWS-1;
+	ArrayResize(aKeyVal, NewROWS);
+	
+	aKeyVal[LastRow] = "@n"+key+"@v"+val;
+}
+
 bool	SQL_IsTableExist(string db, string table){
 	/**
 		\version	0.0.0.1
@@ -366,7 +366,8 @@ void	SQL_Deinit(){
 	
 }
 
-int	SQL_Insert(string& aKeyVal[][], string select = ""){
+//{ === Insert / Update v0
+int	SQL_Insert_v0(string& aKeyVal[][], string select = ""){
 	/**
 		\version	0.0.0.2
 		\date		2013.05.08
@@ -413,7 +414,7 @@ int	SQL_Insert(string& aKeyVal[][], string select = ""){
 	return(SQL_Exec(SQL_DB, q));	
 }
 
-int SQL_Update(string& aKeyVal[][], string where = ""){
+int SQL_Update_v0(string& aKeyVal[][], string where = ""){
 	/**
 		\version	0.0.0.0
 		\date		2013.05.08
@@ -443,6 +444,89 @@ int SQL_Update(string& aKeyVal[][], string where = ""){
 	
 	return(SQL_Exec(SQL_DB, q));
 }
+
+//}
+
+int	SQL_Insert(string& aKeyVal[], string select = ""){
+	/**
+		\version	0.0.1.3
+		\date		2013.05.14
+		\author		Morochin <artamir> Artiom
+		\details	Create new row and fill cols
+					if select != "" then insert used with select
+		\internal
+			>Hist:			
+					 @0.0.1.3@2013.05.14@artamir	[]	SQL_Insert Изменился входной массив aKeyVal
+					 @0.0.0.2@2013.05.08@artamir	[]	SQL_Insert
+					 @0.0.0.1@2013.05.08@artamir	[]	SQL_Insert
+			>Rev:0
+	*/
+
+	int ROWS = ArrayRange(aKeyVal,0);
+	int idx = 0;
+	
+	string q = "INSERT OR REPLACE INTO OE ";
+	string q_cols = "(";
+	string q_vals = "VALUES (";
+	
+	for(idx = 0; idx < ROWS; idx++){
+		//BP("SQL_Insert", "aKeyVal["+idx+"][0] = ", aKeyVal[idx][0], "StringLen() = ", StringLen(aKeyVal[idx][0]));
+		if(StringLen(aKeyVal[idx]) == 0) continue;
+		
+		if(idx >= 1){
+			q_cols = q_cols + ", ";
+			q_vals = q_vals + ", ";
+		}
+		
+		q_cols = q_cols + Struc_KeyValue_string(aKeyVal[idx],"@n");
+		q_vals = q_vals + Struc_KeyValue_string(aKeyVal[idx],"@v");
+	}
+	
+	q_cols = q_cols + ")";
+	q_vals = q_vals + ")";
+	
+	q = q + q_cols +" "+ q_vals;
+	//BP("SQL_Insert","SQL_DB = ", SQL_DB);
+	
+	if(StringLen(select) > 0){
+		q = select;
+	}
+	
+	return(SQL_Exec(SQL_DB, q));	
+}
+
+int SQL_Update(string& aKeyVal[], string where = ""){
+	/**
+		\version	0.0.1.1
+		\date		2013.05.14
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:	
+					 @0.0.1.1@2013.05.14@artamir	[]	SQL_Update Изменился входной массив aKeyVal
+			>Rev:0
+	*/
+	string q = "UPDATE OE SET ";
+	string exp = "";
+	
+	int ROWS = ArrayRange(aKeyVal,0);
+	
+	for(int idx = 0; idx < ROWS; idx++){
+		
+		if(StringLen(aKeyVal[idx]) == 0) continue;
+		
+		if(idx > 0){
+			exp = exp + ",";
+		}
+		
+		exp = exp + Struc_KeyValue_string(aKeyVal[idx],"@n") +"="+ Struc_KeyValue_string(aKeyVal[idx],"@v");
+	}
+	
+	q = q + exp + " WHERE " + where;
+	
+	return(SQL_Exec(SQL_DB, q));
+}
+
 
 int SQL_SelectByTI(int ti /** ticket*/, int& struc[]	/** array 0 - handle 1 - row counts	*/){
 	/**
@@ -475,8 +559,8 @@ int SQL_SelectByTI(int ti /** ticket*/, int& struc[]	/** array 0 - handle 1 - ro
 	return(rows);
 }
 
-//{ === SET STANDART DATA
-int SQL_setStandartDataByTI(int ti){
+//{ === SET STANDART DATA v0
+int SQL_setStandartDataByTI_v0(int ti){
 	/**
 		\version	0.0.0.2
 		\date		2013.05.10
@@ -500,25 +584,25 @@ int SQL_setStandartDataByTI(int ti){
 	int r = -1;
 	
 	r++;
-	aKeyVal[r][0] = SQL_getColName(SQL_TI); aKeyVal[r][1] = OrderTicket();
+	aKeyVal[r][0] = SQL_getColName(SQL_TI); 	aKeyVal[r][1] = OrderTicket();
 	r++;
-	aKeyVal[r][0] = SQL_getColName(SQL_TY); aKeyVal[r][1] = OrderType();
+	aKeyVal[r][0] = SQL_getColName(SQL_TY); 	aKeyVal[r][1] = OrderType();
 	r++;
-	aKeyVal[r][0] = SQL_getColName(SQL_OOP); aKeyVal[r][1] = Norm_symb(OrderOpenPrice(), Symbol(), 2);
+	aKeyVal[r][0] = SQL_getColName(SQL_OOP); 	aKeyVal[r][1] = Norm_symb(OrderOpenPrice(), Symbol(), 2);
 	r++;
-	aKeyVal[r][0] = SQL_getColName(SQL_OOT); aKeyVal[r][1] = OrderOpenTime();
+	aKeyVal[r][0] = SQL_getColName(SQL_OOT); 	aKeyVal[r][1] = OrderOpenTime();
 	r++;
-	aKeyVal[r][0] = SQL_getColName(SQL_TP); aKeyVal[r][1] = Norm_symb(OrderTakeProfit(), Symbol(), 2);
+	aKeyVal[r][0] = SQL_getColName(SQL_TP); 	aKeyVal[r][1] = Norm_symb(OrderTakeProfit(), Symbol(), 2);
 	r++;
-	aKeyVal[r][0] = SQL_getColName(SQL_SL); aKeyVal[r][1] = Norm_symb(OrderStopLoss(), Symbol(), 2);
+	aKeyVal[r][0] = SQL_getColName(SQL_SL); 	aKeyVal[r][1] = Norm_symb(OrderStopLoss(), Symbol(), 2);
 	r++;
-	aKeyVal[r][0] = SQL_getColName(SQL_MN); aKeyVal[r][1] = OrderMagicNumber();
+	aKeyVal[r][0] = SQL_getColName(SQL_MN); 	aKeyVal[r][1] = OrderMagicNumber();
 	r++;
-	aKeyVal[r][0] = SQL_getColName(SQL_LOT); aKeyVal[r][1] = Norm_symb(OrderLots(), Symbol(), 2);
+	aKeyVal[r][0] = SQL_getColName(SQL_LOT); 	aKeyVal[r][1] = Norm_symb(OrderLots(), Symbol(), 2);
 	r++;
-	aKeyVal[r][0] = SQL_getColName(SQL_SY); aKeyVal[r][1] = "'"+OrderSymbol()+"'";
+	aKeyVal[r][0] = SQL_getColName(SQL_SY); 	aKeyVal[r][1] = "'"+OrderSymbol()+"'";
 	r++;
-	aKeyVal[r][0] = SQL_getColName(SQL_OP); aKeyVal[r][1] = Norm_symb(OrderProfit(), Symbol(), 2);
+	aKeyVal[r][0] = SQL_getColName(SQL_OP); 	aKeyVal[r][1] = Norm_symb(OrderProfit(), Symbol(), 2);
 	
 	int res = -1;
 	
@@ -531,6 +615,89 @@ int SQL_setStandartDataByTI(int ti){
 	Print("SQL_setStandartDataByTI res = "+res);
 } 
 //}
+
+//{ === SET STANDART DATA
+int SQL_setStandartDataByTI(int ti){
+	/**
+		\version	0.0.1.3
+		\date		2013.05.14
+		\author		Morochin <artamir> Artiom
+		\details	Устанавливает стандартные данные по тикету
+		\internal
+			>Hist:			
+					 @0.0.1.3@2013.05.14@artamir	[]	SQL_setStandartDataByTI - Изменился входной массив SQL_Update и SQL_Insert
+					 @0.0.0.2@2013.05.10@artamir	[]	SQL_setStandartDataByTI
+					 @0.0.0.1@2013.05.10@artamir	[]	SQL_setStandartDataByTI
+			>Rev:0
+	*/
+
+	int struc[SQLSTRUC_MAX];
+	
+	if(!OrderSelect(ti, SELECT_BY_TICKET)) return(-1);
+	
+	int ROWS = SQL_SelectByTI(ti, struc);
+	
+	ArrayResize(aKeyVal, 0);
+	
+	int r = -1;
+	
+	r++;
+	SQL_AddKeyVal(SQL_getColName(SQL_TI), OrderTicket());
+	r++;
+	SQL_AddKeyVal(SQL_getColName(SQL_TY), OrderType());
+	r++;
+	SQL_AddKeyVal(SQL_getColName(SQL_OOP), Norm_symb(OrderOpenPrice(), Symbol(), 2));
+	r++;
+	SQL_AddKeyVal(SQL_getColName(SQL_OOT), OrderOpenTime());
+	r++;
+	SQL_AddKeyVal(SQL_getColName(SQL_TP), Norm_symb(OrderTakeProfit(), Symbol(), 2));
+	r++;
+	SQL_AddKeyVal(SQL_getColName(SQL_SL), Norm_symb(OrderStopLoss(), Symbol(), 2));
+	r++;
+	SQL_AddKeyVal(SQL_getColName(SQL_MN), OrderMagicNumber());
+	r++;
+	SQL_AddKeyVal(SQL_getColName(SQL_LOT), Norm_symb(OrderLots(), Symbol(), 2));
+	r++;
+	SQL_AddKeyVal(SQL_getColName(SQL_SY), "'"+OrderSymbol()+"'");
+	r++;
+	SQL_AddKeyVal(SQL_getColName(SQL_OP), Norm_symb(OrderProfit(), Symbol(), 2));
+	
+	int res = -1;
+	
+	if(ROWS >= 1){
+		res = SQL_Update(aKeyVal, "TI="+ti);
+	}else{
+		res = SQL_Insert(aKeyVal);
+	}
+	
+	Print("SQL_setStandartDataByTI res = "+res);
+} 
+//}
+
+void SQL_UpdateOrInsertByTI(int ti){
+	/**
+		\version	0.0.0.1
+		\date		2013.05.14
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.05.14@artamir	[]	SQL_UpdateOrInsertByTI
+			>Rev:0
+	*/
+	
+	int struc[SQLSTRUC_MAX];
+	int ROWS = SQL_SelectByTI(ti, struc);
+	
+	if(struc[SQLSTRUC_ROWS] == 0){
+		SQL_setStandartDataByTI(ti);
+	}
+	
+	SQL_Update(aKeyVal, "TI="+ti);
+	
+	
+}
+
 
 //{	=== TESTS
 void	SQL_TESTS(){
@@ -559,19 +726,26 @@ void	SQL_TESTS(){
 				SQL_TEST_UPDATE();
 				test_update++;
 			}//
+			
+			static int test_select;
+			if(test_select <= 10){//
+				SQL_TEST_SELECT();
+				test_select++;
+			}//
 		*/
+	
+	static int test_updateorinsert;
+	if(test_updateorinsert <= 1){
+		test_updateorinsert++;
+		
+		SQL_TEST_UPDATEORINSERT();
+	}
 	
 	static int test_setstandartdata;
 	if(test_setstandartdata <= 1){
 		test_setstandartdata++;
 		
 		SQL_TEST_SETSTANDARTDATA();
-	}
-	
-	static int test_select;
-	if(test_select <= 10){
-		SQL_TEST_SELECT();
-		test_select++;
 	}
 	
 	static int test_selectByTI;
@@ -700,4 +874,26 @@ int SQL_TEST_SETSTANDARTDATA(){
 	}
 
 }	
+
+int SQL_TEST_UPDATEORINSERT(){
+	/**
+		\version	0.0.0.1
+		\date		2013.05.14
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.05.14@artamir	[]	SQL_UPDATEORINSERT
+			>Rev:0
+	*/
+
+	for(int i = 0; i <= OrdersTotal(); i++){
+		if(!OrderSelect(i, SELECT_BY_POS, MODE_TRADES)) continue;
+		
+		ArrayResize(aKeyVal,0);
+		
+		SQL_AddKeyVal("IP", OI_isPendingByType(OrderType()));
+		SQL_UpdateOrInsertByTI(OrderTicket());
+	}
+}
 //}

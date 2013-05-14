@@ -1,7 +1,8 @@
 	/*
-		>Ver	:	0.1.0.38
-		>Date	:	2013.05.07
-		>Hist:															
+		>Ver	:	0.1.0.39
+		>Date	:	2013.05.14
+		>Hist:																
+				 @0.1.0.39@2013.05.14@artamir	[+] sysOrderInfo	
 				 @0.1.0.38@2013.05.07@artamir	[]	Main
 				 @0.1.37@2013.04.25@artamir	[]	
 				 @0.1.36@2013.04.25@artamir	[*] sysTrades	
@@ -35,7 +36,7 @@
 			DO NOT CHANGE!!!!
 	*/
 
-#define	ELTVER	"0.1.0.38_2013.05.07"
+#define	ELTVER	"0.1.0.39_2013.05.14"
 #define ELTREV	"$rev$"	
 //...	//Include	========================================
 
@@ -45,6 +46,7 @@
 #include	<sysNormalize.mqh>								//Pref: Norm
 #include	<sysStructure.mqh>								//Pref: Struc
 #include	<sysMarketInfo.mqh>								//Pref:	MI
+#include	<sysOrderInfo.mqh>								//Pref:	OI
 //----------------------------------------------------------
 #include	<sysArray.mqh>									//Pref:	A
 #include	<sysDebug.mqh>

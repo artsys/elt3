@@ -1,7 +1,9 @@
 	/*
-		>Ver	:	0.0.33
-		>Date	:	2013.03.06
-		>Hist	:																		
+		>Ver	:	0.0.0.35
+		>Date	:	2013.05.10
+		>Hist	:																				
+					@0.0.0.35@2013.05.10@artamir	[+]	A_s_releaseArray
+					@0.0.0.34@2013.05.10@artamir	[]	A_d_releaseArray
 					@0.0.33@2013.03.06@artamir	[]	A_Assertion_UNDER
 					@0.0.32@2013.03.06@artamir	[]	A_Assertion_UNDER
 					@0.0.31@2013.02.23@artamir	[]	A_d_setPropByIndex
@@ -156,6 +158,22 @@ void	A_d_eraseArray2(double	&d[][]){
 	//------------------------------------------------------
 	ArrayResize(d, 0);
 }
+
+void	A_s_eraseArray2(string &d[][]){
+	/*
+		>Ver	:	0.0.0.3
+		>Date	:	2013.05.10
+		>Hist	:		
+					@0.0.0.3@2013.05.10@artamir	[]	A_d_releaseArray
+					@0.0.0.2@2013.05.10@artamir	[]	A_d_releaseArray
+		>Author	:	Morochin <artamir> Artiom
+		>Desc	:
+	*/
+	
+	//------------------------------------------------------
+	ArrayResize(d, 0);
+}
+
 
 void	A_d_Copy1To2(double &s[], double &d[][], int d_COLS = 1){
 	/*

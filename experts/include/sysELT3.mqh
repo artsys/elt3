@@ -1,7 +1,8 @@
 	/*
-		>Ver	:	0.1.0.39
-		>Date	:	2013.05.14
-		>Hist:																
+		>Ver	:	0.1.0.40
+		>Date	:	2013.05.15
+		>Hist:																	
+				 @0.1.0.40@2013.05.15@artamir	[]	Main
 				 @0.1.0.39@2013.05.14@artamir	[+] sysOrderInfo	
 				 @0.1.0.38@2013.05.07@artamir	[]	Main
 				 @0.1.37@2013.04.25@artamir	[]	
@@ -36,7 +37,7 @@
 			DO NOT CHANGE!!!!
 	*/
 
-#define	ELTVER	"0.1.0.39_2013.05.14"
+#define	ELTVER	"0.1.0.40_2013.05.15"
 #define ELTREV	"$rev$"	
 //...	//Include	========================================
 
@@ -63,18 +64,21 @@
 int Main(){
 	/**
 		\brief		Основная функция 
-		\version	0.0.0.2
-		\date		2013.05.07
+		\version	0.0.0.3
+		\date		2013.05.15
 		\author		Morochin <artamir> Artiom
 		\details		Must be called in begining of "start()" 
 		\internal
-					>Hist:	
+					>Hist:		
+							 @0.0.0.3@2013.05.15@artamir	[]	Main
 							 @0.0.0.2@2013.05.07@artamir	[]	Main
 						@0.0.1@2012.10.04@artamir	[]
 	*/
 	//------------------------------------------------------
 	T_Start();
 	T_End();
+	
+	SQL_Main();
 }
 
 int ELT_init(string fn){

@@ -1,10 +1,16 @@
 /**
-	\version	0.0.0.35
-	\date		2013.05.14
+	\version	0.0.0.41
+	\date		2013.05.15
 	\author		Morochin <artamir> Artiom
 	\details	Detailed description
 	\internal
-		>Hist:																																			
+		>Hist:																																									
+				 @0.0.0.41@2013.05.15@artamir	[]	SQL_setStandartCloseDataByTI
+				 @0.0.0.40@2013.05.15@artamir	[]	SQL_Init
+				 @0.0.0.39@2013.05.15@artamir	[]	SQL_getColType
+				 @0.0.0.38@2013.05.15@artamir	[]	SQL_setStandartDataByTI
+				 @0.0.0.37@2013.05.15@artamir	[]	SQL_InitColsArray
+				 @0.0.0.36@2013.05.14@artamir	[]	SQL_Select
 				 @0.0.0.35@2013.05.14@artamir	[]	SQL_setStandartCloseDataByTI
 				 @0.0.0.34@2013.05.14@artamir	[]	SQL_Select
 				 @0.0.0.33@2013.05.14@artamir	[]	SQL_AddKeyVal
@@ -31,7 +37,7 @@ void sqlite_set_busy_timeout (int ms);
 void sqlite_set_journal_mode (string mode);
 #import	//}
 
-#define SQLVER		"0.0.0.35_2013.05.14"
+#define SQLVER		"0.0.0.41_2013.05.15"
 
 #define SQLSTRUC_HA		0	//Handle
 #define SQLSTRUC_COLS	1	//COUNT COLS
@@ -54,12 +60,17 @@ void sqlite_set_journal_mode (string mode);
 #define SQL_IC	13	//IsClosed()
 
 //{ === Close data
-#define SQL_CT	14	//CloseTime()
-#define SQL_CP	15	//ClosePrice()
+#define SQL_OCT	14	//CloseTime()
+#define SQL_OCP	15	//ClosePrice()
 #define SQL_CM	16	//CloseMethod()
 //}
 
-#define SQL_MAX 17	//MAX COLS
+//{ === Profit data
+#define SQL_PIP	17	//Profit in pips
+#define SQL_PID	18	//Profit in deposit curency
+//}
+
+#define SQL_MAX 19	//MAX COLS
 
 
 string	SQL_DB = "";
@@ -165,14 +176,34 @@ string SQL_getColName(int col){
 	return(name);
 }
 
-void	SQL_InitColsArray(){
+string SQL_getColType(int col){
 	/**
-		\version	0.0.0.0
-		\date		2013.05.10
+		\version	0.0.0.2
+		\date		2013.05.15
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:
+			>Hist:		
+					 @0.0.0.2@2013.05.15@artamir	[]	SQL_getColType
+					 @0.0.0.1@2013.05.10@artamir	[]	SQL_getColName
+			>Rev:0
+	*/
+
+	string name = Struc_KeyValue_string(SQL_ColsDesc[col], "@t");
+	
+	return(name);
+}
+
+
+void	SQL_InitColsArray(){
+	/**
+		\version	0.0.0.1
+		\date		2013.05.15
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.05.15@artamir	[]	SQL_InitColsArray
 			>Rev:0
 	*/
 
@@ -181,19 +212,21 @@ void	SQL_InitColsArray(){
 	SQL_ColsDesc[SQL_TY]	= "@nTY@tINTEGER";
 	SQL_ColsDesc[SQL_OOP]	= "@nOOP@tREAL";
 	SQL_ColsDesc[SQL_OOT]	= "@nOOT@tINTEGER";
-	SQL_ColsDesc[4] = "@nTP@tREAL";
-	SQL_ColsDesc[5] = "@nSL@tREAL";
-	SQL_ColsDesc[6] = "@nMN@tINTEGER";
-	SQL_ColsDesc[7] = "@nLOT@tREAL";
-	SQL_ColsDesc[8] = "@nSY@tTEXT";
-	SQL_ColsDesc[9] = "@nOP@tREAL";
-	SQL_ColsDesc[10] = "@nIW@tINTEGER";
-	SQL_ColsDesc[11] = "@nIP@tINTEGER";
-	SQL_ColsDesc[12] = "@nIM@tINTEGER";
-	SQL_ColsDesc[13] = "@nIC@tINTEGER";
-	SQL_ColsDesc[14] = "@nCT@tINTEGER";
-	SQL_ColsDesc[15] = "@nCP@tREAL";
+	SQL_ColsDesc[SQL_TP] = "@nTP@tREAL";
+	SQL_ColsDesc[SQL_SL] = "@nSL@tREAL";
+	SQL_ColsDesc[SQL_MN] = "@nMN@tINTEGER";
+	SQL_ColsDesc[SQL_LOT] = "@nLOT@tREAL";
+	SQL_ColsDesc[SQL_SY] = "@nSY@tTEXT";
+	SQL_ColsDesc[SQL_OP] = "@nOP@tREAL";
+	SQL_ColsDesc[SQL_IW] = "@nIW@tINTEGER";
+	SQL_ColsDesc[SQL_IM] = "@nIM@tINTEGER";
+	SQL_ColsDesc[SQL_IP] = "@nIP@tINTEGER";
+	SQL_ColsDesc[SQL_IC] = "@nIC@tINTEGER";
+	SQL_ColsDesc[SQL_OCT] = "@nOCT@tINTEGER";
+	SQL_ColsDesc[SQL_OCP] = "@nOCP@tREAL";
 	SQL_ColsDesc[SQL_CM] = "@nCM@tINTEGER";
+	SQL_ColsDesc[SQL_PIP] = "@nPIP@tINTEGER";
+	SQL_ColsDesc[SQL_PID] = "@nPID@tREAL";
 	
 }
 
@@ -362,14 +395,44 @@ void	SQL_CheckTable(string db){
 		
 }
 
-void	SQL_Init(){
+void	SQL_CheckTable_v1(string db){
 	/**
-		\version	0.0.0.2
-		\date		2013.05.08
+		\version	0.0.0.0
+		\date		2013.05.15
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:		
+			>Hist:
+			>Rev:0
+	*/
+
+	if(SQL_IsTableExist(db, "OE")) return;
+	
+	string q = "CREATE TABLE OE(";
+	
+	for(int i = 0; i < ArrayRange(SQL_ColsDesc,0); i++){
+		if(i >= 1){
+			q = q + ", ";
+		} 
+		
+		q = q + SQL_getColName(i) + " " + SQL_getColType(i);
+	}
+	
+	q = q + ")";
+	
+	SQL_Exec(db, q);
+	
+}
+
+void	SQL_Init(){
+	/**
+		\version	0.0.0.3
+		\date		2013.05.15
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:			
+					 @0.0.0.3@2013.05.15@artamir	[]	SQL_Init
 					 @0.0.0.2@2013.05.08@artamir	[]	SQL_Main
 					 @0.0.0.1@2013.05.07@artamir	[]	SQL_Main
 			>Rev:0
@@ -379,7 +442,7 @@ void	SQL_Init(){
 	SQL_DB = TerminalPath()+"\\experts\\files\\"+_fn;
 	
 	SQL_InitColsArray();
-	SQL_CheckTable(SQL_DB);
+	SQL_CheckTable_v1(SQL_DB);
 }
 
 void	SQL_Deinit(){
@@ -398,6 +461,25 @@ void	SQL_Deinit(){
 		sqlite_free_query(SQL_Handles[i]);
 	}
 	
+}
+
+void	SQL_Main(){
+	/**
+		\version	0.0.0.0
+		\date		2013.05.15
+		\author		Morochin <artamir> Artiom
+		\details	Вызывается на каждом тике. обновляет стандартные данные о текущих ордерах.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	for(int i = 0; i<= OrdersTotal(); i++){
+		if(!OrderSelect(i, SELECT_BY_POS, MODE_TRADES)) continue;
+		
+		//---------------------------------
+		SQL_setStandartDataByTI(OrderTicket());
+	}
 }
 
 //{ === Insert / Update v0
@@ -561,15 +643,16 @@ int SQL_Update(string& aKeyVal[], string where = ""){
 	return(SQL_Exec(SQL_DB, q));
 }
 
-int SQL_Select(string table_name, string& awhere[], int& struc[]){
+int SQL_Select(string table_name, string& awhere[], int& struc[], string free_select = ""){
 	/**
-		\version	0.0.0.1
+		\version	0.0.0.2
 		\date		2013.05.14
 		\author		Morochin <artamir> Artiom
 		\details	Открывает запрос по заданным параметрам
 					По умолчанию возвращает все строки таблицы.
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2013.05.14@artamir	[]	SQL_Select
 					 @0.0.0.1@2013.05.14@artamir	[]	SQL_Select
 			>Rev:0
 	*/
@@ -588,6 +671,8 @@ int SQL_Select(string table_name, string& awhere[], int& struc[]){
 			select = select + Struc_KeyValue_string(awhere[i], "@v")+" ";
 		}
 	}
+	
+	select = select + free_select;
 	
 	int cols[1];
 	Print(select);
@@ -696,12 +781,13 @@ int SQL_setStandartDataByTI_v0(int ti){
 //{ === SET STANDART DATA
 int SQL_setStandartDataByTI(int ti){
 	/**
-		\version	0.0.1.3
-		\date		2013.05.14
+		\version	0.0.1.4
+		\date		2013.05.15
 		\author		Morochin <artamir> Artiom
 		\details	Устанавливает стандартные данные по тикету
 		\internal
-			>Hist:			
+			>Hist:				
+					 @0.0.1.4@2013.05.15@artamir	[]	SQL_setStandartDataByTI
 					 @0.0.1.3@2013.05.14@artamir	[]	SQL_setStandartDataByTI - Изменился входной массив SQL_Update и SQL_Insert
 					 @0.0.0.2@2013.05.10@artamir	[]	SQL_setStandartDataByTI
 					 @0.0.0.1@2013.05.10@artamir	[]	SQL_setStandartDataByTI
@@ -722,6 +808,8 @@ int SQL_setStandartDataByTI(int ti){
 	SQL_AddKeyVal(SQL_getColName(SQL_TY), OrderType());
 	SQL_AddKeyVal(SQL_getColName(SQL_OOP), Norm_symb(OrderOpenPrice(), Symbol(), 2));
 	SQL_AddKeyVal(SQL_getColName(SQL_OOT), OrderOpenTime());
+	SQL_AddKeyVal(SQL_getColName(SQL_OCP), Norm_symb(OrderClosePrice(), Symbol(), 2));
+	SQL_AddKeyVal(SQL_getColName(SQL_OCT), OrderCloseTime());
 	SQL_AddKeyVal(SQL_getColName(SQL_TP), Norm_symb(OrderTakeProfit(), Symbol(), 2));
 	SQL_AddKeyVal(SQL_getColName(SQL_SL), Norm_symb(OrderStopLoss(), Symbol(), 2));
 	SQL_AddKeyVal(SQL_getColName(SQL_MN), OrderMagicNumber());
@@ -729,11 +817,14 @@ int SQL_setStandartDataByTI(int ti){
 	SQL_AddKeyVal(SQL_getColName(SQL_SY), "'"+OrderSymbol()+"'");
 	SQL_AddKeyVal(SQL_getColName(SQL_OP), Norm_symb(OrderProfit(), Symbol(), 2));
 	
-	//{ === Extra data
+	//{ 	=== Extra data
 	SQL_AddKeyVal(SQL_getColName(SQL_IP), OI_isPendingByType(OrderType()));
 	SQL_AddKeyVal(SQL_getColName(SQL_IM), OI_isMarketByType(OrderType()));
 	SQL_AddKeyVal(SQL_getColName(SQL_IW), OI_isWorkedBySelected());
 	SQL_AddKeyVal(SQL_getColName(SQL_IC), OI_isClosedBySelected());
+	//..	=== Profit
+	SQL_AddKeyVal(SQL_getColName(SQL_PIP), OI_ProfitInPipsBySelected());
+	SQL_AddKeyVal(SQL_getColName(SQL_PID), OrderProfit());
 	//}
 	
 	int res = -1;
@@ -775,12 +866,13 @@ void SQL_UpdateOrInsertByTI(int ti){
 //{ === SET STANDART CLOSE DATA
 void SQL_setStandartCloseDataByTI(int ti){
 	/**
-		\version	0.0.0.1
-		\date		2013.05.14
+		\version	0.0.0.2
+		\date		2013.05.15
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2013.05.15@artamir	[]	SQL_setStandartCloseDataByTI
 					 @0.0.0.1@2013.05.14@artamir	[]	SQL_setStandartCloseDataByTI
 			>Rev:0
 	*/
@@ -789,9 +881,11 @@ void SQL_setStandartCloseDataByTI(int ti){
 	
 	//Предыдущей процедурой был выбран ордер, его и используем
 	ArrayResize(SQL_aKeyVal, 0);
-	SQL_AddKeyVal(SQL_getColName(SQL_CP), DoubleToStr(OrderClosePrice(), Digits));
-	SQL_AddKeyVal(SQL_getColName(SQL_CT), OrderCloseTime());
+	SQL_AddKeyVal(SQL_getColName(SQL_OCP), DoubleToStr(OrderClosePrice(), Digits));
+	SQL_AddKeyVal(SQL_getColName(SQL_OCT), OrderCloseTime());
 	SQL_AddKeyVal(SQL_getColName(SQL_CM), OI_CloseMethodBySelected());
+	
+	int res = SQL_Update(SQL_aKeyVal, "TI="+ti);
 }
 //}
 

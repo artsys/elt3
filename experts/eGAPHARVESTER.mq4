@@ -1,10 +1,16 @@
 	/**
-		\version	0.1.0.19
-		\date		2013.05.14
+		\version	0.1.0.25
+		\date		2013.05.15
 		\author		Morochin <artamir> Artiom
 		\details	Must be called in begining of "start()" 
 		\internal
-			>Hist:																		
+			>Hist:																								
+					 @0.1.0.25@2013.05.15@artamir	[]	TralBSSS
+					 @0.1.0.24@2013.05.15@artamir	[]	TralBSSS
+					 @0.1.0.23@2013.05.15@artamir	[]	getQOrderForTral
+					 @0.1.0.22@2013.05.14@artamir	[]	getOrdersNearPrice
+					 @0.1.0.21@2013.05.14@artamir	[+]	TralBSSS_v1
+					 @0.1.0.20@2013.05.14@artamir	[]	getOrdersNearPrice
 					 @0.1.0.19@2013.05.14@artamir	[]	isOrdersByMN
 					 @0.1.0.18@2013.05.14@artamir	[+]	isOrdersByMN - rewrite under sqlite
 					 @0.0.17@2013.04.30@artamir	[]	startext
@@ -25,7 +31,7 @@
 	*/
 
 #define	EXP		"eGH"
-#define	VER		"0.1.0.19_2013.05.14"
+#define	VER		"0.1.0.25_2013.05.14"
 #define EXPREV	""
 
 //{	=== Extern 
@@ -47,8 +53,11 @@ extern string	EXP_1	= "=== PHASE1 ==========";			//{
 	//}
 
 extern string	EXP_4	= "=== PHASE2 ==========";			//..	
-	
-	//}
+	extern	bool UsePhase2 = false;
+	//extern	int	BU_pip = 2;				//Через сколько пунктов переводим в БУ
+	extern	int TRAL_Begin_pip = 2;			//Цена закрытия должна уйти в 2 пункта плюса от сл
+	extern	int TRAL_Step_pip = 1;			//если цена ушла больше чем на 2+1 пункт, то двигаем на 1 пункт
+//}
 
 extern string	EXP_BP	= "=== BP   ==========";			//{	BREAK POINTS
 	extern bool	Debug			= false;
@@ -119,7 +128,7 @@ int start(){
 	}else{
 		while(IsExpertEnabled()){
 			startext();
-			Sleep(500); //5 sec.
+			Sleep(50); //0.5 sec.
 		}
 	}
 	//------------------------------------------------------
@@ -197,7 +206,7 @@ int startext(){
 	}
 	
 	if(isPhase2()){
-		//eGH_Phase2();
+		eGH_Phase2();
 	}
 	
 	//------------------------------------------------------
@@ -241,6 +250,16 @@ bool isPhase1(){
 
 bool isPhase2(){
 	//return(CWT(DOW_Ph2, THS_Ph2, TMS_Ph2, THE_Ph2, TME_Ph2));
+	if(!UsePhase2) return(false);
+	
+	string a[];
+	int struc[SQLSTRUC_MAX];
+	SQL_Select("", a, struc, getMarkets());
+	if(struc[SQLSTRUC_ROWS] > 0){
+		return(true);
+	}
+	
+	return(false);
 }
 
 //{	=== PHASE 1
@@ -255,7 +274,7 @@ void eGH_Phase1(){
 	*/
 
 	if(isOrdersByMN()){
-		TralBSSS();
+		TralBSSS_v1();
 	}else{
 		OpenBSSS();
 	}
@@ -339,6 +358,122 @@ void	TralBSSS(){
 	}
 
 }
+
+void	TralBSSS_v1(){
+	/**
+		\version	0.0.0.1
+		\date		2013.05.14
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.05.14@artamir	[]	TralBSSS
+			>Rev:0
+	*/
+
+	double new_pr = Norm_symb(0);
+	
+	int q_handle = getOrdersNearPrice();
+	while(sqlite_next_row(q_handle) == 1){
+		int ti = StrToInteger(sqlite_get_col(q_handle, SQL_TI));
+		int ty = StrToInteger(sqlite_get_col(q_handle, SQL_TY));
+		
+		if(ty == OP_BUYSTOP){
+			new_pr = MarketInfo(Symbol(), MODE_ASK)+TRAL_DeltaPips*Point;
+			TR_MoveOrder(ti, new_pr);
+		}
+		
+		if(ty == OP_SELLSTOP){
+			new_pr = MarketInfo(Symbol(), MODE_BID)-TRAL_DeltaPips*Point;
+			TR_MoveOrder(ti, new_pr);
+		}
+	}
+}
+//}
+
+//{ === PHASE2
+void eGH_Phase2(){
+	/**
+		\version	0.0.0.2
+		\date		2013.05.15
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:		
+					 @0.0.0.2@2013.05.15@artamir	[]	TralBSSS
+					 @0.0.0.1@2013.05.15@artamir	[]	TralBSSS
+			>Rev:0
+	*/
+	//PH2_Tral();
+	CloseAllPendings();
+}
+
+string getOrderForTral(){
+	/**
+		\version	0.0.0.1
+		\date		2013.05.15
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.05.15@artamir	[]	getQOrderForTral
+			>Rev:0
+	*/
+
+	
+	string q = " (SELECT * FROM OE ";
+	q = q + " WHERE IM=1 ";
+	q = q + " AND IW=1";
+	q = q + " AND MN="+TR_MN;
+	q = q + " AND PIP>0 ";
+	q = q + " AND (OCP-SL)/"+DoubleToStr(Point, Digits)+" > "+(TRAL_Begin_pip+TRAL_Step_pip); 
+	q = q + ")";
+	return(q);
+}
+
+string getPendings(){
+	string q = "(";
+	q = q + " SELECT * FROM OE ";
+	q = q + " WHERE IP=1";
+	q = q + " AND IW=1";
+	q = q + " AND MN="+TR_MN;
+	q = q + ")";
+	return(q);
+}
+
+string getMarkets(){
+	string q = "(";
+	q = q + " SELECT * FROM OE ";
+	q = q + " WHERE IM=1";
+	q = q + " AND IW=1";
+	q = q + " AND MN="+TR_MN;
+	q = q + ")";
+	return(q);
+}
+
+void CloseAllPendings(){
+	/**
+		\version	0.0.0.0
+		\date		2013.05.15
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	string a[];
+	int struc[SQLSTRUC_MAX];
+	SQL_Select("",a,struc,getPendings());
+	
+	
+	while(sqlite_next_row(struc[SQLSTRUC_HA]) == 1){
+		int ti = StrToInteger(sqlite_get_col(struc[SQLSTRUC_HA], SQL_TI));
+		TR_CloseByTicket(ti);
+	}
+}
+
+
 //}
 
 //}
@@ -544,6 +679,34 @@ bool isOrdersByMN(int mn = -1){
 	
 	return(false);
 }	
+
+int getOrdersNearPrice(){
+	/**
+		\version	0.0.0.2
+		\date		2013.05.14
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:		
+					 @0.0.0.2@2013.05.14@artamir	[]	getOrdersNearPrice
+					 @0.0.0.1@2013.05.14@artamir	[]	getOrdersNearPrice
+			>Rev:0
+	*/
+
+	int struc[SQLSTRUC_MAX];
+	ArrayResize(SQL_aKeyVal,0);
+	
+	string select = "(";
+	select = select + " SELECT * , CASE WHEN TY=0 OR TY=4 THEN ABS(OOP-"+Ask+") ELSE ABS(OOP-"+Bid+") END AS DELTA ";
+	select = select + " FROM OE ";
+	select = select + " WHERE IW=1 AND IP=1 AND MN="+TR_MN;
+	select = select + " ORDER BY DELTA ASC";
+	select = select + ")";
+	SQL_Select("", SQL_aKeyVal, struc, select);
+	
+	return(struc[SQLSTRUC_HA]);
+	
+}
 //}
 
 //}

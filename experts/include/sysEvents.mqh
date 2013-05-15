@@ -1,7 +1,9 @@
 /*
-		>Ver	:	0.0.0.16
+		>Ver	:	0.0.0.18
 		>Date	:	2013.05.14
-		>Hist:												
+		>Hist:														
+				 @0.0.0.18@2013.05.14@artamir	[]	onChangeType
+				 @0.0.0.17@2013.05.14@artamir	[]	onChangeOP
 				 @0.0.0.16@2013.05.14@artamir	[]	onCloseOrder
 				 @0.0.0.15@2013.05.14@artamir	[]	onNewOrder
 				 @0.0.14@2013.03.06@artamir	[]	onChangeType
@@ -22,7 +24,7 @@
 		>Pref:	E	
 */
 
-#define EVER	"0.0.0.16_2013.05.14"
+#define EVER	"0.0.0.17_2013.05.14"
 
 //{	//=== GLOBAL VARIABLES
 	//{	@ÌÀÑÑÈÂ ÎÐÄÅÐÎÂ/ÑÎÁÛÒÈÉ
@@ -191,9 +193,10 @@ void onNewOrder(int ticket){
 
 void onChangeType(int ticket, int ty_new, int ty_old = -1){
 	/*
-		>Ver	:	0.0.3
-		>Date	:	2013.03.06
-		>Hist	:
+		>Ver	:	0.0.0.4
+		>Date	:	2013.05.14
+		>Hist	:	
+					@0.0.0.4@2013.05.14@artamir	[]	onChangeType
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:
 	*/
@@ -209,13 +212,17 @@ void onChangeType(int ticket, int ty_new, int ty_old = -1){
 	}
 	
 	OE_setChangeTYBuTicket(ticket, ty_new);
+	string a[1];
+	a[0] = "@nTY@v"+ty_new;
+	SQL_Update(a, "TI="+ticket);
 }
 
 void onChangeOP(int ticket, double op.new, double op.old = -1){
 	/*
-		>Ver	:	0.0.2
-		>Date	:	2013.02.23
-		>Hist	:
+		>Ver	:	0.0.0.3
+		>Date	:	2013.05.14
+		>Hist	:	
+					@0.0.0.3@2013.05.14@artamir	[]	onChangeOP
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:
 	*/
@@ -230,6 +237,9 @@ void onChangeOP(int ticket, double op.new, double op.old = -1){
 	}
 	
 	OE_setOPByTicket(ticket, op.new);
+	string a[1];
+	a[0] = "@nOOP@v"+DoubleToStr(op.new, Digits);
+	SQL_Update(a, "TI="+ticket);
 }
 
 void onChangeSL(int ticket, double sl.new, double sl.old = -1){

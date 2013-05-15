@@ -1,10 +1,11 @@
 	/**
-		\version	0.0.0.5
-		\date		2013.05.14
+		\version	0.0.0.6
+		\date		2013.05.15
 		\author		Morochin <artamir> Artiom
 		\details	
 		\internal
-			>Hist:					
+			>Hist:						
+					 @0.0.0.6@2013.05.15@artamir	[]	OI_ProfitInPipsBySelected
 					 @0.0.0.5@2013.05.14@artamir	[]	OI_CloseMethodBySelected
 					 @0.0.0.4@2013.05.14@artamir	[]	OI_isWorkedBySelected
 					 @0.0.0.3@2013.05.14@artamir	[]	OI_isClosedBySelected
@@ -90,11 +91,11 @@ bool OI_isWorkedBySelected(){
 	return(true);
 }
 
-#define OI_CM_Market	0;			//Закрытие с рынка
-#define OI_CM_TP		1;			//Закрытие по тп
-#define OI_CM_SL		2;			//Закрытие по sl
-#define OI_CM_DEL		3;			//Удаление отложенного ордера.
-#define OI_CM_IW		100;		//Ордер рабочий (т.е. еще в рынке)
+#define OI_CM_Market	0			//Закрытие с рынка
+#define OI_CM_TP		1			//Закрытие по тп
+#define OI_CM_SL		2			//Закрытие по sl
+#define OI_CM_DEL		3			//Удаление отложенного ордера.
+#define OI_CM_IW		100			//Ордер рабочий (т.е. еще в рынке)
 int OI_CloseMethodBySelected(){
 	/**
 		\version	0.0.0.1
@@ -125,4 +126,26 @@ int OI_CloseMethodBySelected(){
 	
 	return(OI_CM_Market);
 	
+}
+
+int OI_ProfitInPipsBySelected(){
+	/**
+		\version	0.0.0.1
+		\date		2013.05.15
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.05.15@artamir	[]	OI_ProfitInPipsBySelected
+			>Rev:0
+	*/
+
+	int pips = 0;
+	
+	if(OI_isPendingByType(OrderType())) return(0);
+	
+	//-------------------------------------
+	pips = (OrderClosePrice()-OrderOpenPrice())/Point;
+
+	return(pips);	
 }

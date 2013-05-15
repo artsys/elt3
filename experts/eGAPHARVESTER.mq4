@@ -1,10 +1,11 @@
 	/**
-		\version	0.1.0.25
+		\version	0.1.0.26
 		\date		2013.05.15
 		\author		Morochin <artamir> Artiom
 		\details	Must be called in begining of "start()" 
 		\internal
-			>Hist:																								
+			>Hist:																									
+					 @0.1.0.26@2013.05.15@artamir	[]	CloseAllPendings
 					 @0.1.0.25@2013.05.15@artamir	[]	TralBSSS
 					 @0.1.0.24@2013.05.15@artamir	[]	TralBSSS
 					 @0.1.0.23@2013.05.15@artamir	[]	getQOrderForTral
@@ -31,7 +32,7 @@
 	*/
 
 #define	EXP		"eGH"
-#define	VER		"0.1.0.25_2013.05.14"
+#define	VER		"0.1.0.26_2013.05.14"
 #define EXPREV	""
 
 //{	=== Extern 
@@ -473,6 +474,27 @@ void CloseAllPendings(){
 	}
 }
 
+void PH2_Tral(){
+	/**
+		\version	0.0.0.1
+		\date		2013.05.15
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.05.15@artamir	[]	CloseAllPendings
+			>Rev:0
+	*/
+
+	string a[];
+	int struc[SQLSTRUC_MAX];
+	SQL_Select("", a, struc, getOrderForTral());
+	
+	while(sqlite_next_row(struc[SQLSTRUC_HA]) == 1){
+		int ti = StrToInteger(sqlite_get_col(SQLSTRUC_HA, SQL_TI));
+		TR_ModifySLByPrice(ti, TRAL_Step_pip);
+	}
+}
 
 //}
 

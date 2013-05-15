@@ -1,10 +1,15 @@
 	/**
-		\version	0.1.0.26
+		\version	0.1.0.32
 		\date		2013.05.15
 		\author		Morochin <artamir> Artiom
 		\details	Must be called in begining of "start()" 
 		\internal
-			>Hist:																									
+			>Hist:																														
+					 @0.1.0.32@2013.05.15@artamir	[]	CloseAllPendings
+					 @0.1.0.31@2013.05.15@artamir	[]	CloseAllPendings
+					 @0.1.0.30@2013.05.15@artamir	[]	CloseAllPendings
+					 @0.1.0.29@2013.05.15@artamir	[]	getOrderForTral
+					 @0.1.0.27@2013.05.15@artamir	[]	TralBSSS
 					 @0.1.0.26@2013.05.15@artamir	[]	CloseAllPendings
 					 @0.1.0.25@2013.05.15@artamir	[]	TralBSSS
 					 @0.1.0.24@2013.05.15@artamir	[]	TralBSSS
@@ -32,7 +37,7 @@
 	*/
 
 #define	EXP		"eGH"
-#define	VER		"0.1.0.26_2013.05.14"
+#define	VER		"0.1.0.32_2013.05.14"
 #define EXPREV	""
 
 //{	=== Extern 
@@ -395,28 +400,31 @@ void	TralBSSS_v1(){
 //{ === PHASE2
 void eGH_Phase2(){
 	/**
+		\version	0.0.0.3
+		\date		2013.05.15
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:			
+					 @0.0.0.3@2013.05.15@artamir	[]	TralBSSS
+					 @0.0.0.2@2013.05.15@artamir	[]	TralBSSS
+					 @0.0.0.1@2013.05.15@artamir	[]	TralBSSS
+			>Rev:0
+	*/
+	
+	PH2_Tral();
+	CloseAllPendings();
+}
+
+string getOrderForTral(){
+	/**
 		\version	0.0.0.2
 		\date		2013.05.15
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
 			>Hist:		
-					 @0.0.0.2@2013.05.15@artamir	[]	TralBSSS
-					 @0.0.0.1@2013.05.15@artamir	[]	TralBSSS
-			>Rev:0
-	*/
-	//PH2_Tral();
-	CloseAllPendings();
-}
-
-string getOrderForTral(){
-	/**
-		\version	0.0.0.1
-		\date		2013.05.15
-		\author		Morochin <artamir> Artiom
-		\details	Detailed description
-		\internal
-			>Hist:	
+					 @0.0.0.2@2013.05.15@artamir	[]	getOrderForTral
 					 @0.0.0.1@2013.05.15@artamir	[]	getQOrderForTral
 			>Rev:0
 	*/
@@ -426,8 +434,8 @@ string getOrderForTral(){
 	q = q + " WHERE IM=1 ";
 	q = q + " AND IW=1";
 	q = q + " AND MN="+TR_MN;
-	q = q + " AND PIP>0 ";
-	q = q + " AND (OCP-SL)/"+DoubleToStr(Point, Digits)+" > "+(TRAL_Begin_pip+TRAL_Step_pip); 
+	q = q + " AND PIP>"+TRAL_Begin_pip;
+	q = q + " AND ABS(OCP-SL)/"+DoubleToStr(Point, Digits)+">"+(TRAL_Begin_pip+TRAL_Step_pip); 
 	q = q + ")";
 	return(q);
 }
@@ -454,28 +462,6 @@ string getMarkets(){
 
 void CloseAllPendings(){
 	/**
-		\version	0.0.0.0
-		\date		2013.05.15
-		\author		Morochin <artamir> Artiom
-		\details	Detailed description
-		\internal
-			>Hist:
-			>Rev:0
-	*/
-
-	string a[];
-	int struc[SQLSTRUC_MAX];
-	SQL_Select("",a,struc,getPendings());
-	
-	
-	while(sqlite_next_row(struc[SQLSTRUC_HA]) == 1){
-		int ti = StrToInteger(sqlite_get_col(struc[SQLSTRUC_HA], SQL_TI));
-		TR_CloseByTicket(ti);
-	}
-}
-
-void PH2_Tral(){
-	/**
 		\version	0.0.0.1
 		\date		2013.05.15
 		\author		Morochin <artamir> Artiom
@@ -488,12 +474,41 @@ void PH2_Tral(){
 
 	string a[];
 	int struc[SQLSTRUC_MAX];
+	SQL_Select("",a,struc,getPendings());
+	
+	
+	while(sqlite_next_row(struc[SQLSTRUC_HA]) == 1){
+		int ti = StrToInteger(sqlite_get_col(struc[SQLSTRUC_HA], SQL_TI));
+		TR_CloseByTicket(ti);
+	}
+	
+	SQL_CloseLastHandle();
+}
+
+void PH2_Tral(){
+	/**
+		\version	0.0.0.3
+		\date		2013.05.15
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:			
+					 @0.0.0.3@2013.05.15@artamir	[]	CloseAllPendings
+					 @0.0.0.2@2013.05.15@artamir	[]	CloseAllPendings
+					 @0.0.0.1@2013.05.15@artamir	[]	CloseAllPendings
+			>Rev:0
+	*/
+
+	string a[];
+	int struc[SQLSTRUC_MAX];
 	SQL_Select("", a, struc, getOrderForTral());
 	
 	while(sqlite_next_row(struc[SQLSTRUC_HA]) == 1){
-		int ti = StrToInteger(sqlite_get_col(SQLSTRUC_HA, SQL_TI));
+		int ti = StrToInteger(sqlite_get_col(struc[SQLSTRUC_HA], SQL_TI));
 		TR_ModifySLByPrice(ti, TRAL_Step_pip);
 	}
+	
+	SQL_CloseLastHandle();
 }
 
 //}

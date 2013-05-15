@@ -1,10 +1,11 @@
 /**
-	\version	0.0.0.41
+	\version	0.0.0.42
 	\date		2013.05.15
 	\author		Morochin <artamir> Artiom
 	\details	Detailed description
 	\internal
-		>Hist:																																									
+		>Hist:																																										
+				 @0.0.0.42@2013.05.15@artamir	[]	SQL_CloseLastHandle
 				 @0.0.0.41@2013.05.15@artamir	[]	SQL_setStandartCloseDataByTI
 				 @0.0.0.40@2013.05.15@artamir	[]	SQL_Init
 				 @0.0.0.39@2013.05.15@artamir	[]	SQL_getColType
@@ -37,7 +38,7 @@ void sqlite_set_busy_timeout (int ms);
 void sqlite_set_journal_mode (string mode);
 #import	//}
 
-#define SQLVER		"0.0.0.41_2013.05.15"
+#define SQLVER		"0.0.0.42_2013.05.15"
 
 #define SQLSTRUC_HA		0	//Handle
 #define SQLSTRUC_COLS	1	//COUNT COLS
@@ -248,6 +249,25 @@ void 	SQL_AddHandle(int h){
 	SQL_Handles[New_ROWS-1] = h;
 }
 
+void	SQL_CloseLastHandle(){
+	/**
+		\version	0.0.0.1
+		\date		2013.05.15
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.05.15@artamir	[]	SQL_CloseLastHandle
+			>Rev:0
+	*/
+
+	int last_handle = SQL_Handles[ArrayRange(SQL_Handles,0)-1];
+	sqlite_free_query(last_handle);
+	int new_size = ArrayRange(SQL_Handles,0)-1;
+	ArrayResize(SQL_Handles, new_size);
+
+}
+
 void	SQL_AddKeyVal(string key, string val){
 	/**
 		\version	0.0.0.1
@@ -437,6 +457,8 @@ void	SQL_Init(){
 					 @0.0.0.1@2013.05.07@artamir	[]	SQL_Main
 			>Rev:0
 	*/
+	
+	
 	string _fn = EXP+"."+AccountNumber()+"."+Symbol()+"."+"OE.db";
 	
 	SQL_DB = TerminalPath()+"\\experts\\files\\"+_fn;

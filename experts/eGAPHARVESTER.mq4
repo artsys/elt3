@@ -1,10 +1,12 @@
 	/**
-		\version	0.1.0.32
-		\date		2013.05.15
+		\version	0.1.0.36
+		\date		2013.05.16
 		\author		Morochin <artamir> Artiom
 		\details	Must be called in begining of "start()" 
 		\internal
-			>Hist:																														
+			>Hist:																																
+					 @0.1.0.36@2013.05.16@artamir	[]	startext
+					 @0.1.0.35@2013.05.16@artamir	[]	
 					 @0.1.0.32@2013.05.15@artamir	[]	CloseAllPendings
 					 @0.1.0.31@2013.05.15@artamir	[]	CloseAllPendings
 					 @0.1.0.30@2013.05.15@artamir	[]	CloseAllPendings
@@ -37,7 +39,7 @@
 	*/
 
 #define	EXP		"eGH"
-#define	VER		"0.1.0.32_2013.05.14"
+#define	VER		"0.1.0.36_2013.05.14"
 #define EXPREV	""
 
 //{	=== Extern 
@@ -63,9 +65,9 @@ extern string	EXP_4	= "=== PHASE2 ==========";			//..
 	//extern	int	BU_pip = 2;				//Через сколько пунктов переводим в БУ
 	extern	int TRAL_Begin_pip = 2;			//Цена закрытия должна уйти в 2 пункта плюса от сл
 	extern	int TRAL_Step_pip = 1;			//если цена ушла больше чем на 2+1 пункт, то двигаем на 1 пункт
-//}
-
-extern string	EXP_BP	= "=== BP   ==========";			//{	BREAK POINTS
+extern string	EXP_5	= "=== SQLite settings =";			//..
+	extern	int busy_timeout_ms = 0;
+extern string	EXP_BP	= "=== BP   ==========";				//..	BREAK POINTS
 	extern bool	Debug			= false;
 	extern bool BP_CWT			= false;
 	extern bool BP_TRAL			= false;
@@ -134,7 +136,7 @@ int start(){
 	}else{
 		while(IsExpertEnabled()){
 			startext();
-			Sleep(50); //0.5 sec.
+			Sleep(500); //0.5 sec.
 		}
 	}
 	//------------------------------------------------------
@@ -204,8 +206,9 @@ int startext(){
 	if(isStart) isStart = false;
 
 	//------------------------------------------------------
+	SYS_Start();
 	Main();													//called from sysELT3
-	//SQL_TESTS();
+	
 	
 	if(isPhase1()){
 		eGH_Phase1();
@@ -215,6 +218,7 @@ int startext(){
 		eGH_Phase2();
 	}
 	
+	SYS_End();
 	//------------------------------------------------------
 	return(0);
 }

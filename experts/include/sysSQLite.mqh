@@ -1,10 +1,13 @@
 /**
-	\version	0.0.0.42
-	\date		2013.05.15
+	\version	0.0.0.46
+	\date		2013.05.16
 	\author		Morochin <artamir> Artiom
 	\details	Detailed description
 	\internal
-		>Hist:																																										
+		>Hist:																																													
+				 @0.0.0.46@2013.05.16@artamir	[]	SQL_Init
+				 @0.0.0.45@2013.05.15@artamir	[]	SQL_Init
+				 @0.0.0.43@2013.05.15@artamir	[]	SQL_InitColsArray
 				 @0.0.0.42@2013.05.15@artamir	[]	SQL_CloseLastHandle
 				 @0.0.0.41@2013.05.15@artamir	[]	SQL_setStandartCloseDataByTI
 				 @0.0.0.40@2013.05.15@artamir	[]	SQL_Init
@@ -38,13 +41,14 @@ void sqlite_set_busy_timeout (int ms);
 void sqlite_set_journal_mode (string mode);
 #import	//}
 
-#define SQLVER		"0.0.0.42_2013.05.15"
+#define SQLVER		"0.0.0.46_2013.05.15"
 
 #define SQLSTRUC_HA		0	//Handle
 #define SQLSTRUC_COLS	1	//COUNT COLS
 #define SQLSTRUC_ROWS	2	//COUNT ROWS
 #define SQLSTRUC_MAX	3	//MAX ROWS IN STRUC
 
+//{		=== Standart order data
 #define	SQL_TI	0	//OrderTicket()
 #define	SQL_TY	1	//OrderType()
 #define	SQL_OOP	2	//OrderOpenPrice()
@@ -60,18 +64,21 @@ void sqlite_set_journal_mode (string mode);
 #define	SQL_IP	12	//IsPending() if order type >= 2
 #define SQL_IC	13	//IsClosed()
 
-//{ === Close data
+//..	=== Close data
 #define SQL_OCT	14	//CloseTime()
 #define SQL_OCP	15	//ClosePrice()
 #define SQL_CM	16	//CloseMethod()
-//}
 
-//{ === Profit data
+
+//.. 	=== Profit data
 #define SQL_PIP	17	//Profit in pips
 #define SQL_PID	18	//Profit in deposit curency
+
+//..
+#define	SQL_AOM	19	//Autoopen method
 //}
 
-#define SQL_MAX 19	//MAX COLS
+#define SQL_MAX 20	//MAX COLS
 
 
 string	SQL_DB = "";
@@ -195,15 +202,15 @@ string SQL_getColType(int col){
 	return(name);
 }
 
-
 void	SQL_InitColsArray(){
 	/**
-		\version	0.0.0.1
+		\version	0.0.0.2
 		\date		2013.05.15
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2013.05.15@artamir	[]	SQL_InitColsArray
 					 @0.0.0.1@2013.05.15@artamir	[]	SQL_InitColsArray
 			>Rev:0
 	*/
@@ -228,6 +235,7 @@ void	SQL_InitColsArray(){
 	SQL_ColsDesc[SQL_CM] = "@nCM@tINTEGER";
 	SQL_ColsDesc[SQL_PIP] = "@nPIP@tINTEGER";
 	SQL_ColsDesc[SQL_PID] = "@nPID@tREAL";
+	SQL_ColsDesc[SQL_AOM] = "@nAOM@tINTEGER";
 	
 }
 
@@ -324,7 +332,7 @@ bool	SQL_IsTableExist(string db, string table){
 	int res = sqlite_table_exists (db, table);
 
     if (res < 0) {
-        Print ("Check for table existence failed with code " + res);
+        //#logErr : Print ("Check for table existence failed with code " + res);
         return (false);
     }
 
@@ -348,7 +356,7 @@ int		SQL_Exec(string db, string exp){
 	int res = sqlite_exec (db, exp);
     
     if (res != 0)
-        Print ("Expression '" + exp + "' failed with code " + res);
+    Print ("Expression '" + exp + "' failed with code " + res);
 		
 	return(res);	
 }
@@ -446,12 +454,14 @@ void	SQL_CheckTable_v1(string db){
 
 void	SQL_Init(){
 	/**
-		\version	0.0.0.3
-		\date		2013.05.15
+		\version	0.0.0.5
+		\date		2013.05.16
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:			
+			>Hist:					
+					 @0.0.0.5@2013.05.16@artamir	[]	SQL_Init
+					 @0.0.0.4@2013.05.15@artamir	[]	SQL_Init
 					 @0.0.0.3@2013.05.15@artamir	[]	SQL_Init
 					 @0.0.0.2@2013.05.08@artamir	[]	SQL_Main
 					 @0.0.0.1@2013.05.07@artamir	[]	SQL_Main
@@ -462,9 +472,10 @@ void	SQL_Init(){
 	string _fn = EXP+"."+AccountNumber()+"."+Symbol()+"."+"OE.db";
 	
 	SQL_DB = TerminalPath()+"\\experts\\files\\"+_fn;
-	
+	//Print(SQL_DB);
 	SQL_InitColsArray();
 	SQL_CheckTable_v1(SQL_DB);
+	sqlite_set_busy_timeout(busy_timeout_ms);
 }
 
 void	SQL_Deinit(){
@@ -502,6 +513,16 @@ void	SQL_Main(){
 		//---------------------------------
 		SQL_setStandartDataByTI(OrderTicket());
 	}
+}
+
+void	SQL_Start(){
+	SQL_Exec(SQL_DB, "BEGIN");
+	
+	SQL_Main();
+}
+
+void	SQL_End(){
+	SQL_Exec(SQL_DB, "COMMIT");
 }
 
 //{ === Insert / Update v0
@@ -697,7 +718,7 @@ int SQL_Select(string table_name, string& awhere[], int& struc[], string free_se
 	select = select + free_select;
 	
 	int cols[1];
-	Print(select);
+	//Print(select);
 	int handle = SQL_Query(SQL_DB, select, cols);
 	
 	ROWS = 0;
@@ -796,7 +817,7 @@ int SQL_setStandartDataByTI_v0(int ti){
 		res = SQL_Insert(aKeyVal);
 	}
 	
-	Print("SQL_setStandartDataByTI res = "+res);
+	//Print("SQL_setStandartDataByTI res = "+res);
 } 
 //}
 
@@ -857,7 +878,7 @@ int SQL_setStandartDataByTI(int ti){
 		res = SQL_Insert(SQL_aKeyVal);
 	}
 	
-	Print("SQL_setStandartDataByTI res = "+res);
+	//Print("SQL_setStandartDataByTI res = "+res);
 } 
 //}
 

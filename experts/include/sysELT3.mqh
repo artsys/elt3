@@ -1,5 +1,5 @@
 	/*
-		>Ver	:	0.1.0.40
+		>Ver	:	0.1.0.41
 		>Date	:	2013.05.15
 		>Hist:																	
 				 @0.1.0.40@2013.05.15@artamir	[]	Main
@@ -37,11 +37,11 @@
 			DO NOT CHANGE!!!!
 	*/
 
-#define	ELTVER	"0.1.0.40_2013.05.15"
+#define	ELTVER	"0.1.0.41_2013.05.15"
 #define ELTREV	"$rev$"	
-//...	//Include	========================================
+//{	=== Include	========================================
 
-//..	@System	--------------------------------------------
+//{		@System	--------------------------------------------
 #include	<WinUser32.mqh>
 //----------------------------------------------------------
 #include	<sysNormalize.mqh>								//Pref: Norm
@@ -59,6 +59,7 @@
 #include	<sysTrades.mqh>									//Pref:	TR
 //..	@Indicators
 #include	<iMA.mqh>										//Pref: iMA
+//}
 //}
 
 int Main(){
@@ -78,7 +79,15 @@ int Main(){
 	T_Start();
 	T_End();
 	
-	SQL_Main();
+	//SQL_Main();
+}
+
+int SYS_Start(){
+	SQL_Start();
+}
+
+int SYS_End(){
+	SQL_End();
 }
 
 int ELT_init(string fn){

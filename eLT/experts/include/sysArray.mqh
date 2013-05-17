@@ -553,6 +553,14 @@ int A_d_Select(double &s[][] /*source array*/, double &d[][] /*destination array
 			
 			s_val = s[s_row][s_col];
 			
+			if(Debug && BP_Condition_select){
+				BP("SELECT", "f_as = ", f_as
+							, "f_max = ", f_max
+							, "f_min = ", f_min
+							, "f_sel = ", f_sel
+							, "s_val = ", s_val);
+			}
+			
 			if(f_as == AS_OP_EQ){
 				this_assertion = A_Assertion_EQ(f_max, s_val);
 				

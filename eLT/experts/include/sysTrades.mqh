@@ -1,10 +1,11 @@
 	/**
-		\version	0.0.3
-		\date		2013.04.25
+		\version	0.0.0.4
+		\date		2013.05.17
 		\author		Morochin <artamir> Artiom
 		\details	Trading functtions.
 		\internal
-			>Hist:			
+			>Hist:				
+					 @0.0.0.4@2013.05.17@artamir	[]	TR_ModifySLByPrice
 					 @0.0.3@2013.04.25@artamir	[]	TR_MoveOrder
 					 @0.0.2@2013.04.25@artamir	[]	TR_MoveOrder
 					 @0.0.1@2013.04.25@artamir	[]	TR_MoveOrder
@@ -1242,6 +1243,37 @@ bool TR_MoveOrder(int src_ti, double pr, int mode = 1){
 	//------------------------------------------------------
 	return(_OrderModify(src_ti, new_pr, new_sl, new_tp, -1));
 }
+
+bool TR_ModifySLByPrice(int ti, int minus_pip = 0){
+	/**
+		\version	0.0.0.2
+		\date		2013.05.17
+		\author		Morochin <artamir> Artiom
+		\details	Расчитывается стоплосс ордера от цены закрытия ордера.
+		\internal
+			>Hist:		
+					 @0.0.0.2@2013.05.17@artamir	[]	TR_ModifySLByPrice
+					 @0.0.0.1@2013.05.15@artamir	[]	TR_ModifySLByPrice
+			>Rev:0
+	*/
+
+	if(! OrderSelect(ti, SELECT_BY_TICKET)) return(false);
+	
+	int ty = OrderType();
+	
+	double new_sl = 0.00;
+	
+	if(ty == OP_BUY || ty == OP_BUYSTOP || ty == OP_BUYLIMIT){
+		new_sl = Norm_symb(OrderClosePrice() - minus_pip*Point);
+	}
+	
+	if(ty == OP_SELL || ty == OP_SELLSTOP || ty == OP_SELLLIMIT){
+		new_sl = Norm_symb(OrderClosePrice() + minus_pip*Point);
+	}
+	
+	return(TR_ModifySL(ti, new_sl));
+}
+
 //}
 
 //...	//=== CLOSE 	====================================

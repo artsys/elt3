@@ -1,7 +1,8 @@
 	/*
-		>Ver	:	0.0.40
-		>Date	:	2013.04.16
-		>Hist	:																						
+		>Ver	:	0.0.0.41
+		>Date	:	2013.05.17
+		>Hist	:																							
+					@0.0.0.41@2013.05.17@artamir	[]	OE_ClosePriceSL
 					@0.0.39@2013.03.06@artamir	[]	OE_setGLByTicket
 					@0.0.38@2013.03.06@artamir	[]	OE_setIMByTicket
 					@0.0.37@2013.03.06@artamir	[]	OE_setIPByTicket
@@ -70,6 +71,9 @@
 //------ Close data
 #define OE_CPP		45	//Close profit in pips with sign (-/+)
 #define	OE_CTY		46	//Closed by sl/tp/from market (1,2,3);
+#define OE_CP2SL	47	//Разность между ценой закрытия и сл в пунктах
+#define OE_CP2TP	48	//Разность между ценой закрытия и тп в пунктах
+#define OE_CP2OP	49	//Разность между ценой закрытия и ценой открытия в пунктах
 //------ Other
 #define	OE_OFF		50	//If expert do not work with this order
   
@@ -138,6 +142,106 @@ int	OE_findIndexByTicket(int ticket){
 	//------------------------------------------------------
 	return(idx);
 }
+
+int OE_ClosePriceSL(){
+	/**
+		\version	0.0.0.1
+		\date		2013.05.17
+		\author		Morochin <artamir> Artiom
+		\details	Возвращает разность между ценой закрытия ордера и сл в пунктах с учетом типа ордера.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.05.17@artamir	[]	OE_ClosePriceSL
+			>Rev:0
+	*/
+
+	double sl = Norm_symb(OrderStopLoss());
+	double cp = Norm_symb(OrderClosePrice());
+	int ty = OrderType();
+	
+	int res = 0;
+	
+	if(sl == 0){
+		return(0);
+	}
+	
+	if(ty == OP_BUY || ty == OP_BUYSTOP || ty == OP_BUYLIMIT){
+		res = (cp - sl)/Point;
+	}
+	
+	if(ty == OP_SELL || ty == OP_SELLSTOP || ty == OP_SELLLIMIT){
+		res = (sl - cp)/Point;
+	}
+	
+	return(res);
+}
+
+int OE_ClosePriceTP(){
+	/**
+		\version	0.0.0.1
+		\date		2013.05.17
+		\author		Morochin <artamir> Artiom
+		\details	Возвращает разность между ценой закрытия ордера и tp в пунктах с учетом типа ордера.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.05.17@artamir	[]	OE_ClosePriceSL
+			>Rev:0
+	*/
+
+	double tp = Norm_symb(OrderTakeProfit());
+	double cp = Norm_symb(OrderClosePrice());
+	int ty = OrderType();
+	
+	int res = 0;
+	
+	if(tp == 0){
+		return(0);
+	}
+	
+	if(ty == OP_BUY || ty == OP_BUYSTOP || ty == OP_BUYLIMIT){
+		res = (tp - cp)/Point;
+	}
+	
+	if(ty == OP_SELL || ty == OP_SELLSTOP || ty == OP_SELLLIMIT){
+		res = (cp - tp)/Point;
+	}
+	
+	return(res);
+}
+
+int OE_ClosePriceOP(){
+	/**
+		\version	0.0.0.1
+		\date		2013.05.17
+		\author		Morochin <artamir> Artiom
+		\details	Возвращает разность между ценой закрытия ордера и сл в пунктах с учетом типа ордера.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.05.17@artamir	[]	OE_ClosePriceSL
+			>Rev:0
+	*/
+
+	double op = Norm_symb(OrderOpenPrice());
+	double cp = Norm_symb(OrderClosePrice());
+	int ty = OrderType();
+	
+	int res = 0;
+	
+	if(op == 0){
+		return(0);
+	}
+	
+	if(ty == OP_BUY || ty == OP_BUYSTOP || ty == OP_BUYLIMIT){
+		res = (cp - op)/Point;
+	}
+	
+	if(ty == OP_SELL || ty == OP_SELLSTOP || ty == OP_SELLLIMIT){
+		res = (op - cp)/Point;
+	}
+	
+	return(res);
+}
+
 //}
 
 //{	//=== ADD ROW
@@ -238,6 +342,8 @@ int OE_setStandartDataByOrder(int idx){
 	
 	aOE[idx][OE_LOT] = OrderLots();
 	
+	aOE[idx][OE_CP] = OrderClosePrice();
+	
 	if(Debug && BP_OE){
 		BP("setStandartDataByOrder", "idx = ", idx, "OCP = ", OrderClosePrice());
 	}
@@ -245,6 +351,9 @@ int OE_setStandartDataByOrder(int idx){
 	if(OrderCloseTime() <= 0){
 		aOE[idx][OE_IT] = 1;
 		aOE[idx][OE_IC] = 0;
+	}else{
+		aOE[idx][OE_IT] = 0;
+		aOE[idx][OE_IC] = 1;
 	}	
 	
 	if(OrderType() <= 1){
@@ -256,6 +365,14 @@ int OE_setStandartDataByOrder(int idx){
 		aOE[idx][OE_IM] = 0;
 		aOE[idx][OE_IP] = 1;
 	}
+	
+	
+	//{	=== Расчетные данные по цене закрытия
+	aOE[idx][OE_CP2SL] = OE_ClosePriceSL();
+	aOE[idx][OE_CP2TP] = OE_ClosePriceTP();
+	aOE[idx][OE_CP2OP] = OE_ClosePriceOP();
+	//}
+	
 	//------------------------------------------------------
 	return(0);
 	

@@ -34,7 +34,7 @@
 			DO NOT CHANGE!!!!
 	*/
 
-#define	ELTVER	"0.1.39_2013.04.25"
+#define	ELTVER	"0.1.40_2013.04.25"
 #define ELTREV	"$rev$"	
 //...	//Include	========================================
 
@@ -71,6 +71,14 @@ int Main(){
 	//------------------------------------------------------
 	T_Start();
 	T_End();
+	
+	//{ == Перезапись данных по ордерам, которые есть в терминале
+	for(int i = 0; i <= OrdersTotal(); i++){
+		if(!OrderSelect(i, SELECT_BY_POS, MODE_TRADES)) continue;
+		
+		OE_setStandartDataByTicket(OrderTicket());
+	}
+	//}
 }
 
 int ELT_init(string fn){

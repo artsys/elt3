@@ -1,10 +1,11 @@
 /**
-	\version	0.0.0.46
+	\version	0.0.0.47
 	\date		2013.05.16
 	\author		Morochin <artamir> Artiom
 	\details	Detailed description
 	\internal
-		>Hist:																																													
+		>Hist:																																														
+				 @0.0.0.47@2013.05.16@artamir	[]	SQL_Init
 				 @0.0.0.46@2013.05.16@artamir	[]	SQL_Init
 				 @0.0.0.45@2013.05.15@artamir	[]	SQL_Init
 				 @0.0.0.43@2013.05.15@artamir	[]	SQL_InitColsArray
@@ -454,12 +455,13 @@ void	SQL_CheckTable_v1(string db){
 
 void	SQL_Init(){
 	/**
-		\version	0.0.0.5
+		\version	0.0.0.6
 		\date		2013.05.16
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:					
+			>Hist:						
+					 @0.0.0.6@2013.05.16@artamir	[]	SQL_Init
 					 @0.0.0.5@2013.05.16@artamir	[]	SQL_Init
 					 @0.0.0.4@2013.05.15@artamir	[]	SQL_Init
 					 @0.0.0.3@2013.05.15@artamir	[]	SQL_Init
@@ -471,7 +473,9 @@ void	SQL_Init(){
 	
 	string _fn = EXP+"."+AccountNumber()+"."+Symbol()+"."+"OE.db";
 	
-	SQL_DB = TerminalPath()+"\\experts\\files\\"+_fn;
+	//SQL_DB = TerminalPath()+"\\experts\\files\\"+_fn;
+	SQL_DB = "G:\\"+_fn;
+	
 	//Print(SQL_DB);
 	SQL_InitColsArray();
 	SQL_CheckTable_v1(SQL_DB);
@@ -516,13 +520,13 @@ void	SQL_Main(){
 }
 
 void	SQL_Start(){
-	SQL_Exec(SQL_DB, "BEGIN");
+	//SQL_Exec(SQL_DB, "BEGIN");
 	
 	SQL_Main();
 }
 
 void	SQL_End(){
-	SQL_Exec(SQL_DB, "COMMIT");
+	//SQL_Exec(SQL_DB, "COMMIT");
 }
 
 //{ === Insert / Update v0

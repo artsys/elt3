@@ -74,6 +74,7 @@
 #define OE_CP2SL	47	//Разность между ценой закрытия и сл в пунктах
 #define OE_CP2TP	48	//Разность между ценой закрытия и тп в пунктах
 #define OE_CP2OP	49	//Разность между ценой закрытия и ценой открытия в пунктах
+
 //------ Other
 #define	OE_OFF		50	//If expert do not work with this order
   

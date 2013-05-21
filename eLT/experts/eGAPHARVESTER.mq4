@@ -1,10 +1,11 @@
 	/**
-		\version	0.0.0.21
+		\version	0.0.0.25
 		\date		2013.05.17
 		\author		Morochin <artamir> Artiom
 		\details	Must be called in begining of "start()" 
 		\internal
-			>Hist:																		
+			>Hist:														
+					@0.0.0.22@2013.05.17@artamir	[*]	Сначала тралится ордер, ближний к цене.	
 					 @0.0.0.19@2013.05.17@artamir	[]	CloseAllPendings
 					 @0.0.0.18@2013.05.17@artamir	[]	CloseAllPendings
 					 @0.0.17@2013.04.30@artamir	[]	startext
@@ -23,9 +24,8 @@
 					 @0.0.2@2013.04.25@artamir	[+]	getOrdersByMethod
 					 @0.0.1@2013.04.25@artamir	[+]	CWT
 	*/
-
 #define	EXP	"eGH"
-#define	VER	"0.0.21_2013.04.30"
+#define	VER	"0.0.25_2013.05.20"
 
 //{	=== Extern 
 extern string	EXP_1	= "=== PHASE1 ==========";			//{
@@ -54,6 +54,7 @@ extern string	EXP_3	= "=== EXPERT SETUP ====";			//..
 	extern	int Sleep_ms = 500; 		
 extern string	EXP_BP	= "=== BP   ==========";				//..	BREAK POINTS
 	extern bool	Debug			= false;
+	extern bool BP_Array_Sort	= false;
 	extern bool BP_ISPH2		= false;
 	extern bool BP_CWT			= false;
 	extern bool BP_TRAL			= false;
@@ -184,6 +185,7 @@ int startext(){
 	
 	Comment(	"EXP ver: "	,VER		,"\n"
 			,	"Sys ver: "	,ELTVER		,"\n"
+			,	"Arr ver: "	,ARRVER		,"\n"
 			,	"DOW = "	,DayOfWeek(),"\n"
 			,	"GTBS_S = ", getTimeByShift(0, THS_Ph1, TMS_Ph1), "\n"
 			,	"GTBS_S(0,21,50) = ", getTimeByShift(0, 21, 50), "\n"
@@ -342,6 +344,8 @@ void	TralBSSS(){
 	
 	
 	getOrdersByMethod(d);	//забираем ордера с текущим магиком.
+	
+	A_d_Sort2(d, OE_CP2OP, OE_CP2OP+" <;"); //сортировка по убыванию
 	
 	if(Debug && BP_TRAL){
 		A_d_PrintArray2(d, 4, "TRAL_");

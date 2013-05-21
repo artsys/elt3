@@ -1,5 +1,5 @@
 	/*
-		>Ver	:	0.1.37
+		>Ver	:	0.1.42
 		>Date	:	2013.04.25
 		>Hist:														
 				 @0.1.37@2013.04.25@artamir	[]	
@@ -34,7 +34,9 @@
 			DO NOT CHANGE!!!!
 	*/
 
-#define	ELTVER	"0.1.40_2013.04.25"
+#property stacksize 16192			
+	
+#define	ELTVER	"0.1.42_2013.04.25"
 #define ELTREV	"$rev$"	
 //...	//Include	========================================
 
@@ -43,6 +45,7 @@
 //----------------------------------------------------------
 #include	<sysNormalize.mqh>								//Pref: Norm
 #include	<sysStructure.mqh>								//Pref: Struc
+#include	<sysOther.mqh>									
 #include	<sysMarketInfo.mqh>								//Pref:	MI
 //----------------------------------------------------------
 #include	<sysArray.mqh>									//Pref:	A

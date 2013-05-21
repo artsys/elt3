@@ -1,7 +1,15 @@
 	/*
-		>Ver	:	0.0.33
-		>Date	:	2013.03.06
-		>Hist	:																		
+		>Ver	:	0.0.0.41
+		>Date	:	2013.05.20
+		>Hist	:																										
+					@0.0.0.41@2013.05.20@artamir	[]	A_d_Compare
+					@0.0.0.40@2013.05.20@artamir	[]	A_d_Select
+					@0.0.0.39@2013.05.20@artamir	[]	A_d_Compare
+					@0.0.0.38@2013.05.20@artamir	[]	A_d_Select
+					@0.0.0.37@2013.05.17@artamir	[+]	A_d_Swap2
+					@0.0.0.36@2013.05.17@artamir	[+]	A_d_Sort2
+					@0.0.0.35@2013.05.17@artamir	[]	A_d_Select
+					@0.0.0.34@2013.05.17@artamir	[]	A_d_releaseArray
 					@0.0.33@2013.03.06@artamir	[]	A_Assertion_UNDER
 					@0.0.32@2013.03.06@artamir	[]	A_Assertion_UNDER
 					@0.0.31@2013.02.23@artamir	[]	A_d_setPropByIndex
@@ -25,9 +33,9 @@
 				:	d - for double arrays
 	*/
 
-//stacksize 32768
+#define ARRVER	"0.0.0.41_2013.05.17"
 	
-//=== TEMPORAR ARRAY
+//{ === TEMPORAR ARRAY
 
 double	dArrayTemp2[];	// double temporar 2 dim array
 int		dArrayTemp2.COLS = 0;
@@ -139,11 +147,11 @@ void A_d_releaseArray(double &d[][], int mode = 1){
 	}
 }
 
+//}
 
+//{ === ARRAY FUNCTIONS	============================
 
-//=== ARRAY FUNCTIONS	============================
-
-void	A_d_eraseArray2(double	&d[][]){
+void A_d_eraseArray2(double	&d[][]){
 	/*
 		>Ver	:	0.0.1
 		>Date	:	2012.10.02
@@ -157,7 +165,7 @@ void	A_d_eraseArray2(double	&d[][]){
 	ArrayResize(d, 0);
 }
 
-void	A_d_Copy1To2(double &s[], double &d[][], int d_COLS = 1){
+void A_d_Copy1To2(double &s[], double &d[][], int d_COLS = 1){
 	/*
 		>Ver	:	0.0.1
 		>Date	:	2012.10.02
@@ -191,7 +199,7 @@ void	A_d_Copy1To2(double &s[], double &d[][], int d_COLS = 1){
 	}
 }
 
-void	A_d_Copy2To1(double &s[][], double &d[]){
+void A_d_Copy2To1(double &s[][], double &d[]){
 	/*
 		>Ver	:	0.0.1
 		>Date	:	2012.10.02
@@ -233,7 +241,7 @@ void	A_d_Copy2To1(double &s[][], double &d[]){
 	}
 }
 
-int		A_d_getIndexByProp2(double &d[][], int prop, double val){
+int A_d_getIndexByProp2(double &d[][], int prop, double val){
 	/*
 		>Ver	:	0.0.3
 		>Date	:	2013.02.20
@@ -286,7 +294,89 @@ int		A_d_getIndexByProp2(double &d[][], int prop, double val){
 	return(idx);
 }
 
-//=== SELECT FUNCTIONS	============================
+void A_d_Swap2(double &a[][], int i1, int i2){
+	/**
+		\version	0.0.0.3
+		\date		2013.05.17
+		\author		Morochin <artamir> Artiom
+		\details	Меняет местами строки двумерного массива
+		\internal
+			>Hist:			
+					 @0.0.0.3@2013.05.17@artamir	[]	A_d_releaseArray
+					 @0.0.0.2@2013.05.17@artamir	[]	A_d_releaseArray
+					 @0.0.0.1@2013.05.17@artamir	[]	A_d_releaseArray
+			>Rev:0
+	*/
+	
+	int a_COLS = ArrayRange(a, 1);
+	
+	for(int col = 0; col < a_COLS; col++){
+		double temp = a[i1][col];
+		a[i1][col] = a[i2][col];
+		a[i2][col] = temp;
+	}
+	
+	if(Debug && BP_Array_Sort){
+		BP("SWAP", "i1 = ",i1, "i2 = ",i2);
+	}
+
+}
+
+bool A_d_Compare(double &a[][], int i1, int i2, string compare = ""){
+	/**
+		\version	0.0.0.2
+		\date		2013.05.20
+		\author		Morochin <artamir> Artiom
+		\details	Сравнение двух строк массива
+		\internal
+			>Hist:		
+					 @0.0.0.2@2013.05.20@artamir	[]	A_d_Compare
+					 @0.0.0.1@2013.05.20@artamir	[]	A_d_Compare
+			>Rev:0
+			compare может быть строкой формата "<номер колонки для сравнения><пробел><операция сравнения><точкасзапятой>"
+			"5 >;" или "7 <=;"
+	*/
+
+	string subs[];
+	ArrayResize(subs,0);
+	int subs_ROWS = 0;
+	StringToArray(subs, compare, ";");
+	subs_ROWS = ArrayRange(subs,0);
+	
+	//A_s_PrintArray1(subs, "subs");
+	
+	for(int i = 0; i < subs_ROWS; i++){
+		string co[0];
+		ArrayResize(co,0);
+		int co_ROWS = 0;
+		StringToArray(co, subs[i], " ");
+		co_ROWS = ArrayRange(co,0);
+	
+		if(co_ROWS > 0){
+			int col = StrToInteger(co[0]);
+			string op = co[1];
+			//Print ("col = ",col, " op = ",op);
+			if(op == ">"){
+				if(a[i1][col] > a[i2][col]){ 
+					return(true);
+				}else{
+					return(false);
+				}	
+			}
+			
+			if(op == "<"){
+				if(a[i1][col] < a[i2][col]){
+					return(true);
+				}else{
+					return(false);
+				}	
+			}
+		}
+	}	
+}
+//}
+
+//{ === SELECT FUNCTIONS	============================
 
 #define SEL_OP_AND	1										/*Operation AND*/
 
@@ -610,7 +700,38 @@ int A_d_Select(double &s[][] /*source array*/, double &d[][] /*destination array
 	}
 }
 
-//=== READING/WRITING FILE
+//}
+
+//{ === SORTING FUNCTIONS
+void A_d_Sort2(double& a[][], int col, string order = ""){
+	/**
+		\version	0.0.0.3
+		\date		2013.05.20
+		\author		Morochin <artamir> Artiom
+		\details	Быстрая сортировка двумерного массива по заданной колонке
+		\internal
+			>Hist:			
+					 @0.0.0.3@2013.05.20@artamir	[]	A_d_Select
+					 @0.0.0.2@2013.05.20@artamir	[]	A_d_Select
+					 @0.0.0.1@2013.05.17@artamir	[]	A_d_Select
+			>Rev:0
+			ордер может быть строкой формата "<номер колонки для сравнения><пробел><операция сравнения><точкасзапятой>"
+			"5 >;" или "7 <=;"
+	*/
+
+	int ROWS = ArrayRange(a, 0);
+	
+	for(int i = 0; i < ROWS; i++){
+		for(int j = 1; j < ROWS; j++){
+			
+			if(!A_d_Compare(a, i,j,order)){A_d_Swap2(a,i,j);}
+			//if(a[i][col] > a[j][col]){A_d_Swap2(a,i,j);}
+		}
+	}
+}
+//}
+
+//{ === READING/WRITING FILE
 
 void A_d_SaveToFile2(double &a[][], string fn, int d = 4){
 	/*
@@ -718,8 +839,9 @@ void A_d_ReadFromFile2(double &a[][], string fn){
 	}
 }
 
+//}
 
-//=== FOR DEBUGING
+//{ === FOR DEBUGING
 void A_d_PrintArray2(double &a[][], int d = 4, string fn = "PrintArray_"){
 	/*
 		>Ver	:	0.0.5
@@ -796,3 +918,41 @@ void A_d_PrintArray1(double &a[], int d = 4, string fn = "PrintArray_"){
 	if(handle != 0) FileClose(handle);
 	
 }
+
+void A_s_PrintArray1(string &a[], string fn = "PrintArray_"){
+	/*
+		>Ver	:	0.0.3
+		>Date	:	2012.08.15
+		>Hist:
+			@0.0.3@2012.08.15@artamir	[]
+			@0.0.2@2012.08.15@artamir	[]
+			@0.0.1@2012.08.08@artamir	[]
+		>Descr:
+			Printing array to filE_
+		>VARS:
+			&a[][]  :	array
+			d		:	count of digits.
+			fn		:	filename
+	*/
+
+	static int	i;
+	
+	i++;
+	//------------------------------------------------------
+	int ROWS = ArrayRange(a, 0);
+	
+	//------------------------------------------------------
+	fn = fn+i+".arr";
+	
+	//------------------------------------------------------
+	int handle = FileOpen(fn, FILE_CSV|FILE_WRITE, "\t");
+	
+	for(int idx_1 = 0; idx_1 < ROWS; idx_1++){
+			FileWrite(handle, idx_1, a[idx_1]);
+	}
+	
+	if(handle != 0) FileClose(handle);
+	
+}
+
+//}

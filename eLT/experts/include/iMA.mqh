@@ -1,7 +1,9 @@
 /*
-		>Ver	:	0.0.5
-		>Date	:	2013.02.19
-		>Hist:				
+		>Ver	:	0.0.0.7
+		>Date	:	2013.05.20
+		>Hist:						
+				 @0.0.0.7@2013.05.20@artamir	[]	aMA_set
+				 @0.0.0.6@2013.05.20@artamir	[]	iMA_getByHandle
 				 @0.0.5@2013.02.19@artamir	[]	iMA_isCrossDw
 				 @0.0.4@2013.02.19@artamir	[]	iMA_isCrossDw
 				 @0.0.3@2013.02.14@artamir	[]	iMA_isCrossDw
@@ -11,6 +13,132 @@
 		>Зависимости:
 			#include <libNormalizE_mqh>
 */
+
+string aMASets[];
+
+void aMA_Init(){
+	/**
+		\version	0.0.0.0
+		\date		2013.05.20
+		\author		Morochin <artamir> Artiom
+		\details	Очищает стринговый массив. Использовать при каждом запуске ф-ции старт
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	ArrayResize(aMASets,0);
+}
+
+int aMA_set(int per = 21, int mode_ma = MODE_EMA, int app_price = PRICE_CLOSE, string sy=""){
+	/**
+		\version	0.0.0.1
+		\date		2013.05.20
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.05.20@artamir	[]	aMA_set
+			>Rev:0
+	*/
+
+	int ROWS = ArrayRange(aMASets,0);
+	ROWS++;
+	int lastROW=ROWS-1;
+	ArrayResize(aMASets, ROWS);
+	
+	if(sy == ""){
+		sy=Symbol();
+	}
+	
+	string s = "";
+	s=s+"@p"+per;
+	s=s+"@m"+mode_ma;
+	s=s+"@ap"+app_price;
+	s=s+"@sy"+sy;
+	
+	aMASets[lastROW]=s;
+	return(lastROW);
+}
+
+double iMA_getByHandle(int handle=0, int shift=0, int d=0){
+	/**
+		\version	0.0.0.1
+		\date		2013.05.20
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.05.20@artamir	[]	iMA_getByHandle
+			>Rev:0
+	*/
+
+	int p = Struc_KeyValue_int(aMASets[handle], "@p");
+	int mode = Struc_KeyValue_int(aMASets[handle], "@m");
+	int ap = Struc_KeyValue_int(aMASets[handle], "@ap");
+	string sy = Struc_KeyValue_string(aMASets[handle], "@sy");
+	double ma = iMA(sy,0,p,0,mode,ap,shift);
+	ma = Norm_symb(ma, "", d); 
+	return(ma);
+}
+
+double iMA_getLevel(int handle=0, int shift=0, int level_pip = 50){
+	/**
+		\version	0.0.0.0
+		\date		2013.05.20
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	double ma = iMA_getByHandle(handle, shift);
+	
+	return(Norm_symb(ma+level_pip*Point));
+}
+
+bool iMA_isPinAbove(int handle=0, int shift=0, int level_pip=50){
+	/**
+		\version	0.0.0.0
+		\date		2013.05.20
+		\author		Morochin <artamir> Artiom
+		\details	Вычисляет если лоу бара по смещению shift было ниже ма на том же баре, а мин(закрытие/открытие) 
+					бара было выше ма.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	double ma = iMA_getLevel(handle, shift, level_pip);
+	if(iLow(Symbol(), 0, shift) <= ma && MathMin(iOpen(Symbol(), 0, shift), iClose(Symbol(), 0, shift)) > ma){
+		return(true);
+	}
+	
+	return(false);
+}
+
+bool iMA_isPinBelow(int handle=0, int shift=0, int level_pip=50){
+	/**
+		\version	0.0.0.0
+		\date		2013.05.20
+		\author		Morochin <artamir> Artiom
+		\details	Вычисляет если хай бара по смещению shift было выше ма на том же баре, а мин(закрытие/открытие) 
+					бара было ниже ма.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	double ma = iMA_getLevel(handle, shift, level_pip);
+	if(iHigh(Symbol(), 0, shift) >= ma && MathMax(iOpen(Symbol(), 0, shift), iClose(Symbol(), 0, shift)) < ma){
+		return(true);
+	}
+	
+	return(false);
+}
+
+
 
 double iMA_getMA(int per = 21, int shift = 0, int d = 0, int ty = MODE_EMA){
 	/* 
@@ -241,3 +369,4 @@ bool iMA_isPriceBetween2Ma(int per_f, int per_s, double pr, int shift = 0, int t
 	//------------------------------------------------------
 	return(res);
 }
+

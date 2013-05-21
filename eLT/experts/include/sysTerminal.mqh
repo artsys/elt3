@@ -1,7 +1,8 @@
  	/*
-		>Ver	:	0.0.17
-		>Date	:	2013.02.15
-		>Hist	:		
+		>Ver	:	0.0.0.18
+		>Date	:	2013.05.20
+		>Hist	:			
+					@0.0.0.18@2013.05.20@artamir	[]	T_End
 					@0.0.17@2013.02.15@artamir	[]	T_CurOPByIndex
 					@0.0.16@2013.02.15@artamir	[]	T_OldOPByIndex
 		>Author	:	Morochin <artamir> Artiom
@@ -55,9 +56,10 @@ int T_Start(){
 
 int T_End(){
 	/*
-		>Ver	:	0.0.1
-		>Date	:	2012.10.02
-		>Hist	:
+		>Ver	:	0.0.0.2
+		>Date	:	2013.05.20
+		>Hist	:	
+					@0.0.0.2@2013.05.20@artamir	[]	T_End
 			@0.0.1@2012.10.02@artamir	[]
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:	Copying Cur orders to old orders.
@@ -66,7 +68,9 @@ int T_End(){
 	A_d_eraseArray2(aOldOrders);
 	
 	//------------------------------------------------------
-	ArrayCopy(aOldOrders, aCurOrders, 0, 0, WHOLE_ARRAY);
+	if(OrdersTotal() > 0){
+		ArrayCopy(aOldOrders, aCurOrders, 0, 0, WHOLE_ARRAY);
+	}	
 }
 
 //..	//=== PUBLIC FUNCTIONS	============================

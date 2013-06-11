@@ -1,10 +1,12 @@
 	/**
-		\version	0.0.0.25
-		\date		2013.05.17
+		\version	0.0.0.27
+		\date		2013.06.11
 		\author		Morochin <artamir> Artiom
 		\details	Must be called in begining of "start()" 
 		\internal
-			>Hist:														
+			>Hist:																
+					 @0.0.0.27@2013.06.11@artamir	[]	
+					 @0.0.0.26@2013.06.11@artamir	[]	TralBSSS
 					@0.0.0.22@2013.05.17@artamir	[*]	Сначала тралится ордер, ближний к цене.	
 					 @0.0.0.19@2013.05.17@artamir	[]	CloseAllPendings
 					 @0.0.0.18@2013.05.17@artamir	[]	CloseAllPendings
@@ -25,27 +27,47 @@
 					 @0.0.1@2013.04.25@artamir	[+]	CWT
 	*/
 #define	EXP	"eGH"
-#define	VER	"0.0.25_2013.05.20"
+#define	VER	"0.0.27_2013.06.11"
 
 //{	=== Extern 
-extern string	EXP_1	= "=== PHASE1 ==========";			//{
+extern string	EXP_11	= "=== PHASE1_1 ==========";			//{
 	extern	int	DOW_Ph1	= 5;	//(Day Of Week) воскресенье-0,1,2,3,4,5,6
 	extern	int	THS_Ph1 = 23;	//(Time Hour Start) час начала работы первой фазы
-	extern	int	TMS_Ph1 = 55;	//(Time Minutes Start) минуты начала первой фазы
-	extern	int	THE_Ph1 = 0;	//(Time Hour End) час окончания работы первой фазы
-	extern	int	TME_Ph1 = 0;	//(Time Minutes End) минуты окончания первой фазы
+	extern	int	TMS_Ph1 = 45;	//(Time Minutes Start) минуты начала первой фазы
+	extern	int	THE_Ph1 = 23;	//(Time Hour End) час окончания работы первой фазы
+	extern	int	TME_Ph1 = 59;	//(Time Minutes End) минуты окончания первой фазы
 
-	extern string EXP_11= "=== TRAL ==========";			//{
-		extern int TRAL_DeltaPips = 5;	//На каком расстоянии от цены тралится.
+	extern string EXP_111= "=== TRAL ==========";			//{
+		extern int TRAL_DeltaPips = 15;	//На каком расстоянии от цены тралится.
 	//}
 	
-	extern string EXP_12= "=== OPEN ==========";			//{
+	extern string EXP_112= "=== OPEN ==========";			//{
 		extern double	OPEN_FixLot = 100.00;	//Каким объемом будут открываться ордера.
 		extern int		OPEN_TPPips = 0;
 		extern int		OPEN_SLPips = 10;		//На всякий пожарный случай.
 	//}
 
-extern string	EXP_2	= "=== PHASE2 ==========";			//..	
+
+extern string	EXP_12	= "=== PHASE1_2 ==========";			//..
+	extern	int	DOW_Ph12	= 5;	//(Day Of Week) воскресенье-0,1,2,3,4,5,6
+	extern	int	THS_Ph12	= 23;	//(Time Hour Start) час начала работы первой фазы
+	extern	int	TMS_Ph12	= 58;	//(Time Minutes Start) минуты начала первой фазы
+	extern	int	THE_Ph12	= 24;	//(Time Hour End) час окончания работы первой фазы
+	extern	int	TME_Ph12	= 2;	//(Time Minutes End) минуты окончания первой фазы
+
+	extern string EXP_121= "=== TRAL ==========";			//{
+		extern int TRAL_DeltaPips12 = 5;	//На каком расстоянии от цены тралится.
+	//}
+	
+	extern string EXP_122= "=== OPEN ==========";			//{
+		extern double	OPEN_FixLot12 = 100.00;	//Каким объемом будут открываться ордера.
+		extern int		OPEN_TPPips12 = 0;
+		extern int		OPEN_SLPips12 = 0;		//На всякий пожарный случай.
+	//}
+
+
+	
+extern string	EXP_2	= "=== PHASE2_1 ==========";			//..	
 	extern	bool UsePhase2 = false;
 	//extern	int	BU_pip = 2;				//Через сколько пунктов переводим в БУ
 	extern	int TRAL_Begin_pip = 2;			//Цена закрытия должна уйти в 2 пункта плюса от сл
@@ -183,13 +205,14 @@ int startext(){
 		//}
 	//}	
 	
-	Comment(	"EXP ver: "	,VER		,"\n"
+	Comment(	"EXP ver: "	,VER		,"\n"					//{
 			,	"Sys ver: "	,ELTVER		,"\n"
 			,	"Arr ver: "	,ARRVER		,"\n"
 			,	"DOW = "	,DayOfWeek(),"\n"
 			,	"GTBS_S = ", getTimeByShift(0, THS_Ph1, TMS_Ph1), "\n"
 			,	"GTBS_S(0,21,50) = ", getTimeByShift(0, 21, 50), "\n"
 			,	CommAdd);
+			//}
 	
 	//------------------------------------------------------
 	if(isStart) isStart = false;
@@ -197,17 +220,27 @@ int startext(){
 	//------------------------------------------------------
 	Main();													//called from sysELT3
 	
-	//------------------------------------------------------
-	//mngAO.Main();											//Main function of autoopen manager.
+	int phase = 0;
 	
-	//------------------------------------------------------
-	//libCY.Main();											//Main function of convoys manager.
-
 	if(isPhase1()){
-		eGH_Phase1();
+		phase = 1;
+	}
+	
+	if(isPhase12()){
+		phase = 12;
 	}
 	
 	if(isPhase2()){
+		phase = 2;
+	}
+	
+	if(phase == 1){
+		eGH_Phase1();
+	}
+	
+	if(phase == 12){}
+	
+	if(phase == 2){
 		eGH_Phase2();
 	}
 	
@@ -248,6 +281,10 @@ double iif( bool condition, double ifTrue, double ifFalse ){
 //{	Expert functions
 bool isPhase1(){
 	return(CWT(DOW_Ph1, THS_Ph1, TMS_Ph1, THE_Ph1, TME_Ph1));
+}
+
+bool isPhase12(){
+	return(CWT(DOW_Ph12, THS_Ph12, TMS_Ph12, THE_Ph12, TME_Ph12));
 }
 
 bool isPhase2(){
@@ -364,6 +401,107 @@ void	TralBSSS(){
 		
 		if(oty == OP_SELLSTOP){
 			new_pr = MarketInfo(Symbol(), MODE_BID)-TRAL_DeltaPips*Point;
+			TR_MoveOrder(oti, new_pr);
+		}
+		
+	}
+
+}
+//}
+
+//{	=== PHASE 12
+void eGH_Phase12(){											
+	/**
+		\version	0.0.0.1
+		\date		2013.06.11
+		\author		Morochin <artamir> Artiom
+		\details	Must be called in begining of "start()" 
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.06.11@artamir	[]	TralBSSS
+	*/
+
+	if(isOrdersByMN()){
+		TralBSSS12();
+	}else{
+		OpenBSSS12();
+	}
+}
+
+void	OpenBSSS12(){
+	/**
+		\version	0.0.2
+		\date		2013.04.29
+		\author		Morochin <artamir> Artiom
+		\details	Процедура открывает Байстоп и СеллСтоп ордера с заданными настройками. 
+		\internal
+			>Hist:		
+					 @0.0.2@2013.04.29@artamir	[]	OpenBSSS
+					 @0.0.1@2013.04.25@artamir	[]	Изменил расчет стартовой цены открытия ордеров.
+	*/
+
+	double bs[], ss[];	//Массивы выставленных ордеров.
+	double sp, vol;
+	int ap, tppips, slpips;
+	
+	vol = OPEN_FixLot12;
+	ap = TRAL_DeltaPips12;
+	tppips = OPEN_TPPips12;
+	slpips = OPEN_SLPips12;
+	
+	//{		=== Open BS
+	RefreshRates();
+	sp = MarketInfo(Symbol(), MODE_ASK);
+	TR_SendBUYSTOP_array(bs, sp, ap, vol, tppips, slpips, "eGH_BS_"+TR_MN, -1);
+	
+	//..	=== Open SS
+	RefreshRates();
+	sp = MarketInfo(Symbol(), MODE_BID);
+	TR_SendSELLSTOP_array(ss, sp, ap, vol, tppips, slpips, "eGH_SS_"+TR_MN, -1);
+	//}
+
+}
+
+void	TralBSSS12(){
+	/**
+		\version	0.0.1
+		\date		2013.04.25
+		\author		Morochin <artamir> Artiom
+		\details	Трейлинг отложенных ордеров в дельте от цены.
+		\internal
+			>Hist:	
+			@0.0.1@2013.04.25@artamir	[]	TralBSSS
+	*/
+	
+	double d[][OE_MAX];
+	int dROWS = 0;
+	int didx;
+	int oti = -1;
+	int oty = -1;
+	double new_pr = 0.00;
+	
+	
+	getOrdersByMethod(d);	//забираем ордера с текущим магиком.
+	
+	A_d_Sort2(d, OE_CP2OP, OE_CP2OP+" <;"); //сортировка по убыванию
+	
+	if(Debug && BP_TRAL){
+		A_d_PrintArray2(d, 4, "TRAL_");
+	}
+	
+	dROWS = ArrayRange(d, 0);
+	
+	for(didx = 0; didx < dROWS; didx++){
+		oti = d[didx][OE_TI];
+		oty = d[didx][OE_TY];
+		
+		if(oty == OP_BUYSTOP){
+			new_pr = MarketInfo(Symbol(), MODE_ASK)+TRAL_DeltaPips12*Point;
+			TR_MoveOrder(oti, new_pr);
+		}
+		
+		if(oty == OP_SELLSTOP){
+			new_pr = MarketInfo(Symbol(), MODE_BID)-TRAL_DeltaPips12*Point;
 			TR_MoveOrder(oti, new_pr);
 		}
 		

@@ -1,10 +1,11 @@
 	/**
-		\version	0.0.0.27
-		\date		2013.06.11
+		\version	0.0.0.28
+		\date		2013.06.12
 		\author		Morochin <artamir> Artiom
 		\details	Must be called in begining of "start()" 
 		\internal
-			>Hist:																
+			>Hist:																	
+					 @0.0.0.28@2013.06.12@artamir	[]	startext
 					 @0.0.0.27@2013.06.11@artamir	[]	
 					 @0.0.0.26@2013.06.11@artamir	[]	TralBSSS
 					@0.0.0.22@2013.05.17@artamir	[*]	Сначала тралится ордер, ближний к цене.	
@@ -27,7 +28,7 @@
 					 @0.0.1@2013.04.25@artamir	[+]	CWT
 	*/
 #define	EXP	"eGH"
-#define	VER	"0.0.27_2013.06.11"
+#define	VER	"0.0.28_2013.06.12"
 
 //{	=== Extern 
 extern string	EXP_11	= "=== PHASE1_1 ==========";			//{
@@ -158,13 +159,14 @@ int start(){
 
 int startext(){
 	/**
-		\version	0.0.3
-		\date		2013.04.30
+		\version	0.0.0.4
+		\date		2013.06.12
 		\author		Morochin <artamir> Artiom
 		\details	Расширение функции старт.
 					т.е. ее основная начинка
 		\internal
-			>Hist:			
+			>Hist:				
+					 @0.0.0.4@2013.06.12@artamir	[]	startext
 					 @0.0.3@2013.04.30@artamir	[+]	Добавлен вывод соощения если Торговля запрещена или Рынок закрыт
 					 @0.0.2@2013.04.29@artamir	[]	startext
 					 @0.0.1@2013.04.25@artamir	[]	startext
@@ -238,7 +240,9 @@ int startext(){
 		eGH_Phase1();
 	}
 	
-	if(phase == 12){}
+	if(phase == 12){
+		eGH_Phase12();
+	}
 	
 	if(phase == 2){
 		eGH_Phase2();

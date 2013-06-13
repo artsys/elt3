@@ -1,10 +1,12 @@
 	/**
-		\version	0.0.0.28
+		\version	0.0.0.30
 		\date		2013.06.12
 		\author		Morochin <artamir> Artiom
 		\details	Must be called in begining of "start()" 
 		\internal
-			>Hist:																	
+			>Hist:																			
+					 @0.0.0.30@2013.06.12@artamir	[*]	TralBSSS - Изменилась функция сортировки массива.
+					 @0.0.0.29@2013.06.12@artamir	[]	TralBSSS
 					 @0.0.0.28@2013.06.12@artamir	[]	startext
 					 @0.0.0.27@2013.06.11@artamir	[]	
 					 @0.0.0.26@2013.06.11@artamir	[]	TralBSSS
@@ -28,7 +30,7 @@
 					 @0.0.1@2013.04.25@artamir	[+]	CWT
 	*/
 #define	EXP	"eGH"
-#define	VER	"0.0.28_2013.06.12"
+#define	VER	"0.0.30_2013.06.12"
 
 //{	=== Extern 
 extern string	EXP_11	= "=== PHASE1_1 ==========";			//{
@@ -367,12 +369,13 @@ void	OpenBSSS(){
 
 void	TralBSSS(){
 	/**
-		\version	0.0.1
-		\date		2013.04.25
+		\version	0.0.0.2
+		\date		2013.06.12
 		\author		Morochin <artamir> Artiom
 		\details	Трейлинг отложенных ордеров в дельте от цены.
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2013.06.12@artamir	[]	TralBSSS
 			@0.0.1@2013.04.25@artamir	[]	TralBSSS
 	*/
 	
@@ -386,7 +389,7 @@ void	TralBSSS(){
 	
 	getOrdersByMethod(d);	//забираем ордера с текущим магиком.
 	
-	A_d_Sort2(d, OE_CP2OP, OE_CP2OP+" <;"); //сортировка по убыванию
+	A_d_Sort2(d, OE_CP2OP+" <;"); //сортировка по убыванию
 	
 	if(Debug && BP_TRAL){
 		A_d_PrintArray2(d, 4, "TRAL_");
@@ -468,12 +471,13 @@ void	OpenBSSS12(){
 
 void	TralBSSS12(){
 	/**
-		\version	0.0.1
-		\date		2013.04.25
+		\version	0.0.0.2
+		\date		2013.06.12
 		\author		Morochin <artamir> Artiom
 		\details	Трейлинг отложенных ордеров в дельте от цены.
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2013.06.12@artamir	[]	TralBSSS
 			@0.0.1@2013.04.25@artamir	[]	TralBSSS
 	*/
 	
@@ -487,7 +491,7 @@ void	TralBSSS12(){
 	
 	getOrdersByMethod(d);	//забираем ордера с текущим магиком.
 	
-	A_d_Sort2(d, OE_CP2OP, OE_CP2OP+" <;"); //сортировка по убыванию
+	A_d_Sort2(d, OE_CP2OP+" <;"); //сортировка по убыванию
 	
 	if(Debug && BP_TRAL){
 		A_d_PrintArray2(d, 4, "TRAL_");

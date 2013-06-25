@@ -1,7 +1,8 @@
 	/*
-		>Ver	:	0.0.0.41
-		>Date	:	2013.05.20
-		>Hist	:																										
+		>Ver	:	0.0.0.42
+		>Date	:	2013.06.12
+		>Hist	:																											
+					@0.0.0.42@2013.06.12@artamir	[]	A_d_Select
 					@0.0.0.41@2013.05.20@artamir	[]	A_d_Compare
 					@0.0.0.40@2013.05.20@artamir	[]	A_d_Select
 					@0.0.0.39@2013.05.20@artamir	[]	A_d_Compare
@@ -340,17 +341,17 @@ bool A_d_Compare(double &a[][], int i1, int i2, string compare = ""){
 	string subs[];
 	ArrayResize(subs,0);
 	int subs_ROWS = 0;
-	StringToArray(subs, compare, ";");
+	StringToArray(subs, compare, ";");	//Разбиваем на массив параметров сравнения т.е. на элементы: <НомерКолонки><Пробел><ОперацияСравнения>
 	subs_ROWS = ArrayRange(subs,0);
 	
 	//A_s_PrintArray1(subs, "subs");
 	
-	for(int i = 0; i < subs_ROWS; i++){
+	for(int i = 0; i < subs_ROWS; i++){	//цикл по количеству сравниваемых колонок.
 		string co[0];
 		ArrayResize(co,0);
 		int co_ROWS = 0;
-		StringToArray(co, subs[i], " ");
-		co_ROWS = ArrayRange(co,0);
+		StringToArray(co, subs[i], " ");	
+		co_ROWS = ArrayRange(co,0);	//Количество строк массива индексов колонок для сравнения.
 	
 		if(co_ROWS > 0){
 			int col = StrToInteger(co[0]);
@@ -703,29 +704,32 @@ int A_d_Select(double &s[][] /*source array*/, double &d[][] /*destination array
 //}
 
 //{ === SORTING FUNCTIONS
-void A_d_Sort2(double& a[][], int col, string order = ""){
+void A_d_Sort2(double& a[][], string order = "0 >;"){
 	/**
-		\version	0.0.0.3
-		\date		2013.05.20
+		\version	0.0.0.4
+		\date		2013.06.12
 		\author		Morochin <artamir> Artiom
-		\details	Быстрая сортировка двумерного массива по заданной колонке
+		\details	Сортировка двумерного массива по заданной колонке
 		\internal
-			>Hist:			
+			>Hist:				
+					 @0.0.0.4@2013.06.12@artamir	[]	A_d_Select
 					 @0.0.0.3@2013.05.20@artamir	[]	A_d_Select
 					 @0.0.0.2@2013.05.20@artamir	[]	A_d_Select
 					 @0.0.0.1@2013.05.17@artamir	[]	A_d_Select
 			>Rev:0
 			ордер может быть строкой формата "<номер колонки для сравнения><пробел><операция сравнения><точкасзапятой>"
 			"5 >;" или "7 <=;"
+			По умолчанию Сортировка 0-колонки по возрастанию
 	*/
 
 	int ROWS = ArrayRange(a, 0);
 	
-	for(int i = 0; i < ROWS; i++){
+	
+	
+	for(int i = 0; i < ROWS-1; i++){
 		for(int j = 1; j < ROWS; j++){
 			
 			if(!A_d_Compare(a, i,j,order)){A_d_Swap2(a,i,j);}
-			//if(a[i][col] > a[j][col]){A_d_Swap2(a,i,j);}
 		}
 	}
 }

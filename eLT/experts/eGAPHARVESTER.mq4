@@ -1,10 +1,11 @@
 	/**
-		\version	0.0.0.30
-		\date		2013.06.12
+		\version	0.0.0.31
+		\date		2013.06.25
 		\author		Morochin <artamir> Artiom
 		\details	Must be called in begining of "start()" 
 		\internal
-			>Hist:																			
+			>Hist:																				
+					 @0.0.0.31@2013.06.25@artamir	[*]	CloseAllPendings - Добавлен трал для ордеров у которых сл = 0.
 					 @0.0.0.30@2013.06.12@artamir	[*]	TralBSSS - Изменилась функция сортировки массива.
 					 @0.0.0.29@2013.06.12@artamir	[]	TralBSSS
 					 @0.0.0.28@2013.06.12@artamir	[]	startext
@@ -30,7 +31,7 @@
 					 @0.0.1@2013.04.25@artamir	[+]	CWT
 	*/
 #define	EXP	"eGH"
-#define	VER	"0.0.30_2013.06.12"
+#define	VER	"0.0.31_2013.06.25"
 
 //{	=== Extern 
 extern string	EXP_11	= "=== PHASE1_1 ==========";			//{
@@ -615,12 +616,13 @@ void CloseAllPendings(){
 
 void PH2_Tral(){
 	/**
-		\version	0.0.0.4
-		\date		2013.05.17
+		\version	0.0.0.5
+		\date		2013.06.25
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:				
+			>Hist:					
+					 @0.0.0.5@2013.06.25@artamir	[]	CloseAllPendings
 					 @0.0.0.4@2013.05.17@artamir	[]	CloseAllPendings
 					 @0.0.0.3@2013.05.15@artamir	[]	CloseAllPendings
 					 @0.0.0.2@2013.05.15@artamir	[]	CloseAllPendings
@@ -629,6 +631,7 @@ void PH2_Tral(){
 	*/
 
 	double d[][OE_MAX];
+	//{ --- Если СЛ > 0
 	A_eraseFilter();										
 	
 	A_FilterAdd_AND(OE_IT, 1, -1, AS_OP_EQ);
@@ -644,6 +647,27 @@ void PH2_Tral(){
 		int ti = d[idx][OE_TI];
 		TR_ModifySLByPrice(ti, TRAL_Step_pip);
 	}
+	//}
+	
+	//{ --- Если СЛ = 0
+	ArrayResize(d, 0);
+	
+	A_eraseFilter();										
+	
+	A_FilterAdd_AND(OE_IT, 1, -1, AS_OP_EQ);
+	A_FilterAdd_AND(OE_MN, TR_MN, -1, AS_OP_EQ);
+	A_FilterAdd_AND(OE_SL, 0, -1, AS_OP_EQ);
+	A_FilterAdd_AND(OE_CP2OP, (TRAL_DeltaPips), -1, AS_OP_ABOVE);
+	
+	A_d_Select(aOE, d);
+	
+	ROWS = ArrayRange(d, 0);
+	
+	for(idx = 0; idx < ROWS; idx++){
+		ti = d[idx][OE_TI];
+		TR_ModifySLByPrice(ti, TRAL_Step_pip);
+	}
+	//}
 }	
 
 //}

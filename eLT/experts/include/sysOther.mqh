@@ -1,22 +1,24 @@
 	/**
-		\version	0.0.0.0
-		\date		2013.05.20
+		\version	0.0.0.1
+		\date		2013.06.12
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:
+			>Hist:	
+					 @0.0.0.1@2013.06.12@artamir	[+]	StringToArray
 			>Rev:0
 	*/
 
 
 int StringToArray(string &a[], string s, string del = ";"){
 	/**
-		\version	0.0.0.0
-		\date		2013.05.20
+		\version	0.0.0.1
+		\date		2013.06.12
 		\author		Morochin <artamir> Artiom
 		\details	Разбивает строку на подстроки разделителем. если разделителя нет, то в массиве возврящается строка.
 		\internal
-			>Hist:
+			>Hist:	
+					 @0.0.0.1@2013.06.12@artamir	[]	StringToArray
 			>Rev:0
 	*/
 	

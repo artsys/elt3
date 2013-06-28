@@ -1,7 +1,8 @@
 	/*
-		>Ver	:	0.0.0.43
-		>Date	:	2013.06.25
-		>Hist	:																												
+		>Ver	:	0.0.0.44
+		>Date	:	2013.06.28
+		>Hist	:																													
+					@0.0.0.44@2013.06.28@artamir	[]	A_d_releaseArray
 					@0.0.0.43@2013.06.25@artamir	[!]	A_d_Select	ƒобавлено обнуление массива-приемника по требованию.
 					@0.0.0.42@2013.06.12@artamir	[]	A_d_Select
 					@0.0.0.41@2013.05.20@artamir	[]	A_d_Compare
@@ -322,6 +323,33 @@ void A_d_Swap2(double &a[][], int i1, int i2){
 		BP("SWAP", "i1 = ",i1, "i2 = ",i2);
 	}
 
+}
+
+void A_d_CopyRow2(double &a[][], int ifrom, int ito=-1){
+	/**
+		\version	0.0.0.1
+		\date		2013.06.28
+		\author		Morochin <artamir> Artiom
+		\details	 опирует строку с индексом ifrom в строку с индексом ito
+					≈сли ito = -1 тогда создаетс€ нова€ строка и нужна€ строка копируетс€ в эту строку.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.06.28@artamir	[]	A_d_releaseArray
+			>Rev:0
+	*/
+
+	int idx_to = ito;
+	if(idx_to <= -1){
+		int ROWS = ArrayRange(a, 0);
+		ArrayResize(a, (ROWS+1));
+		idx_to = ROWS;
+	}
+	
+	int COLS = ArrayRange(a, 1);
+	for(int ic = 0; ic < COLS; ic++){
+		//÷икл по колонкам.
+		a[ito][ic] = a[ifrom][ic];
+	}
 }
 
 bool A_d_Compare(double &a[][], int i1, int i2, string compare = ""){

@@ -1,10 +1,11 @@
 	/**
-		\version	0.0.0.6
+		\version	0.0.0.7
 		\date		2013.06.28
 		\author		Morochin <artamir> Artiom
 		\details	Trading functtions.
 		\internal
-			>Hist:						
+			>Hist:							
+					 @0.0.0.7@2013.06.28@artamir	[]	TR_SendPending_array
 					 @0.0.0.6@2013.06.28@artamir	[]	TR_SendREVERSOrder
 					 @0.0.0.5@2013.06.27@artamir	[]	TR_MoveToOrder
 					 @0.0.0.4@2013.05.17@artamir	[]	TR_ModifySLByPrice
@@ -596,6 +597,23 @@ int TR_SendSTOPLikeOrder_array(double &d[], int src_ti = 0, int AddPips = 0, dou
 	
 }
 
+int TR_SendPending_array(double &d[], int type, double StartPrice, int AddPips = 0, double Vol = 0.01, int TPPip = 0, int SLPip = 0, string Comm = "", int Magic = -1){
+	/**
+		\version	0.0.0.1
+		\date		2013.06.28
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.06.28@artamir	[]	TR_SendPending_array
+			>Rev:0
+	*/
+	
+	if(type == OP_BUYSTOP	){return(TR_SendBUYSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic));}
+	if(type == OP_BUYLIMIT	){return(TR_SendBUYLIMIT_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic));}
+	if(type == OP_SELLSTOP	){return(TR_SendSELLSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic));}
+	if(type == OP_SELLLIMIT	){return(TR_SendSELLLIMIT_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic));}
+}
 //}
 
 //{	//====== MARKET ORDERS	============================

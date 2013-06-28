@@ -1414,6 +1414,48 @@ int		OE_getAOMByTicket(int ti){
 	
 	return(val);
 }
+
+int		OE_getMPByTicket(int ti){
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2013.03.01
+		>Hist	:
+		>Author	:	Morochin <artamir> Artiom
+		>Desc	:
+	*/
+	int idx = OE_FIBT(ti);
+	int val = OE_getPropByIndex(idx, OE_MP);
+	
+	return(val);
+}
+
+int		OE_getGLByTicket(int ti){
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2013.03.01
+		>Hist	:
+		>Author	:	Morochin <artamir> Artiom
+		>Desc	:
+	*/
+	int idx = OE_FIBT(ti);
+	int val = OE_getPropByIndex(idx, OE_GL);
+	
+	return(val);
+}
+
+int		OE_getFOTYByTicket(int ti){
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2013.03.01
+		>Hist	:
+		>Author	:	Morochin <artamir> Artiom
+		>Desc	:
+	*/
+	int idx = OE_FIBT(ti);
+	int val = OE_getPropByIndex(idx, OE_FOTY);
+	
+	return(val);
+}
 //}
 
 

@@ -1,7 +1,8 @@
 	/*
-		>Ver	:	0.0.0.42
-		>Date	:	2013.06.12
-		>Hist	:																											
+		>Ver	:	0.0.0.43
+		>Date	:	2013.06.25
+		>Hist	:																												
+					@0.0.0.43@2013.06.25@artamir	[!]	A_d_Select	Добавлено обнуление массива-приемника по требованию.
 					@0.0.0.42@2013.06.12@artamir	[]	A_d_Select
 					@0.0.0.41@2013.05.20@artamir	[]	A_d_Compare
 					@0.0.0.40@2013.05.20@artamir	[]	A_d_Select
@@ -34,7 +35,7 @@
 				:	d - for double arrays
 	*/
 
-#define ARRVER	"0.0.0.41_2013.05.17"
+#define ARRVER	"0.0.0.43_2013.06.25"
 	
 //{ === TEMPORAR ARRAY
 
@@ -580,11 +581,14 @@ bool A_Assertion_OUT(double		s_max_val	/*source max value*/
 }
 
 
-int A_d_Select(double &s[][] /*source array*/, double &d[][] /*destination array*/){
+int A_d_Select(		double &s[][] /*source array*/
+				,	double &d[][] /*destination array*/
+				,	bool	need_add_rows = false){
 	/*
-		>Ver	:	0.0.5
-		>Date	:	2013.02.22
-		>Hist	:
+		>Ver	:	0.0.0.6
+		>Date	:	2013.06.25
+		>Hist	:	
+					@0.0.0.6@2013.06.25@artamir	[]	A_d_Select
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:
 	*/
@@ -607,9 +611,10 @@ int A_d_Select(double &s[][] /*source array*/, double &d[][] /*destination array
 	bool this_assertion = false;
 	bool res_assertion = false;
 	
-	ArrayResize(d,0);
+	if(!need_add_rows){ArrayResize(d,0);}
+	
 	ArrayResize(f,0);
-	int d_idx = 0;
+	int d_idx = ArrayRange(d,0);
 	
 	ArrayCopy(f, A_Filter, 0, 0, WHOLE_ARRAY);
 	s_ROWS = ArrayRange(s,0);
@@ -644,13 +649,13 @@ int A_d_Select(double &s[][] /*source array*/, double &d[][] /*destination array
 			
 			s_val = s[s_row][s_col];
 			
-			if(Debug && BP_Condition_select){
-				BP("SELECT", "f_as = ", f_as
-							, "f_max = ", f_max
-							, "f_min = ", f_min
-							, "f_sel = ", f_sel
-							, "s_val = ", s_val);
-			}
+			// if(Debug && BP_Condition_select){
+				// BP("SELECT", "f_as = ", f_as
+							// , "f_max = ", f_max
+							// , "f_min = ", f_min
+							// , "f_sel = ", f_sel
+							// , "s_val = ", s_val);
+			// }
 			
 			if(f_as == AS_OP_EQ){
 				this_assertion = A_Assertion_EQ(f_max, s_val);

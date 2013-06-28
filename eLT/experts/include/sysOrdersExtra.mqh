@@ -1,11 +1,12 @@
 	/*
-		>Ver	:	0.0.0.41
-		>Date	:	2013.05.17
-		>Hist	:																							
-					@0.0.0.41@2013.05.17@artamir	[]	OE_ClosePriceSL
-					@0.0.39@2013.03.06@artamir	[]	OE_setGLByTicket
-					@0.0.38@2013.03.06@artamir	[]	OE_setIMByTicket
-					@0.0.37@2013.03.06@artamir	[]	OE_setIPByTicket
+		>Ver	:	0.0.0.42
+		>Date	:	2013.06.28
+		>Hist	:																								
+					@0.0.0.42@2013.06.28@artamir	[+]	OE_setFIRByTicket
+					@0.0.0.41@2013.05.17@artamir	[+]	OE_ClosePriceSL
+					@0.0.39@2013.03.06@artamir	[+]	OE_setGLByTicket
+					@0.0.38@2013.03.06@artamir	[+]	OE_setIMByTicket
+					@0.0.37@2013.03.06@artamir	[+]	OE_setIPByTicket
 					@0.0.36@2013.03.06@artamir	[]	
 			@0.0.35@2013.03.02@artamir	[]
 					@0.0.34@2013.02.26@artamir	[]	OE_RecheckStatuses
@@ -53,7 +54,8 @@
 //------ Parents
 #define	OE_MP		15	//Main parent of the grid
 #define	OE_LP		16	//Local parent
-#define OE_LP2		17	//Local parent
+#define	OE_LP2		17	//Local parent
+
 //------ Partial close
 #define	OE_FROM		20	//If was partial close 
 //------ Grid
@@ -65,6 +67,7 @@
 #define	OE_FOTY		32	//First open type
 #define	OE_FOTI		33	//First open ticket
 #define	OE_FOL		34	//First open lot
+#define OE_FIR		35	//First is Revers? 0-main order, 1-revers order.
 //------ Auto open data (AOD)
 #define OE_AOM		40	//Auto open method
 #define OE_AOTY		41	//Auto open type
@@ -867,6 +870,38 @@ int	OE_setGLByTicket(int ti, int gl = -1){
 	return(idx);
 }
 
+int OE_setFIRByTicket(int ti, int fir = 0){
+	/**
+		\version	0.0.0.1
+		\date		2013.06.28
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.06.28@artamir	[]	OE_setFIRByTicket
+			>Rev:0
+	*/
+
+	
+	//------------------------------------------------------
+	if(fir <= -1){
+		return(-1);
+	}
+	
+	//------------------------------------------------------
+	int idx = OE_findIndexByTicket(ti);
+	
+	//------------------------------------------------------
+	if(idx <= -1){
+		return(-1);
+	}
+	
+	//------------------------------------------------------
+	aOE[idx][OE_FIR] = fir;
+	
+	//------------------------------------------------------
+	return(idx);
+}
 //}
 
 //{	//=== SET AOM

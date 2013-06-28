@@ -1,10 +1,12 @@
 	/**
-		\version	0.0.0.4
-		\date		2013.05.17
+		\version	0.0.0.6
+		\date		2013.06.28
 		\author		Morochin <artamir> Artiom
 		\details	Trading functtions.
 		\internal
-			>Hist:				
+			>Hist:						
+					 @0.0.0.6@2013.06.28@artamir	[]	TR_SendREVERSOrder
+					 @0.0.0.5@2013.06.27@artamir	[]	TR_MoveToOrder
 					 @0.0.0.4@2013.05.17@artamir	[]	TR_ModifySLByPrice
 					 @0.0.3@2013.04.25@artamir	[]	TR_MoveOrder
 					 @0.0.2@2013.04.25@artamir	[]	TR_MoveOrder
@@ -17,7 +19,7 @@ extern double	TR_TwiseLots	= 20.0;						// Объем выставляемой позиции, после кот
 extern int		TR_MN = 0;									// Магический номер позиции.
 extern string	TR_E = "===================================";
 
-//...	//=== SENDING	====================================
+//{	//=== SENDING	====================================
 
 //{	//=== PUBLIC	====================================
 
@@ -659,7 +661,7 @@ int TR_getReversType(int src_ty = -1){
 	return(dest_ty);
 }
 
-int TR_SendREVERSOrder(int src_ti, double vol = 0.01, double lot_multi = 2){
+int TR_SendREVERSOrder(int src_ti, double vol = 0.01, double lot_multi = 1){
 	/*
 		>Ver	:	0.0.3
 		>Date	:	2013.03.02
@@ -675,6 +677,9 @@ int TR_SendREVERSOrder(int src_ti, double vol = 0.01, double lot_multi = 2){
 	int dest_ty = -1;
 	double dest_vol = vol;
 	
+	int SPREAD = MarketInfo(Symbol(), MODE_SPREAD);
+	int addSpread = 0;
+	
 	if(!OrderSelect(src_ti, SELECT_BY_TICKET)) return(-1);
 	
 	src_ty = OrderType();
@@ -686,19 +691,19 @@ int TR_SendREVERSOrder(int src_ti, double vol = 0.01, double lot_multi = 2){
 	dest_ty = TR_getReversType(src_ty);
 	
 	if(dest_ty == OP_BUYLIMIT){
-		return(TR_SendBUYLIMIT(src_pr, 0, dest_vol));
+		return(TR_SendBUYLIMIT((src_pr+SPREAD*Point), 0, dest_vol));
 	}
 	
 	if(dest_ty == OP_SELLLIMIT){
-		return(TR_SendSELLLIMIT(src_pr, 0, dest_vol));
+		return(TR_SendSELLLIMIT((src_pr-SPREAD*Point), 0, dest_vol));
 	}
 	
 	if(dest_ty == OP_BUYSTOP){
-		return(TR_SendBUYSTOP(src_pr, 0, dest_vol));
+		return(TR_SendBUYSTOP((src_pr+SPREAD*Point), 0, dest_vol));
 	}
 	
 	if(dest_ty == OP_SELLSTOP){
-		return(TR_SendSELLSTOP(src_pr, 0, dest_vol));
+		return(TR_SendSELLSTOP((src_pr-SPREAD*Point), 0, dest_vol));
 	}
 	
 	return(-1);
@@ -707,7 +712,7 @@ int TR_SendREVERSOrder(int src_ti, double vol = 0.01, double lot_multi = 2){
 
 //}
 
-//...	//=== PRIVATE	====================================
+//{	//=== PRIVATE	====================================
 int	_TR_CountOrdersToSend(double all_vol = 0){
 	/*
 		>Ver	:	0.0.0
@@ -810,7 +815,7 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 	takeprofit	= Norm_symb(takeprofit);
 	
 	//------------------------------------------------------
-	//...	//Checking ability to send order
+	//{	//Checking ability to send order
 	
 		//--------------------------------------------------
 		if(cmd == OP_BUYSTOP){
@@ -830,7 +835,7 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 				//return(-1);
 			}
 		}
-	//.
+	//}
 	
 	//------------------------------------------------------
 	int res = OrderSend(symbol, cmd, volume, price, slippage, stoploss, takeprofit, comment, lMN, expiration, arrow_color);
@@ -850,9 +855,9 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 	return(res);
 }
 
-//.
+//}
 
-//.
+//}
 
 //{	//=== MODIFY 	====================================
 
@@ -1244,6 +1249,45 @@ bool TR_MoveOrder(int src_ti, double pr, int mode = 1){
 	return(_OrderModify(src_ti, new_pr, new_sl, new_tp, -1));
 }
 
+bool TR_MoveToOrder(	int dest_ti /** тикет-получатель */
+					, 	int src_ti	/** тикет-источник*/){
+	/**
+		\version	0.0.0.1
+		\date		2013.06.27
+		\author		Morochin <artamir> Artiom
+		\details	Двигает ордер-получатель к ордеру-источнику с учетом спреда.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.06.27@artamir	[]	TR_MoveToOrder
+			>Rev:0
+	*/
+	
+	if(!OrderSelect(src_ti, SELECT_BY_TICKET)){return(false);}
+	int src_ty = OrderType();
+	double src_op = OrderOpenPrice();
+	
+	if(!OrderSelect(dest_ti, SELECT_BY_TICKET)){return(false);}
+	int dest_ty = OrderType();
+	double dest_op = OrderOpenPrice();
+	
+	int SPREAD = MarketInfo(Symbol(), MODE_SPREAD);
+	int addSpread = 0;
+	
+	if(src_ty == OP_BUY || src_ty == OP_BUYSTOP || src_ty == OP_BUYLIMIT){
+		if(dest_ty == OP_SELLSTOP || dest_ty == OP_SELLLIMIT){
+			addSpread = -1*SPREAD;
+		}
+	}
+	
+	if(src_ty == OP_SELL || src_ty == OP_SELLSTOP || src_ty == OP_SELLLIMIT){
+		if(dest_ty == OP_BUYSTOP || dest_ty == OP_BUYLIMIT){
+			addSpread = SPREAD;
+		}
+	}
+	
+	return(TR_MoveOrder(dest_ti, (src_op+addSpread*Point)));
+}
+
 bool TR_ModifySLByPrice(int ti, int minus_pip = 0){
 	/**
 		\version	0.0.0.2
@@ -1276,7 +1320,7 @@ bool TR_ModifySLByPrice(int ti, int minus_pip = 0){
 
 //}
 
-//...	//=== CLOSE 	====================================
+//{	//=== CLOSE 	====================================
 
 bool TR_CloseByTicket(int ticket){
 	/*
@@ -1360,4 +1404,4 @@ bool TR_CloseByTicket(int ticket){
 	return(res);
 }
 
-//.
+//}

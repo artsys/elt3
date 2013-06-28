@@ -1,7 +1,11 @@
 /*
-		>Ver	:	0.0.0.7
-		>Date	:	2013.05.20
-		>Hist:						
+		\version	0.0.0.11
+		\date		2013.06.27
+		>Hist:										
+				 @0.0.0.11@2013.06.27@artamir	[]	iMA_getByHandle
+				 @0.0.0.10@2013.06.27@artamir	[]	aMA_set
+				 @0.0.0.9@2013.06.25@artamir	[+]	iMAh_isHierarhyUp iMAh_isHierarhyDw
+				 @0.0.0.8@2013.06.25@artamir	[]	iMA_isPinBelow
 				 @0.0.0.7@2013.05.20@artamir	[]	aMA_set
 				 @0.0.0.6@2013.05.20@artamir	[]	iMA_getByHandle
 				 @0.0.5@2013.02.19@artamir	[]	iMA_isCrossDw
@@ -11,7 +15,7 @@
 		>Descr:
 			Библиотека функций для работы с машками
 		>Зависимости:
-			#include <libNormalizE_mqh>
+			#include <libNormalize.mqh>
 */
 
 string aMASets[];
@@ -30,14 +34,15 @@ void aMA_Init(){
 	ArrayResize(aMASets,0);
 }
 
-int aMA_set(int per = 21, int mode_ma = MODE_EMA, int app_price = PRICE_CLOSE, string sy=""){
+int aMA_set(int per = 21, int mode_ma = MODE_EMA, int app_price = PRICE_CLOSE, string sy="", int shift=0){
 	/**
-		\version	0.0.0.1
-		\date		2013.05.20
+		\version	0.0.0.2
+		\date		2013.06.27
 		\author		Morochin <artamir> Artiom
-		\details	Detailed description
+		\details	Сохраняет настройку скользящей средней в массив настроек. Возвращает индекс настроек в массиве.
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2013.06.27@artamir	[]	aMA_set
 					 @0.0.0.1@2013.05.20@artamir	[]	aMA_set
 			>Rev:0
 	*/
@@ -56,19 +61,21 @@ int aMA_set(int per = 21, int mode_ma = MODE_EMA, int app_price = PRICE_CLOSE, s
 	s=s+"@m"+mode_ma;
 	s=s+"@ap"+app_price;
 	s=s+"@sy"+sy;
+	s=s+"@sh"+shift;
 	
 	aMASets[lastROW]=s;
 	return(lastROW);
 }
 
-double iMA_getByHandle(int handle=0, int shift=0, int d=0){
+double iMA_getByHandle(int handle=0, int shift=-1, int d=0){
 	/**
-		\version	0.0.0.1
-		\date		2013.05.20
+		\version	0.0.0.2
+		\date		2013.06.27
 		\author		Morochin <artamir> Artiom
-		\details	Detailed description
+		\details	Возвращает цену скользящей средней по заданному индексу в массиве настроек и индексу бара.
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2013.06.27@artamir	[]	iMA_getByHandle
 					 @0.0.0.1@2013.05.20@artamir	[]	iMA_getByHandle
 			>Rev:0
 	*/
@@ -77,9 +84,17 @@ double iMA_getByHandle(int handle=0, int shift=0, int d=0){
 	int mode = Struc_KeyValue_int(aMASets[handle], "@m");
 	int ap = Struc_KeyValue_int(aMASets[handle], "@ap");
 	string sy = Struc_KeyValue_string(aMASets[handle], "@sy");
-	double ma = iMA(sy,0,p,0,mode,ap,shift);
+	int sh = shift;
+	if(sh<=-1){
+		sh = Struc_KeyValue_int(aMASets[handle], "@sh");
+	}
+	double ma = iMA(sy,0,p,0,mode,ap,sh);
 	ma = Norm_symb(ma, "", d); 
 	return(ma);
+}
+
+double iMAh_get(int h=0, int s=-1, int d=0){
+	return(iMA_getByHandle(h,s,d));
 }
 
 double iMA_getLevel(int handle=0, int shift=0, int level_pip = 50){
@@ -87,7 +102,7 @@ double iMA_getLevel(int handle=0, int shift=0, int level_pip = 50){
 		\version	0.0.0.0
 		\date		2013.05.20
 		\author		Morochin <artamir> Artiom
-		\details	Detailed description
+		\details	Возвращает цену, отстоящую от скользящей средней на level_pip
 		\internal
 			>Hist:
 			>Rev:0
@@ -138,6 +153,61 @@ bool iMA_isPinBelow(int handle=0, int shift=0, int level_pip=50){
 	return(false);
 }
 
+bool iMAh_isPriceBetween2Ma(int h1, int h2, double pr = 0){
+	/**
+		\version	0.0.0.2
+		\date		2013.06.25
+		\author		Morochin <artamir> Artiom
+		\details	Проверяет, если цена находится между двух ма.
+		\internal
+			>Hist:		
+					 @0.0.0.2@2013.06.25@artamir	[]	iMAh_isHierarhyUp
+					 @0.0.0.1@2013.06.25@artamir	[]	iMA_isPinBelow
+			>Rev:0
+	*/
+
+	if(pr == 0){
+		pr = Close[0];
+	}
+	
+	if((iMAh_get(h1) > pr && pr > iMAh_get(h2)) || (iMAh_get(h1) < pr && pr < iMAh_get(h2))){
+		return(true);
+	}
+	
+	return(false);
+}
+
+bool iMAh_isHierarhyUp(int hf, int hs, int shift = -1){
+	/**
+		\version	0.0.0.0
+		\date		2013.06.25
+		\author		Morochin <artamir> Artiom
+		\details	Проверяет если быстрая ма находится выше медленной
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	if(iMAh_get(hf) > iMAh_get(hs)){return(true);}
+	
+	return(false);
+}
+
+bool iMAh_isHierarhyDw(int hf, int hs, int shift = -1){
+	/**
+		\version	0.0.0.0
+		\date		2013.06.25
+		\author		Morochin <artamir> Artiom
+		\details	Проверяет если быстрая ма находится ниже медленной.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	if(iMAh_get(hf) < iMAh_get(hs)){return(true);}
+	
+	return(false);
+}
 
 
 double iMA_getMA(int per = 21, int shift = 0, int d = 0, int ty = MODE_EMA){
@@ -356,7 +426,7 @@ bool iMA_isPriceBetween2Ma(int per_f, int per_s, double pr, int shift = 0, int t
 		>Date	:	2013.02.14
 		>Hist	:
 		>Author	:	Morochin <artamir> Artiom
-		>Desc	:
+		>Desc	:	Определяет, если заданная цена находится между ценами скользящих средних на заданном баре
 	*/
 	
 	bool res = false;

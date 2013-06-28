@@ -1,10 +1,12 @@
 	/**
-		\version	0.0.0.11
+		\version	0.1.0.2
 		\date		2013.06.28
 		\author		Morochin <artamir> Artiom
 		\details	Советник Цена между двух МА
 		\internal
-			>Hist:										
+			>Hist:												
+					 @0.1.0.2@2013.06.28@artamir	[]	iif
+					 @0.1.0.1@2013.06.28@artamir	[]	iif
 					 @0.0.0.10@2013.06.27@artamir	[]	iif
 					 @0.0.0.9@2013.06.27@artamir	[]	iif
 					 @0.0.0.8@2013.06.27@artamir	[]	iif
@@ -23,7 +25,7 @@
 //{ --- DEFINES
 //{		--- MAIN
 #define	EXP	"ePB2MA"
-#define	VER	"0.0.0.11a_2013.06.28"
+#define	VER	"0.1.0.2_2013.06.28"
 //..	--- Open methods
 #define	AOM_PB2MA		20
 #define	AOM_PB2MA1_B	21
@@ -45,6 +47,7 @@ extern	int		AO_PB2MA_TP = 50;
 extern	int		AO_PB2MA_SL = 20;
 extern	double	AO_PB2MA_Lot1	= 0.1;
 extern	double	AO_PB2MA_Lot2	= 0.2;
+extern	double 	AO_PB2MA_Mylty	= 2;	//Коэф. увеличения объемов след. уровня
 extern	bool	AO_PB2MA_revers = false;
 
 int		AO_PB2MA_OpenLastMinutes = -1;	//check if was open any orders last 10 min.
@@ -314,7 +317,7 @@ void ePB2MA_Open(int method){
 		for(int idx_MO = 0; idx_MO < ROWS_MO; idx_MO++){
 			int ti = aMO[idx_MO];
 			ePB2MA_ModifySLTP(ti);
-			ePB2MA_OpenRevers(ti, method);
+			ePB2MA_OpenRevers(ti, method, AO_PB2MA_Lot2, 0);
 			ePB2MA_setStandartData(ti, method, 0);
 		}
 	}
@@ -325,10 +328,10 @@ void ePB2MA_ModifySLTP(int ti){
 	TR_ModifySL(ti, AO_PB2MA_SL, TR_MODE_PIP);
 }
 
-void ePB2MA_OpenRevers(int ti, int method){
-	int ti_rev = TR_SendREVERSOrder(ti, AO_PB2MA_Lot2);
+void ePB2MA_OpenRevers(int ti, int method, double lot, int gl){
+	int ti_rev = TR_SendREVERSOrder(ti, lot);
 	ePB2MA_ModifySLTP_revers(ti, ti_rev);
-	ePB2MA_setStandartData(ti_rev, method, 0, ti);
+	ePB2MA_setStandartData(ti_rev, method, gl, ti);
 	OE_setFIRByTicket(ti_rev, 1);
 }
 
@@ -337,7 +340,7 @@ void ePB2MA_ModifySLTP_revers(int ti, int ti_rev){
 	TR_ModifySLOnTP(ti, ti_rev);
 }
 
-void ePB2MA_setStandartData(int ti, int method, int gl, int mp=0){
+void ePB2MA_setStandartData(int ti, int method, int gl=0, int mp=0){
 	/**
 		\version	0.0.0.1
 		\date		2013.06.25
@@ -349,8 +352,9 @@ void ePB2MA_setStandartData(int ti, int method, int gl, int mp=0){
 			>Rev:0
 	*/
 	OE_setStandartDataByTicket(ti);
+	OE_setFODByTicket(ti);
 	OE_setAOMByTicket(ti, method);
-	OE_setGLByTicket(ti, 0);
+	OE_setGLByTicket(ti, gl);
 	OE_setMPByTicket(ti, mp);
 }
 //}
@@ -494,8 +498,93 @@ void ePB2MA_Martin(){
 		double op = Norm_symb(aPRev[idx][OE_OP]);
 		TR_ModifySL(ti, op);
 		
+		ePB2MA_Martin_Open(ti);
 	}
 	//}
+}
+
+void ePB2MA_Martin_Open(int mp){
+	/**
+		\version	0.0.0.1
+		\date		2013.06.28
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.06.28@artamir	[]	iif
+			>Rev:0
+	*/
+
+	//Отбор ордеров по MP.
+	double aMP[][OE_MAX];
+	int ROWS_MP = ELT_SelectByMP_d2(aOE, aMP, mp);
+
+	if(ROWS_MP >= 1){return;}	//если есть ордера с заданным мп, то выходим.
+	
+	//МП - это реверсный ордер. Чтоб узнать цену открытия увеличенного ордера,
+	//нужно выбрать мп от мп. и посмотреть его цену, а так же foty, чтоб выставить провильный ордер.
+	int ti_mp_mp = OE_getMPByTicket(mp);
+	
+	ePB2MA_OpenNextLevel(mp, ti_mp_mp);
+	
+}
+
+void ePB2MA_OpenNextLevel(int ti_mp/** реверсный ордер */, int ti_mp_mp/** родитель текущего уровня*/){
+	/**
+		\version	0.0.0.0
+		\date		2013.06.28
+		\author		Morochin <artamir> Artiom
+		\details	Выставляет ордера нового уровня.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	//Выставляет основной ордер нового уровня.
+	int this_level = OE_getGLByTicket(ti_mp_mp);
+	int next_level = this_level+1;
+
+	double this_lot = OE_getLOTByTicket(ti_mp_mp);
+	double next_lot = this_lot*AO_PB2MA_Mylty;
+	
+	double this_lot_rev = OE_getLOTByTicket(ti_mp);
+	double next_lot_rev = this_lot_rev*AO_PB2MA_Mylty;
+
+	int this_type = OE_getFOTYByTicket(ti_mp_mp);
+	int next_type = this_type;
+	
+	double this_op = OE_getOPByTicket(ti_mp_mp);
+	double next_op = this_op;
+	
+	int this_method = OE_getAOMByTicket(ti_mp_mp);
+	int next_method = this_method;
+	
+	double aO[];
+	int ROWS_MO = TR_SendPending_array(aO, next_type, next_op, 0, next_lot, 0, 0, "lvl "+next_level, -1);
+	
+	for(int idx = 0; idx<ROWS_MO; idx++){
+		int ti = aO[idx];
+			ePB2MA_ModifySLTP(ti);
+			ePB2MA_OpenRevers(ti, next_method, next_lot_rev, next_level);
+			ePB2MA_setStandartData(ti, next_method, next_level, ti_mp);
+		
+	}
+}
+
+int MAH_By_Method(int method){
+	/**
+		\version	0.0.0.0
+		\date		2013.06.28
+		\author		Morochin <artamir> Artiom
+		\details	Возвращает хэндл ма по методу открытия.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+	
+	if(method == AOM_PB2MA1_B || method == AOM_PB2MA1_S){return(ma1h);}
+	if(method == AOM_PB2MA2_B || method == AOM_PB2MA2_S){return(ma2h);}
+	if(method == AOM_PB2MA3_B || method == AOM_PB2MA3_S){return(ma3h);}
 }
 //}
 //}

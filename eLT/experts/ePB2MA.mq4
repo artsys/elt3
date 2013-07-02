@@ -1,10 +1,11 @@
 	/**
-		\version	0.1.0.2
+		\version	0.1.0.3
 		\date		2013.06.28
 		\author		Morochin <artamir> Artiom
 		\details	Советник Цена между двух МА
 		\internal
-			>Hist:												
+			>Hist:													
+					 @0.1.0.3@2013.06.28@artamir	[]	MAH_By_Method
 					 @0.1.0.2@2013.06.28@artamir	[]	iif
 					 @0.1.0.1@2013.06.28@artamir	[]	iif
 					 @0.0.0.10@2013.06.27@artamir	[]	iif
@@ -25,7 +26,7 @@
 //{ --- DEFINES
 //{		--- MAIN
 #define	EXP	"ePB2MA"
-#define	VER	"0.1.0.2_2013.06.28"
+#define	VER	"0.1.0.3_2013.06.28"
 //..	--- Open methods
 #define	AOM_PB2MA		20
 #define	AOM_PB2MA1_B	21
@@ -144,6 +145,10 @@ int startext(){
 	
 	//{ Проверка усреднения
 	ePB2MA_Martin();
+	//}
+	
+	//{ Удаление неиспользованных отложек
+	ePB2MA_DelUnused();
 	//}
 	
 	//{	--- Автооткрытие ордеров.
@@ -587,4 +592,36 @@ int MAH_By_Method(int method){
 	if(method == AOM_PB2MA3_B || method == AOM_PB2MA3_S){return(ma3h);}
 }
 //}
+
+//{ --- Del unused
+void ePB2MA_DelUnused(){
+	/**
+		\version	0.0.0.1
+		\date		2013.06.28
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.06.28@artamir	[]	MAH_By_Method
+			>Rev:0
+	*/
+	
+	double aMN[][OE_MAX];
+	int ROWS_MN = ELT_SelectByMN_d2(aOE, aMN);
+	if(!ROWS_MN){return;}
+	
+	double aO[][OE_MAX];
+	int ROWS_O = ELT_SelectOrders_d2(aMN, aO);
+	if(!ROWS_O){return;}
+
+	for(int idx = 0; idx<ROWS_O; idx++){
+		int ti = aO[idx][OE_TI];
+		int mp = aO[idx][OE_MP];
+		
+		if(!OE_getICByTicket(mp)){continue;}
+		
+		TR_CloseByTicket(ti);
+	}
+}
+//}	
 //}

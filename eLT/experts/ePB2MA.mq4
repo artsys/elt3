@@ -1,5 +1,5 @@
 	/**
-		\version	0.1.0.5
+		\version	0.1.0.6
 		\date		2013.07.02
 		\author		Morochin <artamir> Artiom
 		\details	Советник Цена между двух МА
@@ -27,7 +27,7 @@
 //{ --- DEFINES
 //{		--- MAIN
 #define	EXP	"ePB2MA"
-#define	VER	"0.1.0.5_2013.06.28"
+#define	VER	"0.1.0.6_2013.07.02"
 //..	--- Open methods
 #define	AOM_PB2MA		20
 #define	AOM_PB2MA1_B	21

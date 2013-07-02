@@ -19,8 +19,8 @@
 //--- input parameters
 extern int		Left=2;
 extern int 		Right=2;
-extern int		Mode=1; //1 - классика, 2 - последовательные хай лоу
-extern int		Price=1; //Тип цены поиска фрактала 1 - хай/лоу, 2 - закрытие
+extern int		Mode=1; 	//1 - классика, 2 - последовательные хай лоу
+extern int		Price=1; 	//Тип цены поиска фрактала 1 - хай/лоу, 2 - закрытие
 //--- buffers
 double U[];
 double D[];

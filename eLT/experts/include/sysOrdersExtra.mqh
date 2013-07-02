@@ -1,7 +1,8 @@
 	/*
-		>Ver	:	0.0.0.42
-		>Date	:	2013.06.28
-		>Hist	:																								
+		>Ver	:	0.0.0.43
+		>Date	:	2013.07.02
+		>Hist	:																									
+					@0.0.0.43@2013.07.02@artamir	[*]	OE_getAOMByTicket - исправлено получение метода открытия.
 					@0.0.0.42@2013.06.28@artamir	[+]	OE_setFIRByTicket
 					@0.0.0.41@2013.05.17@artamir	[+]	OE_ClosePriceSL
 					@0.0.39@2013.03.06@artamir	[+]	OE_setGLByTicket
@@ -30,6 +31,8 @@
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:
 	*/
+
+#define OE_VER	"0.0.0.43"
 	
 //{	//=== ARRAY	
 #define OE_NULL -19801028
@@ -1403,14 +1406,15 @@ int		OE_getICByTicket(int ti){
 
 int		OE_getAOMByTicket(int ti){
 	/*
-		>Ver	:	0.0.1
-		>Date	:	2013.03.01
-		>Hist	:
+		>Ver	:	0.0.0.2
+		>Date	:	2013.07.02
+		>Hist	:	
+					@0.0.0.2@2013.07.02@artamir	[]	OE_getAOMByTicket
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:
 	*/
 	int idx = OE_FIBT(ti);
-	int val = OE_getPropByIndex(idx, OE_IC);
+	int val = OE_getPropByIndex(idx, OE_AOM);
 	
 	return(val);
 }

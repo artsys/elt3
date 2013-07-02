@@ -1,10 +1,11 @@
 	/**
-		\version	0.1.0.3
-		\date		2013.06.28
+		\version	0.1.0.5
+		\date		2013.07.02
 		\author		Morochin <artamir> Artiom
 		\details	Советник Цена между двух МА
 		\internal
-			>Hist:													
+			>Hist:														
+					 @0.1.0.5@2013.07.02@artamir	[+]	Добавлена возможность открываться только по одной паре средних. Ускорение тестирования
 					 @0.1.0.3@2013.06.28@artamir	[]	MAH_By_Method
 					 @0.1.0.2@2013.06.28@artamir	[]	iif
 					 @0.1.0.1@2013.06.28@artamir	[]	iif
@@ -26,7 +27,7 @@
 //{ --- DEFINES
 //{		--- MAIN
 #define	EXP	"ePB2MA"
-#define	VER	"0.1.0.3_2013.06.28"
+#define	VER	"0.1.0.5_2013.06.28"
 //..	--- Open methods
 #define	AOM_PB2MA		20
 #define	AOM_PB2MA1_B	21
@@ -50,6 +51,9 @@ extern	double	AO_PB2MA_Lot1	= 0.1;
 extern	double	AO_PB2MA_Lot2	= 0.2;
 extern	double 	AO_PB2MA_Mylty	= 2;	//Коэф. увеличения объемов след. уровня
 extern	bool	AO_PB2MA_revers = false;
+extern	bool	AO_PB2MA_useMA12 = true;
+extern	bool	AO_PB2MA_useMA23 = true;
+extern	bool	AO_PB2MA_useMA34 = true;
 
 int		AO_PB2MA_OpenLastMinutes = -1;	//check if was open any orders last 10 min.
 extern	string	AO_PB2MA_2 = "=== END   PRICE BETWEEN 2 MA ===";
@@ -114,7 +118,8 @@ int deinit(){
 }
 
 int start(){
-
+	
+	if(IsTesting()){OE_eraseArray();}
 	startext();
 
 	return(0);
@@ -185,12 +190,13 @@ double iif( bool condition, double ifTrue, double ifFalse ){
 //{ --- Autoopen
 void ePB2MA_AO(){
 	/**
-		\version	0.0.0.2
-		\date		2013.06.26
+		\version	0.0.0.3
+		\date		2013.07.02
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:		
+			>Hist:			
+					 @0.0.0.3@2013.07.02@artamir	[]	iif
 					 @0.0.0.2@2013.06.26@artamir	[]	iif
 					 @0.0.0.1@2013.06.25@artamir	[]	getExtraFN
 			>Rev:0
@@ -213,39 +219,45 @@ void ePB2MA_AO(){
 	double aO2BS[][OE_MAX];
 	double aO3BS[][OE_MAX];
 	
-	if(iMAh_isPriceBetween2Ma(ma1h, ma2h, Close[1])){
-		
-		ELT_SelectByMethod_d2(aO, aO1BS, AOM_PB2MA1_B);
-		if(ELT_SelectByMethod_d2(aO, aO1BS, AOM_PB2MA1_S, true) == 0){
-			if(iMAh_isHierarhyUp(ma1h,ma2h)){
-				ePB2MA_Open(AOM_PB2MA1_B);
-			}else{
-				ePB2MA_Open(AOM_PB2MA1_S);
+	if(AO_PB2MA_useMA12){
+		if(iMAh_isPriceBetween2Ma(ma1h, ma2h, Close[1])){
+			
+			ELT_SelectByMethod_d2(aO, aO1BS, AOM_PB2MA1_B);
+			if(ELT_SelectByMethod_d2(aO, aO1BS, AOM_PB2MA1_S, true) == 0){
+				if(iMAh_isHierarhyUp(ma1h,ma2h)){
+					ePB2MA_Open(AOM_PB2MA1_B);
+				}else{
+					ePB2MA_Open(AOM_PB2MA1_S);
+				}
 			}
 		}
 	}
 	
-	if(iMAh_isPriceBetween2Ma(ma2h, ma3h, Close[1])){
-		ELT_SelectByMethod_d2(aO, aO2BS, AOM_PB2MA2_B);
-		if(ELT_SelectByMethod_d2(aO, aO2BS, AOM_PB2MA2_S, true) == 0){
-			if(iMAh_isHierarhyUp(ma2h,ma3h)){
-				ePB2MA_Open(AOM_PB2MA2_B);
-			}else{
-				ePB2MA_Open(AOM_PB2MA2_S);
+	if(AO_PB2MA_useMA23){
+		if(iMAh_isPriceBetween2Ma(ma2h, ma3h, Close[1])){
+			ELT_SelectByMethod_d2(aO, aO2BS, AOM_PB2MA2_B);
+			if(ELT_SelectByMethod_d2(aO, aO2BS, AOM_PB2MA2_S, true) == 0){
+				if(iMAh_isHierarhyUp(ma2h,ma3h)){
+					ePB2MA_Open(AOM_PB2MA2_B);
+				}else{
+					ePB2MA_Open(AOM_PB2MA2_S);
+				}
 			}
-		}
+	}
 	}
 	
-	if(iMAh_isPriceBetween2Ma(ma3h, ma4h, Close[1])){
-		ELT_SelectByMethod_d2(aO, aO3BS, AOM_PB2MA3_B);
-		if(ELT_SelectByMethod_d2(aO, aO3BS, AOM_PB2MA3_S, true) == 0){
-			if(iMAh_isHierarhyUp(ma3h,ma4h)){
-				ePB2MA_Open(AOM_PB2MA3_B);
-			}else{
-				ePB2MA_Open(AOM_PB2MA3_S);
+	if(AO_PB2MA_useMA34){
+		if(iMAh_isPriceBetween2Ma(ma3h, ma4h, Close[1])){
+			ELT_SelectByMethod_d2(aO, aO3BS, AOM_PB2MA3_B);
+			if(ELT_SelectByMethod_d2(aO, aO3BS, AOM_PB2MA3_S, true) == 0){
+				if(iMAh_isHierarhyUp(ma3h,ma4h)){
+					ePB2MA_Open(AOM_PB2MA3_B);
+				}else{
+					ePB2MA_Open(AOM_PB2MA3_S);
+				}
 			}
 		}
-	}
+	}	
 }
 
 void ePB2MA_Open(int method){

@@ -1,10 +1,11 @@
 	/**
-		\version	0.0.0.7
-		\date		2013.06.28
+		\version	0.0.0.8
+		\date		2013.07.02
 		\author		Morochin <artamir> Artiom
 		\details	Trading functtions.
 		\internal
-			>Hist:							
+			>Hist:								
+					 @0.0.0.8@2013.07.02@artamir	[]	_TR_CountOrdersToSend
 					 @0.0.0.7@2013.06.28@artamir	[]	TR_SendPending_array
 					 @0.0.0.6@2013.06.28@artamir	[]	TR_SendREVERSOrder
 					 @0.0.0.5@2013.06.27@artamir	[]	TR_MoveToOrder
@@ -129,14 +130,22 @@ int TR_SendBUYSTOP_array(double &d[], double StartPrice, int AddPips = 0, double
 	//----------------------------------------------------
 	countSends = _TR_CountOrdersToSend(Vol);
 	
-	if(Debug && BP_Trades){
-		BP("TR_SendBUYSTOP_array","countSends = ",countSends);
-	}
-	
 	for(ns = 0; ns < countSends; ns++){
 		sendVol = MathMin(rest_vol, TR_TwiseLots);
 		
 		sendVol = Norm_vol(sendVol);
+		
+		if(Debug && BP_Trades){
+			BP("TR_SendBUYSTOP_array",
+				"countSends = ",countSends
+				,"rest_vol = ",rest_vol
+				,"ns=",ns
+				,"",""
+				,"",""
+				,"",""
+				,"",""
+				,(sendVol > TR_TwiseLots));
+		}
 		
 		ticket = _OrderSend("", OP_BUYSTOP, sendVol, SendPrice, 0, SLPrice, TPPrice, Comm, mn);
 		
@@ -211,14 +220,22 @@ int TR_SendBUYLIMIT_array(double &d[], double StartPrice, int AddPips = 0, doubl
 	//----------------------------------------------------
 	countSends = _TR_CountOrdersToSend(Vol);
 	
-	if(Debug && BP_Trades){
-		BP("TR_SendBUYLIMIT_array","countSends = ",countSends);
-	}
-	
 	for(ns = 0; ns < countSends; ns++){
 		sendVol = MathMin(rest_vol, TR_TwiseLots);
 		
 		sendVol = Norm_vol(sendVol);
+		
+		if(Debug && BP_Trades){
+			BP("TR_SendBUYLIMIT_array",
+				"countSends = ",countSends
+				,"rest_vol = ",rest_vol
+				,"ns=",ns
+				,"",""
+				,"",""
+				,"",""
+				,"",""
+				,(sendVol > TR_TwiseLots));
+		}
 		
 		ticket = _OrderSend("", OP_BUYLIMIT, sendVol, SendPrice, 0, SLPrice, TPPrice, Comm, mn);
 		
@@ -393,14 +410,22 @@ int TR_SendSELLSTOP_array(double &d[], double StartPrice, int AddPips = 0, doubl
 	//----------------------------------------------------
 	countSends = _TR_CountOrdersToSend(Vol);
 	
-	if(Debug && BP_Trades){
-		BP("TR_SendSELLSTOP_array","countSends = ",countSends);
-	}
-	
 	for(ns = 0; ns < countSends; ns++){
 		sendVol = MathMin(rest_vol, TR_TwiseLots);
 		
 		sendVol = Norm_vol(sendVol);
+		
+		if(Debug && BP_Trades){
+			BP("TR_SendSELLSTOP_array",
+				"countSends = ",countSends
+				,"rest_vol = ",rest_vol
+				,"ns=",ns
+				,"",""
+				,"",""
+				,"",""
+				,"",""
+				,(sendVol > TR_TwiseLots));
+		}
 		
 		ticket = _OrderSend("", OP_SELLSTOP, sendVol, SendPrice, 0, SLPrice, TPPrice, Comm, mn);
 		
@@ -474,14 +499,22 @@ int TR_SendSELLLIMIT_array(double &d[], double StartPrice, int AddPips = 0, doub
 	//----------------------------------------------------
 	countSends = _TR_CountOrdersToSend(Vol);
 	
-	if(Debug){
-		BP("TR_SendSELLLIMIT_array","countSends = ",countSends);
-	}
-	
 	for(ns = 0; ns < countSends; ns++){
 		sendVol = MathMin(rest_vol, TR_TwiseLots);
 		
 		sendVol = Norm_vol(sendVol);
+		
+		if(Debug && BP_Trades){
+			BP("TR_SendSELLLIMIT_array",
+				"countSends = ",countSends
+				,"rest_vol = ",rest_vol
+				,"ns=",ns
+				,"",""
+				,"",""
+				,"",""
+				,"",""
+				,(sendVol > TR_TwiseLots));
+		}
 		
 		ticket = _OrderSend("", OP_SELLLIMIT, sendVol, SendPrice, 0, SLPrice, TPPrice, Comm, mn);
 		
@@ -679,7 +712,7 @@ int TR_getReversType(int src_ty = -1){
 	return(dest_ty);
 }
 
-int TR_SendREVERSOrder(int src_ti, double vol = 0.01, double lot_multi = 1){
+int TR_SendREVERSOrder(double &d[], int src_ti, double vol = 0.01, double lot_multi = 1){
 	/*
 		>Ver	:	0.0.3
 		>Date	:	2013.03.02
@@ -709,19 +742,19 @@ int TR_SendREVERSOrder(int src_ti, double vol = 0.01, double lot_multi = 1){
 	dest_ty = TR_getReversType(src_ty);
 	
 	if(dest_ty == OP_BUYLIMIT){
-		return(TR_SendBUYLIMIT((src_pr+SPREAD*Point), 0, dest_vol));
+		return(TR_SendBUYLIMIT_array(d, (src_pr+SPREAD*Point), 0, dest_vol));
 	}
 	
 	if(dest_ty == OP_SELLLIMIT){
-		return(TR_SendSELLLIMIT((src_pr-SPREAD*Point), 0, dest_vol));
+		return(TR_SendSELLLIMIT_array(d, (src_pr-SPREAD*Point), 0, dest_vol));
 	}
 	
 	if(dest_ty == OP_BUYSTOP){
-		return(TR_SendBUYSTOP((src_pr+SPREAD*Point), 0, dest_vol));
+		return(TR_SendBUYSTOP_array(d, (src_pr+SPREAD*Point), 0, dest_vol));
 	}
 	
 	if(dest_ty == OP_SELLSTOP){
-		return(TR_SendSELLSTOP((src_pr-SPREAD*Point), 0, dest_vol));
+		return(TR_SendSELLSTOP_array(d,(src_pr-SPREAD*Point), 0, dest_vol));
 	}
 	
 	return(-1);
@@ -733,15 +766,19 @@ int TR_SendREVERSOrder(int src_ti, double vol = 0.01, double lot_multi = 1){
 //{	//=== PRIVATE	====================================
 int	_TR_CountOrdersToSend(double all_vol = 0){
 	/*
-		>Ver	:	0.0.0
-		>Date	:
-		>Hist	:
+		>Ver	:	0.0.0.1
+		>Date	:	2013.07.02
+		>Hist	:	
+					@0.0.0.1@2013.07.02@artamir	[]	изменен алгоритм нахождения количества выставляемых ордеров.
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:
 	*/
 	
-	double count = all_vol / TR_TwiseLots;
-	int count_floor = MathFloor(count);
+	double count = 0;//all_vol / TR_TwiseLots;
+	
+	count = all_vol/TR_TwiseLots;
+	
+	int count_floor = MathRound(count);
 	
 	if(count - count_floor > 0){
 		count_floor++;

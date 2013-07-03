@@ -1,10 +1,12 @@
 	/**
-		\version	0.1.0.6
+		\version	0.1.0.10
 		\date		2013.07.02
 		\author		Morochin <artamir> Artiom
 		\details	Советник Цена между двух МА
 		\internal
-			>Hist:														
+			>Hist:																
+					 @0.1.0.10@2013.07.02@artamir	[*]	исправлено открытие реверсных ордеров.
+					 @0.1.0.7@2013.07.02@artamir	[]	OpenNextLevel
 					 @0.1.0.5@2013.07.02@artamir	[+]	Добавлена возможность открываться только по одной паре средних. Ускорение тестирования
 					 @0.1.0.3@2013.06.28@artamir	[]	MAH_By_Method
 					 @0.1.0.2@2013.06.28@artamir	[]	iif
@@ -27,7 +29,7 @@
 //{ --- DEFINES
 //{		--- MAIN
 #define	EXP	"ePB2MA"
-#define	VER	"0.1.0.6_2013.07.02"
+#define	VER	"0.1.0.10_2013.07.02"
 //..	--- Open methods
 #define	AOM_PB2MA		20
 #define	AOM_PB2MA1_B	21
@@ -346,10 +348,27 @@ void ePB2MA_ModifySLTP(int ti){
 }
 
 void ePB2MA_OpenRevers(int ti, int method, double lot, int gl){
-	int ti_rev = TR_SendREVERSOrder(ti, lot);
-	ePB2MA_ModifySLTP_revers(ti, ti_rev);
-	ePB2MA_setStandartData(ti_rev, method, gl, ti);
-	OE_setFIRByTicket(ti_rev, 1);
+	/**
+		\version	0.0.0.1
+		\date		2013.07.02
+		\author		Morochin <artamir> Artiom
+		\details	Выставление реверсного ордера
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	double aREV[];
+	int ROWS_rev = TR_SendREVERSOrder(aREV, ti, lot);
+	
+	if(!ROWS_rev){return;}
+	
+	for(int i=0; i<ROWS_rev; i++){
+		int ti_rev = aREV[i];
+		ePB2MA_ModifySLTP_revers(ti, ti_rev);
+		ePB2MA_setStandartData(ti_rev, method, gl, ti);
+		OE_setFIRByTicket(ti_rev, 1);
+	}	
 }
 
 void ePB2MA_ModifySLTP_revers(int ti, int ti_rev){
@@ -548,15 +567,18 @@ void ePB2MA_Martin_Open(int mp){
 
 void ePB2MA_OpenNextLevel(int ti_mp/** реверсный ордер */, int ti_mp_mp/** родитель текущего уровня*/){
 	/**
-		\version	0.0.0.0
-		\date		2013.06.28
+		\version	0.0.0.1
+		\date		2013.07.02
 		\author		Morochin <artamir> Artiom
 		\details	Выставляет ордера нового уровня.
 		\internal
-			>Hist:
+			>Hist:	
+					 @0.0.0.1@2013.07.02@artamir	[*] Увеличил выставление след. уровня на спред.	
 			>Rev:0
 	*/
 
+	int SPREAD = MarketInfo(Symbol(), MODE_SPREAD);
+	
 	//Выставляет основной ордер нового уровня.
 	int this_level = OE_getGLByTicket(ti_mp_mp);
 	int next_level = this_level+1;
@@ -577,7 +599,7 @@ void ePB2MA_OpenNextLevel(int ti_mp/** реверсный ордер */, int ti_
 	int next_method = this_method;
 	
 	double aO[];
-	int ROWS_MO = TR_SendPending_array(aO, next_type, next_op, 0, next_lot, 0, 0, "lvl "+next_level, -1);
+	int ROWS_MO = TR_SendPending_array(aO, next_type, next_op, (-1*SPREAD), next_lot, 0, 0, "lvl "+next_level, -1);
 	
 	for(int idx = 0; idx<ROWS_MO; idx++){
 		int ti = aO[idx];

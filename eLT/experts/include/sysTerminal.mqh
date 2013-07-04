@@ -12,7 +12,7 @@
 	*/
 
 
-//..	//=== ORDERS ARRAY	================================ 
+//{	//=== ORDERS ARRAY	================================ 
 
 #define	O_TI	0
 #define	O_TY	1
@@ -30,7 +30,7 @@ double	aCurOrders[][O_MAX];
 
 //----------------------------------------------------------
 double	aOldOrders[][O_MAX];
-//.
+//}
 
 
 int T_Start(){
@@ -73,7 +73,7 @@ int T_End(){
 	}	
 }
 
-//..	//=== PUBLIC FUNCTIONS	============================
+//{	//=== PUBLIC FUNCTIONS	============================
 
 int T_CurRows(){
 	/*
@@ -103,8 +103,8 @@ int T_OldRows(){
 	return(ArrayRange(aOldOrders, 0));
 }
 
-//..	//=== GET FROM ARRAY	============================
-//..	//====== CURRENT		============================
+//{	//=== GET FROM ARRAY	============================
+//{	//====== CURRENT		============================
 
 int T_CurTicketByIndex(int idx = 0){
 	/*
@@ -186,9 +186,9 @@ double T_CurSLByIndex(int idx = 0){
 	return(val);
 }
 
-//.
+//}
 
-//..	//====== OLD			============================
+//{	//====== OLD			============================
 
 int T_OldTicketByIndex(int idx = 0){
 	/*
@@ -271,11 +271,11 @@ double T_OldSLByIndex(int idx = 0){
 	return(val);
 }
 
-//.
+//}
 
-//.
+//}
 
-//..	//=== TRADING FUNCTIONS ============================
+//{	//=== TRADING FUNCTIONS ============================
 
 bool	T_SelOrderByIndex(int idx = 0){
 	/*
@@ -305,11 +305,11 @@ bool	T_SelOrderByTicket(int ti){
 	return(OrderSelect(ti, SELECT_BY_TICKET));
 }
 
-//.
+//}
 
-//.
+//}
 
-//..	//=== PRIVATE FUNCTIONS	============================
+//{	//=== PRIVATE FUNCTIONS	============================
 
 //==========================================================
 int T_FillArrayCurOrders(){
@@ -392,4 +392,4 @@ int T_FillRow(){
 	}
 }
 	
-//.
+//}

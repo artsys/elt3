@@ -1,10 +1,13 @@
 	/**
-		\version	0.1.0.10
-		\date		2013.07.02
+		\version	0.2.0.3
+		\date		2013.07.04
 		\author		Morochin <artamir> Artiom
 		\details	Советник Цена между двух МА
 		\internal
-			>Hist:																
+			>Hist:																			
+					 @0.2.0.3@2013.07.04@artamir	[+]	Добавлены настройки сл и тп для каждой пары средних. 
+					 @0.1.0.12@2013.07.04@artamir	[]	iif
+					 @0.1.0.11@2013.07.04@artamir	[]	iif
 					 @0.1.0.10@2013.07.02@artamir	[*]	исправлено открытие реверсных ордеров.
 					 @0.1.0.7@2013.07.02@artamir	[]	OpenNextLevel
 					 @0.1.0.5@2013.07.02@artamir	[+]	Добавлена возможность открываться только по одной паре средних. Ускорение тестирования
@@ -29,7 +32,7 @@
 //{ --- DEFINES
 //{		--- MAIN
 #define	EXP	"ePB2MA"
-#define	VER	"0.1.0.10_2013.07.02"
+#define	VER	"0.2.0.3_2013.07.04"
 //..	--- Open methods
 #define	AOM_PB2MA		20
 #define	AOM_PB2MA1_B	21
@@ -47,8 +50,12 @@ extern	int		AO_PB2MA_MA1_per	= 16;
 extern	int		AO_PB2MA_MA2_per	= 64;
 extern	int		AO_PB2MA_MA3_per	= 256;
 extern	int		AO_PB2MA_MA4_per	= 1024;
-extern	int		AO_PB2MA_TP = 50;
-extern	int		AO_PB2MA_SL = 20;
+extern	int		AO_PB2MA1_TP = 50;
+extern	int		AO_PB2MA1_SL = 20;
+extern	int		AO_PB2MA2_TP = 50;
+extern	int		AO_PB2MA2_SL = 20;
+extern	int		AO_PB2MA3_TP = 50;
+extern	int		AO_PB2MA3_SL = 20;
 extern	double	AO_PB2MA_Lot1	= 0.1;
 extern	double	AO_PB2MA_Lot2	= 0.2;
 extern	double 	AO_PB2MA_Mylty	= 2;	//Коэф. увеличения объемов след. уровня
@@ -245,7 +252,7 @@ void ePB2MA_AO(){
 					ePB2MA_Open(AOM_PB2MA2_S);
 				}
 			}
-	}
+		}
 	}
 	
 	if(AO_PB2MA_useMA34){
@@ -335,16 +342,45 @@ void ePB2MA_Open(int method){
 	if(ROWS_MO > 0){
 		for(int idx_MO = 0; idx_MO < ROWS_MO; idx_MO++){
 			int ti = aMO[idx_MO];
-			ePB2MA_ModifySLTP(ti);
+			ePB2MA_ModifySLTP(ti, method);
 			ePB2MA_OpenRevers(ti, method, AO_PB2MA_Lot2, 0);
 			ePB2MA_setStandartData(ti, method, 0);
 		}
 	}
 }
 
-void ePB2MA_ModifySLTP(int ti){
-	TR_ModifyTP(ti, AO_PB2MA_TP, TR_MODE_PIP);
-	TR_ModifySL(ti, AO_PB2MA_SL, TR_MODE_PIP);
+void ePB2MA_ModifySLTP(int ti, int method = 0){
+	/**
+		\version	0.0.0.1
+		\date		2013.07.04
+		\author		Morochin <artamir> Artiom
+		\details	Модификация сл и тп ордера.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.07.04@artamir	[]	iif
+			>Rev:0
+	*/
+
+	int sl=0;
+	int tp=0;
+	
+	if(method==AOM_PB2MA1_B || method==AOM_PB2MA1_S){
+		sl=AO_PB2MA1_SL;
+		tp=AO_PB2MA1_TP;
+	}
+	
+	if(method==AOM_PB2MA2_B || method==AOM_PB2MA2_S){
+		sl=AO_PB2MA2_SL;
+		tp=AO_PB2MA2_TP;
+	}
+	
+	if(method==AOM_PB2MA3_B || method==AOM_PB2MA3_S){
+		sl=AO_PB2MA3_SL;
+		tp=AO_PB2MA3_TP;
+	}
+	
+	TR_ModifyTP(ti, tp, TR_MODE_PIP);
+	TR_ModifySL(ti, sl, TR_MODE_PIP);
 }
 
 void ePB2MA_OpenRevers(int ti, int method, double lot, int gl){
@@ -365,14 +401,42 @@ void ePB2MA_OpenRevers(int ti, int method, double lot, int gl){
 	
 	for(int i=0; i<ROWS_rev; i++){
 		int ti_rev = aREV[i];
-		ePB2MA_ModifySLTP_revers(ti, ti_rev);
+		ePB2MA_ModifySLTP_revers(ti, ti_rev, method);
 		ePB2MA_setStandartData(ti_rev, method, gl, ti);
 		OE_setFIRByTicket(ti_rev, 1);
 	}	
 }
 
-void ePB2MA_ModifySLTP_revers(int ti, int ti_rev){
-	TR_ModifyTP(ti_rev, AO_PB2MA_TP, TR_MODE_PIP);
+void ePB2MA_ModifySLTP_revers(int ti, int ti_rev, int method=0){
+	/**
+		\version	0.0.0.0
+		\date		2013.07.04
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	int sl=0;
+	int tp=0;
+	
+	if(method==AOM_PB2MA1_B || method==AOM_PB2MA1_S){
+		sl = AO_PB2MA1_SL;
+		tp = AO_PB2MA1_TP;
+	}
+	
+	if(method==AOM_PB2MA2_B || method==AOM_PB2MA2_S){
+		sl = AO_PB2MA2_SL;
+		tp = AO_PB2MA2_TP;
+	}
+	
+	if(method==AOM_PB2MA3_B || method==AOM_PB2MA3_S){
+		sl = AO_PB2MA3_SL;
+		tp = AO_PB2MA3_TP;
+	}
+	
+	TR_ModifyTP(ti_rev, tp, TR_MODE_PIP);
 	TR_ModifySLOnTP(ti, ti_rev);
 }
 
@@ -603,7 +667,7 @@ void ePB2MA_OpenNextLevel(int ti_mp/** реверсный ордер */, int ti_
 	
 	for(int idx = 0; idx<ROWS_MO; idx++){
 		int ti = aO[idx];
-			ePB2MA_ModifySLTP(ti);
+			ePB2MA_ModifySLTP(ti, next_method);
 			ePB2MA_OpenRevers(ti, next_method, next_lot_rev, next_level);
 			ePB2MA_setStandartData(ti, next_method, next_level, ti_mp);
 		

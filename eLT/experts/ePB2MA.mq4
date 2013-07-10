@@ -1,10 +1,11 @@
 	/**
-		\version	0.2.0.3
-		\date		2013.07.04
+		\version	0.2.0.5
+		\date		2013.07.09
 		\author		Morochin <artamir> Artiom
 		\details	Советник Цена между двух МА
 		\internal
-			>Hist:																			
+			>Hist:																					
+					 @0.2.0.5@2013.07.09@artamir	[+]	Добавлены различные объемы для различных машек
 					 @0.2.0.3@2013.07.04@artamir	[+]	Добавлены настройки сл и тп для каждой пары средних. 
 					 @0.1.0.12@2013.07.04@artamir	[]	iif
 					 @0.1.0.11@2013.07.04@artamir	[]	iif
@@ -32,7 +33,7 @@
 //{ --- DEFINES
 //{		--- MAIN
 #define	EXP	"ePB2MA"
-#define	VER	"0.2.0.3_2013.07.04"
+#define	VER	"0.2.0.5_2013.07.04"
 //..	--- Open methods
 #define	AOM_PB2MA		20
 #define	AOM_PB2MA1_B	21
@@ -56,8 +57,13 @@ extern	int		AO_PB2MA2_TP = 50;
 extern	int		AO_PB2MA2_SL = 20;
 extern	int		AO_PB2MA3_TP = 50;
 extern	int		AO_PB2MA3_SL = 20;
-extern	double	AO_PB2MA_Lot1	= 0.1;
-extern	double	AO_PB2MA_Lot2	= 0.2;
+extern	double	AO_PB2MA_Lot11	= 0.1;
+extern	double	AO_PB2MA_Lot12	= 0.2;
+extern	double	AO_PB2MA_Lot21	= 0.2;
+extern	double	AO_PB2MA_Lot22	= 0.4;
+extern	double	AO_PB2MA_Lot31	= 0.4;
+extern	double	AO_PB2MA_Lot32	= 0.8;
+
 extern	double 	AO_PB2MA_Mylty	= 2;	//Коэф. увеличения объемов след. уровня
 extern	bool	AO_PB2MA_revers = false;
 extern	bool	AO_PB2MA_useMA12 = true;
@@ -271,18 +277,21 @@ void ePB2MA_AO(){
 
 void ePB2MA_Open(int method){
 	/**
-		\version	0.0.0.1
-		\date		2013.06.25
+		\version	0.0.0.2
+		\date		2013.07.09
 		\author		Morochin <artamir> Artiom
 		\details	Открывает отложенные ордера в зависимости от метода.
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2013.07.09@artamir	[]	iif
 					 @0.0.0.1@2013.06.25@artamir	[]	getExtraFN
 			>Rev:0
 	*/
 
 	double aMO[];	//Main orders;
 	double ma;
+	double lot1;
+	double lot2;
 	
 	int op = -1;
 	
@@ -292,16 +301,22 @@ void ePB2MA_Open(int method){
 	if(method == AOM_PB2MA1_B){
 		ma = iMAh_get(ma1h,0);
 		op = OP_BUYSTOP;
+		lot1 = AO_PB2MA_Lot11;
+		lot2 = AO_PB2MA_Lot12;
 	}
 	
 	if(method == AOM_PB2MA2_B){
 		ma = iMAh_get(ma2h,0);
 		op = OP_BUYSTOP;
+		lot1 = AO_PB2MA_Lot21;
+		lot2 = AO_PB2MA_Lot22;
 	}
 	
 	if(method == AOM_PB2MA3_B){
 		ma = iMAh_get(ma3h,0);
 		op = OP_BUYSTOP;
+		lot1 = AO_PB2MA_Lot31;
+		lot2 = AO_PB2MA_Lot32;
 	}
 	//}
 	
@@ -309,32 +324,38 @@ void ePB2MA_Open(int method){
 	if(method == AOM_PB2MA1_S){
 		ma = iMAh_get(ma1h,0);
 		op = OP_SELLSTOP;
+		lot1 = AO_PB2MA_Lot11;
+		lot2 = AO_PB2MA_Lot12;
 	}
 	
 	if(method == AOM_PB2MA2_S){
 		ma = iMAh_get(ma2h,0);
 		op = OP_SELLSTOP;
+		lot1 = AO_PB2MA_Lot21;
+		lot2 = AO_PB2MA_Lot22;
 	}
 	
 	if(method == AOM_PB2MA3_S){
 		ma = iMAh_get(ma3h,0);
 		op = OP_SELLSTOP;
+		lot1 = AO_PB2MA_Lot31;
+		lot2 = AO_PB2MA_Lot32;
 	}
 	//}
 	
 	if(op == OP_BUYSTOP){
 		if(!AO_PB2MA_revers){
-			ROWS_MO = TR_SendBUYSTOP_array(aMO , ma, 0, AO_PB2MA_Lot1 ,0 ,0 ,method);
+			ROWS_MO = TR_SendBUYSTOP_array(aMO , ma, 0, lot1 ,0 ,0 ,method);
 		}else{
-			ROWS_MO = TR_SendSELLLIMIT_array(aMO , ma, 0, AO_PB2MA_Lot1, 0, 0, method);
+			ROWS_MO = TR_SendSELLLIMIT_array(aMO , ma, 0, lot1, 0, 0, method);
 		}	
 	}
 	
 	if(op == OP_SELLSTOP){
 		if(!AO_PB2MA_revers){
-			ROWS_MO = TR_SendSELLSTOP_array(aMO, ma, 0, AO_PB2MA_Lot1 ,0 ,0 ,method);
+			ROWS_MO = TR_SendSELLSTOP_array(aMO, ma, 0, lot1 ,0 ,0 ,method);
 		}else{
-			ROWS_MO = TR_SendBUYLIMIT_array(aMO, ma, 0, AO_PB2MA_Lot1, 0, 0, method);
+			ROWS_MO = TR_SendBUYLIMIT_array(aMO, ma, 0, lot1, 0, 0, method);
 		}
 	} 
 	
@@ -343,7 +364,7 @@ void ePB2MA_Open(int method){
 		for(int idx_MO = 0; idx_MO < ROWS_MO; idx_MO++){
 			int ti = aMO[idx_MO];
 			ePB2MA_ModifySLTP(ti, method);
-			ePB2MA_OpenRevers(ti, method, AO_PB2MA_Lot2, 0);
+			ePB2MA_OpenRevers(ti, method, lot2, 0);
 			ePB2MA_setStandartData(ti, method, 0);
 		}
 	}

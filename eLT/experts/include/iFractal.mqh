@@ -31,10 +31,6 @@
 	/*
 		>Ver	:	0.0.3
 		>Date	:	2013.01.18
-		>Hist	:
-			@0.0.3@2013.01.18@artamir	[]
-			@0.0.2@2013.01.10@artamir	[]
-			@0.0.1@2012.11.13@artamir	[]
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:	set fractal bars.
 	*/

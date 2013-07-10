@@ -1,16 +1,16 @@
- 	/*
-		>Ver	:	0.0.0.18
-		>Date	:	2013.05.20
-		>Hist	:			
-					@0.0.0.18@2013.05.20@artamir	[]	T_End
-					@0.0.17@2013.02.15@artamir	[]	T_CurOPByIndex
-					@0.0.16@2013.02.15@artamir	[]	T_OldOPByIndex
-		>Author	:	Morochin <artamir> Artiom
-		>Desc	:
-		>Pendings	:
-					#include <sysArray.mqh>
-	*/
-
+/*
+	>Ver	:	0.0.0.18
+	>Date	:	2013.05.20
+	>Hist	:			
+				@0.0.0.18@2013.05.20@artamir	[]	T_End
+				@0.0.17@2013.02.15@artamir	[]	T_CurOPByIndex
+				@0.0.16@2013.02.15@artamir	[]	T_OldOPByIndex
+	>Author	:	Morochin <artamir> Artiom
+	>Desc	:
+	>Pendings	:
+				#include <sysArray.mqh>
+				#include <sysEvents.mqh>
+*/
 
 //{	//=== ORDERS ARRAY	================================ 
 
@@ -32,16 +32,12 @@ double	aCurOrders[][O_MAX];
 double	aOldOrders[][O_MAX];
 //}
 
-
 int T_Start(){
 	/*
 		>Ver	:	0.0.2
 		>Date	:	2012.10.02
-		>Hist	:
-			@0.0.2@2012.10.02@artamir	[]
-			@0.0.1@2012.10.02@artamir	[]
 		>Author	:	Morochin <artamir> Artiom
-		>Desc	:	
+		>Desc	:	Вызывается в начале ф-ции start()
 	*/
 	
 	//------------------------------------------------------
@@ -51,18 +47,16 @@ int T_Start(){
 	T_FillArrayCurOrders();
 	
 	//------------------------------------------------------
-	E_Start();
+	E_Start();	//анализ массивов текущих и старых ордеров.
 }
 
 int T_End(){
 	/*
 		>Ver	:	0.0.0.2
 		>Date	:	2013.05.20
-		>Hist	:	
-					@0.0.0.2@2013.05.20@artamir	[]	T_End
-			@0.0.1@2012.10.02@artamir	[]
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:	Copying Cur orders to old orders.
+					Вызывается в конце ф-ции start().
 	*/
 	
 	A_d_eraseArray2(aOldOrders);
@@ -82,7 +76,7 @@ int T_CurRows(){
 		>Hist	:
 			@0.0.1@2012.10.02@artamir	[]
 		>Author	:	Morochin <artamir> Artiom
-		>Desc	:
+		>Desc	:	Количество строк массива текущих ордеров.
 	*/
 	
 	//------------------------------------------------------
@@ -96,7 +90,7 @@ int T_OldRows(){
 		>Hist	:
 			@0.0.1@2012.10.02@artamir	[]
 		>Author	:	Morochin <artamir> Artiom
-		>Desc	:
+		>Desc	:	Количество строк массива ордеров на предыдущем цикле.
 	*/
 	
 	//------------------------------------------------------
@@ -113,7 +107,7 @@ int T_CurTicketByIndex(int idx = 0){
 		>Hist	:
 			@0.0.1@2012.10.02@artamir	[]
 		>Author	:	Morochin <artamir> Artiom
-		>Desc	:
+		>Desc	:	Получает тикет ордера по его индексу в массиве текущих ордеров.
 	*/
 	
 	//------------------------------------------------------
@@ -127,7 +121,7 @@ int T_CurIndexByTicket(int ticket){
 		>Hist	:
 			@0.0.1@2012.10.03@artamir	[]
 		>Author	:	Morochin <artamir> Artiom
-		>Desc	:
+		>Desc	:	Возвращает индекс ордера в массиве текущих ордеров по его (ордера) тикету
 	*/
 	
 	//------------------------------------------------------
@@ -144,7 +138,7 @@ int	T_CurTypeByIndex(int idx = 0){
 		>Hist	:
 			@0.0.1@2012.10.03@artamir	[]
 		>Author	:	Morochin <artamir> Artiom
-		>Desc	:
+		>Desc	:	Возвращает тип ордера по его индексу в массиве текущих ордеров
 	*/
 	
 	//------------------------------------------------------
@@ -160,7 +154,7 @@ double T_CurOPByIndex(int idx = 0){
 		>Date	:	2013.02.15
 		>Hist	:
 		>Author	:	Morochin <artamir> Artiom
-		>Desc	:
+		>Desc	:	Возвращает цену открытия ордера по его индексу в массиве текущих ордеров
 	*/
 	
 	//------------------------------------------------------
@@ -176,7 +170,7 @@ double T_CurSLByIndex(int idx = 0){
 		>Date	:	2013.02.15
 		>Hist	:
 		>Author	:	Morochin <artamir> Artiom
-		>Desc	:
+		>Desc	:	Возвращает цену стоплосс а ордера по его индексу в массиве текущих ордеров
 	*/
 	
 	//------------------------------------------------------
@@ -197,7 +191,8 @@ int T_OldTicketByIndex(int idx = 0){
 		>Hist	:
 			@0.0.1@2012.10.03@artamir	[]
 		>Author	:	Morochin <artamir> Artiom
-		>Desc	:
+		>Desc	:	Возвращает тикет ордера по его индексу из массива старых ордеров. 
+					Массив старых ордеров соответствует массиву текущих ордеров с предыдущего тика.
 	*/
 	
 	//------------------------------------------------------
@@ -212,7 +207,7 @@ int T_OldIndexByTicket(int ticket){
 			@0.0.2@2012.10.03@artamir	[]
 			@0.0.1@2012.10.03@artamir	[]
 		>Author	:	Morochin <artamir> Artiom
-		>Desc	:
+		>Desc	:	Возвращает индекс ордера по его (ордера) тикету из массива старых ордеров
 	*/
 	
 	//------------------------------------------------------
@@ -229,7 +224,7 @@ int	T_OldTypeByIndex(int idx = 0){
 		>Hist	:
 			@0.0.1@2012.10.03@artamir	[]
 		>Author	:	Morochin <artamir> Artiom
-		>Desc	:
+		>Desc	:	Возвращает тип ордера по его индексу из массива старых ордеров
 	*/
 	
 	//------------------------------------------------------
@@ -245,7 +240,7 @@ double T_OldOPByIndex(int idx = 0){
 		>Date	:	2013.02.15
 		>Hist	:
 		>Author	:	Morochin <artamir> Artiom
-		>Desc	:
+		>Desc	:	Возвращает цену открытия ордера по его индексу из массива старых ордеров
 	*/
 	
 	//------------------------------------------------------
@@ -261,7 +256,7 @@ double T_OldSLByIndex(int idx = 0){
 		>Date	:	2013.02.15
 		>Hist	:
 		>Author	:	Morochin <artamir> Artiom
-		>Desc	:
+		>Desc	:	Возвращает уровень стоплосса ордера по его индексу из массива старых ордеров
 	*/
 	
 	//------------------------------------------------------
@@ -285,6 +280,7 @@ bool	T_SelOrderByIndex(int idx = 0){
 			@0.0.1@2012.10.02@artamir	[]
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:	return true, if can select in trades orders
+					Выбирает ордер в терминале по его индексу.
 	*/
 	
 	//------------------------------------------------------
@@ -298,7 +294,7 @@ bool	T_SelOrderByTicket(int ti){
 		>Hist	:
 			@0.0.1@2012.10.03@artamir	[]
 		>Author	:	Morochin <artamir> Artiom
-		>Desc	:
+		>Desc	:	Выбирает ордер в терминале по его тикету
 	*/
 	
 	//------------------------------------------------------
@@ -340,18 +336,6 @@ int T_FillArrayCurOrders(){
 		//--------------------------------------------------
 		T_FillRow();
 	}
-	
-	//******************************************************
-	//..	//*** DEBUGGING	********************************
-	
-	if(Debug){
-		
-		//--------------------------------------------------
-		//A_d_PrintArray2(aCurOrders, 4, "CurOrders_FillArray");
-		
-	}
-	
-	//.
 }
 
 //==========================================================
@@ -362,7 +346,7 @@ int T_FillRow(){
 		>Hist	:
 			@0.0.1@2012.10.02@artamir	[]
 		>Author	:	Morochin <artamir> Artiom
-		>Desc	:
+		>Desc	:	Заполнение строки массива текущих ордеров данными выбранного ордера
 	*/
 	
 	//------------------------------------------------------

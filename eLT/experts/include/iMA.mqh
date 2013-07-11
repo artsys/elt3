@@ -15,7 +15,8 @@
 		>Descr:
 			Библиотека функций для работы с машками
 		>Зависимости:
-			#include <libNormalize.mqh>
+			#include <sysStructure.mqh>
+			#include <sysNormalize.mqh>
 */
 
 string aMASets[];
@@ -39,7 +40,7 @@ int aMA_set(int per = 21, int mode_ma = MODE_EMA, int app_price = PRICE_CLOSE, s
 		\version	0.0.0.2
 		\date		2013.06.27
 		\author		Morochin <artamir> Artiom
-		\details	Сохраняет настройку скользящей средней в массив настроек. Возвращает индекс настроек в массиве.
+		\details	Сохраняет настройку скользящей средней в массив настроек. Возвращает индекс настройки в массиве.
 		\internal
 			>Hist:		
 					 @0.0.0.2@2013.06.27@artamir	[]	aMA_set

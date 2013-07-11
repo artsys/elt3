@@ -3,7 +3,7 @@
 		>Date	:	2012.10.03
 		>Hist	:
 		>Author	:	Morochin <artamir> Artiom
-		>Desc	:
+		>Desc	:	Нормализация реальных чисел
 	*/
 	
 double Norm_symb(double d, string sy = "", int add = 0){//..
@@ -40,7 +40,7 @@ double Norm_vol(double v, string sy = ""){//..
 		>History:
 			@0.0.2@2012.07.31@artamir	[+] Добавил нормализацию объема в зависимости от шага объема.
 			@0.0.1@2012.07.25@artamir	[]
-		>Description:
+		>Description: Нормализация объема по шагу изменения.
 	*/
 	
 	//--------------------------------------------------------------------

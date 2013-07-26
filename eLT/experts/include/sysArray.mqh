@@ -105,9 +105,9 @@ void A_d_setPropByIndex(int idx, int prop, double val){
 	dArrayTemp2[(idx*dArrayTemp2.COLS)+prop] = val;
 	
 	//------------------------------------------------------
-	if(Debug){
-		//A_d_PrintArray1(dArrayTemp2, 4, fn);
-	}	
+	// if(Debug){
+		// //A_d_PrintArray1(dArrayTemp2, 4, fn);
+	// }	
 }
 
 #define	A_RA_COPY	1
@@ -144,10 +144,10 @@ void A_d_releaseArray(double &d[][], int mode = 1){
 	A_d_eraseArray2(dArrayTemp2);
 	
 	//------------------------------------------------------
-	if(Debug){
-		//A_d_PrintArray2(d, 4, fn);
-		//A_d_PrintArray1(dTemp, 4, fn);
-	}
+	// if(Debug){
+		// //A_d_PrintArray2(d, 4, fn);
+		// //A_d_PrintArray1(dTemp, 4, fn);
+	// }
 }
 
 //}
@@ -319,9 +319,9 @@ void A_d_Swap2(double &a[][], int i1, int i2){
 		a[i2][col] = temp;
 	}
 	
-	if(Debug && BP_Array_Sort){
-		BP("SWAP", "i1 = ",i1, "i2 = ",i2);
-	}
+	// if(Debug && BP_Array_Sort){
+		// BP("SWAP", "i1 = ",i1, "i2 = ",i2);
+	// }
 
 }
 
@@ -659,9 +659,9 @@ int A_d_Select(		double &s[][] /*source array*/
 		res_assertion = false;
 		this_assertion = false;
 		
-		if(Debug && BP_Array){
-			BP("Select", "f_ROWS = ",f_ROWS);
-		}	
+		// if(Debug && BP_Array){
+			// BP("Select", "f_ROWS = ",f_ROWS);
+		// }	
 		
 		//--- цикл по строкам массива-источника
 		//--------------------------------------------------
@@ -688,9 +688,9 @@ int A_d_Select(		double &s[][] /*source array*/
 			if(f_as == AS_OP_EQ){
 				this_assertion = A_Assertion_EQ(f_max, s_val);
 				
-				if(Debug && BP_Array){
-					BP("A_d_Select", "this_assertion = ", this_assertion);
-				}	
+				// if(Debug && BP_Array){
+					// BP("A_d_Select", "this_assertion = ", this_assertion);
+				// }	
 			}
 			
 			if(f_as == AS_OP_NOT){

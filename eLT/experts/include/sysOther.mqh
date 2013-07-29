@@ -1,14 +1,14 @@
 	/**
-		\version	0.0.0.1
-		\date		2013.06.12
+		\version	0.0.0.2
+		\date		2013.07.29
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2013.07.29@artamir	[+]	iif
 					 @0.0.0.1@2013.06.12@artamir	[+]	StringToArray
 			>Rev:0
 	*/
-
 
 int StringToArray(string &a[], string s, string del = ";"){
 	/**
@@ -41,4 +41,16 @@ int StringToArray(string &a[], string s, string del = ";"){
 		a[lastROW] = s;
 		return(ROWS);
 	}
+}
+
+double iif( bool condition, double ifTrue, double ifFalse ){
+	/*
+		>Ver	:	0.0.0.2
+		>Date	:	2013.07.29
+		>History:	
+					@0.0.0.2@2013.07.29@artamir	[]	iif
+	*/
+	if( condition ) return( ifTrue );
+	//---
+	return( ifFalse );
 }

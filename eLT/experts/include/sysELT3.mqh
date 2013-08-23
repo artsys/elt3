@@ -1,7 +1,8 @@
 	/*
-		>Ver	:	0.1.0.44
-		>Date	:	2013.06.28
-		>Hist:																
+		>Ver	:	0.1.0.45
+		>Date	:	2013.08.20
+		>Hist:																	
+				 @0.1.0.45@2013.08.20@artamir	[+]	ELT_DBFN
 				 @0.1.0.44@2013.06.28@artamir	[]	ELT_deinit
 				 @0.1.0.43@2013.06.25@artamir	[]	ELT_deinit
 				 @0.1.37@2013.04.25@artamir	[]	
@@ -28,7 +29,7 @@
 				 @0.1.13@2013.02.16@artamir	[]	
 		>Author: Morochin <artamir> Artiom
 		>Desc:
-			Base includE_
+			Base include
 			Manager for system include files.
 		>Pref:
 			non
@@ -38,7 +39,7 @@
 
 #property stacksize 16192			
 	
-#define	ELTVER	"0.1.42_2013.04.25"
+#define	ELTVER	"0.1.0.45_2013.08.20"
 
 //{	//Include	========================================
 //{		@System	----------------------------------------
@@ -57,7 +58,7 @@
 //.. 	@Trades	----------------------------------------
 #include	<sysTrades.mqh>									//Pref:	TR
 //..	@Indicators
-#include	<iMA.mqh>										//Pref: iMA
+//#include	<iMA.mqh>										//Pref: iMA
 //}
 //}
 
@@ -86,7 +87,7 @@ int Main(){
 	//}
 }
 
-int ELT_init(string fn){
+int ELT_init(string fn = ""){
 	/**
 		\version	0.0.2
 		\date		2013.02.26
@@ -98,6 +99,11 @@ int ELT_init(string fn){
 	*/
 	
 	//------------------------------------------------------
+	if(fn == ""){
+		fn = ELT_DBFN();
+	}
+	
+	//------------------------------------------------------
 	A_d_ReadFromFile2(aOE, fn);
 	
 	OE_RecheckStatuses();
@@ -105,7 +111,7 @@ int ELT_init(string fn){
 	aMA_Init();
 }
 
-int ELT_deinit(string fn){
+int ELT_deinit(string fn = ""){
 	/**
 		\version	0.0.2
 		\date
@@ -116,9 +122,44 @@ int ELT_deinit(string fn){
 				@0.0.2 - changed name
 	*/
 	
+	if(fn == ""){
+		fn = ELT_DBFN();
+	}
+	
 	//------------------------------------------------------
 	A_d_SaveToFile2(aOE, fn, 8);
 }	
+
+int ELT_start(){
+	/**
+		\version	0.0.0.0
+		\date		2013.08.20
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+}
+
+string ELT_DBFN(){
+	/**
+		\version	0.0.0.1
+		\date		2013.08.20
+		\author		Morochin <artamir> Artiom
+		\details	Возвращает имя файла-хранилища
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.08.20@artamir	[+]	ELT_DBFN
+			>Rev:0
+	*/
+	
+	string fn = "DB."+EXP+"."+AccountNumber()+"."+Symbol()+".edb";
+
+	//------------------------------------------------------
+	return(fn);
+}
 
 //{ === SELECTING
 int ELT_SelectByMN_d2(		double &s[][] /** source array */

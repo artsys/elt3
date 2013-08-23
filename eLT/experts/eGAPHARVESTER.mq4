@@ -117,9 +117,6 @@ bool BP_Condition_select = false;
 //==========================================================
 #include	<sysELT3.mqh>
 
-//#include	<sysSignals.mqh>
-//#include	<sysAOM.mqh>
-
 //==========================================================
 int init(){
 	

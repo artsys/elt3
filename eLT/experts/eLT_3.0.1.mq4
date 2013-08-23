@@ -1,101 +1,89 @@
-/*
-		>Ver	:	0.1.4
-		>Date	:	2012.10.05
-		>History:
-		>Description:
-			Помошник реализации различных стратегий сопровождения открытых позиций
-			Имя файла для сохранения массива array_dExtraOrders[][]:
-			ИмяЭксперта.Счет.Пара.extra.arr
-*/	
+/**
+	\version	3.0.1.0
+	\date		2013.08.20
+	\author		Morochin <artamir> Artiom
+	\details	Шабон построения советника на базе фреймворка eLT 3.0.1
+	\internal
+		>Hist:
+		>Rev:0
+*/
+	
+//{ === DEFINES
+#define EXP	"expert_name"	/** имя эксперта */
+#define VER	"3.0.1.0"		/** expert_version */
+#define DATE "2013.08.20"	/** extert date */	
+//}
 
-#define	EXP	"eLT3"
-#define	VER	"0.1.4_2012.10.05"
+//{ === expert DEFINES
+//}
 
+//{ === EXTERN VARIABLES
+//}
 
+//{ === INCLUDES
+#include <sysELT3.mqh>
+//}
 
-//...	@VARS
-string	fnExtra	= ""	;
-bool 	Debug	= false	;
-
-//----------------------------------------------------------
-bool	isStart = true	;
-//.
-
-//==========================================================
-#include	<sysELT3.mqh>
-
-
-//==========================================================
 int init(){
-	
-	fnExtra = getExtraFN();
-
-	
-	//------------------------------------------------------
-	ELT.init(fnExtra);
-}
-
-//==========================================================
-int deinit(){
-	ELT.deinit(fnExtra);
-}
-
-//==========================================================
-int start(){
-	/*
-		>Ver	:	0.0.1
-		>Date	:	2012.10.02
-		>History:
-			@0.0.1@2012.10.02@artamir	[]
-		>Description:
-			start function of EA.
+	/**
+		\version	0.0.0.0
+		\date		2013.08.20
+		\author		Morochin <artamir> Artiom
+		\details	Функция инициализации советника.
+		\internal
+			>Hist:
+			>Rev:0
 	*/
-	
-	Comment(	"EXP ver: "	,VER	,"\n"
-			,	"Sys ver: "	,ELTVER	,"\n");
-	
-	//------------------------------------------------------
-	if(isStart) isStart = false;
 
-	//------------------------------------------------------
-	Main();													//called from sysELT3
+	ELT_init();
 	
-	//------------------------------------------------------
-	//mngAO.Main();											//Main function of autoopen manager.
-	
-	//------------------------------------------------------
-	//libCY.Main();											//Main function of convoys manager.
-
-	//------------------------------------------------------
+	//-------------------------------------
 	return(0);
 }
 
-
-//==========================================================
-string getExtraFN(){
-	/*
-		>Ver	:	0.0.3
-		>Date	:	2012.09.10
-		>Hist:
-			@0.0.3@2012.09.10@artamir	[]
-			@0.0.2@2012.09.10@artamir	[]
-			@0.0.1@2012.09.10@artamir	[]
-		>Description:
+int deinit(){
+	/**
+		\version	0.0.0.0
+		\date		2013.08.20
+		\author		Morochin <artamir> Artiom
+		\details	Функция деинициализации советника
+		\internal
+			>Hist:
+			>Rev:0
 	*/
-	
-	string fn = EXP+"."+AccountNumber()+"."+Symbol()+"."+"Extra.arr";
 
-	//------------------------------------------------------
-	return(fn);
+	ELT_deinit();
+	//-------------------------------------
+	return(0);
 }
 
-double iif( bool condition, double ifTrue, double ifFalse ){
-	/*
-		>Ver	:	0.0.1
-		>Date	:	2012.04.04
-		>History:
+int start(){
+	/**
+		\version	0.0.0.0
+		\date		2013.08.20
+		\author		Morochin <artamir> Artiom
+		\details	функция срабатывает с появлением нового тика
+		\internal
+			>Hist:
+			>Rev:0
 	*/
-	if( condition ) return( ifTrue );
-	//---
-	return( ifFalse );
+
+	//-------------------------------------
+	return(0);
+}
+
+int startext(){
+	/**
+		\version	0.0.0.0
+		\date		2013.08.20
+		\author		Morochin <artamir> Artiom
+		\details	расширение функции start()
+					можно вызывать при наступлении какого-нибудь условия.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	//-------------------------------------
+	return(0);
 }

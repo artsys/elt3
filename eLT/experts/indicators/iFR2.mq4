@@ -6,7 +6,7 @@
 //|                                                   eltth.ucoz.org |
 //|                                                artamir@yandex.ru |
 //+------------------------------------------------------------------+
-#property copyright "Copyright 2012, artamir"
+#property copyright "Copyright 2013, artamir"
 #property link      "forexmd.ucoz.org"
 
 #property indicator_chart_window

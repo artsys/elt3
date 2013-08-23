@@ -5,14 +5,6 @@
 		\details	Trading functtions.
 		\internal
 			>Hist:								
-					 @0.0.0.8@2013.07.02@artamir	[]	_TR_CountOrdersToSend
-					 @0.0.0.7@2013.06.28@artamir	[]	TR_SendPending_array
-					 @0.0.0.6@2013.06.28@artamir	[]	TR_SendREVERSOrder
-					 @0.0.0.5@2013.06.27@artamir	[]	TR_MoveToOrder
-					 @0.0.0.4@2013.05.17@artamir	[]	TR_ModifySLByPrice
-					 @0.0.3@2013.04.25@artamir	[]	TR_MoveOrder
-					 @0.0.2@2013.04.25@artamir	[]	TR_MoveOrder
-					 @0.0.1@2013.04.25@artamir	[]	TR_MoveOrder
 	*/
 
 
@@ -135,18 +127,6 @@ int TR_SendBUYSTOP_array(double &d[], double StartPrice, int AddPips = 0, double
 		
 		sendVol = Norm_vol(sendVol);
 		
-		if(Debug && BP_Trades){
-			BP("TR_SendBUYSTOP_array",
-				"countSends = ",countSends
-				,"rest_vol = ",rest_vol
-				,"ns=",ns
-				,"",""
-				,"",""
-				,"",""
-				,"",""
-				,(sendVol > TR_TwiseLots));
-		}
-		
 		ticket = _OrderSend("", OP_BUYSTOP, sendVol, SendPrice, 0, SLPrice, TPPrice, Comm, mn);
 		
 		if(ticket > 0){
@@ -224,18 +204,6 @@ int TR_SendBUYLIMIT_array(double &d[], double StartPrice, int AddPips = 0, doubl
 		sendVol = MathMin(rest_vol, TR_TwiseLots);
 		
 		sendVol = Norm_vol(sendVol);
-		
-		if(Debug && BP_Trades){
-			BP("TR_SendBUYLIMIT_array",
-				"countSends = ",countSends
-				,"rest_vol = ",rest_vol
-				,"ns=",ns
-				,"",""
-				,"",""
-				,"",""
-				,"",""
-				,(sendVol > TR_TwiseLots));
-		}
 		
 		ticket = _OrderSend("", OP_BUYLIMIT, sendVol, SendPrice, 0, SLPrice, TPPrice, Comm, mn);
 		
@@ -415,18 +383,6 @@ int TR_SendSELLSTOP_array(double &d[], double StartPrice, int AddPips = 0, doubl
 		
 		sendVol = Norm_vol(sendVol);
 		
-		if(Debug && BP_Trades){
-			BP("TR_SendSELLSTOP_array",
-				"countSends = ",countSends
-				,"rest_vol = ",rest_vol
-				,"ns=",ns
-				,"",""
-				,"",""
-				,"",""
-				,"",""
-				,(sendVol > TR_TwiseLots));
-		}
-		
 		ticket = _OrderSend("", OP_SELLSTOP, sendVol, SendPrice, 0, SLPrice, TPPrice, Comm, mn);
 		
 		if(ticket > 0){
@@ -504,18 +460,6 @@ int TR_SendSELLLIMIT_array(double &d[], double StartPrice, int AddPips = 0, doub
 		
 		sendVol = Norm_vol(sendVol);
 		
-		if(Debug && BP_Trades){
-			BP("TR_SendSELLLIMIT_array",
-				"countSends = ",countSends
-				,"rest_vol = ",rest_vol
-				,"ns=",ns
-				,"",""
-				,"",""
-				,"",""
-				,"",""
-				,(sendVol > TR_TwiseLots));
-		}
-		
 		ticket = _OrderSend("", OP_SELLLIMIT, sendVol, SendPrice, 0, SLPrice, TPPrice, Comm, mn);
 		
 		if(ticket > 0){
@@ -588,7 +532,7 @@ int TR_SendSTOPLikeOrder_array(double &d[], int src_ti = 0, int AddPips = 0, dou
 		>Hist	:
 			@0.0.1@2013.03.02@artamir	[]
 		>Author	:	Morochin <artamir> Artiom
-		>Desc	:
+		>Desc	:	Выставление ордеров, подобных заданному ордеру.
 	*/
 	
 	double	StartPrice = 0.0;
@@ -601,7 +545,7 @@ int TR_SendSTOPLikeOrder_array(double &d[], int src_ti = 0, int AddPips = 0, dou
 	if(src_ti <= 0) return(-1);
 	
 	//------------------------------------------------------
-	if(!T_SelOrderByTicket(src_ti)) return(-1);
+	if(!OrderSelect(src_ti, SELECT_BY_TICKET)) return(-1);
 	
 	//------------------------------------------------------
 	StartPrice = Norm_symb(OrderOpenPrice());
@@ -609,16 +553,6 @@ int TR_SendSTOPLikeOrder_array(double &d[], int src_ti = 0, int AddPips = 0, dou
 	Type = OrderType();
 	Lot = OrderLots()*lot_multi;
 	Magic = OrderMagicNumber();
-	
-	if(Debug){
-		if(BP_Trades || BP_Like){
-			BP("SendSTOPLikeOrder_array"
-				,"StartPrice = ", StartPrice
-				,"src_ti = ", src_ti
-				,"OrderTicket() = ", OrderTicket());
-			
-		}
-	}
 	
 	if(Type == OP_BUY || Type == OP_BUYSTOP){
 		return(TR_SendBUYSTOP_array(d, StartPrice, AddPips, Lot, 0, 0, Comm, Magic));
@@ -688,7 +622,7 @@ int TR_getReversType(int src_ty = -1){
 		>Date	:	2013.02.26
 		>Hist	:
 		>Author	:	Morochin <artamir> Artiom
-		>Desc	:
+		>Desc	:	Получение типа ордера для выставления реверсного ордера (ордера в противоположном направлении) по заданному типу и на том же ценовом уровне, что и ордер-родитель.
 	*/
 	
 	int dest_ty = -1;
@@ -719,7 +653,7 @@ int TR_SendREVERSOrder(double &d[], int src_ti, double vol = 0.01, double lot_mu
 		>Hist	:
 			@0.0.3@2013.03.02@artamir	[]
 		>Author	:	Morochin <artamir> Artiom
-		>Desc	:
+		>Desc	:	Выставление реверсных ордеров до заданного объема по заданному тикету-родителю.
 	*/
 	
 	int src_ty = -1;
@@ -771,7 +705,7 @@ int	_TR_CountOrdersToSend(double all_vol = 0){
 		>Hist	:	
 					@0.0.0.1@2013.07.02@artamir	[]	изменен алгоритм нахождения количества выставляемых ордеров.
 		>Author	:	Morochin <artamir> Artiom
-		>Desc	:
+		>Desc	:	Расчет количества выставляемых ордеров при нужном объеме, превышающем максимально заданный объем. Максимальный объем задается в переменной TR_TwiseLots.
 	*/
 	
 	double count = 0;//all_vol / TR_TwiseLots;
@@ -846,7 +780,16 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 	
 	//------------------------------------------------------
 	if(price <= 0){
-		price = MI_MarketOpenByCMD(cmd);
+		
+		//--------------------------------------------------
+		if(cmd == OP_BUY){
+			price = MarketInfo(symbol, MODE_ASK);
+		}
+		
+		//--------------------------------------------------
+		if(cmd == OP_SELL){
+			price = MarketInfo(symbol, MODE_BID);
+		}
 	}
 	
 	//------------------------------------------------------
@@ -870,7 +813,7 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 	takeprofit	= Norm_symb(takeprofit);
 	
 	//------------------------------------------------------
-	//{	//Checking ability to send order
+	//{	=== Checking ability to send order
 	
 		//--------------------------------------------------
 		if(cmd == OP_BUYSTOP){
@@ -1033,10 +976,7 @@ bool TR_ModifyTP(int ticket, double tp, int mode = 1){
 			@0.0.2@2012.09.20@artamir	[]
 			@0.0.1@2012.08.20@artamir	[]
 		>Description:
-			Modify TP
-		>Зависимости заголовков:
-			libMarketInfo
-			libNormalize
+			Модификация тейкпрофита ордера. Тейкпрофит может быть задан в пунктах от цены открытия ордера или ценовым уровнем.
 	*/
 	if(!OrderSelect(ticket, SELECT_BY_TICKET)) return(false);
 	
@@ -1060,6 +1000,15 @@ bool TR_ModifyTP(int ticket, double tp, int mode = 1){
 }
 
 bool TR_ModifyPrice(int ticket, double price, int mode = 1){
+	/**
+		\version	0.0.0.1
+		\date		2013.08.22
+		\author		Morochin <artamir> Artiom
+		\details	Модификация цены открытия отложенного ордера. Цена задается ценовым уровнем.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
 
 	//------------------------------------------------------
 	if(mode == TR_MODE_PRICE){
@@ -1182,10 +1131,6 @@ bool TR_ModifyPriceByTicket(int src_ti, int dest_ti){
 		}
 	}
 	
-	if(Debug && BP_Trades){
-		BP("TR_ModifyPriceByTicket", "addSPREAD = ", addSPREAD, "src_ty = ", src_ty, "dest_ty = ", dest_ty);
-	}
-	
 	return(TR_ModifyPrice(dest_ti, src_pr+addSPREAD*Point));
 }
 
@@ -1195,7 +1140,7 @@ bool TR_ModifySLOnTP(int src_ti, int dest_ti){
 		>Date	:	2013.02.23
 		>Hist	:
 		>Author	:	Morochin <artamir> Artiom
-		>Desc	:
+		>Desc	:	Устанавливает стоплосс дл тикета dest_ti на ценовой уровень тейкпрофита тикета src_ti с учетом спреда
 	*/
 	
 	double src_tp = 0;
@@ -1249,14 +1194,6 @@ bool TR_MoveOrder(int src_ti, double pr, int mode = 1){
 	
 	src_delta_sl = MathAbs((Norm_symb(src_pr,"",2) - Norm_symb(src_sl,"",2)) / Point);
 	src_delta_tp = MathAbs((Norm_symb(src_pr,"",2) - Norm_symb(src_tp,"",2)) / Point);
-	
-	if(Debug && BP_TRMOVE){
-		BP(		"TR_MoveOrder"
-			,	"src_delta_sl = ",src_delta_sl
-			,	"src_pr = ", DoubleToStr(Norm_symb(src_pr), Digits)
-			,	"src_sl = ", DoubleToStr(Norm_symb(src_sl), Digits)
-			,	"Point = ", DoubleToStr(Point, Digits+2));
-	}
 	
 	if(mode == TR_MODE_PRICE){
 		delta_pips = MathAbs(pr - src_pr);
@@ -1400,7 +1337,7 @@ bool TR_CloseByTicket(int ticket){
 	}
 	
 	//------------------------------------------------------
-	double price = MI_MarketCloseByCMD(OrderType());
+	double price = 0.00;//MI_MarketCloseByCMD(OrderType());
 	
 	price = Norm_symb(price);
 	//------------------------------------------------------

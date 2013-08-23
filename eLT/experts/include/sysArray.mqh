@@ -1,35 +1,12 @@
 	/*
-		>Ver	:	0.0.0.44
-		>Date	:	2013.06.28
-		>Hist	:																													
+		>Ver	:	0.0.0.45
+		>Date	:	2013.08.06
+		>Hist	:																														
+					@0.0.0.45@2013.08.06@artamir	[+]	A_s_PrintArray2
 					@0.0.0.44@2013.06.28@artamir	[]	A_d_releaseArray
 					@0.0.0.43@2013.06.25@artamir	[!]	A_d_Select	Добавлено обнуление массива-приемника по требованию.
 					@0.0.0.42@2013.06.12@artamir	[]	A_d_Select
 					@0.0.0.41@2013.05.20@artamir	[]	A_d_Compare
-					@0.0.0.40@2013.05.20@artamir	[]	A_d_Select
-					@0.0.0.39@2013.05.20@artamir	[]	A_d_Compare
-					@0.0.0.38@2013.05.20@artamir	[]	A_d_Select
-					@0.0.0.37@2013.05.17@artamir	[+]	A_d_Swap2
-					@0.0.0.36@2013.05.17@artamir	[+]	A_d_Sort2
-					@0.0.0.35@2013.05.17@artamir	[]	A_d_Select
-					@0.0.0.34@2013.05.17@artamir	[]	A_d_releaseArray
-					@0.0.33@2013.03.06@artamir	[]	A_Assertion_UNDER
-					@0.0.32@2013.03.06@artamir	[]	A_Assertion_UNDER
-					@0.0.31@2013.02.23@artamir	[]	A_d_setPropByIndex
-					@0.0.30@2013.02.22@artamir	[]	A_d_Select
-					@0.0.29@2013.02.21@artamir	[]	A_d_Select
-					@0.0.28@2013.02.20@artamir	[]	A_d_Select	-	Исправлена работа с фильтром.
-					@0.0.27@2013.02.20@artamir	[]	A_FilterAdd_AND
-					@0.0.25@2013.02.20@artamir	[*] Изменены константы массива фильтра	
-					@0.0.24@2013.02.19@artamir	[]	A_d_Select
-					@0.0.23@2013.02.19@artamir	[]	A_Assertion_OUT
-					@0.0.22@2013.02.19@artamir	[]	A_Assertion_IN
-					@0.0.21@2013.02.19@artamir	[]	A_Assertion_NOT
-					@0.0.20@2013.02.19@artamir	[]	A_Assertion_EQ
-					@0.0.19@2013.02.18@artamir	[]	A_d_Select
-					@0.0.18@2013.02.16@artamir	[]	A_FilterAdd_OR
-					@0.0.17@2013.02.16@artamir	[]	A_FilterAdd_OR
-					@0.0.16@2013.02.16@artamir	[]	A_FilterAdd_OR
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:	function to work with arrays
 		>Pref	:	A
@@ -103,11 +80,7 @@ void A_d_setPropByIndex(int idx, int prop, double val){
 	
 	//------------------------------------------------------
 	dArrayTemp2[(idx*dArrayTemp2.COLS)+prop] = val;
-	
-	//------------------------------------------------------
-	// if(Debug){
-		// //A_d_PrintArray1(dArrayTemp2, 4, fn);
-	// }	
+		
 }
 
 #define	A_RA_COPY	1
@@ -138,16 +111,8 @@ void A_d_releaseArray(double &d[][], int mode = 1){
 	
 	A_d_Copy1To2(dArrayTemp2, d, dArrayTemp2.COLS);
 	
-	//double dTemp[];
-	//ArrayCopy(dTemp, dArrayTemp2, 0, 0, WHOLE_ARRAY);
 	//------------------------------------------------------
 	A_d_eraseArray2(dArrayTemp2);
-	
-	//------------------------------------------------------
-	// if(Debug){
-		// //A_d_PrintArray2(d, 4, fn);
-		// //A_d_PrintArray1(dTemp, 4, fn);
-	// }
 }
 
 //}
@@ -318,10 +283,6 @@ void A_d_Swap2(double &a[][], int i1, int i2){
 		a[i1][col] = a[i2][col];
 		a[i2][col] = temp;
 	}
-	
-	// if(Debug && BP_Array_Sort){
-		// BP("SWAP", "i1 = ",i1, "i2 = ",i2);
-	// }
 
 }
 
@@ -657,11 +618,7 @@ int A_d_Select(		double &s[][] /*source array*/
 		s_val = 0;
 		
 		res_assertion = false;
-		this_assertion = false;
-		
-		// if(Debug && BP_Array){
-			// BP("Select", "f_ROWS = ",f_ROWS);
-		// }	
+		this_assertion = false;	
 		
 		//--- цикл по строкам массива-источника
 		//--------------------------------------------------
@@ -677,20 +634,8 @@ int A_d_Select(		double &s[][] /*source array*/
 			
 			s_val = s[s_row][s_col];
 			
-			// if(Debug && BP_Condition_select){
-				// BP("SELECT", "f_as = ", f_as
-							// , "f_max = ", f_max
-							// , "f_min = ", f_min
-							// , "f_sel = ", f_sel
-							// , "s_val = ", s_val);
-			// }
-			
 			if(f_as == AS_OP_EQ){
-				this_assertion = A_Assertion_EQ(f_max, s_val);
-				
-				// if(Debug && BP_Array){
-					// BP("A_d_Select", "this_assertion = ", this_assertion);
-				// }	
+				this_assertion = A_Assertion_EQ(f_max, s_val);	
 			}
 			
 			if(f_as == AS_OP_NOT){
@@ -878,6 +823,66 @@ void A_d_ReadFromFile2(double &a[][], string fn){
 
 //}
 
+//{ === STRING ARRAY
+
+//{ === COPY
+void A_s_CopyCol2To1(string &s[][], string &d[], int col = 0){
+	/**
+		\version	0.0.0.0
+		\date		2013.08.02
+		\author		Morochin <artamir> Artiom
+		\details	Выгружает колонку двумерного массива в одномерный
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	int ROWS = ArrayRange(s,0);
+	ArrayResize(d,0);
+	ArrayResize(d,ROWS);
+	
+	for(int i=0; i<ROWS; i++){
+		d[i] = s[i][col];
+	}
+}
+//}
+
+
+int A_s_MaxLen2(string &a[][], int col = -1){
+	/**
+		\version	0.0.0.0
+		\date		2013.08.02
+		\author		Morochin <artamir> Artiom
+		\details	Поиск макс. длины строки в двумерном строковом массиве. по заданной колонке
+					Если колонка  = -1, то поиск производится во всем массиве.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	int ROWS = ArrayRange(a,0);
+	int COLS = ArrayRange(a,1);
+	
+	int start_col = 0;
+	int end_col = COLS-1;
+	
+	int max_len = 0;
+	
+	if(col > -1){
+		start_col = col;
+		end_col = col;
+	}
+	
+	for(int r=0; r<ROWS; r++){
+		for(int c=start_col; c<=end_col; c++){
+			max_len = MathMax(max_len, StringLen(a[r][c]));
+		}
+	}
+	
+	return(max_len);
+}
+//}
+
 //{ === FOR DEBUGING
 void A_d_PrintArray2(double &a[][], int d = 4, string fn = "PrintArray_"){
 	/*
@@ -992,4 +997,41 @@ void A_s_PrintArray1(string &a[], string fn = "PrintArray_"){
 	
 }
 
+void A_s_PrintArray2(string &a[][], string fn = "PrintArray_"){
+	/**
+		\version	0.0.0.1
+		\date		2013.08.06
+		\author		Morochin <artamir> Artiom
+		\details	Печатает двумерный строковой массив в файл.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.08.06@artamir	[+]	A_d_Select
+			>Rev:0
+	*/
+
+
+	static int	i;
+	
+	i++;
+	//------------------------------------------------------
+	int ROWS = ArrayRange(a, 0);
+	int COLS = ArrayRange(a, 1);
+	
+	//------------------------------------------------------
+	fn = fn+i+".arr";
+	string s = "";
+	//------------------------------------------------------
+	int handle = FileOpen(fn, FILE_CSV|FILE_WRITE, "\t");
+	
+	for(int idx_1=0; idx_1<ROWS; idx_1++){
+		s="";
+		for(int idx_2=0; idx_2<COLS; idx_2++){	
+			s = StringConcatenate(s,"\t", "["+idx_1+"]["+idx_2+"]", a[idx_1][idx_2]);
+		}	
+		FileWrite(handle, idx_1, s);
+	}
+	
+	if(handle != 0) FileClose(handle);
+	
+}
 //}

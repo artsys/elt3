@@ -1,7 +1,9 @@
 	/*
-		>Ver	:	0.0.0.43
-		>Date	:	2013.07.02
-		>Hist	:																									
+		>Ver	:	0.0.0.45
+		>Date	:	2013.08.29
+		>Hist	:																											
+					@0.0.0.45@2013.08.29@artamir	[-] Удалены отладочные метки.	
+					@0.0.0.44@2013.08.29@artamir	[+]	OE_SortDesc
 					@0.0.0.43@2013.07.02@artamir	[*]	OE_getAOMByTicket - исправлено получение метода открытия.
 					@0.0.0.42@2013.06.28@artamir	[+]	OE_setFIRByTicket
 					@0.0.0.41@2013.05.17@artamir	[+]	OE_ClosePriceSL
@@ -32,7 +34,8 @@
 		>Desc	:
 	*/
 
-#define OE_VER	"0.0.0.43"
+#define OE_VER	"0.0.0.44"
+#define OE_DATE	"2013.08.29"
 	
 //{	//=== ARRAY	
 #define OE_NULL -19801028
@@ -268,18 +271,9 @@ int OE_addRow(int ti){
 		return(-1);
 	}
 	
-	//------------------------------------------------------
-	A_d_setArray(aOE);
+	int idx = Ad_AddRow2(aOE);
 	
-	//------------------------------------------------------
-	int idx = A_d_addRow();
-	
-	//------------------------------------------------------
-	A_d_setPropByIndex(idx, OE_TI, ti);
-	
-	//------------------------------------------------------
-	A_d_releaseArray(aOE);
-	
+	aOE[idx][OE_TI] = ti;
 	//------------------------------------------------------
 	return(idx);
 }
@@ -304,7 +298,7 @@ int OE_setStandartDataByTicket(int ti){
 	}
 	
 	//------------------------------------------------------
-	int	idx = OE_findIndexByTicket(ti);
+	int	idx = OE_FIBT(ti);
 	
 	//------------------------------------------------------
 	if(idx <= -1){
@@ -350,10 +344,6 @@ int OE_setStandartDataByOrder(int idx){
 	aOE[idx][OE_LOT] = OrderLots();
 	
 	aOE[idx][OE_CP] = OrderClosePrice();
-	
-	if(Debug && BP_OE){
-		BP("setStandartDataByOrder", "idx = ", idx, "OCP = ", OrderClosePrice());
-	}
 	
 	if(OrderCloseTime() <= 0){
 		aOE[idx][OE_IT] = 1;
@@ -981,10 +971,7 @@ int	OE_setITByTicket(int ti, int status = -1){
 	if(idx <= -1){
 		return(-1);
 	}
-	
-	if(Debug && BP_OE){
-		BP("setITByTicket", "status = ", status);
-	}	
+		
 	//------------------------------------------------------
 	aOE[idx][OE_IT] = status;
 	
@@ -1015,10 +1002,7 @@ int OE_setCTByTicket(int ti, int ct = -1){
 	
 	//------------------------------------------------------
 	int idx = OE_findIndexByTicket(ti);
-	
-	if(Debug && BP_OE){
-		BP("setCTByTicket()","idx = ",idx,"ct = ",ct);
-	}	
+		
 	//------------------------------------------------------
 	if(idx <= -1){
 		return(-1);
@@ -1174,10 +1158,6 @@ int OE_setCTYByTicket(int ti){
 	
 	aOE[idx][OE_CTY] = ty;
 	
-	if(Debug && BP_OE){
-		BP("setCTYByTicket", "ty = ", ty);
-	}
-	
 	return(idx);
 }
 
@@ -1198,9 +1178,7 @@ int OE_setCloseByTicket(int ti){
 	idx = OE_setITByTicket(ti, 0);
 	idx = OE_setCTByTicket(ti);
 	idx = OE_setCPByTicket(ti);
-	if(Debug && BP_OE){
-		BP("setCloseByTicket()","idx = ",idx);
-	}	
+	
 	idx = OE_setICByTicket(ti, 1);
 	idx = OE_setCPPByTicket(ti);
 	idx = OE_setCTYByTicket(ti);
@@ -1463,6 +1441,21 @@ int		OE_getFOTYByTicket(int ti){
 //}
 
 
+void OE_SortDesc(int col=0){
+	/**
+		\version	0.0.0.1
+		\date		2013.08.29
+		\author		Morochin <artamir> Artiom
+		\details	Сортирует массив aOE по умолчанию по измерению OE_TI по убыванию.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.08.29@artamir	[]	OE_SortDesc
+			>Rev:0
+	*/
+
+	Ad_QuickSort2(aOE, -1,-1,OE_TI, A_MODE_DESC);
+}
+
 void OE_RecheckStatuses(){
 	/*
 		>Ver	:	0.0.1
@@ -1503,17 +1496,7 @@ int OE_CountIT(){
 	A_eraseFilter();
 	A_FilterAdd_AND(OE_IT,1,-1,AS_OP_EQ);
 	
-	if(Debug && BP_OE){
-		BP("OE_CountIT");
-	}
-	
 	A_d_Select(aOE, d);
-	
-	if(Debug	&& BP_OE){
-		A_d_PrintArray2(aOE,4,"CountIT_aOE");
-		A_d_PrintArray2(d,4,"CountIT_d");
-		A_d_PrintArray2(A_Filter,"CountIT_filt");
-	}
 	
 	return(ArrayRange(d, 0));
 }

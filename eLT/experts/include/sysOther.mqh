@@ -4,7 +4,7 @@
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:							
+			>Hist:									
 					 @0.0.0.7@2013.08.06@artamir	[+]	UCase
 					 @0.0.0.6@2013.08.06@artamir	[+]	StringToColor
 					 @0.0.0.5@2013.08.06@artamir	[*]	StringReplace
@@ -50,9 +50,10 @@ int StringToArray(string &a[], string s, string del = ";"){
 
 double iif( bool condition, double ifTrue, double ifFalse ){
 	/*
-		>Ver	:	0.0.0.2
-		>Date	:	2013.07.29
-		>History:	
+		>Ver	:	0.0.0.3
+		>Date	:	2013.08.29
+		>History:		
+					@0.0.0.3@2013.08.29@artamir	[*]	dif
 					@0.0.0.2@2013.07.29@artamir	[]	iif
 	*/
 	if( condition ) return( ifTrue );
@@ -200,4 +201,34 @@ string UCase(string str){
 	}
 	
 	return(str);
+}
+
+//Получение списка валют из обзора рынка.
+//файл symbols.sel
+
+void SelectedSymbols(){
+	/**
+		\version	0.0.0.0
+		\date		2013.08.27
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	int h = FileOpenHistory("symbols.sel",FILE_BIN|FILE_READ);	//открываем файл обзора рынка.
+	int symbols_count = (FileSize(h)-2)/130+1; //всего выбрано валютных пар.
+	
+	int start_ofset = 4;// первые 4 байта пропускаем.
+	
+	string s = "";
+	
+	for(int i = 0; i<symbols_count; i++){
+		int total_ofset = start_ofset+128*i;	//расчет офсета с начала файла.
+		FileSeek(h,total_ofset,SEEK_SET);		//переводим курсор на расчитанный офсет.
+		s = FileReadString(h,10);				//читаем 10 байт (содержат название валютной пары)
+		Print(i+": "+s);						//делаем с названием что хотим.
+	}
+	FileClose(h);	//закрываем файл.
 }

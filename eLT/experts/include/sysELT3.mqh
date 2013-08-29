@@ -1,7 +1,9 @@
 	/*
-		>Ver	:	0.1.0.45
-		>Date	:	2013.08.20
-		>Hist:																	
+		>Ver	:	0.1.0.47
+		>Date	:	2013.08.29
+		>Hist:																			
+				 @0.1.0.47@2013.08.29@artamir	[]	ELT_start
+				 @0.1.0.46@2013.08.28@artamir	[+]	ELT_start
 				 @0.1.0.45@2013.08.20@artamir	[+]	ELT_DBFN
 				 @0.1.0.44@2013.06.28@artamir	[]	ELT_deinit
 				 @0.1.0.43@2013.06.25@artamir	[]	ELT_deinit
@@ -39,11 +41,12 @@
 
 #property stacksize 16192			
 	
-#define	ELTVER	"0.1.0.45_2013.08.20"
+#define	ELTVER	"0.1.0.46_2013.08.28"
 
 //{	//Include	========================================
 //{		@System	----------------------------------------
 #include	<WinUser32.mqh>
+#include	<sysDebug.mqh>
 //----------------------------------------------------------
 #include	<sysNormalize.mqh>								//Pref: Norm
 #include	<sysStructure.mqh>								//Pref: Struc
@@ -51,7 +54,7 @@
 #include	<sysMarketInfo.mqh>								//Pref:	MI
 //----------------------------------------------------------
 #include	<sysArray.mqh>									//Pref:	A
-#include	<sysDebug.mqh>
+#include	<sysArray2.mqh>									//Pref: A
 #include	<sysOrdersExtra.mqh>							//Pref:	OE
 #include	<sysTerminal.mqh>								//Pref: T
 #include	<sysEvents.mqh>									//Pref:	E
@@ -106,9 +109,6 @@ int ELT_init(string fn = ""){
 	//------------------------------------------------------
 	A_d_ReadFromFile2(aOE, fn);
 	
-	OE_RecheckStatuses();
-	
-	aMA_Init();
 }
 
 int ELT_deinit(string fn = ""){
@@ -132,18 +132,31 @@ int ELT_deinit(string fn = ""){
 
 int ELT_start(){
 	/**
-		\version	0.0.0.0
-		\date		2013.08.20
+		\version	0.0.0.2
+		\date		2013.08.29
 		\author		Morochin <artamir> Artiom
-		\details	Detailed description
+		\details	Перепроверка данных ордеров в терминале. Заполнение событий.
 		\internal
-			>Hist:
+			>Hist:		
+					 @0.0.0.2@2013.08.29@artamir	[]	ELT_start
+					 @0.0.0.1@2013.08.28@artamir	[]	ELT_start
 			>Rev:0
 	*/
 
+	double a[];
+	int t = T_getTickets(a);
+
+	
+	
+	for(int i=0; i<t; i++){
+		OE_setStandartDataByTicket(a[i]);
+	}
+	
+	T_Start();
+	T_End();
 }
 
-string ELT_DBFN(){
+string ELT_DBFN(string ext=".edb"){
 	/**
 		\version	0.0.0.1
 		\date		2013.08.20
@@ -155,7 +168,7 @@ string ELT_DBFN(){
 			>Rev:0
 	*/
 	
-	string fn = "DB."+EXP+"."+AccountNumber()+"."+Symbol()+".edb";
+	string fn = "DB."+EXP+"."+AccountNumber()+"."+Symbol()+ext;
 
 	//------------------------------------------------------
 	return(fn);

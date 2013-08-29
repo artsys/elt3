@@ -1,7 +1,8 @@
 	/*
-		>Ver	:	0.0.0.45
-		>Date	:	2013.08.06
-		>Hist	:																														
+		>Ver	:	0.0.0.46
+		>Date	:	2013.08.29
+		>Hist	:																															
+					@0.0.0.46@2013.08.29@artamir	[]	A_d_Select
 					@0.0.0.45@2013.08.06@artamir	[+]	A_s_PrintArray2
 					@0.0.0.44@2013.06.28@artamir	[]	A_d_releaseArray
 					@0.0.0.43@2013.06.25@artamir	[!]	A_d_Select	Добавлено обнуление массива-приемника по требованию.
@@ -385,7 +386,7 @@ bool A_d_Compare(double &a[][], int i1, int i2, string compare = ""){
 #define F_COL		0										/*колонка фильтра*/
 #define F_MAX		1										//макс. значение фильтра
 #define F_MIN		2										//мин. значение фильтра
-#define F_SEL_OP		3										//операция объединения условий (or and)
+#define F_SEL_OP	3										//операция объединения условий (or and)
 #define F_AS_OP		4										//операция проверки значения ячейки.
 #define F_TOT		5
 
@@ -570,9 +571,10 @@ bool A_Assertion_OUT(double		s_max_val	/*source max value*/
 }
 
 
-int A_d_Select(		double &s[][] /*source array*/
-				,	double &d[][] /*destination array*/
-				,	bool	need_add_rows = false){
+int A_d_Select(		double	&s[][] /*source array*/
+				,	double	&d[][] /*destination array*/
+				,	bool	need_add_rows = false
+				,	int 	mode=0 /** направление перебора (по умолчанию по возрастанию)*/){
 	/*
 		>Ver	:	0.0.0.6
 		>Date	:	2013.06.25
@@ -610,7 +612,10 @@ int A_d_Select(		double &s[][] /*source array*/
 	s_COLS = ArrayRange(s,1);
 	f_ROWS = ArrayRange(f,0);
 	
-	for(s_row = 0; s_row < s_ROWS; s_row++){
+	for(int i = 0; i < s_ROWS; i++){
+		
+		if(mode==0) s_row = i;
+		if(mode==1){s_row = s_ROWS-i;}
 		
 		f_max = 0;	f_min = 0; 
 		f_as = 0;	f_sel = 0;
@@ -926,6 +931,82 @@ void A_d_PrintArray2(double &a[][], int d = 4, string fn = "PrintArray_"){
 }
 
 void A_d_PrintArray1(double &a[], int d = 4, string fn = "PrintArray_"){
+	/*
+		>Ver	:	0.0.3
+		>Date	:	2012.08.15
+		>Hist:
+			@0.0.3@2012.08.15@artamir	[]
+			@0.0.2@2012.08.15@artamir	[]
+			@0.0.1@2012.08.08@artamir	[]
+		>Descr:
+			Printing array to filE_
+		>VARS:
+			&a[][]  :	array
+			d		:	count of digits.
+			fn		:	filename
+	*/
+
+	static int	i;
+	
+	i++;
+	//------------------------------------------------------
+	int ROWS = ArrayRange(a, 0);
+	
+	//------------------------------------------------------
+	fn = fn+i+".arr";
+	
+	//------------------------------------------------------
+	int handle = FileOpen(fn, FILE_CSV|FILE_WRITE, "\t");
+	
+	for(int idx_1 = 0; idx_1 < ROWS; idx_1++){
+			FileWrite(handle, idx_1, DoubleToStr(a[idx_1], d));
+	}
+	
+	if(handle != 0) FileClose(handle);
+	
+}
+
+void A_i_PrintArray2(int &a[][], int d = 4, string fn = "PrintArray_"){
+	/*
+		>Ver	:	0.0.0.2
+		>Date	:	2013.08.29
+		>Hist:	
+				 @0.0.0.2@2013.08.29@artamir	[]	A_d_Select
+			
+		>Descr:
+			Printing array to filE_
+		>VARS:
+			&a[][]  :	array
+			d		:	count of digits.
+			fn		:	filename
+	*/
+
+	static int	i;
+	
+	i++;
+	//------------------------------------------------------
+	int ROWS = ArrayRange(a, 0);
+	int COLS = ArrayRange(a,1);
+	
+	//------------------------------------------------------
+	fn = i+"_"+fn+".arr";
+	
+	//------------------------------------------------------
+	int handle = FileOpen(fn, FILE_CSV|FILE_WRITE, "\t");
+	for(int idx_1 = 0; idx_1 < ROWS; idx_1++){
+		string s = "";
+		for(int idx_2 = 0; idx_2 < COLS; idx_2++){
+			s = StringConcatenate(s,"\t", "["+idx_1+"]["+idx_2+"]",DoubleToStr(a[idx_1][idx_2], d));
+			//FileWrite(handle, idx_1, idx_2, DoubleToStr(a[idx_1][idx_2], d));
+		}
+		FileWrite(handle, s);
+	}
+	
+	if(handle != 0) FileClose(handle);
+	
+}
+
+void A_i_PrintArray1(int &a[], int d = 4, string fn = "PrintArray_"){
 	/*
 		>Ver	:	0.0.3
 		>Date	:	2012.08.15

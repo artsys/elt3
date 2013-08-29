@@ -1,16 +1,17 @@
 /**
-	\version	3.0.1.0
-	\date		2013.08.20
+	\version	3.0.1.1
+	\date		2013.08.28
 	\author		Morochin <artamir> Artiom
 	\details	Шабон построения советника на базе фреймворка eLT 3.0.1
 	\internal
-		>Hist:
+		>Hist:	
+				 @3.0.1.1@2013.08.28@artamir	[]	startext
 		>Rev:0
 */
 	
 //{ === DEFINES
 #define EXP	"expert_name"	/** имя эксперта */
-#define VER	"3.0.1.0"		/** expert_version */
+#define VER	"3.0.1.1"		/** expert_version */
 #define DATE "2013.08.20"	/** extert date */	
 //}
 
@@ -74,16 +75,19 @@ int start(){
 
 int startext(){
 	/**
-		\version	0.0.0.0
-		\date		2013.08.20
+		\version	0.0.0.1
+		\date		2013.08.28
 		\author		Morochin <artamir> Artiom
 		\details	расширение функции start()
 					можно вызывать при наступлении какого-нибудь условия.
 		\internal
-			>Hist:
+			>Hist:	
+					 @0.0.0.1@2013.08.28@artamir	[]	startext
 			>Rev:0
 	*/
 
+	ELT_start();
+	
 	//-------------------------------------
 	return(0);
 }

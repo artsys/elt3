@@ -1,7 +1,9 @@
 /*
-	>Ver	:	0.0.0.18
-	>Date	:	2013.05.20
-	>Hist	:			
+	>Ver	:	0.0.0.20
+	>Date	:	2013.08.29
+	>Hist	:					
+				@0.0.0.20@2013.08.29@artamir	[-] удалены отладочныее метки.	
+				@0.0.0.19@2013.08.28@artamir	[+]	T_getTickets
 				@0.0.0.18@2013.05.20@artamir	[]	T_End
 				@0.0.17@2013.02.15@artamir	[]	T_CurOPByIndex
 				@0.0.16@2013.02.15@artamir	[]	T_OldOPByIndex
@@ -301,6 +303,29 @@ bool	T_SelOrderByTicket(int ti){
 	return(OrderSelect(ti, SELECT_BY_TICKET));
 }
 
+int		T_getTickets(double &a[]){
+	/**
+		\version	0.0.0.1
+		\date		2013.08.28
+		\author		Morochin <artamir> Artiom
+		\details	Заполнение массива тикетов ордеров.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.08.28@artamir	[]	T_getTickets
+			>Rev:0
+	*/
+	
+	int t = OrdersTotal();
+	ArrayResize(a, t);
+	
+	for(int i = t; i>=0; i--){
+		if(!OrderSelect(i, SELECT_BY_POS, MODE_TRADES)) continue;
+		
+		a[i] = OrderTicket();
+	}
+	
+	return(ArrayRange(a,0));
+}
 //}
 
 //}
@@ -370,10 +395,6 @@ int T_FillRow(){
 	//------------------------------------------------------
 	A_d_releaseArray(aCurOrders);	// release temporar array and copy temporar array to 
 
-	//------------------------------------------------------
-	if(Debug && BP_Terminal){
-		A_d_PrintArray2(aCurOrders, 4, fn);
-	}
 }
 	
 //}

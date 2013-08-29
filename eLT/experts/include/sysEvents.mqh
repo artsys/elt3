@@ -1,7 +1,8 @@
 /*
-		>Ver	:	0.0.14
-		>Date	:	2013.03.06
-		>Hist:										
+		>Ver	:	0.0.0.15
+		>Date	:	2013.08.29
+		>Hist:											
+				 @0.0.0.15@2013.08.29@artamir	[-] удалены отладочные метки.	
 				 @0.0.14@2013.03.06@artamir	[]	onChangeType
 				 @0.0.13@2013.02.24@artamir	[]	onChangeType
 				 @0.0.12@2013.02.23@artamir	[]	onChangeOP
@@ -173,14 +174,7 @@ void onNewOrder(int ticket){
 	//3.добавление нового события в массив событий
 	
 	//------------------------------------------------------
-	if(Debug && BP_Events_NEW){
-		BP("onNewOrder", "ti = ", ticket);
-	}
-	
 	OE_setStandartDataByTicket(ticket);
-	if(Debug && BP_Events_NEW){
-		A_d_PrintArray2(aOE, 4, "aOE_NewOrder");
-	}
 }
 
 void onChangeType(int ticket, int ty_new, int ty_old = -1){
@@ -197,10 +191,6 @@ void onChangeType(int ticket, int ty_new, int ty_old = -1){
 	//1.добавление в массив екстраордеров
 	//2.заполнение стандартных свойств ЕкстраОрдера
 	//3.добавление нового события в массив событий
-	
-	if(Debug && BP_Events_CHTY){
-		BP("onChangeType");
-	}
 	
 	OE_setChangeTYBuTicket(ticket, ty_new);
 }
@@ -219,9 +209,6 @@ void onChangeOP(int ticket, double op.new, double op.old = -1){
 	//1.добавление в массив екстраордеров
 	//2.заполнение стандартных свойств ЕкстраОрдера
 	//3.добавление нового события в массив событий
-	if(Debug && BP_Events_CHOP){
-		BP("onChangeOP","ti = ", ticket, "op.new = ", op.new, "op.old = ", op.old);
-	}
 	
 	OE_setOPByTicket(ticket, op.new);
 }
@@ -240,9 +227,6 @@ void onChangeSL(int ticket, double sl.new, double sl.old = -1){
 	//1.добавление в массив екстраордеров
 	//2.заполнение стандартных свойств ЕкстраОрдера
 	//3.добавление нового события в массив событий
-	if(Debug && BP_Events_CHSL){
-		BP("onChangeSL");
-	}
 }
 
 void onCloseOrder(int ticket){
@@ -259,12 +243,6 @@ void onCloseOrder(int ticket){
 	//1.обновление статуса IsClosed массива экстраордеров.
 	//2.добавление нового события в массив событий
 	OE_setCloseByTicket(ticket);
-	if(Debug && BP_Events_CL){
-		A_d_PrintArray2(aOE, 4, "aOE_Close");
-		A_d_PrintArray2(aCurOrders, 4, "aCUR_Close");
-		A_d_PrintArray2(aOldOrders, 4, "aOLD_Close");
-		BP("onCloseOrder","ti = ",ticket);
-	}
 }
 
 //}

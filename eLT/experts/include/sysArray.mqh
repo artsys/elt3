@@ -14,7 +14,7 @@
 				:	d - for double arrays
 	*/
 
-#define ARRVER	"0.0.0.43_2013.06.25"
+#define ARRVER	"0.0.0.44_2013.09.06"
 	
 //{ === TEMPORAR ARRAY
 
@@ -409,7 +409,7 @@ int A_eraseFilter(){
 	return(0);
 }
 
-int A_FilterAdd_AND(int COL, int MAX = 0, int MIN = 0, int as.OP = 3){
+int A_FilterAdd_AND(int COL, double MAX = 0, double MIN = 0, int as.OP = 3){
 	/*
 		>Ver	:	0.0.2
 		>Date	:	2013.02.20
@@ -439,7 +439,7 @@ int A_FilterAdd_AND(int COL, int MAX = 0, int MIN = 0, int as.OP = 3){
 	return(idx);
 }
 
-int A_FilterAdd_OR(int COL, int MAX = 0, int MIN = 0, int as.OP = 3){
+int A_FilterAdd_OR(int COL, double MAX = 0, double MIN = 0, int as.OP = 3){
 	/*
 		>Ver	:	0.0.1
 		>Date	:	2012.10.05
@@ -639,6 +639,16 @@ int A_d_Select(		double	&s[][] /*source array*/
 			
 			s_val = s[s_row][s_col];
 			
+			if(BP_SNP){
+				BP("A_d_Select"
+					,"s_col=",s_col
+					,"f_max=",f_max
+					,"f_min=",f_min
+					,"f_as=",f_as
+					,"f_sel=",f_sel
+					,"s_val=",s_val);
+			}	
+			
 			if(f_as == AS_OP_EQ){
 				this_assertion = A_Assertion_EQ(f_max, s_val);	
 			}
@@ -682,6 +692,7 @@ int A_d_Select(		double	&s[][] /*source array*/
 			ArrayCopy(d, s, (d_idx-1)*s_COLS, s_row*s_COLS, s_COLS);
 		}
 	}
+	
 }
 
 //}

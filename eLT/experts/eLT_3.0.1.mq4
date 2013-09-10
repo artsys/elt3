@@ -68,7 +68,11 @@ int start(){
 			>Hist:
 			>Rev:0
 	*/
-
+	
+	int h_tmr_start = TMR_Start("start");
+	startext();
+	int tmr_res = TMR_Stop(h_tmr_start);
+	Comment("Start circle = "+tmr_res);
 	//-------------------------------------
 	return(0);
 }
@@ -91,3 +95,7 @@ int startext(){
 	//-------------------------------------
 	return(0);
 }
+
+//{ === expert additional fincrions
+
+//}

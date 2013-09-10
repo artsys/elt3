@@ -1,11 +1,12 @@
 /**
-	\version	0.0.0.3
-	\date		2013.08.29
+	\version	0.0.0.4
+	\date		2013.09.04
 	\author		Morochin <artamir> Artiom
 	\details	Detailed description
 	\internal
-		>Hist:			
-				 @0.0.0.3@2013.08.29@artamir	[]	
+		>Hist:				
+				 @0.0.0.4@2013.09.04@artamir	[*]	Ad_AddRow2
+				 @0.0.0.3@2013.08.29@artamir	[+]	Ad_AddRow2	
 				 @0.0.0.2@2013.08.29@artamir	[+]	
 				 @0.0.0.1@2013.08.29@artamir	[+]	
 		>Rev:0
@@ -20,19 +21,35 @@
 
 //{ === С плавающей точкой.
 //{ 	=== двумерный массив
-int Ad_AddRow2(double &a[][]){
+int Ad_CopyCol2To1(double &s[][], double &d[], int col){
 	/**
-		\version	0.0.0.1
-		\date		2013.08.29
+		\version	0.0.0.0
+		\date		2013.09.05
 		\author		Morochin <artamir> Artiom
-		\details	добавляет новую строку к массиву. Возвращает индекс новой строки
+		\details	Копирует колонку двумерного массива в одномерный.
 		\internal
-			>Hist:	
-					 @0.0.0.1@2013.08.29@artamir	[]	
+			Прототип.
+			>Hist:
 			>Rev:0
 	*/
 
-	return(ArrayResize(a, (ArrayRange(a,0)+1))-1);
+}
+
+int Ad_AddRow2(double &a[][]){
+	/**
+		\version	0.0.0.2
+		\date		2013.09.04
+		\author		Morochin <artamir> Artiom
+		\details	добавляет новую строку к массиву. Возвращает индекс новой строки
+		\internal
+			>Hist:		
+					 @0.0.0.2@2013.09.04@artamir	[*] Исправлен расчет индекса нового элемента.	
+					 @0.0.0.1@2013.08.29@artamir	[+]	
+			>Rev:0
+	*/
+	int ROWS = ArrayRange(a,0);
+	ArrayResize(a,(ROWS+1));
+	return(ArrayRange(a,0)-1);
 }
 
 int Ad_CopyRow2To2(	double &s[][]	/** массив источник*/

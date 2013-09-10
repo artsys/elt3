@@ -1,18 +1,14 @@
 /*
-		>Ver	:	0.0.0.8
-		>Date	:	2013.08.29
-		>History:		
+		>Ver	:	0.0.0.9
+		>Date	:	2013.09.04
+		>History:			
+					@0.0.0.9@2013.09.04@artamir	[*]	TMR_Start
 					@0.0.0.8@2013.08.29@artamir	[]	TMR_findIndexByName
 					@0.0.7@2013.04.25@artamir	[]	BP
-			@0.0.6@2012.10.08@artamir	[]
-			@0.0.5@2012.10.08@artamir	[]
-			@0.0.4@2012.10.08@artamir	[]
-			@0.0.3@2012.10.08@artamir	[]
-			@0.0.2@2012.10.08@artamir	[]
-			@0.0.1@2012.06.25@artamir	[+] BP()
 		>Description:
 			system. For debugging
 */
+bool BP_SNP=false;	//Точка условной остановки. SelectNearPrice.
 
 void BP(string	txt	= "",
 		string	p11	= "",		string p12	= "",
@@ -59,11 +55,10 @@ void BP(string	txt	= "",
 		}
 }
 
-#define	TMR_ST	0
-#define	TMR_ET	1
-#define TMR_CN	2
-#define TMR_AT	3
-#define TMR_MAX 4
+#define	TMR_ST	0	//start time
+#define	TMR_ET	1	//end time
+#define TMR_RES	2	//result in sec 	
+#define TMR_MAX 3
 
 string	asTMR[]				;	//name of timer
 int		aiTMR[][TMR_MAX]	;	//timer
@@ -95,10 +90,10 @@ int TMR_findIndexByName(string name){
 	for(int i=0; i<ROWS && !isFind;i++){
 		
 		//--------------------------------------------------
-		string timer.name = asTMR[i];
+		string timer_name = asTMR[i];
 		
 		//--------------------------------------------------
-		if(timer.name == name){
+		if(timer_name == name){
 			isFind = true;
 			idx = i;
 		}
@@ -187,24 +182,25 @@ int TMR_addNewTimer(string name = ""){
 
 int TMR_Start(string name = ""){
 	/*
-		>Ver	:	0.0.0
-		>Date	:
-		>Hist	:
+		>Ver	:	0.0.0.1
+		>Date	:	2013.09.04
+		>Hist	:	
+					@0.0.0.1@2013.09.04@artamir	[*]	TMR_Start
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:	
 	*/
 	
 	//------------------------------------------------------
 	int idx = TMR_findIndexByName(name);
-	Print("tmr_idx=",idx);
 	
 	//------------------------------------------------------
 	if(idx <= -1){
 		
 		//--------------------------------------------------
 		idx = TMR_addNewTimer(name);
-		TMR_setStartTime(idx,TimeLocal());
 	}
+	
+	TMR_setStartTime(idx,TimeLocal());
 	
 	return(idx);
 }
@@ -224,7 +220,13 @@ int TMR_Stop(int idx = -1, string name=""){
 		idx=TMR_findIndexByName(name);
 	}
 	
+	
 	TMR_setPropByIndex(idx, TMR_ET, TimeLocal());
 	
-	return(aiTMR[idx][TMR_ET]-aiTMR[idx][TMR_ST]);
+	//-------------------------------------
+	int res_sec =  aiTMR[idx][TMR_ET]-aiTMR[idx][TMR_ST];
+	TMR_setPropByIndex(idx, TMR_RES, res_sec);
+	
+	//-------------------------------------
+	return(res_sec);
 }

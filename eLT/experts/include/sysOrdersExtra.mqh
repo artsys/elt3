@@ -1,7 +1,8 @@
 	/*
-		>Ver	:	0.0.0.45
-		>Date	:	2013.08.29
-		>Hist	:																											
+		>Ver	:	0.0.0.46
+		>Date	:	2013.09.06
+		>Hist	:																	
+					@0.0.0.46@2013.09.@artamir		[!] Исправлен дефайн OrderProfit.	
 					@0.0.0.45@2013.08.29@artamir	[-] Удалены отладочные метки.	
 					@0.0.0.44@2013.08.29@artamir	[+]	OE_SortDesc
 					@0.0.0.43@2013.07.02@artamir	[*]	OE_getAOMByTicket - исправлено получение метода открытия.
@@ -34,8 +35,8 @@
 		>Desc	:
 	*/
 
-#define OE_VER	"0.0.0.44"
-#define OE_DATE	"2013.08.29"
+#define OE_VER	"0.0.0.46"
+#define OE_DATE	"2013.09.06"
 	
 //{	//=== ARRAY	
 #define OE_NULL -19801028
@@ -48,7 +49,7 @@
 #define	OE_SL	5	//OrderStopLoss()
 #define	OE_MN	6	//OrderMagicNumber()
 #define	OE_LOT	7	//OrderLots()
-#define OE_OP	8	//OrderProfit()
+#define OE_OPR	8	//OrderProfit()
 #define	OE_IT	9	//Is in Terminal() if order is in terminal
 #define	OE_IM	10	//IsMarket() if order type is OP_BUY || OP_SELL
 #define	OE_IP	11	//IsPending() if order type >= 2
@@ -324,7 +325,7 @@ int OE_setStandartDataByOrder(int idx){
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:
 	*/
-	
+
 	//------------------------------------------------------
 	aOE[idx][OE_TI] = OrderTicket();
 	

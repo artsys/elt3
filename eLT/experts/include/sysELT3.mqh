@@ -1,7 +1,10 @@
 	/*
-		>Ver	:	0.1.0.47
-		>Date	:	2013.08.29
-		>Hist:																			
+		>Ver	:	0.1.0.50
+		>Date	:	2013.09.06
+		>Hist:																						
+				 @0.1.0.50@2013.09.06@artamir	[+]	ELT_SelectNearPrice_d2
+				 @0.1.0.49@2013.09.05@artamir	[+]	ELT_SelectByFOTY_d2
+				 @0.1.0.48@2013.09.04@artamir	[*]	ELT_init
 				 @0.1.0.47@2013.08.29@artamir	[]	ELT_start
 				 @0.1.0.46@2013.08.28@artamir	[+]	ELT_start
 				 @0.1.0.45@2013.08.20@artamir	[+]	ELT_DBFN
@@ -41,7 +44,7 @@
 
 #property stacksize 16192			
 	
-#define	ELTVER	"0.1.0.46_2013.08.28"
+#define	ELTVER	"0.1.0.50_2013.08.29"
 
 //{	//Include	========================================
 //{		@System	----------------------------------------
@@ -92,12 +95,13 @@ int Main(){
 
 int ELT_init(string fn = ""){
 	/**
-		\version	0.0.2
-		\date		2013.02.26
+		\version	0.0.0.3
+		\date		2013.09.04
 		\author		Morochin <artamir> Artiom
 		\details		import array aOE from file
 		\internal
-			>Hist:
+			>Hist:	
+					 @0.0.0.3@2013.09.04@artamir	[*]	ELT_init добавлена инициализация таймера.
 				@0.0.2 - changed name
 	*/
 	
@@ -109,6 +113,8 @@ int ELT_init(string fn = ""){
 	//------------------------------------------------------
 	A_d_ReadFromFile2(aOE, fn);
 	
+	//------------------------------------------------------
+	TMR_init();
 }
 
 int ELT_deinit(string fn = ""){
@@ -274,6 +280,33 @@ int ELT_SelectOrders_d2(		double	&s[][] /** source array */
 	return(ArrayRange(d, 0));
 }
 
+int ELT_SelectNearPrice_d2(double	&s[][] /** source array */
+							,	double	&d[][] /** destination array */	
+							,	double 	pr=0	  /** уровень цены открытия*/
+							,	bool	add=false	/** добавлять результат к массиву-приемнику*/){
+		
+	/**
+		\version	0.0.0.1
+		\date		2013.09.06
+		\author		Morochin <artamir> Artiom
+		\details	Фильтрация по цене открытия.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.09.06@artamir	[]	ELT_DBFN
+			>Rev:0
+	*/
+
+	A_eraseFilter();										
+	
+	A_FilterAdd_AND(OE_OP, pr, -1, AS_OP_EQ);
+	BP_SNP=false;
+	A_d_Select(s, d, add);
+	BP_SNP=false;
+	//A_d_PrintArray2(s,4,"s");
+	//A_d_PrintArray2(d,4,"d");
+	return(ArrayRange(d, 0));
+}					
+
 int ELT_SelectByGL_d2(		double	&s[][] /** source array */
 							,	double	&d[][] /** destination array */	
 							,	int 	gl=0	  /** уровень сетки*/
@@ -322,6 +355,31 @@ int ELT_SelectByMP_d2(		double	&s[][] /** source array */
 	return(ArrayRange(d, 0));
 }
 
+int ELT_SelectByLP_d2(		double	&s[][] /** source array */
+							,	double	&d[][] /** destination array */	
+							,	int 	lp=0	  /** тикет локального родителя*/
+							,	bool	add=false	/** добавлять результат к массиву-приемнику*/){
+	/**
+		\version	0.0.0.1
+		\date		2013.06.25
+		\author		Morochin <artamir> Artiom
+		\details	Отбор по локальному родителю.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.06.25@artamir	[]	ELT_deinit
+			>Rev:0
+	*/
+	
+	A_eraseFilter();										
+	
+	A_FilterAdd_AND(OE_LP, lp, -1, AS_OP_EQ);
+	
+	A_d_Select(s, d, add);
+	
+	return(ArrayRange(d, 0));
+}
+
+
 int ELT_SelectByFIR_d2(		double	&s[][] /** source array */
 							,	double	&d[][] /** destination array */	
 							,	int 	fir=1	  /** is Revers?*/
@@ -341,6 +399,32 @@ int ELT_SelectByFIR_d2(		double	&s[][] /** source array */
 	A_eraseFilter();										
 	
 	A_FilterAdd_AND(OE_FIR, fir, -1, AS_OP_EQ);
+	
+	A_d_Select(s, d, add);
+	
+	return(ArrayRange(d, 0));
+}
+
+int ELT_SelectByFOTY_d2(		double	&s[][] /** source array */
+							,	double	&d[][] /** destination array */	
+							,	int 	foty	  /** first open type*/
+							,	bool	add=false	/** добавлять результат к массиву-приемнику*/){
+	/**
+		\version	0.0.0.3
+		\date		2013.09.05
+		\author		Morochin <artamir> Artiom
+		\details	Отбор по признаку начального типа.
+		\internal
+			>Hist:			
+					 @0.0.0.3@2013.09.05@artamir	[]	ELT_DBFN
+					 @0.0.0.2@2013.06.28@artamir	[]	ELT_deinit
+			
+			>Rev:0
+	*/
+	
+	A_eraseFilter();										
+	
+	A_FilterAdd_AND(OE_FOTY, foty, -1, AS_OP_EQ);
 	
 	A_d_Select(s, d, add);
 	

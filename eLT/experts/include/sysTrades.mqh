@@ -1,10 +1,13 @@
 	/**
-		\version	0.0.0.8
-		\date		2013.07.02
+		\version	0.0.0.11
+		\date		2013.09.05
 		\author		Morochin <artamir> Artiom
 		\details	Trading functtions.
 		\internal
-			>Hist:								
+			>Hist:											
+					 @0.0.0.11@2013.09.05@artamir	[*]	_OrderSend
+					 @0.0.0.10@2013.09.04@artamir	[*]	TR_SendSELLSTOP_array
+					 @0.0.0.9@2013.09.04@artamir	[*]	TR_SendBUYSTOP_array
 	*/
 
 
@@ -68,9 +71,10 @@ int TR_SendBUYSTOP(double StartPrice, int AddPips = 0, double Vol = 0.01, int TP
 
 int TR_SendBUYSTOP_array(double &d[], double StartPrice, int AddPips = 0, double Vol = 0.01, int TPPip = 0, int SLPip = 0, string Comm = "", int Magic = -1){
 	/*
-		>Ver	:	0.0.2
-		>Date	:	2013.04.22
-		>Hist:	
+		>Ver	:	0.0.0.3
+		>Date	:	2013.09.04
+		>Hist:		
+				 @0.0.0.3@2013.09.04@artamir	[*]	TR_SendBUYSTOP_array + добавлена возможность выставлять отложенные ордера от текущей цены Аск.
 				 @0.0.2@2013.04.22@artamir	[]	TR_SendBUYSTOP_array
 		>Desc:
 			Функция выставления отложенных БайСтоп ордеров.
@@ -98,8 +102,12 @@ int TR_SendBUYSTOP_array(double &d[], double StartPrice, int AddPips = 0, double
 	
 	ArrayResize(d,0);
 	
+	double _StartPrice = StartPrice;
+	if(_StartPrice<=0){
+		_StartPrice=MarketInfo(Symbol(),MODE_ASK);
+	}
 	
-	SendPrice = Norm_symb((StartPrice + AddPips*Point));
+	SendPrice = Norm_symb((_StartPrice + AddPips*Point));
 	
 	//------------------------------------------------------
 	if(TPPip > 0){
@@ -325,9 +333,10 @@ int TR_SendSELLSTOP(double StartPrice, int AddPips = 0, double Vol = 0.01, int T
 
 int TR_SendSELLSTOP_array(double &d[], double StartPrice, int AddPips = 0, double Vol = 0.01, int TPPip = 0, int SLPip = 0, string Comm = "", int Magic = -1){
 	/*
-		>Ver	:	0.0.1
-		>Date	:	2013.02.22
-		>Hist:
+		>Ver	:	0.0.0.2
+		>Date	:	2013.09.04
+		>Hist:	
+				 @0.0.0.2@2013.09.04@artamir	[*]	TR_SendSELLSTOP_array + добавлена возможность выставления отложенных ордеров от текущей цены.
 		>Desc:
 			Функция выставления отложенных БайСтоп ордеров.
 			Для брокеров, которые поддерживают выставление ордера с заданными тейкпрофитом и стоплоссом.
@@ -354,8 +363,12 @@ int TR_SendSELLSTOP_array(double &d[], double StartPrice, int AddPips = 0, doubl
 	
 	ArrayResize(d,0);
 	
+	double _StartPrice = StartPrice;
+	if(_StartPrice<=0){
+		_StartPrice=MarketInfo(Symbol(),MODE_BID);
+	}
 	
-	SendPrice = Norm_symb((StartPrice - AddPips*Point));
+	SendPrice = Norm_symb((_StartPrice - AddPips*Point));
 	
 	//--------------
 	if(TPPip > 0){
@@ -723,9 +736,10 @@ int	_TR_CountOrdersToSend(double all_vol = 0){
 
 int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double price = 0.0, int slippage = 0, double stoploss = 0.0, double takeprofit = 0.0, string comment="", int magic=-1, datetime expiration=0, color arrow_color=CLR_NONE){
 	/*
-		>Ver	:	0.0.6
-		>Date	:	2013.04.22
-		>History:	
+		>Ver	:	0.0.0.7
+		>Date	:	2013.09.05
+		>History:		
+					@0.0.0.7@2013.09.05@artamir	[*]	_OrderSend Добавил установку FOD
 					@0.0.6@2013.04.22@artamir	[]	_OrderSend
 			@0.0.3@2012.10.01@artamir	[]
 			@0.0.2@2012.09.20@artamir	[+] checking price for sending order.
@@ -840,6 +854,7 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 	
 	if(res > 0){
 		OE_setStandartDataByTicket(res);
+		OE_setFODByTicket(res);
 	}
 	
 	//------------------------------------------------------

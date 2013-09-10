@@ -1,0 +1,82 @@
+/**
+	\version	3.0.1.0
+	\date		2013.08.20
+	\author		Morochin <artamir> Artiom
+	\details	Шабон построения советника на базе фреймворка eLT 3.0.1
+	\internal
+		>Hist:
+		>Rev:0
+*/
+	
+//{ === DEFINES
+#define EXP	"expert_name"	/** имя эксперта */
+#define VER	"3.0.1.0"		/** expert_version */
+#define DATE "2013.08.20"	/** extert date */	
+//}
+
+//{ === expert DEFINES
+//}
+
+//{ === EXTERN VARIABLES
+//}
+
+int init(){
+	/**
+		\version	0.0.0.0
+		\date		2013.08.20
+		\author		Morochin <artamir> Artiom
+		\details	Функция инициализации советника.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	//-------------------------------------
+	return(0);
+}
+
+int deinit(){
+	/**
+		\version	0.0.0.0
+		\date		2013.08.20
+		\author		Morochin <artamir> Artiom
+		\details	Функция деинициализации советника
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	//-------------------------------------
+	return(0);
+}
+
+int start(){
+	/**
+		\version	0.0.0.0
+		\date		2013.08.20
+		\author		Morochin <artamir> Artiom
+		\details	функция срабатывает с появлением нового тика
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	//-------------------------------------
+	return(0);
+}
+
+int startext(){
+	/**
+		\version	0.0.0.0
+		\date		2013.08.20
+		\author		Morochin <artamir> Artiom
+		\details	расширение функции start()
+					можно вызывать при наступлении какого-нибудь условия.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	//-------------------------------------
+	return(0);
+}

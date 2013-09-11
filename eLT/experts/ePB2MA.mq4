@@ -1,6 +1,6 @@
 	/**
 		$Revision$
-		\version	0.2.0.5
+		\version	0.2.0.6
 		\date		2013.07.09
 		\author		Morochin <artamir> Artiom
 		\details	Советник Цена между двух МА

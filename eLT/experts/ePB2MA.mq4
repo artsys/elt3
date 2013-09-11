@@ -1,4 +1,5 @@
 	/**
+		$Revision$
 		\version	0.2.0.5
 		\date		2013.07.09
 		\author		Morochin <artamir> Artiom
@@ -25,7 +26,7 @@
 					 @0.0.0.3@2013.06.25@artamir	[]	getExtraFN
 					 @0.0.0.2@2013.06.25@artamir	[]	getExtraFN
 					 @0.0.0.1@2013.06.25@artamir	[]	getExtraFN
-			>Rev:0
+			>Rev:249
 			>Disclaimer:	Каждый переворот является новым уровнем OE_GL
 							Начинаем работать с 0-го уровня.
 	*/

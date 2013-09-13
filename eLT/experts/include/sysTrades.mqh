@@ -1371,10 +1371,10 @@ bool TR_CloseByTicket(int ticket){
 		RefreshRates();
 		
 		if(OrderType() == OP_BUY){
-			price = MarketInfo(Symbol(), MODE_BID);
+			price = MarketInfo(OrderSymbol(), MODE_BID);
 		}else{
 			if(OrderType() == OP_SELL){
-				price = MarketInfo(Symbol(), MODE_ASK);
+				price = MarketInfo(OrderSymbol(), MODE_ASK);
 			}
 		}
 		

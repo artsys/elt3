@@ -1,16 +1,17 @@
 /**
-	\version	3.0.1.0
-	\date		2013.08.20
+	\version	3.0.$REV$.3
+	\date		2013.09.10
 	\author		Morochin <artamir> Artiom
 	\details	Шабон построения советника на базе фреймворка eLT 3.0.1
 	\internal
-		>Hist:
+		>Hist:			
+				 @3.0.$REV$.3@2013.09.10@artamir	[]	
 		>Rev:0
 */
 	
 //{ === DEFINES
 #define EXP	"expert_name"	/** имя эксперта */
-#define VER	"3.0.1.0"		/** expert_version */
+#define VER	"3.0.1.0_2013.08.20"		/** expert_version */
 #define DATE "2013.08.20"	/** extert date */	
 //}
 
@@ -22,12 +23,14 @@
 
 int init(){
 	/**
-		\version	0.0.0.0
-		\date		2013.08.20
+		\version	0.0.$WCREV$.2$WCREV$.1
+		\date		2013.09.10
 		\author		Morochin <artamir> Artiom
 		\details	Функция инициализации советника.
 		\internal
-			>Hist:
+			>Hist:		
+					 @0.0.$WCREV$.2@2013.09.10@artamir	[]	init
+					 @0.0.$WCREV$.1@2013.09.10@artamir	[]	init
 			>Rev:0
 	*/
 

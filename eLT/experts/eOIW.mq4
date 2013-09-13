@@ -1,12 +1,17 @@
 /**
-	\version	3.0.1.12
-	\date		2013.09.10
+	\version	3.0.1.17
+	\date		2013.09.12
 	\author		Morochin <artamir> Artiom
 	\details	Ўабон построени€ советника на базе фреймворка eLT 3.0.1
 				Orders in window.
 	\internal
 		¬место отбора по локальному родителю использовать отбор по ценовому уровню.
-		>Hist:												
+		>Hist:																	
+				 @3.0.1.17@2013.09.12@artamir	[+]	CheckNets
+				 @3.0.1.16@2013.09.12@artamir	[*]	SendChild
+				 @3.0.1.15@2013.09.11@artamir	[]	Convoy
+				 @3.0.1.14@2013.09.11@artamir	[]	SendChild
+				 @3.0.1.13@2013.09.11@artamir	[]	SendChild
 				 @3.0.1.12@2013.09.10@artamir	[*]	SendChild ƒобавлено выставление сетки, если нет ордеров нужного направлени€.
 				 @3.0.1.11@2013.09.06@artamir	[]	SelectExpertTickets
 				 @3.0.1.10@2013.09.06@artamir	[+]	SelectTINearPrice
@@ -24,7 +29,7 @@
 	
 //{ === DEFINES
 #define EXP	"eOIW"	/** им€ эксперта */
-#define VER	"3.0.1.12"		/** expert_version */
+#define VER	"3.0.1.17_2013.09.12"		/** expert_version */
 #define DATE "2013.09.05"	/** extert date */	
 //}
 
@@ -120,7 +125,7 @@ int startext(){
 			ќписание: дл€ каждой живой позиции на рассто€нии шага должен находитьс€ 
 			противоположный ордер с тейком противоположной сетки.
 		*/
-		//CheckNets();
+		CheckNets();
 		Convoy();
 		
 	//..	=== Ѕлок открыти€ позиций
@@ -147,27 +152,8 @@ void Autoopen(){
 	*/
 
 	if(!isExpertsTickets()){
-		double bs[];
-		double ss[];
-		
-		int rows_bs=TR_SendBUYSTOP_array(bs,0,Step);
-		int rows_ss=TR_SendSELLSTOP_array(ss,0,Step);
-		
-		if(rows_bs <= 0 && rows_ss <= 0){return;}	//ордера не получилось выставить, выходим из процедуры.
-		
-		for(int b=0; b<rows_bs;b++){
-			OE_setGLByTicket(bs[b],1);
-			TR_ModifyTP(bs[b],TP,TR_MODE_PIP);
-			SendSTOPNet(bs[b]);
-		}
-		
-		for(int s=0; s<rows_ss;s++){
-			OE_setGLByTicket(ss[s],1);
-			TR_ModifyTP(ss[s],TP,TR_MODE_PIP);
-			SendSTOPNet(ss[s]);
-		}
-	
-		
+		SendParent(OP_BUYSTOP);
+		SendParent(OP_SELLSTOP);
 	}
 }	
 
@@ -212,12 +198,13 @@ void SendSTOPNet(int ti){
 //{ === convoy
 void Convoy(){
 	/**
-		\version	0.0.0.1
-		\date		2013.09.05
+		\version	0.0.0.2
+		\date		2013.09.11
 		\author		Morochin <artamir> Artiom
 		\details	—опровождение позиций.
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2013.09.11@artamir	[]	Convoy
 					 @0.0.0.1@2013.09.05@artamir	[+]	Convoy
 			>Rev:0
 	*/
@@ -251,13 +238,13 @@ void Convoy(){
 		for(int np_i=0; np_i<np_rows;np_i++){
 			int ty = aNP[np_i][OE_TY];
 			if(parent_ty==OP_BUY || parent_ty==OP_BUYSTOP){
-				if(ty==OP_SELL || ty==OP_SELLSTOP){
+				if(ty==OP_SELL || ty==OP_SELLSTOP || ty==OP_SELLLIMIT){
 					isChild=true;
 					break;
 				}
 			}
 			if(parent_ty==OP_SELL || parent_ty==OP_SELLSTOP){
-				if(ty==OP_BUY || ty==OP_BUYSTOP){
+				if(ty==OP_BUY || ty==OP_BUYSTOP || ty==OP_BUYLIMIT){
 					isChild=true;
 					break;
 				}
@@ -274,7 +261,34 @@ void Convoy(){
 //провер€ем сетки, чтоб они существовали.
 //если какой-то сетки не существует, тогда выставл€ем новую.
 //но при условии, что есть живые тикеты эксперта.
+void CheckNets(){
+	/**
+		\version	0.0.0.1
+		\date		2013.09.12
+		\author		Morochin <artamir> Artiom
+		\details	ѕровер€ет, если существуют сетки.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.09.12@artamir	[]	CheckNets
+			>Rev:0
+	*/
 
+	double a[][OE_MAX];
+	if(SelectExpertTickets(a)>0){
+		double aB[][OE_MAX];
+		if(ELT_SelectByFOTY_d2(a,aB,OP_BUYSTOP)<=0){
+			if(Bid > 1.3280){
+				A_d_PrintArray2(a,4,"eT");
+				A_d_PrintArray2(aB,4,"eT");
+			}
+			SendParent(OP_BUYSTOP);
+		}
+		
+		if(ELT_SelectByFOTY_d2(a,aB,OP_SELLSTOP)<=0){
+			SendParent(OP_SELLSTOP);
+		}
+	}
+}
 //}
 
 //{ === expert additional fincrions
@@ -360,12 +374,15 @@ int SelectTINearPrice(double &a[][], double pr){
 
 int SendChild(int parent_ti){
 	/**
-		\version	0.0.0.1
-		\date		2013.09.10
+		\version	0.0.0.4
+		\date		2013.09.12
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:	
+			>Hist:				
+					 @0.0.0.4@2013.09.12@artamir	[*]	ƒл€ выставлени€ байстоп ордера нужно чтоб цена была ниже цены открыти€ селлового ордера.
+					 @0.0.0.3@2013.09.11@artamir	[]	SendChild
+					 @0.0.0.2@2013.09.11@artamir	[*]	¬ыставл€етс€ лимитный ордер, если нет возможности поставить стоповый.
 					 @0.0.0.1@2013.09.10@artamir	[*]	SendChild
 			>Rev:0
 	*/
@@ -373,14 +390,31 @@ int SendChild(int parent_ti){
 	T_SelOrderByTicket(parent_ti);
 	int parent_ty = OrderType();
 	double parent_op=OrderOpenPrice();
+	
+	double dBID = MarketInfo(Symbol(),MODE_BID);
+	double dASK = MarketInfo(Symbol(),MODE_ASK);
+	
 	int ty = -1;
+	int foty = -1;
 	if(parent_ty == OP_SELL){
 		ty=OP_BUYSTOP;
+		foty=OP_BUYSTOP;
+		if(dBID >= parent_op){
+			//ty = OP_BUYLIMIT;
+			ty=-1;
+		}
 	}
 	
 	if(parent_ty == OP_BUY){
 		ty=OP_SELLSTOP;
+		foty=OP_SELLSTOP;
+		if(dASK <= parent_op){
+			//ty = OP_SELLLIMIT;
+			ty=-1;
+		}
 	}
+	
+	if(ty==-1){return(-1);}
 	
 	double tp = getTPNet(ty);
 	int tp_mode = TR_MODE_PRICE;
@@ -390,7 +424,7 @@ int SendChild(int parent_ti){
 		tp_mode=TR_MODE_PIP;
 	}
 	
-	int max_gl = getMaxGL(ty);
+	int max_gl = getMaxGL(foty);
 	
 	double a[];
 	TR_SendPending_array(a, ty, parent_op, Step);
@@ -401,6 +435,28 @@ int SendChild(int parent_ti){
 	
 	if(max_gl <= 0){
 		SendSTOPNet(ti);
+	}
+}
+
+int SendParent(int ty){
+	/**
+		\version	0.0.0.0
+		\date		2013.09.12
+		\author		Morochin <artamir> Artiom
+		\details	¬ыставление массива родительских ордеров
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	double a[];
+	double start_pr=0.00;
+	int rows_a=TR_SendPending_array(a, ty, start_pr, Step);
+	
+	for(int i=0; i<rows_a;i++){
+		OE_setGLByTicket(a[i],1);
+		TR_ModifyTP(a[i],TP,TR_MODE_PIP);
+		SendSTOPNet(a[i]);
 	}
 }
 

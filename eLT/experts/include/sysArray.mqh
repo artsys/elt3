@@ -1,7 +1,8 @@
 	/*
-		>Ver	:	0.0.0.46
-		>Date	:	2013.08.29
-		>Hist	:																															
+		>Ver	:	0.0.0.47
+		>Date	:	2013.09.13
+		>Hist	:																																
+					@0.0.0.47@2013.09.13@artamir	[*]	A_d_Select
 					@0.0.0.46@2013.08.29@artamir	[]	A_d_Select
 					@0.0.0.45@2013.08.06@artamir	[+]	A_s_PrintArray2
 					@0.0.0.44@2013.06.28@artamir	[]	A_d_releaseArray
@@ -14,7 +15,7 @@
 				:	d - for double arrays
 	*/
 
-#define ARRVER	"0.0.0.44_2013.09.06"
+#define ARRVER	"0.0.0.47_2013.09.13"
 	
 //{ === TEMPORAR ARRAY
 
@@ -576,9 +577,10 @@ int A_d_Select(		double	&s[][] /*source array*/
 				,	bool	need_add_rows = false
 				,	int 	mode=0 /** направление перебора (по умолчанию по возрастанию)*/){
 	/*
-		>Ver	:	0.0.0.6
-		>Date	:	2013.06.25
-		>Hist	:	
+		>Ver	:	0.0.0.7
+		>Date	:	2013.09.13
+		>Hist	:		
+					@0.0.0.7@2013.09.13@artamir	[*]	удалил операцию копирования массива фильтра.
 					@0.0.0.6@2013.06.25@artamir	[]	A_d_Select
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:
@@ -604,13 +606,13 @@ int A_d_Select(		double	&s[][] /*source array*/
 	
 	if(!need_add_rows){ArrayResize(d,0);}
 	
-	ArrayResize(f,0);
+	//ArrayResize(f,0);
 	int d_idx = ArrayRange(d,0);
 	
 	ArrayCopy(f, A_Filter, 0, 0, WHOLE_ARRAY);
 	s_ROWS = ArrayRange(s,0);
 	s_COLS = ArrayRange(s,1);
-	f_ROWS = ArrayRange(f,0);
+	f_ROWS = ArrayRange(A_Filter,0);
 	
 	for(int i = 0; i < s_ROWS; i++){
 		
@@ -631,11 +633,11 @@ int A_d_Select(		double	&s[][] /*source array*/
 		for(f_row = 0; f_row < f_ROWS; f_row++){
 			//--- цикл по строкам массива-фильтра
 			//----------------------------------------------
-			s_col = f[f_row][F_COL];
-			f_max = f[f_row][F_MAX];
-			f_min = f[f_row][F_MIN];
-			f_as = f[f_row][F_AS_OP];
-			f_sel = f[f_row][F_SEL_OP];
+			s_col 	= A_Filter[f_row][F_COL];
+			f_max 	= A_Filter[f_row][F_MAX];
+			f_min 	= A_Filter[f_row][F_MIN];
+			f_as	= A_Filter[f_row][F_AS_OP];
+			f_sel 	= A_Filter[f_row][F_SEL_OP];
 			
 			s_val = s[s_row][s_col];
 			

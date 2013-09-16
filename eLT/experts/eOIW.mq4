@@ -1,12 +1,15 @@
 /**
-	\version	3.0.1.17
-	\date		2013.09.12
+	\version	3.0.1.20
+	\date		2013.09.13
 	\author		Morochin <artamir> Artiom
 	\details	Шабон построения советника на базе фреймворка eLT 3.0.1
 				Orders in window.
 	\internal
 		Вместо отбора по локальному родителю использовать отбор по ценовому уровню.
-		>Hist:																	
+		>Hist:																				
+				 @3.0.1.20@2013.09.13@artamir	[]	startext
+				 @3.0.1.19@2013.09.13@artamir	[]	startext
+				 @3.0.1.18@2013.09.13@artamir	[+] Добавлена библиотека libCloseOrders.	
 				 @3.0.1.17@2013.09.12@artamir	[+]	CheckNets
 				 @3.0.1.16@2013.09.12@artamir	[*]	SendChild
 				 @3.0.1.15@2013.09.11@artamir	[]	Convoy
@@ -29,9 +32,26 @@
 	
 //{ === DEFINES
 #define EXP	"eOIW"	/** имя эксперта */
-#define VER	"3.0.1.17_2013.09.12"		/** expert_version */
+#define VER	"3.0.1.20_2013.09.13"
 #define DATE "2013.09.05"	/** extert date */	
 //}
+bool isStarted=true;
+int max_start_timer=0;
+int elt_start=0;
+int cfp = 0;
+int cnv_all = 0;
+int cnt=0;
+int cnv=0;
+int sp=0;
+int set=0;
+int np=0;
+int set_mn=0;
+int elt_mn_flt=0;
+int elt_mn_sl=0;
+int set_sp=0;
+int set_so=0;
+int elt_so_flt=0;
+int elt_so_sl=0;
 
 //{ === expert DEFINES
 //}
@@ -45,7 +65,9 @@ extern	string	e1="==== EXPERT END =====";//}
 
 //{ === INCLUDES
 #include <sysELT3.mqh>
+#include <libCloseOrders.mqh>
 //}
+
 
 int init(){
 	/**
@@ -54,7 +76,8 @@ int init(){
 		\author		Morochin <artamir> Artiom
 		\details	Функция инициализации советника.
 		\internal
-			>Hist:
+			>Hist:	
+					 @3.0.1.18@2013.09.13@artamir	[]	
 			>Rev:0
 	*/
 
@@ -94,39 +117,93 @@ int start(){
 	int h_tmr_start = TMR_Start("start");
 	startext();
 	int tmr_res = TMR_Stop(h_tmr_start);
-	Comment("Start circle = "+tmr_res,"\n",
+	if(tmr_res>max_start_timer){max_start_timer=tmr_res;}
+	string comm=StringConcatenate("Start circle = "+max_start_timer,"\n",
+			"elt_start=",elt_start,"\n",
+			"cfp=",cfp,"\n",
+			"cnv_all=",cnv_all,"\n",
+			"cnt=",cnt,"\n",
+			"cnv=",cnv,"\n",
+			"---sp=",sp,"\n",
+			"---set=",set,"\n",
+			"--- -set_mn=",set_mn,"\n",
+			"--- - - elt_mn_flt=",elt_mn_flt,"\n",
+			"--- - - elt_mn_sl=",elt_mn_sl,"\n",
+			"--- -set_sp=",set_sp,"\n",
+			"--- -set_so=",set_so,"\n",
+			"--- - - elt_so_flt=",elt_so_flt,"\n",
+			"--- - - elt_so_sl=",elt_so_sl,"\n",
+			"---np=",np,"\n",
 			"ver: ",VER,"\n",
 			"date: ",DATE);
+		Comment(comm);	
+			int h=FileOpen("eOIW.tmr",FILE_BIN|FILE_WRITE);
+			FileWrite(h,comm);
+			FileFlush(h);
+			FileClose(h);
 	//-------------------------------------
 	return(0);
 }
 
 int startext(){
 	/**
-		\version	0.0.0.1
-		\date		2013.08.28
+		\version	0.0.0.3
+		\date		2013.09.13
 		\author		Morochin <artamir> Artiom
 		\details	расширение функции start()
 					можно вызывать при наступлении какого-нибудь условия.
 		\internal
-			>Hist:	
+			>Hist:			
+					 @0.0.0.3@2013.09.13@artamir	[*]	Если не было событий, то выходим из функции
+					 @0.0.0.2@2013.09.13@artamir	[*]	Если тестирование и нет ордеров, то очищаем массив ордеров.
 					 @0.0.0.1@2013.08.28@artamir	[]	startext
 			>Rev:0
 	*/
-
+	OE_eraseArray();
+	
+	int h_start=TMR_Start("elt_start");
 	ELT_start();
+	int tmr_elt_start = TMR_Stop(h_start);
+	if(tmr_elt_start>elt_start){elt_start=tmr_elt_start;}
 	//-------------------------------------
 	
 	//{		=== Блок закрытия позиций
-	
+		int h_cfp=TMR_Start("cfp");
+		
+		libCO_CFP_Check();
+		
+		int res_tmr=TMR_Stop(h_cfp);
+		if(res_tmr>cfp){cfp=res_tmr;}
 	//..	=== Блок сопровождения позиций
 		
 		/*	Основной блок советника.
 			Описание: для каждой живой позиции на расстоянии шага должен находиться 
 			противоположный ордер с тейком противоположной сетки.
 		*/
+		if(ArrayRange(aEvents,0)<=0 && !isStarted){isStarted=0; return(0);}
+		
+		int h_cnv_all = TMR_Start("cnv_all");
+		
+		int h_cnt=TMR_Start("cnt");
 		CheckNets();
+		int res_cnt=TMR_Stop(h_cnt);
+		if(res_cnt>cnt){cnt=res_cnt;}
+		
+		int h_cnv=TMR_Start("cnv");
 		Convoy();
+		int res_cnv=TMR_Stop(h_cnv);
+		if(res_cnv>cnv){cnv=res_cnv;}
+		
+		int res_cnv_all=TMR_Stop(h_cnv_all);
+		if(res_cnv_all>cnv_all){
+			if(cnv_all!=0){
+				if(res_cnv_all/cnv_all<10){
+					cnv_all=res_cnv_all;
+				}
+			}else{
+				cnv_all=res_cnv_all;
+			}
+		}
 		
 	//..	=== Блок открытия позиций
 		Autoopen();
@@ -210,7 +287,12 @@ void Convoy(){
 	*/
 	
 	double aPos[][OE_MAX];
+	
+	int h_sp=TMR_Start("sp");
 	int pos_rows=SelectPositions(aPos);
+	int res_sp=TMR_Stop(h_sp);
+	if(res_sp>sp){sp=res_sp;}
+	
 	if(pos_rows<=0){return;} //значит у нас нет позиций.
 	
 	for(int pos_i=0;pos_i<pos_rows;pos_i++){
@@ -229,10 +311,18 @@ void Convoy(){
 		
 		child_op=Norm_symb(child_op);
 		
+		int h_set=TMR_Start("set");
 		double aT[][OE_MAX];
 		int t_rows=SelectExpertTickets(aT);
+		int res_set=TMR_Stop(h_set);
+		if(res_set>set){set=res_set;}
+		
+		int h_np=TMR_Start("np");
 		double aNP[][OE_MAX];
 		int np_rows=ELT_SelectNearPrice_d2(aT, aNP, child_op);
+		int res_np=TMR_Stop(h_np);
+		if(res_np>np){np=res_np;}
+		
 		
 		bool isChild = false;
 		for(int np_i=0; np_i<np_rows;np_i++){
@@ -257,7 +347,6 @@ void Convoy(){
 //}
 
 //{ === checkNets
-
 //проверяем сетки, чтоб они существовали.
 //если какой-то сетки не существует, тогда выставляем новую.
 //но при условии, что есть живые тикеты эксперта.
@@ -323,11 +412,24 @@ int SelectExpertTickets(double &aT[][]){
 			>Rev:0
 	*/
 	
+	int h_set_mn=TMR_Start("set_mn");
 	double aMN[][OE_MAX];
 	int ROWS_MN = ELT_SelectByMN_d2(aOE, aMN);
+	int res_set_mn=TMR_Stop(h_set_mn);
+	if(res_set_mn>set_mn){set_mn=res_set_mn;}
+	
 	if(!ROWS_MN){return(0);}
+	
+	int h_set_sp=TMR_Start("set_sp");
 	ELT_SelectPositions_d2(aMN, aT);	//из аМН выбираем только позиции	
+	int res_set_sp=TMR_Stop(h_set_sp);
+	if(res_set_sp>set_sp){set_sp=res_set_sp;}
+	
+	int h_set_so=TMR_Start("set_so");
 	int ROWS_T = ELT_SelectOrders_d2(aMN, aT, true);	//к ним добавляем ордера.
+	int res_set_so=TMR_Stop(h_set_so);
+	if(res_set_so>set_so){set_so=res_set_so;}
+	
 	return(ROWS_T);
 }
 

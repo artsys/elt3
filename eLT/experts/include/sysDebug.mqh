@@ -200,7 +200,7 @@ int TMR_Start(string name = ""){
 		idx = TMR_addNewTimer(name);
 	}
 	
-	TMR_setStartTime(idx,TimeLocal());
+	TMR_setStartTime(idx,GetTickCount());
 	
 	return(idx);
 }
@@ -221,10 +221,10 @@ int TMR_Stop(int idx = -1, string name=""){
 	}
 	
 	
-	TMR_setPropByIndex(idx, TMR_ET, TimeLocal());
+	TMR_setPropByIndex(idx, TMR_ET, GetTickCount());
 	
 	//-------------------------------------
-	int res_sec =  aiTMR[idx][TMR_ET]-aiTMR[idx][TMR_ST];
+	int res_sec =  (aiTMR[idx][TMR_ET]-aiTMR[idx][TMR_ST]);
 	TMR_setPropByIndex(idx, TMR_RES, res_sec);
 	
 	//-------------------------------------

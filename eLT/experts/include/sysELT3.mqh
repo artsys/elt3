@@ -201,9 +201,15 @@ int ELT_SelectByMN_d2(		double &s[][] /** source array */
 	
 	A_eraseFilter();										
 	
+	int h_flt=TMR_Start("elt_mn_flt");
 	A_FilterAdd_AND(OE_MN, mn, -1, AS_OP_EQ);
+	int res_elt_mn_flt=TMR_Stop(h_flt);
+	if(res_elt_mn_flt>elt_mn_flt){elt_mn_flt=res_elt_mn_flt;}
 	
+	int h_sl=TMR_Start("elt_mn_sl");
 	A_d_Select(s, d);
+	int res_elt_mn_sl=TMR_Stop(h_sl);
+	if(res_elt_mn_sl>elt_mn_sl){elt_mn_sl=res_elt_mn_sl;}
 	
 	return(ArrayRange(d, 0));
 }
@@ -271,11 +277,16 @@ int ELT_SelectOrders_d2(		double	&s[][] /** source array */
 	*/
 	
 	A_eraseFilter();										
-	
+	int h_flt=TMR_Start("elt_so_flt");
 	A_FilterAdd_AND(OE_IT, 1, -1, AS_OP_EQ);
 	A_FilterAdd_AND(OE_IP, 1, -1, AS_OP_EQ);
+	int res_elt_so_flt=TMR_Stop(h_flt);
+	if(res_elt_so_flt>elt_so_flt){elt_so_flt=res_elt_so_flt;}
 	
+	int h_sl=TMR_Start("elt_so_sl");
 	A_d_Select(s, d, add);
+	int res_elt_so_sl=TMR_Stop(h_sl);
+	if(res_elt_so_sl>elt_so_sl){elt_so_sl=res_elt_so_sl;}
 	
 	return(ArrayRange(d, 0));
 }

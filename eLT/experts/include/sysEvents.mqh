@@ -1,7 +1,10 @@
 /*
-		>Ver	:	0.0.0.15
-		>Date	:	2013.08.29
-		>Hist:											
+		>Ver	:	0.0.0.18
+		>Date	:	2013.09.13
+		>Hist:														
+				 @0.0.0.18@2013.09.13@artamir	[*]	onCloseOrder
+				 @0.0.0.17@2013.09.13@artamir	[*]	onNewOrder
+				 @0.0.0.16@2013.09.13@artamir	[*]	onChangeType
 				 @0.0.0.15@2013.08.29@artamir	[-] удалены отладочные метки.	
 				 @0.0.14@2013.03.06@artamir	[]	onChangeType
 				 @0.0.13@2013.02.24@artamir	[]	onChangeType
@@ -157,11 +160,12 @@ void E_FillEventsArray(){
 
 //{	@onEvents	====================================
 
-void onNewOrder(int ticket){
+void onNewOrder(int ti){
 	/*
-		>Ver	:	0.0.3
-		>Date	:	2013.02.21
-		>Hist	:
+		>Ver	:	0.0.0.4
+		>Date	:	2013.09.13
+		>Hist	:	
+					@0.0.0.4@2013.09.13@artamir	[*]	добавлена запись события в журнал событий
 			@0.0.2@2012.10.03@artamir	[]
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:
@@ -174,14 +178,18 @@ void onNewOrder(int ticket){
 	//3.добавление нового события в массив событий
 	
 	//------------------------------------------------------
-	OE_setStandartDataByTicket(ticket);
+	int idx=Ad_AddRow2(aEvents);
+	aEvents[idx][E_TI]=ti;
+	aEvents[idx][E_EVENT]=EVENT_NO;
+	OE_setStandartDataByTicket(ti);
 }
 
-void onChangeType(int ticket, int ty_new, int ty_old = -1){
+void onChangeType(int ti, int ty_new, int ty_old = -1){
 	/*
-		>Ver	:	0.0.3
-		>Date	:	2013.03.06
-		>Hist	:
+		>Ver	:	0.0.0.4
+		>Date	:	2013.09.13
+		>Hist	:	
+					@0.0.0.4@2013.09.13@artamir	[*]	добавлена затись события в массив событий.
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:
 	*/
@@ -191,8 +199,10 @@ void onChangeType(int ticket, int ty_new, int ty_old = -1){
 	//1.добавление в массив екстраордеров
 	//2.заполнение стандартных свойств ЕкстраОрдера
 	//3.добавление нового события в массив событий
-	
-	OE_setChangeTYBuTicket(ticket, ty_new);
+	int idx=Ad_AddRow2(aEvents);
+	aEvents[idx][E_TI]=ti;
+	aEvents[idx][E_EVENT]=EVENT_CHTY;
+	OE_setChangeTYBuTicket(ti, ty_new);
 }
 
 void onChangeOP(int ticket, double op.new, double op.old = -1){
@@ -229,11 +239,12 @@ void onChangeSL(int ticket, double sl.new, double sl.old = -1){
 	//3.добавление нового события в массив событий
 }
 
-void onCloseOrder(int ticket){
+void onCloseOrder(int ti){
 	/*
-		>Ver	:	0.0.3
-		>Date	:	2013.02.21
-		>Hist	:
+		>Ver	:	0.0.0.4
+		>Date	:	2013.09.13
+		>Hist	:	
+					@0.0.0.4@2013.09.13@artamir	[*] добавлена запись события в массив событий					
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:
 	*/
@@ -242,7 +253,10 @@ void onCloseOrder(int ticket){
 	//TODO: написать обработчик закрытого ордера.
 	//1.обновление статуса IsClosed массива экстраордеров.
 	//2.добавление нового события в массив событий
-	OE_setCloseByTicket(ticket);
+	int idx=Ad_AddRow2(aEvents);
+	aEvents[idx][E_TI]=ti;
+	aEvents[idx][E_EVENT]=EVENT_CO;
+	OE_setCloseByTicket(ti);
 }
 
 //}

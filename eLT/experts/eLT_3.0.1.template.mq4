@@ -6,7 +6,7 @@
 	\internal
 		>Hist:			
 				 @3.0.$REV$.3@2013.09.10@artamir	[]	
-		>Rev:0
+		>Rev:$Revision$
 */
 	
 //{ === DEFINES

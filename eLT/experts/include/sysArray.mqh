@@ -379,7 +379,7 @@ bool A_d_Compare(double &a[][], int i1, int i2, string compare = ""){
 #define AS_OP_NOT	2										// Операция сравнения на не равенство значению Макс фильтра
 #define AS_OP_ABOVE	5										// Больще заданного значения
 #define AS_OP_UNDER	6										// Меньше заданного значения
-#define AS_OP_IN	3										// Операция сравнения на вхождение в диапазон
+#define AS_OP_IN	3										// Операция сравнения на вхождение в диапазон включая границы.
 #define AS_OP_OUT	4										// значение колонки вне диапазона
 
 //===	Filter array cols

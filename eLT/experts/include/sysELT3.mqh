@@ -441,4 +441,5 @@ int ELT_SelectByFOTY_d2(		double	&s[][] /** source array */
 	
 	return(ArrayRange(d, 0));
 }
+
 //}

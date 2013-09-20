@@ -1,10 +1,11 @@
 /**
-	\version	0.0.0.4
-	\date		2013.09.04
+	\version	0.0.0.5
+	\date		2013.09.18
 	\author		Morochin <artamir> Artiom
 	\details	Detailed description
 	\internal
-		>Hist:				
+		>Hist:					
+				 @0.0.0.5@2013.09.18@artamir	[+]	Ad_CrossByIdx
 				 @0.0.0.4@2013.09.04@artamir	[*]	Ad_AddRow2
 				 @0.0.0.3@2013.08.29@artamir	[+]	Ad_AddRow2	
 				 @0.0.0.2@2013.08.29@artamir	[+]	
@@ -18,6 +19,10 @@
 
 #define A_MODE_ADD	2	//режим добавления
 #define A_MODE_REPL	3	//режим замещения
+
+#define A_CROSS_NO	0	//пересечения не было.
+#define A_CROSS_UP	1	//Быстрый массив пересекает медленный снизу вверх.
+#define A_CROSS_DW	2	//Быстрый массив пересекает медленный сверху вниз.
 
 //{ === С плавающей точкой.
 //{ 	=== двумерный массив
@@ -238,6 +243,37 @@ void Ad_Collapse1(double &a[]){
 	}
 	
 	Ad_Copy1To1(d,a);
+}
+
+int Ad_CrossByIdx(double &f[], double &s[], int idx){
+	/**
+		\version	0.0.0.1
+		\date		2013.09.18
+		\author		Morochin <artamir> Artiom
+		\details	Вычисляет, было ли пересечение на заданном индексе двух массивов.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.09.18@artamir	[]	Ad_CrossByIdx
+			>Rev:0
+	*/
+
+	if(ArrayRange(f,0)<=0){return(A_CROSS_NO);}
+	if(ArrayRange(s,0)<=0){return(A_CROSS_NO);}
+	
+	double f2=Norm_symb(f[idx],2),		s2=Norm_symb(s[idx],2);
+	double f1=Norm_symb(f[idx-1],2),	s1=Norm_symb(s[idx-1],2);
+	double f3=Norm_symb(f[idx+1],2), 	s3=Norm_symb(s[idx+1],2);
+	
+	if(f2>s2){if(s1>f1){return(A_CROSS_UP);}}
+	
+	if(f2<s2){if(s1<f1){return(A_CROSS_DW);}}
+	
+	if(f2==s2){
+		if(f1<s1 && f3>s3){return(A_CROSS_UP);}
+		if(f1>s1 && f3<s3){return(A_CROSS_DW);}
+	}
+	
+	return(A_CROSS_NO);
 }
 //}
 //}	

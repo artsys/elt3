@@ -1,10 +1,17 @@
 	/**
-		\version	0.0.0.18
-		\date		2013.09.17
+		\version	0.0.0.24
+		\date		2013.09.18
 		\author		Morochin <artamir> Artiom
 		\details	Trading functtions.
-		\internal
-			>Hist:																		
+		\
+			$Revision$
+			>Hist:																								
+					 @0.0.0.24@2013.09.18@artamir	[]	TR_SendSELLLIMIT_array
+					 @0.0.0.23@2013.09.18@artamir	[]	TR_SendSELLSTOP_array
+					 @0.0.0.22@2013.09.18@artamir	[]	TR_SendBUYLIMIT_array
+					 @0.0.0.21@2013.09.18@artamir	[]	TR_SendBUYSTOP_array
+					 @0.0.0.20@2013.09.18@artamir	[]	TR_SendPending_array
+					 @0.0.0.19@2013.09.18@artamir	[]	TR_SendPendingLikeOrder
 					 @0.0.0.18@2013.09.17@artamir	[]	TR_SendPendingLikeOrder
 					 @0.0.0.17@2013.09.16@artamir	[+]	TR_SendPendingLikeOrder
 					 @0.0.0.16@2013.09.16@artamir	[*]	TR_SendSELLLIMIT_array
@@ -78,11 +85,12 @@ int TR_SendBUYSTOP(double StartPrice, int AddPips = 0, double Vol = 0.01, int TP
 	return(ticket);
 }
 
-int TR_SendBUYSTOP_array(double &d[], double StartPrice, int AddPips = 0, double Vol = 0.01, int TPPip = 0, int SLPip = 0, string Comm = "", int Magic = -1, string Sy=""){
+int TR_SendBUYSTOP_array(double &d[], double StartPrice, int AddPips = 0, double Vol = 0.01, double TPPip = 0, double SLPip = 0, string Comm = "", int Magic = -1, string Sy="", int Mode=2){
 	/*
-		>Ver	:	0.0.0.4
-		>Date	:	2013.09.16
-		>Hist:			
+		>Ver	:	0.0.0.5
+		>Date	:	2013.09.18
+		>Hist:				
+				 @0.0.0.5@2013.09.18@artamir	[+]	Добавлена возможность задавать сл и тп ценовыми уровнями.
 				 @0.0.0.4@2013.09.16@artamir	[*]	TR_SendBUYSTOP_array добавлена валютная пара для выставления ордеров.
 				 @0.0.0.3@2013.09.04@artamir	[*]	TR_SendBUYSTOP_array + добавлена возможность выставлять отложенные ордера от текущей цены Аск.
 				 @0.0.2@2013.04.22@artamir	[]	TR_SendBUYSTOP_array
@@ -121,12 +129,14 @@ int TR_SendBUYSTOP_array(double &d[], double StartPrice, int AddPips = 0, double
 	
 	//------------------------------------------------------
 	if(TPPip > 0){
-		TPPrice	= Norm_symb(SendPrice + TPPip*Point);
+		if(Mode==TR_MODE_PIP){TPPrice=Norm_symb(SendPrice + TPPip*Point);}
+		if(Mode==TR_MODE_PRICE){TPPrice=TPPip;}
 	}
 	
 	//--------------
 	if(SLPip > 0){
-		SLPrice = Norm_symb(SendPrice - SLPip*Point);
+		if(Mode==TR_MODE_PIP){SLPrice=Norm_symb(SendPrice - SLPip*Point);}
+		if(Mode==TR_MODE_PRICE){SLPrice=SLPip;}
 	}	
 	
 	//------------------------------------------------------
@@ -162,11 +172,12 @@ int TR_SendBUYSTOP_array(double &d[], double StartPrice, int AddPips = 0, double
 	return(ArrayRange(d,0));
 }
 
-int TR_SendBUYLIMIT_array(double &d[], double StartPrice, int AddPips = 0, double Vol = 0.01, int TPPip = 0, int SLPip = 0, string Comm = "", int Magic = -1, string Sy=""){
+int TR_SendBUYLIMIT_array(double &d[], double StartPrice, int AddPips = 0, double Vol = 0.01, double TPPip = 0, double SLPip = 0, string Comm = "", int Magic = -1, string Sy="", int Mode=2){
 	/*
-		>Ver	:	0.0.0.4
-		>Date	:	2013.09.16
-		>Hist:		
+		>Ver	:	0.0.0.5
+		>Date	:	2013.09.18
+		>Hist:			
+				 @0.0.0.5@2013.09.18@artamir	[+]	Добавлена возможность задавать сл и тп ценовыми уровнями.
 				 @0.0.0.4@2013.09.16@artamir	[*]	Добавлена валютная пара.
 				 @0.0.3@2013.04.22@artamir	[]	TR_SendBUYLIMIT_array
 		>Desc:
@@ -198,12 +209,14 @@ int TR_SendBUYLIMIT_array(double &d[], double StartPrice, int AddPips = 0, doubl
 	
 	//--------------
 	if(TPPip > 0){
-		TPPrice	= Norm_symb(SendPrice + TPPip*Point);
+		if(Mode==TR_MODE_PIP){TPPrice=Norm_symb(SendPrice + TPPip*Point);}
+		if(Mode==TR_MODE_PRICE){TPPrice=TPPip;}
 	}
 	
 	//--------------
 	if(SLPip > 0){
-		SLPrice = Norm_symb(SendPrice - SLPip*Point);
+		if(Mode==TR_MODE_PIP){SLPrice=Norm_symb(SendPrice - SLPip*Point);}
+		if(Mode==TR_MODE_PRICE){SLPrice=SLPip;}
 	}	
 	
 	//------------------------------------------------------
@@ -340,11 +353,12 @@ int TR_SendSELLSTOP(double StartPrice, int AddPips = 0, double Vol = 0.01, int T
 	return(ticket);
 }
 
-int TR_SendSELLSTOP_array(double &d[], double StartPrice, int AddPips = 0, double Vol = 0.01, int TPPip = 0, int SLPip = 0, string Comm = "", int Magic = -1, string Sy=""){
+int TR_SendSELLSTOP_array(double &d[], double StartPrice, int AddPips = 0, double Vol = 0.01, double TPPip = 0, double SLPip = 0, string Comm = "", int Magic = -1, string Sy="", int Mode=2){
 	/*
-		>Ver	:	0.0.0.3
-		>Date	:	2013.09.16
-		>Hist:		
+		>Ver	:	0.0.0.4
+		>Date	:	2013.09.18
+		>Hist:			
+				 @0.0.0.4@2013.09.18@artamir	[*]	Добавлена возможность задавать тп и сл ценовыми уровнями.
 				 @0.0.0.3@2013.09.16@artamir	[*]	Добавлена валютная пара
 				 @0.0.0.2@2013.09.04@artamir	[*]	TR_SendSELLSTOP_array + добавлена возможность выставления отложенных ордеров от текущей цены.
 		>Desc:
@@ -382,12 +396,14 @@ int TR_SendSELLSTOP_array(double &d[], double StartPrice, int AddPips = 0, doubl
 	
 	//--------------
 	if(TPPip > 0){
-		TPPrice	= Norm_symb(SendPrice - TPPip*Point);
+		if(Mode==TR_MODE_PIP){TPPrice=Norm_symb(SendPrice - TPPip*Point);}
+		if(Mode==TR_MODE_PRICE){TPPrice=TPPip;}
 	}
 	
 	//--------------
 	if(SLPip > 0){
-		SLPrice = Norm_symb(SendPrice + SLPip*Point);
+			if(Mode==TR_MODE_PIP){SLPrice=Norm_symb(SendPrice + SLPip*Point);}
+			if(Mode==TR_MODE_PRICE){SLPrice=SLPip;}
 	}	
 	
 	//------------------------------------------------------
@@ -423,11 +439,12 @@ int TR_SendSELLSTOP_array(double &d[], double StartPrice, int AddPips = 0, doubl
 	return(ArrayRange(d,0));
 }
 
-int TR_SendSELLLIMIT_array(double &d[], double StartPrice, int AddPips = 0, double Vol = 0.01, int TPPip = 0, int SLPip = 0, string Comm = "", int Magic = -1, string Sy=""){
+int TR_SendSELLLIMIT_array(double &d[], double StartPrice, int AddPips = 0, double Vol = 0.01, double TPPip = 0, double SLPip = 0, string Comm = "", int Magic = -1, string Sy="", int Mode=2){
 	/*
-		>Ver	:	0.0.0.3
-		>Date	:	2013.09.16
-		>Hist:	
+		>Ver	:	0.0.0.4
+		>Date	:	2013.09.18
+		>Hist:		
+				 @0.0.0.4@2013.09.18@artamir	[+]	Добавлена возможность задавать сл и тп в виде ценовых уровней.
 				 @0.0.0.3@2013.09.16@artamir	[*]	Добавлена валютная пара.
 		>Desc:
 			Функция выставления отложенных БайСтоп ордеров.
@@ -460,12 +477,14 @@ int TR_SendSELLLIMIT_array(double &d[], double StartPrice, int AddPips = 0, doub
 	
 	//--------------
 	if(TPPip > 0){
-		TPPrice	= Norm_symb(SendPrice - TPPip*Point);
+		if(Mode==TR_MODE_PIP){TPPrice=Norm_symb(SendPrice - TPPip*Point);}
+		if(Mode==TR_MODE_PRICE){TPPrice=TPPip;}
 	}
 	
 	//--------------
 	if(SLPip > 0){
-		SLPrice = Norm_symb(SendPrice + SLPip*Point);
+		if(Mode==TR_MODE_PIP){SLPrice=Norm_symb(SendPrice + SLPip*Point);}
+		if(Mode==TR_MODE_PRICE){SLPrice=SLPip;}
 	}	
 	
 	//------------------------------------------------------
@@ -588,35 +607,37 @@ int TR_SendSTOPLikeOrder_array(double &d[], int src_ti = 0, int AddPips = 0, dou
 	
 }
 
-int TR_SendPending_array(double &d[], int type, double StartPrice, int AddPips = 0, double Vol = 0.01, int TPPip = 0, int SLPip = 0, string Comm = "", int Magic = -1, string Sy=""){
+int TR_SendPending_array(double &d[], int type, double StartPrice, int AddPips = 0, double Vol = 0.01, double TPPip = 0, double SLPip = 0, string Comm = "", int Magic = -1, string Sy="", int Mode=2){
 	/**
-		\version	0.0.0.2
-		\date		2013.09.16
+		\version	0.0.0.3
+		\date		2013.09.18
 		\author		Morochin <artamir> Artiom
 		\details	Выставляет отложенные ордера до заданного объема.
 		\internal
-			>Hist:		
+			>Hist:			
+					 @0.0.0.3@2013.09.18@artamir	[*]	Изменения связанные с возможностью выставлять сл и тп в виде ценового уровня.
 					 @0.0.0.2@2013.09.16@artamir	[*]	Добавлена валютная пара для выставления.
 					 @0.0.0.1@2013.06.28@artamir	[]	TR_SendPending_array
 			>Rev:0
 	*/
 	
-	if(type == OP_BUYSTOP	){return(TR_SendBUYSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy));}
-	if(type == OP_BUYLIMIT	){return(TR_SendBUYLIMIT_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy));}
-	if(type == OP_SELLSTOP	){return(TR_SendSELLSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy));}
-	if(type == OP_SELLLIMIT	){return(TR_SendSELLLIMIT_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy));}
+	if(type == OP_BUYSTOP	){return(TR_SendBUYSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode));}
+	if(type == OP_BUYLIMIT	){return(TR_SendBUYLIMIT_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode));}
+	if(type == OP_SELLSTOP	){return(TR_SendSELLSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode));}
+	if(type == OP_SELLLIMIT	){return(TR_SendSELLLIMIT_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode));}
 }
 
 int TR_SendPendingLikeOrder(double &d[], int src_ti=0, int AddPips=0){
 	/**
-		\version	0.0.0.2
-		\date		2013.09.17
+		\version	0.0.0.3
+		\date		2013.09.18
 		\author		Morochin <artamir> Artiom
 		\details	Выставление похожего ордера в зависимости от цены.
 					Если ордер-источник=бай и цена ниже цены ордера, то выставляется байстоп
 					Если ордер-источник=бай и цена выше цены ордера, то выставляется байлимит
 		\internal
-			>Hist:		
+			>Hist:			
+					 @0.0.0.3@2013.09.18@artamir	[*]	Изменения в связи с возможностью выставлять сл и тп в виде ценового уровня.
 					 @0.0.0.2@2013.09.17@artamir	[*]	Исправление, не вытавлялся тп и сл
 					 @0.0.0.1@2013.09.16@artamir	[+]	TR_SendPendingLikeOrder
 			>Rev:0
@@ -637,10 +658,10 @@ int TR_SendPendingLikeOrder(double &d[], int src_ti=0, int AddPips=0){
 	double _ASK = MarketInfo(src_sy, MODE_ASK);
 	
 	int ty = -1;
-	int sl_pip=0;
-	int tp_pip=0;
-	if(src_sl>0){sl_pip=MathAbs((src_op-src_sl)/Point);}
-	if(src_tp>0){tp_pip=MathAbs((src_op-src_tp)/Point);}
+	double sl_pip=0;
+	double tp_pip=0;
+	if(src_sl>0){sl_pip=src_sl;}//=MathAbs((src_op-src_sl)/Point);}
+	if(src_tp>0){tp_pip=src_tp;}//=MathAbs((src_op-src_tp)/Point);}
 	
 	if(src_ty==OP_BUY ){
 		if(_ASK<src_op){ty=OP_BUYSTOP;}
@@ -652,7 +673,7 @@ int TR_SendPendingLikeOrder(double &d[], int src_ti=0, int AddPips=0){
 		if(_ASK<src_op){ty=OP_SELLLIMIT;}
 	}
 	
-	return(TR_SendPending_array(d,ty,src_op,AddPips,src_lot,tp_pip,sl_pip,src_comm, src_mn, src_sy));
+	return(TR_SendPending_array(d,ty,src_op,AddPips,src_lot,tp_pip,sl_pip,src_comm, src_mn, src_sy, TR_MODE_PRICE));
 }
 //}
 

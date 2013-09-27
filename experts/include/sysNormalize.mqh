@@ -21,6 +21,7 @@ double Norm_symb(double d, string sy = "", int add = 0){//..
 			add	: Добавление количесва значащих цифр после запятой
 	*/
 	//==================================
+	string fn="Norm_symb";
 	if(sy == ""){
 		sy = Symbol();
 	}

@@ -1,7 +1,8 @@
 	/*
-		>Ver	:	0.1.0.50
-		>Date	:	2013.09.06
-		>Hist:																						
+		>Ver	:	0.1.0.51
+		>Date	:	2013.09.26
+		>Hist:																							
+				 @0.1.0.51@2013.09.26@artamir	[*]	ELT_start
 				 @0.1.0.50@2013.09.06@artamir	[+]	ELT_SelectNearPrice_d2
 				 @0.1.0.49@2013.09.05@artamir	[+]	ELT_SelectByFOTY_d2
 				 @0.1.0.48@2013.09.04@artamir	[*]	ELT_init
@@ -44,7 +45,7 @@
 
 #property stacksize 16192			
 	
-#define	ELTVER	"0.1.0.50_2013.08.29"
+#define	ELTVER	"0.1.0.51_2013.09.26"
 
 //{	//Include	========================================
 //{		@System	----------------------------------------
@@ -138,12 +139,13 @@ int ELT_deinit(string fn = ""){
 
 int ELT_start(){
 	/**
-		\version	0.0.0.2
-		\date		2013.08.29
+		\version	0.0.0.3
+		\date		2013.09.26
 		\author		Morochin <artamir> Artiom
 		\details	Перепроверка данных ордеров в терминале. Заполнение событий.
 		\internal
-			>Hist:		
+			>Hist:			
+					 @0.0.0.3@2013.09.26@artamir	[*]	для использования Sqlite убраны ссылки на OE
 					 @0.0.0.2@2013.08.29@artamir	[]	ELT_start
 					 @0.0.0.1@2013.08.28@artamir	[]	ELT_start
 			>Rev:0
@@ -152,12 +154,6 @@ int ELT_start(){
 	double a[];
 	int t = T_getTickets(a);
 
-	
-	
-	for(int i=0; i<t; i++){
-		OE_setStandartDataByTicket(a[i]);
-	}
-	
 	T_Start();
 	T_End();
 }

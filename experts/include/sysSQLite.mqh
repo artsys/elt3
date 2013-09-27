@@ -20,6 +20,7 @@ void	Sqlite_ExecSQL(int db_id, string sql);				//Выполнить инстру
 //===================
 int		Sqlite_Query(int db_id, string query);				//возвращает хэндл результата запроса.
 void	Sqlite_DestroyQuery(int query_id);					//деструктор результата запроса. Вызывать перед закрытием базы.
+void	EraseArray_aQR();									//Вызыват в функции старт.
 //===================
 bool	Sqlite_Next(int query_id);							//Перевод указателя на следующую строку результата запроса.
 int		Sqlite_ColCount(int query_id);						//возвращает количество полей в запросе.

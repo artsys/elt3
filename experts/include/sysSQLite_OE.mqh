@@ -1,13 +1,18 @@
 	/**
-		\version	0.0.0.11
-		\date		2013.09.25
+		\version	0.0.0.16
+		\date		2013.09.26
 		\author		Morochin <artamir> Artiom
 		\details	База данных ордеров. драйвер - sqlite3
 					библиотека sysSQLite.mqh должна быть прилеплена в основной программе.
 					например в sysELT.mqh
 		\internal
-			>Hist:											
-					 @0.0.0.11@2013.09.25@artamir	[]	SQL_FieldAsDouble
+			>Hist:																
+					 @0.0.0.16@2013.09.26@artamir	[+]	SQL_setFOD
+					 @0.0.0.15@2013.09.26@artamir	[+]	SQL_setGLByTicket
+					 @0.0.0.14@2013.09.26@artamir	[+]	SQL_setMPByTicket
+					 @0.0.0.13@2013.09.26@artamir	[+]	SQL_setOrderDataByTicket
+					 @0.0.0.12@2013.09.26@artamir	[*]	SQL_setAllOrdersData
+					 @0.0.0.11@2013.09.25@artamir	[*]	SQL_FieldAsDouble
 					 @0.0.0.10@2013.09.25@artamir	[+]	SQL_start
 					 @0.0.0.9@2013.09.25@artamir	[+]	SQL_setAllOrdersData
 					 @0.0.0.8@2013.09.25@artamir	[+]	SQL_setAllOrdersData
@@ -25,7 +30,7 @@
 				Процедура SELECT
 	*/
 
-#define SQLVER		"0.0.0.11_2013.09.25"
+#define SQLVER		"0.0.0.16_2013.09.26"
 
 #define SQLSTRUC_HA		0	//Handle
 #define SQLSTRUC_COLS	1	//COUNT COLS
@@ -63,9 +68,12 @@
 
 //..
 #define	SQL_AOM	20	//Autoopen method
+//..    === Настройки сетки
+#define	SQL_MP	21
+#define	SQL_GL	22
 //}
 
-#define SQL_MAX 21	//MAX COLS
+#define SQL_MAX 23	//MAX COLS
 
 
 string	sSQL_DB_name = "";
@@ -93,12 +101,12 @@ void	SQL_InitColsArray(){
 	ArrayResize(aSQL_Cols, SQL_MAX);
 	aSQL_Cols[SQL_TI]	= "@nTI@tINTEGER";
 	aSQL_Cols[SQL_TY]	= "@nTY@tINTEGER";
-	aSQL_Cols[SQL_OOP]	= "@nOOP@tFLOAT";
+	aSQL_Cols[SQL_OOP]	= "@nOOP@tREAL";
 	aSQL_Cols[SQL_OOT]	= "@nOOT@tINTEGER";
-	aSQL_Cols[SQL_TP]	= "@nTP@tFLOAT";
-	aSQL_Cols[SQL_SL]	= "@nSL@tFLOAT";
+	aSQL_Cols[SQL_TP]	= "@nTP@tREAL";
+	aSQL_Cols[SQL_SL]	= "@nSL@tREAL";
 	aSQL_Cols[SQL_MN]	= "@nMN@tINTEGER";
-	aSQL_Cols[SQL_LOT]	= "@nLOT@tFLOAT";
+	aSQL_Cols[SQL_LOT]	= "@nLOT@tREAL";
 	aSQL_Cols[SQL_SY]	= "@nSY@tTEXT";
 	aSQL_Cols[SQL_OP]	= "@nOP@tREAL";
 	//================
@@ -110,10 +118,16 @@ void	SQL_InitColsArray(){
 	aSQL_Cols[SQL_OCT]	= "@nOCT@tINTEGER";
 	aSQL_Cols[SQL_OCP]	= "@nOCP@tREAL";
 	aSQL_Cols[SQL_CM]	= "@nCM@tINTEGER";
-	aSQL_Cols[SQL_PIP]	= "@nPIP@tFLOAT";
-	aSQL_Cols[SQL_PID]	= "@nPID@tFLOAT";
+	//================
+	aSQL_Cols[SQL_PIP]	= "@nPIP@tREAL";
+	aSQL_Cols[SQL_PID]	= "@nPID@tREAL";
+	//================
 	aSQL_Cols[SQL_AOM]	= "@nAOM@tINTEGER";
+	//================
 	aSQL_Cols[SQL_FTY]	= "@nFTY@tINTEGER";
+	//================
+	aSQL_Cols[SQL_MP]	= "@nMP@tINTEGER";
+	aSQL_Cols[SQL_GL]	= "@nGL@tINTEGER";
 }
 
 //.. Приват
@@ -227,6 +241,7 @@ int	SQL_Insert(string select = ""){
 			>Rev:0
 	*/
 
+	bool clean_array=true;
 	int ROWS = ArrayRange(aSQL_NameVal,0);
 	int idx = 0;
 	
@@ -253,9 +268,14 @@ int	SQL_Insert(string select = ""){
 	
 	if(StringLen(select) > 0){
 		q = select;
+		clean_array=false;
 	}
 	
 	Sqlite_ExecSQL(SQL_DB, q);
+	
+	if(clean_array){
+		ArrayResize(aSQL_NameVal,0);
+	}
 	return(0);	
 }
 
@@ -288,6 +308,8 @@ int SQL_Update(string where = ""){
 	
 	q = q + exp + " WHERE " + where;
 	Sqlite_ExecSQL(SQL_DB, q);
+	
+	ArrayResize(aSQL_NameVal,0);
 	return(0);
 }
 
@@ -359,7 +381,22 @@ void SQL_start(){
 					 @0.0.0.1@2013.09.25@artamir	[+]	SQL_start
 			>Rev:0
 	*/
+	EraseArray_aQR();
 	SQL_setAllOrdersData();
+	
+	//Проверим, если в событиях есть есть закрытие ордера,
+	//то занесем стандартные данные этого ордера в таблицу.
+	
+	int events_rows = ArrayRange(aEvents,0);
+	for(int i=0; i<events_rows;i++){
+		int event = aEvents[i][E_EVENT];
+		if(event==EVENT_CO){
+			SQL_setOrderDataByTicket(aEvents[i][E_TI]);
+		}
+		if(event==EVENT_NO){
+			SQL_setFOD(aEvents[i][E_TI]);
+		}
+	}
 }
 
 //..    Получение значеня поля таблицы запроса.
@@ -395,12 +432,15 @@ double SQL_FieldAsDouble(int query_id, int col_id, int addDigits = 0){
 					 @0.0.0.1@2013.09.24@artamir	[+]	SQL_FieldAsDouble
 			>Rev:0
 	*/
-	string fn="SQL_FieldAsDouble.";
+	string fn="SQL_FieldAsDouble";
 	string	field_name = SQL_getColName(col_id);
+	Print(fn+".field_name="+field_name);
 	int		field_id = Sqlite_FieldIndex(query_id, field_name);
+	Print(fn+".field_id=",field_id);
 	double	d_res = Sqlite_FieldAsDouble(query_id, field_id);
-			d_res = Norm_symb(d_res, addDigits);
-
+	Print(fn+".d_res_before_norm="+d_res);		
+			d_res = Norm_symb(d_res, "",addDigits);
+	Print(fn+".d_res="+d_res);
 	return(d_res);
 }
 
@@ -423,14 +463,66 @@ int SQL_FieldAsInt(int qry_id, int col_id){
 }
 
 //..    Установка стандартных значений ордеров.
+void SQL_setOrderDataByTicket(int ti){
+	/**
+		\version	0.0.0.1
+		\date		2013.09.26
+		\author		Morochin <artamir> Artiom
+		\details	Установка стандартных значений для ордера.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.09.26@artamir	[+]	SQL_setOrderDataByTicket
+			>Rev:0
+	*/
+	ArrayResize(aSQL_NameVal,0);
+	
+	if(!OrderSelect(ti, SELECT_BY_TICKET)){return;}
+	
+	SQL_addNameVal(SQL_TI	, OrderTicket());
+	SQL_addNameVal(SQL_TY	, OrderType());
+	SQL_addNameVal(SQL_OOP	, OrderOpenPrice());
+	SQL_addNameVal(SQL_OOT	, OrderOpenTime());
+	SQL_addNameVal(SQL_OCP	, OrderClosePrice());
+	SQL_addNameVal(SQL_TP	, OrderTakeProfit());
+	SQL_addNameVal(SQL_SL	, OrderStopLoss());
+	SQL_addNameVal(SQL_MN	, OrderMagicNumber());
+	SQL_addNameVal(SQL_LOT	, OrderLots());
+	SQL_addNameVal(SQL_SY	, "'"+OrderSymbol()+"'");
+	SQL_addNameVal(SQL_OP	, OrderProfit());
+	
+	SQL_addNameVal(SQL_PID	, OrderProfit());
+	SQL_addNameVal(SQL_PIP	, (OrderOpenPrice()-OrderClosePrice()));
+	
+	if(OrderCloseTime()>0){
+		SQL_addNameVal(SQL_IC,1);
+		SQL_addNameVal(SQL_IT,0);
+	}
+	
+	if(OrderCloseTime()==0){
+		SQL_addNameVal(SQL_IC,0);
+		SQL_addNameVal(SQL_IT,1);
+	}
+	
+	if(OrderType()==OP_BUY || OrderType()==OP_SELL){
+		SQL_addNameVal(SQL_IM,1);
+		SQL_addNameVal(SQL_IP,0);
+	}else{
+		SQL_addNameVal(SQL_IM,0);
+		SQL_addNameVal(SQL_IP,1);
+	}
+	
+	SQL_InsertOrUpdate("TI="+OrderTicket(), OrderTicket());
+}
+
 void SQL_setAllOrdersData(){
 	/**
-		\version	0.0.0.2
-		\date		2013.09.25
+		\version	0.0.0.3
+		\date		2013.09.26
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:		
+			>Hist:			
+					 @0.0.0.3@2013.09.26@artamir	[*]	Вынес само выставление данных по ордеру в отдельную процедуру.
 					 @0.0.0.2@2013.09.25@artamir	[]	SQL_setAllOrdersData
 					 @0.0.0.1@2013.09.25@artamir	[+]	SQL_setAllOrdersData
 			>Rev:0
@@ -439,45 +531,60 @@ void SQL_setAllOrdersData(){
 	int t = OrdersTotal();
 	for(int i=0; i<=t; i++){
 		if(!OrderSelect(i, SELECT_BY_POS, MODE_TRADES)){continue;}
-		
-		ArrayResize(aSQL_NameVal,0);
-		
-		SQL_addNameVal(SQL_TI	, OrderTicket());
-		SQL_addNameVal(SQL_TY	, OrderType());
-		SQL_addNameVal(SQL_OOP	, OrderOpenPrice());
-		SQL_addNameVal(SQL_OOT	, OrderOpenTime());
-		SQL_addNameVal(SQL_OCP	, OrderClosePrice());
-		SQL_addNameVal(SQL_TP	, OrderTakeProfit());
-		SQL_addNameVal(SQL_SL	, OrderStopLoss());
-		SQL_addNameVal(SQL_MN	, OrderMagicNumber());
-		SQL_addNameVal(SQL_LOT	, OrderLots());
-		SQL_addNameVal(SQL_SY	, "'"+OrderSymbol()+"'");
-		SQL_addNameVal(SQL_OP	, OrderProfit());
-		
-		SQL_addNameVal(SQL_PID	, OrderProfit());
-		SQL_addNameVal(SQL_PIP	, (OrderOpenPrice()-OrderClosePrice()));
-		
-		if(OrderCloseTime()>0){
-			SQL_addNameVal(SQL_IC,1);
-			SQL_addNameVal(SQL_IT,0);
-		}
-		
-		if(OrderCloseTime()==0){
-			SQL_addNameVal(SQL_IC,0);
-			SQL_addNameVal(SQL_IT,1);
-		}
-		
-		if(OrderType()==OP_BUY || OrderType()==OP_SELL){
-			SQL_addNameVal(SQL_IM,1);
-			SQL_addNameVal(SQL_IP,0);
-		}else{
-			SQL_addNameVal(SQL_IM,0);
-			SQL_addNameVal(SQL_IP,1);
-		}
-		
-		SQL_InsertOrUpdate("TI="+OrderTicket(), OrderTicket());
-		
+		SQL_setOrderDataByTicket(OrderTicket());
 	}
+}
+
+void SQL_setFOD(int ti){
+	/**
+		\version	0.0.0.1
+		\date		2013.09.26
+		\author		Morochin <artamir> Artiom
+		\details	Установка значений с которыми был выставлен ордер.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.09.26@artamir	[+]	SQL_setFOD
+			>Rev:0
+	*/
+	ArrayResize(aSQL_NameVal,0);
+	if(!OrderSelect(ti,SELECT_BY_TICKET)){return;}
+	
+	SQL_addNameVal(SQL_FTY,OrderType());
+	SQL_InsertOrUpdate("TI="+OrderTicket(),OrderTicket());
+}
+//..    Установка произвольных значений ордера по тикету.
+void SQL_setGLByTicket(int ti, int val){
+	/**
+		\version	0.0.0.1
+		\date		2013.09.26
+		\author		Morochin <artamir> Artiom
+		\details	Установка значения GridLevel для заданного тикета
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.09.26@artamir	[]	SQL_setGLByTicket
+			>Rev:0
+	*/
+	ArrayResize(aSQL_NameVal,0);
+	SQL_addNameVal(SQL_TI,ti);
+	SQL_addNameVal(SQL_GL,val);
+	SQL_InsertOrUpdate("TI="+ti);
+}
+
+void SQL_setMPByTicket(int ti, int val){
+/**
+		\version	0.0.0.1
+		\date		2013.09.26
+		\author		Morochin <artamir> Artiom
+		\details	Установка значения GridLevel для заданного тикета
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.09.26@artamir	[]	SQL_setMPByTicket
+			>Rev:0
+	*/
+	ArrayResize(aSQL_NameVal,0);
+	SQL_addNameVal(SQL_TI,ti);
+	SQL_addNameVal(SQL_MP,val);
+	SQL_InsertOrUpdate("TI="+ti);
 }
 //}
 //}

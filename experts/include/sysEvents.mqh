@@ -181,7 +181,7 @@ void onNewOrder(int ti){
 	int idx=Ad_AddRow2(aEvents);
 	aEvents[idx][E_TI]=ti;
 	aEvents[idx][E_EVENT]=EVENT_NO;
-	OE_setStandartDataByTicket(ti);
+	//OE_setStandartDataByTicket(ti);
 }
 
 void onChangeType(int ti, int ty_new, int ty_old = -1){
@@ -202,7 +202,7 @@ void onChangeType(int ti, int ty_new, int ty_old = -1){
 	int idx=Ad_AddRow2(aEvents);
 	aEvents[idx][E_TI]=ti;
 	aEvents[idx][E_EVENT]=EVENT_CHTY;
-	OE_setChangeTYBuTicket(ti, ty_new);
+	//OE_setChangeTYBuTicket(ti, ty_new);
 }
 
 void onChangeOP(int ticket, double op.new, double op.old = -1){
@@ -220,7 +220,7 @@ void onChangeOP(int ticket, double op.new, double op.old = -1){
 	//2.заполнение стандартных свойств ≈кстраќрдера
 	//3.добавление нового событи€ в массив событий
 	
-	OE_setOPByTicket(ticket, op.new);
+	//OE_setOPByTicket(ticket, op.new);
 }
 
 void onChangeSL(int ticket, double sl.new, double sl.old = -1){
@@ -256,7 +256,7 @@ void onCloseOrder(int ti){
 	int idx=Ad_AddRow2(aEvents);
 	aEvents[idx][E_TI]=ti;
 	aEvents[idx][E_EVENT]=EVENT_CO;
-	OE_setCloseByTicket(ti);
+	//OE_setCloseByTicket(ti);
 }
 
 //}

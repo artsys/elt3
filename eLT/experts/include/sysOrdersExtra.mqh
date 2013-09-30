@@ -1,7 +1,10 @@
 	/*
-		>Ver	:	0.0.0.46
-		>Date	:	2013.09.06
-		>Hist	:																	
+		>Ver	:	0.0.0.49
+		>Date	:	2013.09.30
+		>Hist	:																				
+					@0.0.0.49@2013.09.30@artamir	[+]	OE_setSIDByTicket
+					@0.0.0.48@2013.09.30@artamir	[!]	OE_setCloseByTicket
+					@0.0.0.47@2013.09.30@artamir	[!]	OE_setStandartDataByOrder
 					@0.0.0.46@2013.09.@artamir		[!] Исправлен дефайн OrderProfit.	
 					@0.0.0.45@2013.08.29@artamir	[-] Удалены отладочные метки.	
 					@0.0.0.44@2013.08.29@artamir	[+]	OE_SortDesc
@@ -35,7 +38,7 @@
 		>Desc	:
 	*/
 
-#define OE_VER	"0.0.0.46"
+#define OE_VER	"0.0.0.49_2013.09.30"
 #define OE_DATE	"2013.09.06"
 	
 //{	//=== ARRAY	
@@ -62,7 +65,7 @@
 #define	OE_MP		15	//Main parent of the grid
 #define	OE_LP		16	//Local parent
 #define	OE_LP2		17	//Local parent
-
+#define OE_SID		18	//ИД сессии.
 //------ Partial close
 #define	OE_FROM		20	//If was partial close 
 //------ Grid
@@ -318,17 +321,17 @@ int OE_setStandartDataByTicket(int ti){
 
 int OE_setStandartDataByOrder(int idx){
 	/*
-		>Ver	:	0.0.3
-		>Date	:	2013.02.26
-		>Hist	:
+		>Ver	:	0.0.0.4
+		>Date	:	2013.09.30
+		>Hist	:	
+					@0.0.0.4@2013.09.30@artamir	[+]	Добавлен OrderProfit()
 			@0.0.1@2012.10.03@artamir	[]
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:
 	*/
-
+	string fn="OE_setStandartDataByOrder";
 	//------------------------------------------------------
 	aOE[idx][OE_TI] = OrderTicket();
-	
 	//------------------------------------------------------
 	aOE[idx][OE_TY]	= OrderType();
 	
@@ -346,6 +349,8 @@ int OE_setStandartDataByOrder(int idx){
 	
 	aOE[idx][OE_CP] = OrderClosePrice();
 	
+	aOE[idx][OE_OPR] = OrderProfit();
+
 	if(OrderCloseTime() <= 0){
 		aOE[idx][OE_IT] = 1;
 		aOE[idx][OE_IC] = 0;
@@ -896,6 +901,40 @@ int OE_setFIRByTicket(int ti, int fir = 0){
 	//------------------------------------------------------
 	return(idx);
 }
+
+int OE_setSIDByTicket(int ti, int sid = 0){
+	/**
+		\version	0.0.0.1
+		\date		2013.09.30
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:		
+					 @0.0.0.1@2013.09.30@artamir	[+]	OE_setSIDByTicket
+			>Rev:0
+	*/
+
+	
+	//------------------------------------------------------
+	if(sid <= -1){
+		return(-1);
+	}
+	
+	//------------------------------------------------------
+	int idx = OE_findIndexByTicket(ti);
+	
+	//------------------------------------------------------
+	if(idx <= -1){
+		return(-1);
+	}
+	
+	//------------------------------------------------------
+	aOE[idx][OE_SID] = sid;
+	
+	//------------------------------------------------------
+	return(idx);
+}
+
 //}
 
 //{	//=== SET AOM
@@ -1164,9 +1203,10 @@ int OE_setCTYByTicket(int ti){
 
 int OE_setCloseByTicket(int ti){
 	/*
-		>Ver	:	0.0.5
-		>Date	:	2013.02.26
-		>Hist	:
+		>Ver	:	0.0.0.6
+		>Date	:	2013.09.30
+		>Hist	:	
+					@0.0.0.6@2013.09.30@artamir	[+]	Добавлена установка стандартных данных по тикету.
 			@0.0.1@2012.10.04@artamir	[]
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:
@@ -1176,6 +1216,7 @@ int OE_setCloseByTicket(int ti){
 	int idx = -1;
 	
 	//------------------------------------------------------
+	OE_setStandartDataByTicket(ti);
 	idx = OE_setITByTicket(ti, 0);
 	idx = OE_setCTByTicket(ti);
 	idx = OE_setCPByTicket(ti);

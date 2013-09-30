@@ -1,12 +1,18 @@
 /**
-	\version	3.0.1.22
-	\date		2013.09.19
+	\version	3.0.1.28
+	\date		2013.09.30
 	\author		Morochin <artamir> Artiom
 	\details	Шабон построения советника на базе фреймворка eLT 3.0.1
 				Orders in window.
 	\internal
 		Вместо отбора по локальному родителю использовать отбор по ценовому уровню.
-		>Hist:																						
+		>Hist:																												
+				 @3.0.1.28@2013.09.30@artamir	[*]	SendSTOPNet
+				 @3.0.1.27@2013.09.30@artamir	[*]	FixProfit
+				 @3.0.1.26@2013.09.30@artamir	[*]	startext
+				 @3.0.1.25@2013.09.30@artamir	[*]	SendChild
+				 @3.0.1.24@2013.09.30@artamir	[*]	getNextLot
+				 @3.0.1.23@2013.09.30@artamir	[+]	SelectPosBySID
 				 @3.0.1.22@2013.09.19@artamir	[+]	getNextLot
 				 @3.0.1.21@2013.09.19@artamir	[*]	Autoopen
 				 @3.0.1.20@2013.09.13@artamir	[]	startext
@@ -34,7 +40,7 @@
 	
 //{ === DEFINES
 #define EXP	"eOIW"	/** имя эксперта */
-#define VER	"3.0.1.22_2013.09.19"
+#define VER	"3.0.1.28_2013.09.30"
 #define DATE "2013.09.05"	/** extert date */	
 //}
 bool isStarted=true;
@@ -54,6 +60,7 @@ int set_sp=0;
 int set_so=0;
 int elt_so_flt=0;
 int elt_so_sl=0;
+int oe_maxrows=0;
 
 //{ === expert DEFINES
 //}
@@ -64,6 +71,7 @@ extern	int			Step=20;	//Шаг между ордерами в пунктах.
 extern	int			TP=150;		//тейкпрофит сетки в пунктах.
 extern	double		Lot=0.1;	//Лот родительского ордера.
 extern	double		Multy=0.6;	//коэф. для вычисления начального лота. следующих сеток.	
+extern	double		Fix=200;	//фиксированный профит по ордерам сессии.
 extern	string	e1="==== EXPERT END =====";//}
 //}
 
@@ -72,6 +80,9 @@ extern	string	e1="==== EXPERT END =====";//}
 #include <libCloseOrders.mqh>
 //}
 
+//{ === Expert VARS
+bool isFixProfit=false;
+//}
 
 int init(){
 	/**
@@ -120,10 +131,16 @@ int start(){
 	
 	int h_tmr_start = TMR_Start("start");
 	startext();
+	oe_maxrows=MathMax(oe_maxrows, ArrayRange(aOE,0));
 	int tmr_res = TMR_Stop(h_tmr_start);
 	if(tmr_res>max_start_timer){max_start_timer=tmr_res;}
-	string comm=StringConcatenate("Start circle = "+max_start_timer,"\n",
-			"elt_start=",elt_start,"\n",
+	string comm=StringConcatenate( 	"Start circle = "+max_start_timer,"\n",
+									"ver: ",VER,"\n",
+									"date: ",DATE);
+	Comment(comm);	
+	
+	comm=StringConcatenate(comm,
+	"elt_start=",elt_start,"\n",
 			"cfp=",cfp,"\n",
 			"cnv_all=",cnv_all,"\n",
 			"cnt=",cnt,"\n",
@@ -138,10 +155,11 @@ int start(){
 			"--- - - elt_so_flt=",elt_so_flt,"\n",
 			"--- - - elt_so_sl=",elt_so_sl,"\n",
 			"---np=",np,"\n",
-			"ver: ",VER,"\n",
-			"date: ",DATE);
-		Comment(comm);	
-			int h=FileOpen("eOIW.tmr",FILE_BIN|FILE_WRITE);
+			"aOE.rows="+ArrayRange(aOE,0)+"\n",
+			"OrdersTotal="+OrdersTotal()+"\n",
+			"aOE.max_rows="+oe_maxrows);
+
+	int h=FileOpen("eOIW.tmr",FILE_BIN|FILE_WRITE);
 			FileWrite(h,comm);
 			FileFlush(h);
 			FileClose(h);
@@ -151,18 +169,27 @@ int start(){
 
 int startext(){
 	/**
-		\version	0.0.0.3
-		\date		2013.09.13
+		\version	0.0.0.4
+		\date		2013.09.30
 		\author		Morochin <artamir> Artiom
 		\details	расширение функции start()
 					можно вызывать при наступлении какого-нибудь условия.
 		\internal
-			>Hist:			
+			>Hist:				
+					 @0.0.0.4@2013.09.30@artamir	[*]	Добавлено очищение массивов ордеров после фикс профита.
 					 @0.0.0.3@2013.09.13@artamir	[*]	Если не было событий, то выходим из функции
 					 @0.0.0.2@2013.09.13@artamir	[*]	Если тестирование и нет ордеров, то очищаем массив ордеров.
 					 @0.0.0.1@2013.08.28@artamir	[]	startext
 			>Rev:0
 	*/
+	string fn="startext";
+	if(isFixProfit){
+		isFixProfit=false;
+		A_d_eraseArray2(aOldOrders);
+		A_d_eraseArray2(aCurOrders);
+		return(0);
+	}
+	
 	OE_eraseArray();
 	
 	int h_start=TMR_Start("elt_start");
@@ -174,7 +201,14 @@ int startext(){
 	//{		=== Блок закрытия позиций
 		int h_cfp=TMR_Start("cfp");
 		
-		libCO_CFP_Check();
+		//libCO_CFP_Check();
+		if(isExpertsTickets()){
+			if(FixProfit()){
+				isFixProfit=true;
+				OE_eraseArray();
+				return(0);
+			}
+		}
 		
 		int res_tmr=TMR_Stop(h_cfp);
 		if(res_tmr>cfp){cfp=res_tmr;}
@@ -218,6 +252,36 @@ int startext(){
 	return(0);
 }
 
+//{ === FixProfit
+bool FixProfit(){
+	/**
+		\version	0.0.0.1
+		\date		2013.09.30
+		\author		Morochin <artamir> Artiom
+		\details	Собирает фиксированный профит по позициям.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.09.30@artamir	[]	FixProfit
+			>Rev:0
+	*/
+	string fn="FixProfit";
+	bool res=false;
+	int sid = getMaxSID();
+	double aT[][OE_MAX];
+	
+	SelectPosBySID(aT, sid);
+	double sum = Ad_Sum(aT, OE_OPR);
+	
+	if(sum >= Fix){
+		TR_CloseAll(TR_MN);
+		return(true);
+	}
+	
+	ArrayResize(aT,0);
+	return(res);
+}
+//}
+
 //{ === autoopen
 void Autoopen(){
 	/**
@@ -234,19 +298,20 @@ void Autoopen(){
 	*/
 
 	if(!isExpertsTickets()){
-		SendParent(OP_BUYSTOP, Lot);
-		SendParent(OP_SELLSTOP, Lot);
+		SendParent(OP_BUYSTOP, Lot,true);
+		SendParent(OP_SELLSTOP, Lot, false);
 	}
 }	
 
 void SendSTOPNet(int ti){
 	/**
-		\version	0.0.0.1
-		\date		2013.09.05
+		\version	0.0.0.2
+		\date		2013.09.30
 		\author		Morochin <artamir> Artiom
 		\details	Выставляет сетку ордеров от родителя.
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2013.09.30@artamir	[*]	Добавлена установка SID
 					 @0.0.0.1@2013.09.05@artamir	[+]	SendSTOPNet
 			>Rev:0
 	*/
@@ -256,21 +321,24 @@ void SendSTOPNet(int ti){
 	double start_price = OrderOpenPrice();
 	double parent_tp = OrderTakeProfit();
 	int parent_ty = OrderType();
+	double parent_lot=OrderLots();
+	int sid=getMaxSID();
 	
 	for(int i=1; i<=levels; i++){
 		double level_price_pip = Step*i;
 		int level_ti = -1;
 		if(parent_ty==OP_BUY || parent_ty==OP_BUYSTOP){
-			level_ti=TR_SendBUYSTOP(start_price, level_price_pip);
+			level_ti=TR_SendBUYSTOP(start_price, level_price_pip, parent_lot);
 		}
 
 		if(parent_ty==OP_SELL || parent_ty==OP_SELLSTOP){
-			level_ti=TR_SendSELLSTOP(start_price, level_price_pip);
+			level_ti=TR_SendSELLSTOP(start_price, level_price_pip, parent_lot);
 		}	
 		
 		TR_ModifyTP(level_ti,parent_tp);
 		OE_setGLByTicket(level_ti,i+1);
 		OE_setMPByTicket(level_ti,ti);
+		OE_setSIDByTicket(level_ti,sid);
 	}
 	
 }
@@ -454,9 +522,52 @@ int SelectPositions(double &a[][]){
 	if(!ROWS_MN){return(0);}
 	
 	ELT_SelectPositions_d2(aMN, a);	//из аМН выбираем только позиции	
-	
+	ArrayResize(aMN,0);
 	return(ArrayRange(a,0));
 }
+
+int SelectPosBySID(double &a[][], int sid){
+	/**
+		\version	0.0.0.1
+		\date		2013.09.30
+		\author		Morochin <artamir> Artiom
+		\details	Выбирает позиции эксперта с заданным sid
+		\internal
+			>Hist:		
+					 @0.0.0.1@2013.09.30@artamir	[+]	SelectPosBySID
+			>Rev:0
+	*/
+
+	double aMN[][OE_MAX];
+	int ROWS_MN = ELT_SelectByMN_d2(aOE, aMN);
+	if(!ROWS_MN){return(0);}
+	
+	ELT_SelectPosBySID_d2(aMN, a, sid);	//из аМН выбираем только позиции	
+	ArrayResize(aMN,0);
+	return(ArrayRange(a,0));
+}
+
+int SelectTIBySID(double &a[][], int sid){
+	/**
+		\version	0.0.0.1
+		\date		2013.09.30
+		\author		Morochin <artamir> Artiom
+		\details	Выбирает ордера эксперта с заданным sid
+		\internal
+			>Hist:		
+					 @0.0.0.1@2013.09.30@artamir	[+]	SelectPosBySID
+			>Rev:0
+	*/
+
+	double aMN[][OE_MAX];
+	int ROWS_MN = ELT_SelectByMN_d2(aOE, aMN);
+	if(!ROWS_MN){return(0);}
+	
+	ELT_SelectTicketsBySID_d2(aMN, a, sid);	//из аМН выбираем только позиции	
+	ArrayResize(aMN,0);
+	return(ArrayRange(a,0));
+}
+
 
 int SelectTINearPrice(double &a[][], double pr){
 	/**
@@ -476,16 +587,19 @@ int SelectTINearPrice(double &a[][], double pr){
 	if(t_rows<=0){return(0);}
 	
 	int np_rows = ELT_SelectNearPrice_d2(aT, a, pr);
+	
+	ArrayResize(aT,0);
 }
 
 int SendChild(int parent_ti){
 	/**
-		\version	0.0.0.4
-		\date		2013.09.12
+		\version	0.0.0.5
+		\date		2013.09.30
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:				
+			>Hist:					
+					 @0.0.0.5@2013.09.30@artamir	[*]	Выставление лотом родительского ордера.
 					 @0.0.0.4@2013.09.12@artamir	[*]	Для выставления байстоп ордера нужно чтоб цена была ниже цены открытия селлового ордера.
 					 @0.0.0.3@2013.09.11@artamir	[]	SendChild
 					 @0.0.0.2@2013.09.11@artamir	[*]	Выставляется лимитный ордер, если нет возможности поставить стоповый.
@@ -496,6 +610,7 @@ int SendChild(int parent_ti){
 	T_SelOrderByTicket(parent_ti);
 	int parent_ty = OrderType();
 	double parent_op=OrderOpenPrice();
+	double parent_lot=OrderLots();
 	
 	double dBID = MarketInfo(Symbol(),MODE_BID);
 	double dASK = MarketInfo(Symbol(),MODE_ASK);
@@ -533,10 +648,12 @@ int SendChild(int parent_ti){
 	int max_gl = getMaxGL(foty);
 	
 	double a[];
-	TR_SendPending_array(a, ty, parent_op, Step);
+	TR_SendPending_array(a, ty, parent_op, Step, parent_lot);
 	int ti = a[0];
+	int sid = getMaxSID();
 	OE_setGLByTicket(ti,(max_gl+1));
 	OE_setLPByTicket(ti,parent_ti);
+	OE_setSIDByTicket(ti, sid);
 	TR_ModifyTP(ti,tp,tp_mode);
 	
 	if(max_gl <= 0){
@@ -544,7 +661,7 @@ int SendChild(int parent_ti){
 	}
 }
 
-int SendParent(int ty, double lot=-1){
+int SendParent(int ty, double lot=-1, bool new_sid=false){
 	/**
 		\version	0.0.0.0
 		\date		2013.09.12
@@ -558,13 +675,22 @@ int SendParent(int ty, double lot=-1){
 	double a[];
 	double start_pr=0.00;
 	if(lot<=0){lot=MarketInfo(Symbol(), MODE_MINLOT);}
+	
+	int sid=getMaxSID();
+	if(new_sid){
+		sid=sid+1;
+	}
+	
 	int rows_a=TR_SendPending_array(a, ty, start_pr, Step, lot);
 	
 	for(int i=0; i<rows_a;i++){
 		OE_setGLByTicket(a[i],1);
+		OE_setSIDByTicket(a[i],sid);
 		TR_ModifyTP(a[i],TP,TR_MODE_PIP);
 		SendSTOPNet(a[i]);
 	}
+	
+	ArrayResize(a,0);
 }
 
 double getTPNet(int ty){
@@ -591,6 +717,10 @@ double getTPNet(int ty){
 	
 	double tp = aGL[0][OE_TP]; //если есть хоть один родитель сетки, то он будет в 0-м индексе.
 	
+	ArrayResize(aT,0);
+	ArrayResize(aFOTY,0);
+	ArrayResize(aGL,0);
+	
 	return(tp);
 	
 }
@@ -615,32 +745,63 @@ int getMaxGL(int foty){
 	if(foty_rows <= 0){return(0);}
 	
 	Ad_QuickSort2(aFOTY, -1, -1, OE_GL, A_MODE_DESC);
+	int res=aFOTY[0][OE_GL];
 	
-	return(aFOTY[0][OE_GL]);
+	ArrayResize(aT,0);
+	ArrayResize(aFOTY,0);
+	
+	return(res);
 }
 
-double getNextLot(int foty){
+int getMaxSID(){
 	/**
-		\version	0.0.0.2
-		\date		2013.09.19
+		\version	0.0.0.1
+		\date		2013.09.05
 		\author		Morochin <artamir> Artiom
-		\details	Лотность родительского ордера умноженного на коэффицент.
+		\details	Возвращает максимальный уровень сетки для начального типа.
 		\internal
-			>Hist:		
-					 @0.0.0.2@2013.09.19@artamir	[+]	getNextLot
+			>Hist:	
+					 @0.0.0.1@2013.09.05@artamir	[+]	getMaxGL
 			>Rev:0
 	*/
 
 	double aT[][OE_MAX];
-	int t_rows = SelectExpertTickets(aT);
+	ArrayCopy(aT, aOE);
+	
+	Ad_QuickSort2(aT, -1, -1, OE_SID, A_MODE_DESC);
+	int res=aT[0][OE_SID];
+	ArrayResize(aT,0);
+	return(res);
+}
+
+double getNextLot(int foty){
+	/**
+		\version	0.0.0.3
+		\date		2013.09.30
+		\author		Morochin <artamir> Artiom
+		\details	Лотность родительского ордера умноженного на коэффицент.
+		\internal
+			>Hist:			
+					 @0.0.0.3@2013.09.30@artamir	[*]	Выборка ордеров по sid
+					 @0.0.0.2@2013.09.19@artamir	[+]	getNextLot
+			>Rev:0
+	*/
+	string fn="getNextLot";
+	double aT[][OE_MAX];
+	int sid = getMaxSID();
+	int t_rows = SelectTIBySID(aT, sid);
+	
 	double aFOTY[][OE_MAX];
 	int foty_rows = ELT_SelectByFOTY_d2(aT, aFOTY, foty);
-	
 	if(foty_rows <= 0){return(Lot);}
 	
 	Ad_QuickSort2(aFOTY, -1, -1, OE_GL, A_MODE_DESC);
 	
 	double next_lot = Norm_vol(aFOTY[0][OE_LOT]*Multy);
+	
+	ArrayResize(aT,0);
+	ArrayResize(aFOTY,0);
+	
 	return(next_lot);
 }
 

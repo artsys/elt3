@@ -1,7 +1,8 @@
 	/*
-		>Ver	:	0.1.0.50
-		>Date	:	2013.09.06
-		>Hist:																						
+		>Ver	:	0.1.0.51
+		>Date	:	2013.09.30
+		>Hist:																							
+				 @0.1.0.51@2013.09.30@artamir	[+]	ELT_SelectPosBySID_d2
 				 @0.1.0.50@2013.09.06@artamir	[+]	ELT_SelectNearPrice_d2
 				 @0.1.0.49@2013.09.05@artamir	[+]	ELT_SelectByFOTY_d2
 				 @0.1.0.48@2013.09.04@artamir	[*]	ELT_init
@@ -44,7 +45,7 @@
 
 #property stacksize 16192			
 	
-#define	ELTVER	"0.1.0.50_2013.08.29"
+#define	ELTVER	"0.1.0.51_2013.09.30"
 
 //{	//Include	========================================
 //{		@System	----------------------------------------
@@ -148,7 +149,7 @@ int ELT_start(){
 					 @0.0.0.1@2013.08.28@artamir	[]	ELT_start
 			>Rev:0
 	*/
-
+	string fn="ELT_start";
 	double a[];
 	int t = T_getTickets(a);
 
@@ -436,6 +437,56 @@ int ELT_SelectByFOTY_d2(		double	&s[][] /** source array */
 	A_eraseFilter();										
 	
 	A_FilterAdd_AND(OE_FOTY, foty, -1, AS_OP_EQ);
+	
+	A_d_Select(s, d, add);
+	
+	return(ArrayRange(d, 0));
+}
+
+int ELT_SelectPosBySID_d2(		double	&s[][]		/** source array */
+							,	double	&d[][]		/** destination array */	
+							,	int		sid			/** ИД сессии */
+							,	bool 	add = false	/** добавлять к массиву приемнику */){
+	/**
+		\version	0.0.0.2
+		\date		2013.09.30
+		\author		Morochin <artamir> Artiom
+		\details	Отбор по рыночным ордерам, которые еще не закрыты
+		\internal
+			>Hist:		
+					 @0.0.0.2@2013.09.30@artamir	[]	ELT_DBFN
+			>Rev:0
+	*/
+	
+	A_eraseFilter();										
+	
+	//A_FilterAdd_AND(OE_IT, 1, -1, AS_OP_EQ);
+	A_FilterAdd_AND(OE_IM, 1  , -1, AS_OP_EQ); //Выбираем все рыночные ордера
+	A_FilterAdd_AND(OE_SID, sid, -1, AS_OP_EQ); //у которых sid=
+	
+	A_d_Select(s, d, add);
+	
+	return(ArrayRange(d, 0));
+}
+
+int ELT_SelectTicketsBySID_d2(	double	&s[][]		/** source array */
+							,	double	&d[][]		/** destination array */	
+							,	int		sid			/** ИД сессии */
+							,	bool 	add = false	/** добавлять к массиву приемнику */){
+	/**
+		\version	0.0.0.2
+		\date		2013.09.30
+		\author		Morochin <artamir> Artiom
+		\details	Отбор по всем ордерам, у которых sid=sid
+		\internal
+			>Hist:		
+					 @0.0.0.2@2013.09.30@artamir	[]	ELT_DBFN
+			>Rev:0
+	*/
+	
+	A_eraseFilter();										
+	
+	A_FilterAdd_AND(OE_SID, sid, -1, AS_OP_EQ); //Выбираем ордера с заданным sid.
 	
 	A_d_Select(s, d, add);
 	

@@ -1,11 +1,12 @@
 	/**
-		\version	0.0.0.24
-		\date		2013.09.18
+		\version	0.0.0.25
+		\date		2013.09.29
 		\author		Morochin <artamir> Artiom
 		\details	Trading functtions.
 		\
 			$Revision$
-			>Hist:																								
+			>Hist:																									
+					 @0.0.0.25@2013.09.29@artamir	[+]	TR_CloseAll
 					 @0.0.0.24@2013.09.18@artamir	[]	TR_SendSELLLIMIT_array
 					 @0.0.0.23@2013.09.18@artamir	[]	TR_SendSELLSTOP_array
 					 @0.0.0.22@2013.09.18@artamir	[]	TR_SendBUYLIMIT_array
@@ -1487,6 +1488,29 @@ bool TR_CloseByTicket(int ticket){
 	
 	//------------------------------------------------------
 	return(res);
+}
+
+void TR_CloseAll(int mn=-1){
+	/**
+		\version	0.0.0.1
+		\date		2013.09.29
+		\author		Morochin <artamir> Artiom
+		\details	«акрывает все ордера с заданным магиком
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.09.29@artamir	[]	TR_CloseAll
+			>Rev:0
+	*/
+
+	int t=OrdersTotal();
+	for(int i=t;i>=0;i--){
+		if(!OrderSelect(i,SELECT_BY_POS, MODE_TRADES)){continue;}
+		if(mn>0){
+			if(OrderMagicNumber() != mn){continue;}
+		}
+		
+		TR_CloseByTicket(OrderTicket());
+	}
 }
 
 //}

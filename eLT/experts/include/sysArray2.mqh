@@ -1,10 +1,11 @@
 /**
-	\version	0.0.0.5
-	\date		2013.09.18
+	\version	0.0.0.6
+	\date		2013.09.30
 	\author		Morochin <artamir> Artiom
 	\details	Detailed description
 	\internal
-		>Hist:					
+		>Hist:						
+				 @0.0.0.6@2013.09.30@artamir	[+]	Ad_Sum
 				 @0.0.0.5@2013.09.18@artamir	[+]	Ad_CrossByIdx
 				 @0.0.0.4@2013.09.04@artamir	[*]	Ad_AddRow2
 				 @0.0.0.3@2013.08.29@artamir	[+]	Ad_AddRow2	
@@ -146,7 +147,26 @@ void Ad_QuickSort2(double &a[][], int idx_min=-1, int idx_max=-1, int col=0, int
 	if(idx_min<j){Ad_QuickSort2(a,idx_min,j,col, mode);}
 }	
 
+double Ad_Sum(double &a[][], int col=0){
+	/**
+		\version	0.0.0.1
+		\date		2013.09.30
+		\author		Morochin <artamir> Artiom
+		\details	Возвращает сумму элементов заданной колонки массива.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.09.30@artamir	[+]	Ad_Sum
+			>Rev:0
+	*/
 
+	int rows = ArrayRange(a,0);
+	double sum = 0;
+	for(int i=0; i<rows; i++){
+		sum=sum+a[i][col];
+	}
+	
+	return(sum);
+}
 //..	=== одномерный массив
 void Ad_Copy1To1(double &s[], double &d[]){
 	/**

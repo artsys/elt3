@@ -1,12 +1,14 @@
 	/**
-		\version	0.0.0.16
-		\date		2013.09.26
+		\version	0.0.0.18
+		\date		2013.09.29
 		\author		Morochin <artamir> Artiom
 		\details	База данных ордеров. драйвер - sqlite3
 					библиотека sysSQLite.mqh должна быть прилеплена в основной программе.
 					например в sysELT.mqh
 		\internal
-			>Hist:																
+			>Hist:																		
+					 @0.0.0.18@2013.09.29@artamir	[+]	SQL_DELETE
+					 @0.0.0.17@2013.09.29@artamir	[+]	SQL_setSIDByTicket
 					 @0.0.0.16@2013.09.26@artamir	[+]	SQL_setFOD
 					 @0.0.0.15@2013.09.26@artamir	[+]	SQL_setGLByTicket
 					 @0.0.0.14@2013.09.26@artamir	[+]	SQL_setMPByTicket
@@ -30,7 +32,7 @@
 				Процедура SELECT
 	*/
 
-#define SQLVER		"0.0.0.16_2013.09.26"
+#define SQLVER		"0.0.0.18_2013.09.29"
 
 #define SQLSTRUC_HA		0	//Handle
 #define SQLSTRUC_COLS	1	//COUNT COLS
@@ -71,9 +73,11 @@
 //..    === Настройки сетки
 #define	SQL_MP	21
 #define	SQL_GL	22
+//..	=== Настройки сессии
+#define SQL_SID	23
 //}
 
-#define SQL_MAX 23	//MAX COLS
+#define SQL_MAX 24	//MAX COLS
 
 
 string	sSQL_DB_name = "";
@@ -128,6 +132,8 @@ void	SQL_InitColsArray(){
 	//================
 	aSQL_Cols[SQL_MP]	= "@nMP@tINTEGER";
 	aSQL_Cols[SQL_GL]	= "@nGL@tINTEGER";
+	//================
+	aSQL_Cols[SQL_SID]	= "@nSID@tINTEGER";
 }
 
 //.. Приват
@@ -210,6 +216,7 @@ void SQL_init(){
 					 @0.0.0.1@2013.09.24@artamir	[+]	SQL_init
 			>Rev:0
 	*/
+	string fn="SQL_init";
 	sSQL_DB_name = ":memory:"; //имя файла базы данных.
 	SQL_DB = Sqlite_DB_Open(sSQL_DB_name); //хэндл открытой базы данных.
 	Print("SQL_DB=",SQL_DB);
@@ -217,6 +224,8 @@ void SQL_init(){
 	
 	//написать загрузку базы из файла (LoadOrSave)
 	string sTableCreate = SQL_getTableCreate();	//Получение строки запроса создания таблицы
+	Print(fn+".len="+StringLen(sTableCreate));
+	Print(fn+".q="+sTableCreate);
 	Sqlite_ExecSQL(SQL_DB,sTableCreate);
 }
 
@@ -240,7 +249,7 @@ int	SQL_Insert(string select = ""){
 					 @0.0.0.1@2013.05.08@artamir	[]	SQL_Insert
 			>Rev:0
 	*/
-
+	string fn="SQL_Insert";
 	bool clean_array=true;
 	int ROWS = ArrayRange(aSQL_NameVal,0);
 	int idx = 0;
@@ -270,7 +279,6 @@ int	SQL_Insert(string select = ""){
 		q = select;
 		clean_array=false;
 	}
-	
 	Sqlite_ExecSQL(SQL_DB, q);
 	
 	if(clean_array){
@@ -290,10 +298,12 @@ int SQL_Update(string where = ""){
 					 @0.0.1.1@2013.05.14@artamir	[]	SQL_Update Изменился входной массив aKeyVal
 			>Rev:0
 	*/
+	string fn="SQL_Update";
 	string q = "UPDATE OR REPLACE main SET ";
 	string exp = "";
 	
 	int ROWS = ArrayRange(aSQL_NameVal,0);
+	if(ROWS<=0){return(0);}
 	
 	for(int idx = 0; idx < ROWS; idx++){
 		
@@ -369,6 +379,27 @@ void SQL_addNameVal(int i_name, string s_val=""){
 	aSQL_NameVal[LastRow] = "@n"+SQL_getColName(i_name)+"@v"+s_val;
 }
 
+
+//..	DELETE
+void SQL_DELETE(){
+	/**
+		\version	0.0.0.1
+		\date		2013.09.29
+		\author		Morochin <artamir> Artiom
+		\details	Удаление всех записей из таблицы.
+					Может использоваться при оптимизации тестирования советника.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.09.29@artamir	[]	SQL_DELETE
+			>Rev:0
+	*/
+
+	string fn="SQL_DELETE";
+	string q="DELETE FROM main";
+	int qry=Sqlite_Query(SQL_DB,q);
+	Sqlite_DestroyQuery(qry);
+}
+
 //..    start()
 void SQL_start(){
 	/**
@@ -412,7 +443,7 @@ string SQL_FieldAsString(int query_id, int col_id /** индекс колонк�
 			>Rev:0
 			>Пример: string sy = SQL_FieldAsString(q_id, SQL_SY); // в запросе должна быть эта колонка.
 	*/
-
+	string	fn="SQL_FieldAsString";
 	string	sField_name = SQL_getColName(col_id);		//Получаем имя колонки по индексу ее значения в массиве колонок.
 	int		iField_id	= Sqlite_FieldIndex(query_id, sField_name);	//Получаем индекс колонки в таблице результата запроса.
 	string	res = "";
@@ -434,13 +465,9 @@ double SQL_FieldAsDouble(int query_id, int col_id, int addDigits = 0){
 	*/
 	string fn="SQL_FieldAsDouble";
 	string	field_name = SQL_getColName(col_id);
-	Print(fn+".field_name="+field_name);
 	int		field_id = Sqlite_FieldIndex(query_id, field_name);
-	Print(fn+".field_id=",field_id);
 	double	d_res = Sqlite_FieldAsDouble(query_id, field_id);
-	Print(fn+".d_res_before_norm="+d_res);		
 			d_res = Norm_symb(d_res, "",addDigits);
-	Print(fn+".d_res="+d_res);
 	return(d_res);
 }
 
@@ -455,7 +482,7 @@ int SQL_FieldAsInt(int qry_id, int col_id){
 					 @0.0.0.1@2013.09.25@artamir	[+]	SQL_FieldAsInt
 			>Rev:0
 	*/
-
+	string fn="SQL_FieldAsInt";
 	string field_name = SQL_getColName(col_id);
 	int field_id = Sqlite_FieldIndex(qry_id, field_name);
 	int i_res = Sqlite_FieldAsInt(qry_id,field_id);
@@ -584,6 +611,23 @@ void SQL_setMPByTicket(int ti, int val){
 	ArrayResize(aSQL_NameVal,0);
 	SQL_addNameVal(SQL_TI,ti);
 	SQL_addNameVal(SQL_MP,val);
+	SQL_InsertOrUpdate("TI="+ti);
+}
+
+void SQL_setSIDByTicket(int ti, int val){
+	/**
+		\version	0.0.0.1
+		\date		2013.09.29
+		\author		Morochin <artamir> Artiom
+		\details	Установка ИД сессии
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.09.29@artamir	[+]	SQL_setSIDByTicket
+			>Rev:0
+	*/
+	ArrayResize(aSQL_NameVal,0);
+	SQL_addNameVal(SQL_TI,ti);
+	SQL_addNameVal(SQL_SID,val);
 	SQL_InsertOrUpdate("TI="+ti);
 }
 //}

@@ -1,19 +1,30 @@
 	/**
-		\version	0.0.0.25
-		\date		2013.09.29
+		\version	0.0.0.35
+		\date		2013.10.04
 		\author		Morochin <artamir> Artiom
 		\details	Trading functtions.
 		\
 			$Revision$
-			>Hist:																									
+			>Hist:																																			
+					 @0.0.0.35@2013.10.04@artamir	[]	TR_SendSELLLIMIT_array
+					 @0.0.0.34@2013.10.04@artamir	[]	TR_SendSELLSTOP_array
+					 @0.0.0.33@2013.10.04@artamir	[]	TR_SendBUYLIMIT_array
+					 @0.0.0.32@2013.10.04@artamir	[]	TR_SendBUYSTOP_array
+					 @0.0.0.31@2013.10.04@artamir	[*]	TR_SendPending_array
+					 @0.0.0.30@2013.10.03@artamir	[*]	TR_SendSELLSTOP_array
+					 @0.0.0.29@2013.10.03@artamir	[*]	TR_SendBUYLIMIT_array
+					 @0.0.0.28@2013.10.03@artamir	[*]	TR_SendBUYSTOP_array
+					 @0.0.0.27@2013.10.03@artamir	[+]	TR_getMarketPrice
+					 @0.0.0.26@2013.10.03@artamir	[+] Добавлены константы типов цен открытия.
+														Для использования в сеточных советниках.
 					 @0.0.0.25@2013.09.29@artamir	[+]	TR_CloseAll
-					 @0.0.0.24@2013.09.18@artamir	[]	TR_SendSELLLIMIT_array
-					 @0.0.0.23@2013.09.18@artamir	[]	TR_SendSELLSTOP_array
-					 @0.0.0.22@2013.09.18@artamir	[]	TR_SendBUYLIMIT_array
-					 @0.0.0.21@2013.09.18@artamir	[]	TR_SendBUYSTOP_array
-					 @0.0.0.20@2013.09.18@artamir	[]	TR_SendPending_array
-					 @0.0.0.19@2013.09.18@artamir	[]	TR_SendPendingLikeOrder
-					 @0.0.0.18@2013.09.17@artamir	[]	TR_SendPendingLikeOrder
+					 @0.0.0.24@2013.09.18@artamir	[*]	TR_SendSELLLIMIT_array
+					 @0.0.0.23@2013.09.18@artamir	[*]	TR_SendSELLSTOP_array
+					 @0.0.0.22@2013.09.18@artamir	[*]	TR_SendBUYLIMIT_array
+					 @0.0.0.21@2013.09.18@artamir	[*]	TR_SendBUYSTOP_array
+					 @0.0.0.20@2013.09.18@artamir	[*]	TR_SendPending_array
+					 @0.0.0.19@2013.09.18@artamir	[*]	TR_SendPendingLikeOrder
+					 @0.0.0.18@2013.09.17@artamir	[*]	TR_SendPendingLikeOrder
 					 @0.0.0.17@2013.09.16@artamir	[+]	TR_SendPendingLikeOrder
 					 @0.0.0.16@2013.09.16@artamir	[*]	TR_SendSELLLIMIT_array
 					 @0.0.0.15@2013.09.16@artamir	[*]	TR_SendSELLSTOP_array
@@ -37,9 +48,21 @@ extern string	TR_E = "===================================";
 
 //{	//=== PUBLIC	====================================
 
+#define TR_MODE_ASK 0; 
+#define TR_MODE_BID 1;
+#define TR_MODE_OOP 2; //Order Open Price (Зависит от типа ордера).
+#define TR_MODE_OCP 3; //Order Close Price (Зависит от типа ордера).
+#define TR_MODE_AVG 4; //Средняя цена между бид и аск.
+
 //{	//====== PENDING ORDERS ============================
 
-int TR_SendBUYSTOP(double StartPrice, int AddPips = 0, double Vol = 0.01, int TPPip = 0, int SLPip = 0, string Comm = "", int Magic = -1){
+int TR_SendBUYSTOP (	double	StartPrice //{
+					,	int		AddPips = 0
+					,	double	Vol = 0.01
+					,	int		TPPip = 0
+					,	int		SLPip = 0
+					,	string	Comm = ""
+					,	int		Magic = -1){
 	/**
 		\version	0.0.1
 		\date		2013.04.22
@@ -84,13 +107,25 @@ int TR_SendBUYSTOP(double StartPrice, int AddPips = 0, double Vol = 0.01, int TP
 	
 	//------------------------------------------------------
 	return(ticket);
-}
+} //}
 
-int TR_SendBUYSTOP_array(double &d[], double StartPrice, int AddPips = 0, double Vol = 0.01, double TPPip = 0, double SLPip = 0, string Comm = "", int Magic = -1, string Sy="", int Mode=2){
+int TR_SendBUYSTOP_array(		double &d[] //{
+							,	double StartPrice
+							,	int AddPips = 0
+							,	double Vol = 0.01
+							,	double TPPip = 0
+							,	double SLPip = 0
+							,	string Comm = ""
+							,	int Magic = -1 /** по умолчанию магик берется из TR_MN */
+							,	string Sy="" /** по умолчанию по текущему инструменту */
+							,	int Mode=2 /** по умолчанию тп и сл задаются в пунктах */
+							,	int pr_mode=0 /** при старт прайс=0 по умолчанию будет цена аск */){
 	/*
-		>Ver	:	0.0.0.5
-		>Date	:	2013.09.18
-		>Hist:				
+		>Ver	:	0.0.0.7
+		>Date	:	2013.10.04
+		>Hist:						
+				 @0.0.0.7@2013.10.04@artamir	[*]	TR_SendBUYSTOP_array
+				 @0.0.0.6@2013.10.03@artamir	[+]	добавлена возможность выбора ценового уровня при старт прайс=0.
 				 @0.0.0.5@2013.09.18@artamir	[+]	Добавлена возможность задавать сл и тп ценовыми уровнями.
 				 @0.0.0.4@2013.09.16@artamir	[*]	TR_SendBUYSTOP_array добавлена валютная пара для выставления ордеров.
 				 @0.0.0.3@2013.09.04@artamir	[*]	TR_SendBUYSTOP_array + добавлена возможность выставлять отложенные ордера от текущей цены Аск.
@@ -117,13 +152,15 @@ int TR_SendBUYSTOP_array(double &d[], double StartPrice, int AddPips = 0, double
 	double SLPrice	= 0;
 	double rest_vol	= Vol;
 	
+	if(Sy==""){Sy=Symbol();}
+	
 	int ROWS = 0;
 	
 	ArrayResize(d,0);
 	
 	double _StartPrice = StartPrice;
 	if(_StartPrice<=0){
-		_StartPrice=MarketInfo(Symbol(),MODE_ASK);
+		_StartPrice=TR_getMarketPrice(OP_BUYSTOP, pr_mode, Sy);
 	}
 	
 	SendPrice = Norm_symb((_StartPrice + AddPips*Point));
@@ -171,13 +208,25 @@ int TR_SendBUYSTOP_array(double &d[], double StartPrice, int AddPips = 0, double
 
 	//------------------------------------------------------
 	return(ArrayRange(d,0));
-}
+} //}
 
-int TR_SendBUYLIMIT_array(double &d[], double StartPrice, int AddPips = 0, double Vol = 0.01, double TPPip = 0, double SLPip = 0, string Comm = "", int Magic = -1, string Sy="", int Mode=2){
+int TR_SendBUYLIMIT_array(		double &d[] //{
+							,	double StartPrice
+							,	int AddPips = 0
+							,	double Vol = 0.01
+							,	double TPPip = 0
+							,	double SLPip = 0
+							,	string Comm = ""
+							,	int Magic = -1
+							,	string Sy=""
+							,	int Mode=2
+							,	int pr_mode=1 /** при старт прайс=0 по умолчанию будет цена бид */){
 	/*
-		>Ver	:	0.0.0.5
-		>Date	:	2013.09.18
-		>Hist:			
+		>Ver	:	0.0.0.7
+		>Date	:	2013.10.04
+		>Hist:					
+				 @0.0.0.7@2013.10.04@artamir	[*]	TR_SendBUYLIMIT_array
+				 @0.0.0.6@2013.10.03@artamir	[+]	добавлена возможность выбора ценового уровня при старт прайс=0.
 				 @0.0.0.5@2013.09.18@artamir	[+]	Добавлена возможность задавать сл и тп ценовыми уровнями.
 				 @0.0.0.4@2013.09.16@artamir	[*]	Добавлена валютная пара.
 				 @0.0.3@2013.04.22@artamir	[]	TR_SendBUYLIMIT_array
@@ -204,9 +253,15 @@ int TR_SendBUYLIMIT_array(double &d[], double StartPrice, int AddPips = 0, doubl
 	double rest_vol	= Vol;
 	int ROWS = 0;
 	
+	if(Sy==""){Sy=Symbol();}
+	
 	ArrayResize(d,0);
 	
-	SendPrice = Norm_symb((StartPrice + AddPips*Point));
+	double _StartPrice = StartPrice;
+	if(_StartPrice<=0){
+		_StartPrice=TR_getMarketPrice(OP_BUYLIMIT, pr_mode, Sy);
+	}
+	SendPrice = Norm_symb((_StartPrice + AddPips*Point));
 	
 	//--------------
 	if(TPPip > 0){
@@ -251,7 +306,7 @@ int TR_SendBUYLIMIT_array(double &d[], double StartPrice, int AddPips = 0, doubl
 
 	//------------------------------------------------------
 	return(ArrayRange(d,0));
-}
+} //}
 
 int TR_SendBUYLIMIT(double StartPrice, int AddPips = 0, double Vol = 0.01, int TPPip = 0, int SLPip = 0, string Comm = "", int Magic = -1){
 	/*
@@ -354,11 +409,23 @@ int TR_SendSELLSTOP(double StartPrice, int AddPips = 0, double Vol = 0.01, int T
 	return(ticket);
 }
 
-int TR_SendSELLSTOP_array(double &d[], double StartPrice, int AddPips = 0, double Vol = 0.01, double TPPip = 0, double SLPip = 0, string Comm = "", int Magic = -1, string Sy="", int Mode=2){
+int TR_SendSELLSTOP_array(		double &d[] //{
+							,	double StartPrice
+							,	int AddPips = 0
+							,	double Vol = 0.01
+							,	double TPPip = 0
+							,	double SLPip = 0
+							,	string Comm = ""
+							,	int Magic = -1
+							,	string Sy=""
+							,	int Mode=2
+							,	int pr_mode=1 /** при старт прайс=0 по умолчанию будет цена бид */){
 	/*
-		>Ver	:	0.0.0.4
-		>Date	:	2013.09.18
-		>Hist:			
+		>Ver	:	0.0.0.6
+		>Date	:	2013.10.04
+		>Hist:					
+				 @0.0.0.6@2013.10.04@artamir	[*]	TR_SendSELLSTOP_array
+				 @0.0.0.5@2013.10.03@artamir	[+]	добавлена возможность выбора ценового уровня при старт прайс=0.
 				 @0.0.0.4@2013.09.18@artamir	[*]	Добавлена возможность задавать тп и сл ценовыми уровнями.
 				 @0.0.0.3@2013.09.16@artamir	[*]	Добавлена валютная пара
 				 @0.0.0.2@2013.09.04@artamir	[*]	TR_SendSELLSTOP_array + добавлена возможность выставления отложенных ордеров от текущей цены.
@@ -384,13 +451,15 @@ int TR_SendSELLSTOP_array(double &d[], double StartPrice, int AddPips = 0, doubl
 	double SLPrice	= 0;
 	double rest_vol	= Vol;
 	
+	if(Sy==""){Sy=Symbol();}
+	
 	int ROWS = 0;
 	
 	ArrayResize(d,0);
 	
 	double _StartPrice = StartPrice;
 	if(_StartPrice<=0){
-		_StartPrice=MarketInfo(Symbol(),MODE_BID);
+		_StartPrice=TR_getMarketPrice(OP_SELLSTOP, pr_mode, Sy);
 	}
 	
 	SendPrice = Norm_symb((_StartPrice - AddPips*Point));
@@ -438,13 +507,24 @@ int TR_SendSELLSTOP_array(double &d[], double StartPrice, int AddPips = 0, doubl
 
 	//------------------------------------------------------
 	return(ArrayRange(d,0));
-}
+} //}
 
-int TR_SendSELLLIMIT_array(double &d[], double StartPrice, int AddPips = 0, double Vol = 0.01, double TPPip = 0, double SLPip = 0, string Comm = "", int Magic = -1, string Sy="", int Mode=2){
+int TR_SendSELLLIMIT_array(		double &d[]	//{
+							,	double StartPrice
+							,	int AddPips = 0
+							,	double Vol = 0.01
+							,	double TPPip = 0
+							,	double SLPip = 0
+							,	string Comm = ""
+							,	int Magic = -1
+							,	string Sy=""
+							,	int Mode=2
+							,	int pr_mode=0){
 	/*
-		>Ver	:	0.0.0.4
-		>Date	:	2013.09.18
-		>Hist:		
+		>Ver	:	0.0.0.5
+		>Date	:	2013.10.04
+		>Hist:			
+				 @0.0.0.5@2013.10.04@artamir	[*]	TR_SendSELLLIMIT_array
 				 @0.0.0.4@2013.09.18@artamir	[+]	Добавлена возможность задавать сл и тп в виде ценовых уровней.
 				 @0.0.0.3@2013.09.16@artamir	[*]	Добавлена валютная пара.
 		>Desc:
@@ -469,12 +549,18 @@ int TR_SendSELLLIMIT_array(double &d[], double StartPrice, int AddPips = 0, doub
 	double SLPrice	= 0;
 	double rest_vol	= Vol;
 	
+	if(Sy==""){Sy=Symbol();}
+	
 	int ROWS = 0;
 	
 	ArrayResize(d,0);
 	
+	double _StartPrice = StartPrice;
+	if(_StartPrice<=0){
+		_StartPrice=TR_getMarketPrice(OP_SELLLIMIT, pr_mode, Sy);
+	}
 	
-	SendPrice = Norm_symb((StartPrice - AddPips*Point));
+	SendPrice = Norm_symb((_StartPrice - AddPips*Point));
 	
 	//--------------
 	if(TPPip > 0){
@@ -519,7 +605,7 @@ int TR_SendSELLLIMIT_array(double &d[], double StartPrice, int AddPips = 0, doub
 
 	//------------------------------------------------------
 	return(ArrayRange(d,0));
-}
+} //}
 
 int TR_SendSELLLIMIT(double StartPrice, int AddPips = 0, double Vol = 0.01, int TPPip = 0, int SLPip = 0, string Comm = "", int Magic = -1){
 /*
@@ -608,25 +694,37 @@ int TR_SendSTOPLikeOrder_array(double &d[], int src_ti = 0, int AddPips = 0, dou
 	
 }
 
-int TR_SendPending_array(double &d[], int type, double StartPrice, int AddPips = 0, double Vol = 0.01, double TPPip = 0, double SLPip = 0, string Comm = "", int Magic = -1, string Sy="", int Mode=2){
+int TR_SendPending_array(		double &d[]	//{
+							,	int type
+							,	double StartPrice
+							,	int AddPips = 0
+							,	double Vol = 0.01
+							,	double TPPip = 0
+							,	double SLPip = 0
+							,	string Comm = ""
+							,	int Magic = -1
+							,	string Sy=""
+							,	int Mode=2
+							,	int Pr_mode=2){
 	/**
-		\version	0.0.0.3
-		\date		2013.09.18
+		\version	0.0.0.4
+		\date		2013.10.04
 		\author		Morochin <artamir> Artiom
 		\details	Выставляет отложенные ордера до заданного объема.
 		\internal
-			>Hist:			
+			>Hist:				
+					 @0.0.0.4@2013.10.04@artamir	[+]	добавил выбор стартовой цены при старт прайс=0
 					 @0.0.0.3@2013.09.18@artamir	[*]	Изменения связанные с возможностью выставлять сл и тп в виде ценового уровня.
 					 @0.0.0.2@2013.09.16@artamir	[*]	Добавлена валютная пара для выставления.
 					 @0.0.0.1@2013.06.28@artamir	[]	TR_SendPending_array
 			>Rev:0
 	*/
 	
-	if(type == OP_BUYSTOP	){return(TR_SendBUYSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode));}
-	if(type == OP_BUYLIMIT	){return(TR_SendBUYLIMIT_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode));}
-	if(type == OP_SELLSTOP	){return(TR_SendSELLSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode));}
-	if(type == OP_SELLLIMIT	){return(TR_SendSELLLIMIT_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode));}
-}
+	if(type == OP_BUYSTOP	){return(TR_SendBUYSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
+	if(type == OP_BUYLIMIT	){return(TR_SendBUYLIMIT_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
+	if(type == OP_SELLSTOP	){return(TR_SendSELLSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
+	if(type == OP_SELLLIMIT	){return(TR_SendSELLLIMIT_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
+}	//}
 
 int TR_SendPendingLikeOrder(double &d[], int src_ti=0, int AddPips=0){
 	/**
@@ -634,8 +732,8 @@ int TR_SendPendingLikeOrder(double &d[], int src_ti=0, int AddPips=0){
 		\date		2013.09.18
 		\author		Morochin <artamir> Artiom
 		\details	Выставление похожего ордера в зависимости от цены.
-					Если ордер-источник=бай и цена ниже цены ордера, то выставляется байстоп
-					Если ордер-источник=бай и цена выше цены ордера, то выставляется байлимит
+					Если ордер-источник=бай и цена ниже цены ордера, то выставляется байстоп.
+					Если ордер-источник=бай и цена выше цены ордера, то выставляется байлимит.
 		\internal
 			>Hist:			
 					 @0.0.0.3@2013.09.18@artamir	[*]	Изменения в связи с возможностью выставлять сл и тп в виде ценового уровня.
@@ -793,6 +891,52 @@ int TR_SendREVERSOrder(double &d[], int src_ti, double vol = 0.01, double lot_mu
 //}
 
 //{	//=== PRIVATE	====================================
+double TR_getMarketPrice(int ty, int mode, string sy=""){
+	/**
+		\version	0.0.0.1
+		\date		2013.10.03
+		\author		Morochin <artamir> Artiom
+		\details	В зависимости от метода возвращает текущую рыночную цену.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.10.03@artamir	[+]	TR_getMarketPrice
+						TR_MODE_AVG, TR_MODE_BID, TR_MODE_ASK, 
+						TR_MODE_OOP для OP_BUY, OP_BUYSTOP, OP_SELL, OP_SELLSTOP
+			>Rev:0
+	*/
+	if(sy==""){sy=Symbol();}
+	
+	double dBid = MarketInfo(sy, MODE_BID);
+	double dAsk = MarketInfo(sy, MODE_ASK);
+	
+	double res = -1.00;
+	
+	if(mode==TR_MODE_AVG){
+		res=(dBid+dAsk)/2;
+	}
+	
+	if(mode==TR_MODE_BID){
+		res=dBid;
+	}
+	
+	if(mode==TR_MODE_ASK){
+		res=dAsk;
+	}
+	
+	if(mode==TR_MODE_OOP){
+		if(ty==OP_BUY || ty==OP_BUYSTOP){
+			res=dAsk;
+		}
+		
+		if(ty==OP_SELL || ty==OP_SELLSTOP){
+			res=dBid;
+		}
+	
+	}
+	
+	return(Norm_symb(res));
+}
+
 int	_TR_CountOrdersToSend(double all_vol = 0){
 	/*
 		>Ver	:	0.0.0.1
@@ -1420,6 +1564,7 @@ bool TR_CloseByTicket(int ticket){
 			@0.0.2@2012.10.01@artamir	[]
 			@0.0.1@2012.09.14@artamir	[]
 		>Desc:
+		Закрытие ордера по тикету. Если ордер - рыночный, то закрытие происходит по рынку, если ордер - отложенный, то он удаляется
 	*/
 	
 	//------------------------------------------------------
@@ -1495,7 +1640,7 @@ void TR_CloseAll(int mn=-1){
 		\version	0.0.0.1
 		\date		2013.09.29
 		\author		Morochin <artamir> Artiom
-		\details	Закрывает все ордера с заданным магиком
+		\details	Закрывает все ордера. Возможна фильтрация по магику
 		\internal
 			>Hist:	
 					 @0.0.0.1@2013.09.29@artamir	[]	TR_CloseAll

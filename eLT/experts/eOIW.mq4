@@ -1,12 +1,17 @@
 /**
-	\version	3.0.1.28
-	\date		2013.09.30
+	\version	3.0.1.34
+	\date		2013.10.06
 	\author		Morochin <artamir> Artiom
 	\details	Шабон построения советника на базе фреймворка eLT 3.0.1
 				Orders in window.
 	\internal
 		Вместо отбора по локальному родителю использовать отбор по ценовому уровню.
-		>Hist:																												
+		>Hist:																																	
+				 @3.0.1.34@2013.10.06@artamir	[!]	Изменен параметр stacksize
+				 @3.0.1.33@2013.10.04@artamir	[+] Tral	
+				 @3.0.1.31@2013.10.03@artamir	[]	isChildNearPrice
+				 @3.0.1.30@2013.10.03@artamir	[]	SendChild
+				 @3.0.1.29@2013.09.30@artamir	[!]	getNextLot
 				 @3.0.1.28@2013.09.30@artamir	[*]	SendSTOPNet
 				 @3.0.1.27@2013.09.30@artamir	[*]	FixProfit
 				 @3.0.1.26@2013.09.30@artamir	[*]	startext
@@ -40,7 +45,7 @@
 	
 //{ === DEFINES
 #define EXP	"eOIW"	/** имя эксперта */
-#define VER	"3.0.1.28_2013.09.30"
+#define VER	"3.0.1.34_2013.10.06"
 #define DATE "2013.09.05"	/** extert date */	
 //}
 bool isStarted=true;
@@ -72,6 +77,11 @@ extern	int			TP=150;		//тейкпрофит сетки в пунктах.
 extern	double		Lot=0.1;	//Лот родительского ордера.
 extern	double		Multy=0.6;	//коэф. для вычисления начального лота. следующих сеток.	
 extern	double		Fix=200;	//фиксированный профит по ордерам сессии.
+
+extern	bool		TRAL_Use=false;
+extern	int			TRAL_Begin_pip=0;
+extern	int			TRAL_DeltaPips=10;
+extern	int			TRAL_Step_pip=5;
 extern	string	e1="==== EXPERT END =====";//}
 //}
 
@@ -208,8 +218,10 @@ int startext(){
 				OE_eraseArray();
 				return(0);
 			}
+			
+			Tral();
 		}
-		
+	
 		int res_tmr=TMR_Stop(h_cfp);
 		if(res_tmr>cfp){cfp=res_tmr;}
 	//..	=== Блок сопровождения позиций
@@ -270,7 +282,7 @@ bool FixProfit(){
 	double aT[][OE_MAX];
 	
 	SelectPosBySID(aT, sid);
-	double sum = Ad_Sum(aT, OE_OPR);
+	double sum = Ad_Sum2(aT, OE_OPR);
 	
 	if(sum >= Fix){
 		TR_CloseAll(TR_MN);
@@ -434,19 +446,21 @@ void CheckNets(){
 					 @0.0.0.1@2013.09.12@artamir	[]	CheckNets
 			>Rev:0
 	*/
-
+	string fn="CheckNets";
 	double a[][OE_MAX];
 	if(SelectExpertTickets(a)>0){
 		double aB[][OE_MAX];
 		double _lot=-1;
+		bool new_sid_false=false;
+		bool sendRevers2Step_true=true;
 		if(ELT_SelectByFOTY_d2(a,aB,OP_BUYSTOP)<=0){
 			_lot=getNextLot(OP_BUYSTOP);
-			SendParent(OP_BUYSTOP,_lot);
+			SendParent(OP_BUYSTOP,_lot,new_sid_false,sendRevers2Step_true);
 		}
 		
 		if(ELT_SelectByFOTY_d2(a,aB,OP_SELLSTOP)<=0){
 			_lot=getNextLot(OP_SELLSTOP);
-			SendParent(OP_SELLSTOP,_lot);
+			SendParent(OP_SELLSTOP,_lot,new_sid_false,sendRevers2Step_true);
 		}
 	}
 }
@@ -469,6 +483,51 @@ bool isExpertsTickets(){
 	if(SelectExpertTickets(a)>0){return(true);}
 	
 	return(false);
+}
+
+bool isChildNearPrice(double child_op, int parent_ty){
+	/**
+		\version	0.0.0.1
+		\date		2013.10.03
+		\author		Morochin <artamir> Artiom
+		\details	Проверяет есть ли ордера с заданным фильтром на ценовом уровне.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.10.03@artamir	[+]	isChildNearPrice
+			>Rev:0
+	*/
+	string fn="isTINearPrice";
+	int h_set=TMR_Start("set");
+	double aT[][OE_MAX];
+	int t_rows=SelectExpertTickets(aT);
+	int res_set=TMR_Stop(h_set);
+	if(res_set>set){set=res_set;}
+	
+	int h_np=TMR_Start("np");
+	double aNP[][OE_MAX];
+	int np_rows=ELT_SelectNearPrice_d2(aT, aNP, child_op);
+	int res_np=TMR_Stop(h_np);
+	if(res_np>np){np=res_np;}
+	
+	
+	bool isChild = false;
+	for(int np_i=0; np_i<np_rows;np_i++){
+		int ty = aNP[np_i][OE_TY];
+		if(parent_ty==OP_BUY || parent_ty==OP_BUYSTOP){
+			if(ty==OP_SELL || ty==OP_SELLSTOP || ty==OP_SELLLIMIT){
+				isChild=true;
+				break;
+			}
+		}
+		if(parent_ty==OP_SELL || parent_ty==OP_SELLSTOP){
+			if(ty==OP_BUY || ty==OP_BUYSTOP || ty==OP_BUYLIMIT){
+				isChild=true;
+				break;
+			}
+		}
+	}
+	
+	return(isChild);
 }
 
 int SelectExpertTickets(double &aT[][]){
@@ -568,7 +627,6 @@ int SelectTIBySID(double &a[][], int sid){
 	return(ArrayRange(a,0));
 }
 
-
 int SelectTINearPrice(double &a[][], double pr){
 	/**
 		\version	0.0.0.1
@@ -591,14 +649,15 @@ int SelectTINearPrice(double &a[][], double pr){
 	ArrayResize(aT,0);
 }
 
-int SendChild(int parent_ti){
+int SendChild(int parent_ti, int step_koef=1){
 	/**
-		\version	0.0.0.5
-		\date		2013.09.30
+		\version	0.0.0.6
+		\date		2013.10.03
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:					
+			>Hist:						
+					 @0.0.0.6@2013.10.03@artamir	[*]	Добавлен параметр коэф. шага.
 					 @0.0.0.5@2013.09.30@artamir	[*]	Выставление лотом родительского ордера.
 					 @0.0.0.4@2013.09.12@artamir	[*]	Для выставления байстоп ордера нужно чтоб цена была ниже цены открытия селлового ордера.
 					 @0.0.0.3@2013.09.11@artamir	[]	SendChild
@@ -617,19 +676,19 @@ int SendChild(int parent_ti){
 	
 	int ty = -1;
 	int foty = -1;
-	if(parent_ty == OP_SELL){
+	if(parent_ty == OP_SELL || parent_ty == OP_SELLSTOP){
 		ty=OP_BUYSTOP;
 		foty=OP_BUYSTOP;
-		if(dBID >= parent_op){
+		if(dBID >= parent_op && parent_ty == OP_SELL){
 			//ty = OP_BUYLIMIT;
 			ty=-1;
 		}
 	}
 	
-	if(parent_ty == OP_BUY){
+	if(parent_ty == OP_BUY || parent_ty == OP_BUYSTOP){
 		ty=OP_SELLSTOP;
 		foty=OP_SELLSTOP;
-		if(dASK <= parent_op){
+		if(dASK <= parent_op && parent_ty == OP_BUY){
 			//ty = OP_SELLLIMIT;
 			ty=-1;
 		}
@@ -648,7 +707,7 @@ int SendChild(int parent_ti){
 	int max_gl = getMaxGL(foty);
 	
 	double a[];
-	TR_SendPending_array(a, ty, parent_op, Step, parent_lot);
+	TR_SendPending_array(a, ty, parent_op, Step*step_koef, parent_lot);
 	int ti = a[0];
 	int sid = getMaxSID();
 	OE_setGLByTicket(ti,(max_gl+1));
@@ -661,7 +720,10 @@ int SendChild(int parent_ti){
 	}
 }
 
-int SendParent(int ty, double lot=-1, bool new_sid=false){
+int SendParent(		int ty	/** тип родителя */
+				,	double lot=-1 /** объем родителя */
+				,	bool new_sid=false /** создавать новую сессию? */
+				,	bool sendRevers2Step=false /** выставлять реверс в 2-х шагах (для закрытия по тп)*/){
 	/**
 		\version	0.0.0.0
 		\date		2013.09.12
@@ -674,6 +736,10 @@ int SendParent(int ty, double lot=-1, bool new_sid=false){
 
 	double a[];
 	double start_pr=0.00;
+	double _tp=0, _sl=0;
+	string _comm="", _sy="";
+	int _mn=-1, _mode=TR_MODE_PIP, _pr_mode=TR_MODE_AVG;
+	
 	if(lot<=0){lot=MarketInfo(Symbol(), MODE_MINLOT);}
 	
 	int sid=getMaxSID();
@@ -681,13 +747,17 @@ int SendParent(int ty, double lot=-1, bool new_sid=false){
 		sid=sid+1;
 	}
 	
-	int rows_a=TR_SendPending_array(a, ty, start_pr, Step, lot);
+	int rows_a=TR_SendPending_array(a, ty, start_pr, Step, lot, _tp, _sl, _comm, _mn, _sy, _mode, _pr_mode);
 	
 	for(int i=0; i<rows_a;i++){
 		OE_setGLByTicket(a[i],1);
 		OE_setSIDByTicket(a[i],sid);
 		TR_ModifyTP(a[i],TP,TR_MODE_PIP);
 		SendSTOPNet(a[i]);
+		
+		if(sendRevers2Step){
+			SendChild(a[i], 2);
+		}
 	}
 	
 	ArrayResize(a,0);
@@ -776,12 +846,13 @@ int getMaxSID(){
 
 double getNextLot(int foty){
 	/**
-		\version	0.0.0.3
+		\version	0.0.0.4
 		\date		2013.09.30
 		\author		Morochin <artamir> Artiom
 		\details	Лотность родительского ордера умноженного на коэффицент.
 		\internal
-			>Hist:			
+			>Hist:				
+					 @0.0.0.4@2013.09.30@artamir	[!]	Исправлено получение лота последней сетки.
 					 @0.0.0.3@2013.09.30@artamir	[*]	Выборка ордеров по sid
 					 @0.0.0.2@2013.09.19@artamir	[+]	getNextLot
 			>Rev:0
@@ -790,17 +861,19 @@ double getNextLot(int foty){
 	double aT[][OE_MAX];
 	int sid = getMaxSID();
 	int t_rows = SelectTIBySID(aT, sid);
-	
 	double aFOTY[][OE_MAX];
 	int foty_rows = ELT_SelectByFOTY_d2(aT, aFOTY, foty);
 	if(foty_rows <= 0){return(Lot);}
 	
-	Ad_QuickSort2(aFOTY, -1, -1, OE_GL, A_MODE_DESC);
-	
-	double next_lot = Norm_vol(aFOTY[0][OE_LOT]*Multy);
+	double aGL[][OE_MAX];
+	int gl_rows=ELT_SelectByGL_d2(aFOTY, aGL, 1);
+	if(gl_rows<0){return(Lot);}
+	Ad_QuickSort2(aGL, -1, -1, OE_LOT, A_MODE_DESC);
+	double next_lot = Norm_vol(aGL[0][OE_LOT]*Multy);
 	
 	ArrayResize(aT,0);
 	ArrayResize(aFOTY,0);
+	ArrayResize(aGL,0);
 	
 	return(next_lot);
 }
@@ -818,4 +891,64 @@ int CalcLevels(){
 	*/
 	return(MathFloor(TP/Step)-1);
 }
+
+void Tral(){
+	/**
+		\version	0.0.0.5
+		\date		2013.06.25
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:					
+					 @0.0.0.5@2013.06.25@artamir	[]	CloseAllPendings
+					 @0.0.0.4@2013.05.17@artamir	[]	CloseAllPendings
+					 @0.0.0.3@2013.05.15@artamir	[]	CloseAllPendings
+					 @0.0.0.2@2013.05.15@artamir	[]	CloseAllPendings
+					 @0.0.0.1@2013.05.15@artamir	[]	CloseAllPendings
+			>Rev:0
+	*/
+
+	if(!TRAL_Use){return;}
+	
+	double d[][OE_MAX];
+	//{ --- Если СЛ > 0
+	A_eraseFilter();										
+	
+	A_FilterAdd_AND(OE_IT, 1, -1, AS_OP_EQ);
+	A_FilterAdd_AND(OE_MN, TR_MN, -1, AS_OP_EQ);
+	A_FilterAdd_AND(OE_CP2SL, (TRAL_Begin_pip+TRAL_DeltaPips), -1, AS_OP_ABOVE);
+	A_FilterAdd_AND(OE_CP2OP, (TRAL_DeltaPips), -1, AS_OP_ABOVE);
+	
+	A_d_Select(aOE, d);
+	
+	int ROWS = ArrayRange(d, 0);
+	
+	for(int idx = 0; idx < ROWS; idx++){
+		int ti = d[idx][OE_TI];
+		TR_ModifySLByPrice(ti, TRAL_Step_pip);
+	}
+	//}
+	
+	//{ --- Если СЛ = 0
+	ArrayResize(d, 0);
+	
+	A_eraseFilter();										
+	
+	A_FilterAdd_AND(OE_IT, 1, -1, AS_OP_EQ);
+	A_FilterAdd_AND(OE_MN, TR_MN, -1, AS_OP_EQ);
+	A_FilterAdd_AND(OE_SL, 0, -1, AS_OP_EQ);
+	A_FilterAdd_AND(OE_CP2OP, (TRAL_DeltaPips), -1, AS_OP_ABOVE);
+	
+	A_d_Select(aOE, d);
+	
+	ROWS = ArrayRange(d, 0);
+	
+	for(idx = 0; idx < ROWS; idx++){
+		ti = d[idx][OE_TI];
+		TR_ModifySLByPrice(ti, TRAL_Step_pip);
+	}
+	//}
+	
+	ArrayResize(d,0);
+}	
 //}

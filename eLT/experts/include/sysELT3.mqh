@@ -1,7 +1,8 @@
 	/*
-		>Ver	:	0.1.0.51
-		>Date	:	2013.09.30
-		>Hist:																							
+		>Ver	:	0.1.0.52
+		>Date	:	2013.10.06
+		>Hist:																								
+				 @0.1.0.52@2013.10.06@artamir	[!]	Изменен параметр stacksize
 				 @0.1.0.51@2013.09.30@artamir	[+]	ELT_SelectPosBySID_d2
 				 @0.1.0.50@2013.09.06@artamir	[+]	ELT_SelectNearPrice_d2
 				 @0.1.0.49@2013.09.05@artamir	[+]	ELT_SelectByFOTY_d2
@@ -43,9 +44,9 @@
 			DO NOT CHANGE!!!!
 	*/
 
-#property stacksize 16192			
+#property stacksize 1024			
 	
-#define	ELTVER	"0.1.0.51_2013.09.30"
+#define	ELTVER	"0.1.0.52_2013.10.06"
 
 //{	//Include	========================================
 //{		@System	----------------------------------------

@@ -1,10 +1,12 @@
 /**
-	\version	0.0.0.6
-	\date		2013.09.30
+	\version	0.0.0.8
+	\date		2013.10.01
 	\author		Morochin <artamir> Artiom
 	\details	Detailed description
 	\internal
-		>Hist:						
+		>Hist:								
+				 @0.0.0.8@2013.10.01@artamir	[!] Ad_Sum2	
+				 @0.0.0.7@2013.10.01@artamir	[+]	Ad_addRow1
 				 @0.0.0.6@2013.09.30@artamir	[+]	Ad_Sum
 				 @0.0.0.5@2013.09.18@artamir	[+]	Ad_CrossByIdx
 				 @0.0.0.4@2013.09.04@artamir	[*]	Ad_AddRow2
@@ -122,8 +124,16 @@ void Ad_QuickSort2(double &a[][], int idx_min=-1, int idx_max=-1, int col=0, int
 					 @0.0.0.1@2013.08.29@artamir	[+]	
 			>Rev:0
 	*/
-
-	if(ArrayRange(a,0)<2){return;}
+	string fn="Ad_QuickSort2";
+	if(ArrayRange(a,0)<2){
+		string	order="";
+				order=order+col+" ";
+				if(mode==A_MODE_ASC)
+					order=order+">;";
+				else
+					order=order+"<;";
+		A_d_Sort2( a, order);
+		return;}
 	
 	if(idx_min<0){idx_min=0;}
 	if(idx_max<0){idx_max=ArrayRange(a,0)-1;}
@@ -131,7 +141,6 @@ void Ad_QuickSort2(double &a[][], int idx_min=-1, int idx_max=-1, int col=0, int
 	int i=idx_min, j=idx_max;
 	int idx_pivot = MathRound((i+j)/2);
 	double pivot_value = (a[i][col]+a[j][col]+a[idx_pivot][col])/3; //усредненное значение первого, последнего и среднего элемента массива. 
-	
 	while(i<j){
 		if(mode == A_MODE_ASC){
 			while(a[i][col]<pivot_value){i++;}
@@ -147,14 +156,15 @@ void Ad_QuickSort2(double &a[][], int idx_min=-1, int idx_max=-1, int col=0, int
 	if(idx_min<j){Ad_QuickSort2(a,idx_min,j,col, mode);}
 }	
 
-double Ad_Sum(double &a[][], int col=0){
+double Ad_Sum2(double &a[][], int col=0){
 	/**
-		\version	0.0.0.1
-		\date		2013.09.30
+		\version	0.0.0.2
+		\date		2013.10.01
 		\author		Morochin <artamir> Artiom
 		\details	Возвращает сумму элементов заданной колонки массива.
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2013.10.01@artamir	[!] изменилось название Ad_Sum => Ad_Sum2	
 					 @0.0.0.1@2013.09.30@artamir	[+]	Ad_Sum
 			>Rev:0
 	*/
@@ -168,6 +178,25 @@ double Ad_Sum(double &a[][], int col=0){
 	return(sum);
 }
 //..	=== одномерный массив
+
+int Ad_addRow1(double &a[]){
+	/**
+		\version	0.0.0.1
+		\date		2013.10.01
+		\author		Morochin <artamir> Artiom
+		\details	Изменяет размерность массива на +1. Возвращает индекс последнего элемента.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.10.01@artamir	[+]
+			>Rev:0
+	*/
+
+	int rows=ArrayRange(a,0)+1;
+			 ArrayResize(a,rows);
+			 
+	return(rows-1);		 
+}
+
 void Ad_Copy1To1(double &s[], double &d[]){
 	/**
 		\version	0.0.0.0

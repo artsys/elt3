@@ -43,7 +43,7 @@
 			DO NOT CHANGE!!!!
 	*/
 
-#property stacksize 16192			
+#property stacksize 1024			
 	
 #define	ELTVER	"0.1.0.51_2013.09.26"
 

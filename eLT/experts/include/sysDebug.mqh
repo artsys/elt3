@@ -205,7 +205,7 @@ int TMR_Start(string name = ""){
 	return(idx);
 }
 
-int TMR_Stop(int idx = -1, string name=""){
+int TMR_Stop(int &idx, string name=""){
 	/**
 		\version	0.0.0.0
 		\date		2013.08.29
@@ -226,7 +226,7 @@ int TMR_Stop(int idx = -1, string name=""){
 	//-------------------------------------
 	int res_sec =  (aiTMR[idx][TMR_ET]-aiTMR[idx][TMR_ST]);
 	TMR_setPropByIndex(idx, TMR_RES, res_sec);
-	
+	idx=aiTMR[idx][TMR_ET];
 	//-------------------------------------
 	return(res_sec);
 }

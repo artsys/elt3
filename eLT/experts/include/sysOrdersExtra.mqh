@@ -47,6 +47,7 @@
 #define	OE_TI	0	//OrderTicket()
 #define	OE_TY	1	//OrderType()
 #define	OE_OP	2	//OrderOpenPrice()
+#define OE_OOP	2	//то же самое что и пункт выше.
 #define	OE_OT	3	//OrderOpenTime()
 #define	OE_TP	4	//OrderTakeProfit()
 #define	OE_SL	5	//OrderStopLoss()
@@ -1495,7 +1496,8 @@ void OE_SortDesc(int col=0){
 			>Rev:0
 	*/
 
-	Ad_QuickSort2(aOE, -1,-1,OE_TI, A_MODE_DESC);
+	//Ad_QuickSort2(aOE, -1,-1,col, A_MODE_DESC);
+	A_d_Sort2(aOE, ""+col+" >;");
 }
 
 void OE_RecheckStatuses(){

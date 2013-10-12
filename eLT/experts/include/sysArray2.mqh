@@ -1,10 +1,12 @@
 /**
-	\version	0.0.0.8
-	\date		2013.10.01
+	\version	0.0.0.10
+	\date		2013.10.10
 	\author		Morochin <artamir> Artiom
 	\details	Detailed description
 	\internal
-		>Hist:								
+		>Hist:										
+				 @0.0.0.10@2013.10.10@artamir	[*] Ad_CopyRow2To2	
+				 @0.0.0.9@2013.10.07@artamir	[+]	As_addRow1
 				 @0.0.0.8@2013.10.01@artamir	[!] Ad_Sum2	
 				 @0.0.0.7@2013.10.01@artamir	[+]	Ad_addRow1
 				 @0.0.0.6@2013.09.30@artamir	[+]	Ad_Sum
@@ -27,7 +29,7 @@
 #define A_CROSS_UP	1	//Быстрый массив пересекает медленный снизу вверх.
 #define A_CROSS_DW	2	//Быстрый массив пересекает медленный сверху вниз.
 
-//{ === С плавающей точкой.
+//{  === С плавающей точкой.
 //{ 	=== двумерный массив
 int Ad_CopyCol2To1(double &s[][], double &d[], int col){
 	/**
@@ -64,14 +66,17 @@ int Ad_CopyRow2To2(	double &s[][]	/** массив источник*/
 					,	double &d[][]	/** массив получатель*/
 					,	int sr=0 /** индекс строки массива источника */
 					,	int dr=0 /** индекс строки массива получателя*/
+					,	int from_col=0	/** индекс колонки массивов, с которых начинается копирование данных */
+					,	int to_col=-1	/** индекс колонки массивов, с которыми заканчивается копирование данных */
 					,	int mode=2 /** режим копирования (по умолчанию добавление)*/){
 	/**
-		\version	0.0.0.1
-		\date		2013.08.29
+		\version	0.0.0.2
+		\date		2013.10.10
 		\author		Morochin <artamir> Artiom
 		\details	Копирует строку из одного массива в другой. Возвращает индекс строки из d
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2013.10.10@artamir	[*] Добавлена возможность задавать интервал копируемых колонок.	
 					 @0.0.0.1@2013.08.29@artamir	[+]	
 			>Rev:0
 	*/
@@ -81,8 +86,13 @@ int Ad_CopyRow2To2(	double &s[][]	/** массив источник*/
 		idx_d = Ad_AddRow2(d);
 	}
 	
-	for(int i = 0; i<ArrayRange(s,1); i++){
-		d[idx_d][i] = s[sr][i];
+	int to=to_col;
+	if(to<0){
+		to=ArrayRange(s,1);
+	}
+	
+	for(int c = from_col; c<to; c++){
+		d[idx_d][c] = s[sr][c];
 	}
 	
 	return(idx_d);
@@ -305,13 +315,18 @@ int Ad_CrossByIdx(double &f[], double &s[], int idx){
 					 @0.0.0.1@2013.09.18@artamir	[]	Ad_CrossByIdx
 			>Rev:0
 	*/
-
+	
+	string fn = "Ad_CrossByIdx";
+	
 	if(ArrayRange(f,0)<=0){return(A_CROSS_NO);}
 	if(ArrayRange(s,0)<=0){return(A_CROSS_NO);}
 	
-	double f2=Norm_symb(f[idx],2),		s2=Norm_symb(s[idx],2);
-	double f1=Norm_symb(f[idx-1],2),	s1=Norm_symb(s[idx-1],2);
-	double f3=Norm_symb(f[idx+1],2), 	s3=Norm_symb(s[idx+1],2);
+	
+	double f2=Norm_symb(f[idx],"",2),		s2=Norm_symb(s[idx],"",2);
+	
+	double f1=Norm_symb(f[idx-1],"",2),	s1=Norm_symb(s[idx-1],"",2);
+	
+	double f3=Norm_symb(f[idx+1],"",2), 	s3=Norm_symb(s[idx+1],"",2);
 	
 	if(f2>s2){if(s1>f1){return(A_CROSS_UP);}}
 	
@@ -323,6 +338,28 @@ int Ad_CrossByIdx(double &f[], double &s[], int idx){
 	}
 	
 	return(A_CROSS_NO);
+}
+//}
+
+//.. === Строковой
+//{		=== двумерный массив
+//..	=== одномерный массив
+int As_addRow1(string &a[]){
+	/**
+		\version	0.0.0.1
+		\date		2013.10.07
+		\author		Morochin <artamir> Artiom
+		\details	Изменяет размерность массива на +1. Возвращает индекс последнего элемента.
+		\internal
+			>Hist:		
+					 @0.0.0.1@2013.10.07@artamir	[+]	As_addRow1
+			>Rev:0
+	*/
+
+	int rows=ArrayRange(a,0)+1;
+			 ArrayResize(a,rows);
+			 
+	return(rows-1);		 
 }
 //}
 //}	

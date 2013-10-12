@@ -4,6 +4,7 @@
 		\author		Morochin <artamir> Artiom
 		\details	Trading functtions.
 		\
+			Revision: 265
 			$Revision$
 			>Hist:																																			
 					 @0.0.0.35@2013.10.04@artamir	[]	TR_SendSELLLIMIT_array
@@ -48,11 +49,11 @@ extern string	TR_E = "===================================";
 
 //{	//=== PUBLIC	====================================
 
-#define TR_MODE_ASK 0; 
-#define TR_MODE_BID 1;
-#define TR_MODE_OOP 2; //Order Open Price (Зависит от типа ордера).
-#define TR_MODE_OCP 3; //Order Close Price (Зависит от типа ордера).
-#define TR_MODE_AVG 4; //Средняя цена между бид и аск.
+#define TR_MODE_ASK 0 
+#define TR_MODE_BID 1
+#define TR_MODE_OOP 2 //Order Open Price (Зависит от типа ордера).
+#define TR_MODE_OCP 3 //Order Close Price (Зависит от типа ордера).
+#define TR_MODE_AVG 4 //Средняя цена между бид и аск.
 
 //{	//====== PENDING ORDERS ============================
 

@@ -1,7 +1,8 @@
 	/*
-		>Ver	:	0.0.17
-		>Date	:	2013.01.18
-		>Hist	:
+		>Ver	:	0.0.0.18
+		>Date	:	2013.10.12
+		>Hist	:	
+					@0.0.0.18@2013.10.12@artamir	[!] Добавлена возможность задать пару для поиска фрактала. 	
 			@0.0.17@2013.01.18@artamir	[+] цена расчета фрактала 
 			@0.0.12@2013.01.11@artamir	[*] Исправления из поста: http://forum.roboforex.ru/showthread.php?t=1997&p=87457&viewfull=1#post87457
 			@0.0.8@2013.01.10@artamir	[+]	Добавились две функции определения фракталов в классическом описании.
@@ -25,9 +26,10 @@
 	int	iFR.NR		= 1;									//Nearest right bars
 	int iFR.Mode	= 2;									//Mode for find fractal.
 	int iFR.Pr		= 1;									//Price for find fractal.
+	string sFR.Sy	= "";
 	
 
-	void iFR.Set(int nl=1, int nr=1, int mode = 1, int price = 1){
+	void iFR.Set(int nl=1, int nr=1, int mode = 1, int price = 1, string sy=""){
 	/*
 		>Ver	:	0.0.3
 		>Date	:	2013.01.18
@@ -38,6 +40,10 @@
 		iFR.NR = nr;
 		iFR.Mode = mode;
 		iFR.Pr = price;
+		if(sy=""){
+			sy=Symbol();
+		}
+		sFR.Sy=sy;
 	}
 	
 	bool iFR.IsUpMode1(int fb = 1){
@@ -66,10 +72,10 @@
 		
 		//--------------------------------------------------
 		if(iFR.Pr == iFR.PR_HL){
-			fbH = iHigh(NULL, 0, fb);						//Хай заданного бара.
+			fbH = iHigh(sFR.Sy, 0, fb);						//Хай заданного бара.
 		}	
 		if(iFR.Pr == iFR.PR_C){
-			fbH = iClose(NULL, 0, fb);						//Закрытие заданного бара.
+			fbH = iClose(sFR.Sy, 0, fb);						//Закрытие заданного бара.
 		}
 		
 		
@@ -78,11 +84,11 @@
 			
 			//----------------------------------------------
 			if(iFR.Pr == iFR.PR_HL){
-				h = iHigh(NULL, 0, idx);
+				h = iHigh(sFR.Sy, 0, idx);
 			}	
 			
 			if(iFR.Pr == iFR.PR_C){
-				h = MathMax(iClose(NULL, 0, idx),iOpen(NULL, 0, idx));
+				h = MathMax(iClose(sFR.Sy, 0, idx),iOpen(sFR.Sy, 0, idx));
 			}
 			//----------------------------------------------
 			if(h >= fbH){
@@ -100,10 +106,10 @@
 		
 			//----------------------------------------------
 			if(iFR.Pr == iFR.PR_HL){
-				h = iHigh(NULL, 0, idx);
+				h = iHigh(sFR.Sy, 0, idx);
 			}
 			if(iFR.Pr == iFR.PR_C){
-				h = MathMax(iClose(NULL, 0, idx),iOpen(NULL, 0, idx));
+				h = MathMax(iClose(sFR.Sy, 0, idx),iOpen(sFR.Sy, 0, idx));
 			}
 			
 			//----------------------------------------------
@@ -143,10 +149,10 @@
 		
 		//--------------------------------------------------
 		if(iFR.Pr == iFR.PR_HL){
-			fbL = iLow(NULL, 0, fb);						//Лоу заданного бара.
+			fbL = iLow(sFR.Sy, 0, fb);						//Лоу заданного бара.
 		}
 		if(iFR.Pr == iFR.PR_C){
-			fbL = iClose(NULL, 0, fb);						//Закрытие заданного бара.
+			fbL = iClose(sFR.Sy, 0, fb);						//Закрытие заданного бара.
 		}
 		
 		//--------------------------------------------------
@@ -154,10 +160,10 @@
 			
 			//----------------------------------------------
 			if(iFR.Pr == iFR.PR_HL){
-				l = iLow(NULL, 0, idx);
+				l = iLow(sFR.Sy, 0, idx);
 			}
 			if(iFR.Pr == iFR.PR_C){
-				l = MathMin(iClose(NULL, 0, idx),iOpen(NULL, 0, idx));
+				l = MathMin(iClose(sFR.Sy, 0, idx),iOpen(sFR.Sy, 0, idx));
 			}
 
 			
@@ -177,10 +183,10 @@
 		
 			//----------------------------------------------
 			if(iFR.Pr == iFR.PR_HL){
-				l = iLow(NULL, 0, idx);
+				l = iLow(sFR.Sy, 0, idx);
 			}
 			if(iFR.Pr == iFR.PR_C){
-				l = MathMin(iClose(NULL, 0, idx),iOpen(NULL, 0, idx));
+				l = MathMin(iClose(sFR.Sy, 0, idx),iOpen(sFR.Sy, 0, idx));
 			}
 			
 			//----------------------------------------------
@@ -220,12 +226,12 @@
 			
 			//----------------------------------------------
 			if(iFR.Pr == iFR.PR_HL){
-				if(iHigh(NULL, 0, i) < iHigh(NULL, 0, i-1)){
+				if(iHigh(sFR.Sy, 0, i) < iHigh(sFR.Sy, 0, i-1)){
 					f = false;
 				}
 			}
 			if(iFR.Pr == iFR.PR_C){
-				if(iClose(NULL, 0, i) < MathMax(iClose(NULL, 0, i-1),iOpen(NULL, 0, i-1))){
+				if(iClose(sFR.Sy, 0, i) < MathMax(iClose(sFR.Sy, 0, i-1),iOpen(sFR.Sy, 0, i-1))){
 					f = false;
 				}
 			}
@@ -239,12 +245,12 @@
 		if(f){
 			for(i = fb; i < fb + iFR.NL; i++){
 				if(iFR.Pr == iFR.PR_HL){
-					if(iHigh(NULL, 0, i) < iHigh(NULL, 0, i+1)){
+					if(iHigh(sFR.Sy, 0, i) < iHigh(sFR.Sy, 0, i+1)){
 						f = false;
 					}
 				}
 				if(iFR.Pr == iFR.PR_C){
-					if(iClose(NULL, 0, i) < MathMax(iClose(NULL, 0, i+1),iOpen(NULL, 0, i+1))){
+					if(iClose(sFR.Sy, 0, i) < MathMax(iClose(sFR.Sy, 0, i+1),iOpen(sFR.Sy, 0, i+1))){
 						f = false;
 					}
 				}				
@@ -280,12 +286,12 @@
 			
 			//----------------------------------------------
 			if(iFR.Pr == iFR.PR_HL){
-				if(iLow(NULL, 0, i) > iLow(NULL, 0, i-1)){
+				if(iLow(sFR.Sy, 0, i) > iLow(sFR.Sy, 0, i-1)){
 					f = false;
 				}
 			}
 			if(iFR.Pr == iFR.PR_C){
-				if(iClose(NULL, 0, i) > MathMin(iClose(NULL, 0, i-1),iOpen(NULL, 0, i-1))){
+				if(iClose(sFR.Sy, 0, i) > MathMin(iClose(sFR.Sy, 0, i-1),iOpen(sFR.Sy, 0, i-1))){
 					f = false;
 				}
 			}
@@ -300,12 +306,12 @@
 		if(f){
 			for(i = fb; i < fb + iFR.NL; i++){
 				if(iFR.Pr == iFR.PR_HL){
-					if(iLow(NULL, 0, i) > iLow(NULL, 0, i+1)){
+					if(iLow(sFR.Sy, 0, i) > iLow(sFR.Sy, 0, i+1)){
 						f = false;
 					}
 				}
 				if(iFR.Pr == iFR.PR_C){
-					if(iClose(NULL, 0, i) > MathMin(iClose(NULL, 0, i+1),iOpen(NULL, 0, i+1))){
+					if(iClose(sFR.Sy, 0, i) > MathMin(iClose(sFR.Sy, 0, i+1),iOpen(sFR.Sy, 0, i+1))){
 						f = false;
 					}
 				}
@@ -420,7 +426,7 @@
 	
 		int fb = iFR.getNearstUp(startBar);
 		
-		return(iHigh(NULL, 0, fb));
+		return(iHigh(sFR.Sy, 0, fb));
 	}
 	
 	double iFR.getNearestDwPrice(int startBar){
@@ -436,5 +442,5 @@
 	*/
 	
 		int fb = iFR.getNearstDw(startBar);
-		return(iLow(NULL, 0, fb));
+		return(iLow(sFR.Sy, 0, fb));
 	}

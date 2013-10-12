@@ -1,17 +1,10 @@
 /*
-		\version	0.0.0.11
-		\date		2013.06.27
-		>Hist:										
-				 @0.0.0.11@2013.06.27@artamir	[]	iMA_getByHandle
-				 @0.0.0.10@2013.06.27@artamir	[]	aMA_set
-				 @0.0.0.9@2013.06.25@artamir	[+]	iMAh_isHierarhyUp iMAh_isHierarhyDw
-				 @0.0.0.8@2013.06.25@artamir	[]	iMA_isPinBelow
-				 @0.0.0.7@2013.05.20@artamir	[]	aMA_set
-				 @0.0.0.6@2013.05.20@artamir	[]	iMA_getByHandle
-				 @0.0.5@2013.02.19@artamir	[]	iMA_isCrossDw
-				 @0.0.4@2013.02.19@artamir	[]	iMA_isCrossDw
-				 @0.0.3@2013.02.14@artamir	[]	iMA_isCrossDw
-				 @0.0.2@2013.02.14@artamir	[+]	iMA_getLastCrossBar
+		\version	0.0.0.14
+		\date		2013.10.08
+		>Hist:													
+				 @0.0.0.14@2013.10.08@artamir	[+]	iMAh_isPriceUnder
+				 @0.0.0.13@2013.10.08@artamir	[+]	iMAh_isPriceAbove
+				 
 		>Descr:
 			Библиотека функций для работы с машками
 		>Зависимости:
@@ -209,6 +202,45 @@ bool iMAh_isHierarhyDw(int hf, int hs, int shift = -1){
 	
 	return(false);
 }
+
+bool iMAh_isPriceAbove(int h, double pr, int shift=0){
+	/**
+		\version	0.0.0.2
+		\date		2013.10.08
+		\author		Morochin <artamir> Artiom
+		\details	Возвращает true если цена находится выще заданной ма на заданном баре.
+		\internal
+			>Hist:		
+					 @0.0.0.1@2013.10.08@artamir	[+]	
+			>Rev:0
+	*/
+
+	string fn="iMAh_isPriceAbove";
+	double ma=iMAh_get(h, shift);
+	if(pr>ma){return(true);}
+	
+	return(false);
+}
+
+bool iMAh_isPriceUnder(int h, double pr, int shift=0){
+	/**
+		\version	0.0.0.1
+		\date		2013.10.08
+		\author		Morochin <artamir> Artiom
+		\details	Возвращает true если цена находится ниже заданной ма на заданном баре.
+		\internal
+			>Hist:		
+					 @0.0.0.1@2013.10.08@artamir	[+]	iMAh_isPriceUnder
+			>Rev:0
+	*/
+
+	string fn="iMAh_isPriceAbove";
+	double ma=iMAh_get(h, shift);
+	if(pr<ma){return(true);}
+	
+	return(false);
+}
+
 
 
 double iMA_getMA(int per = 21, int shift = 0, int d = 0, int ty = MODE_EMA){

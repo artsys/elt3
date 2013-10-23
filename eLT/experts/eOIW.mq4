@@ -53,7 +53,7 @@
 	
 //{ === DEFINES
 #define EXP	"eOIW"	/** имя эксперта */
-#define VER	"3.0.1.44_2013.10.22"
+#define VER	"3.0.1.45_2013.10.22"
 #define DATE "2013.09.05"	/** extert date */	
 //}
 

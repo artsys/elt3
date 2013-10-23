@@ -1,12 +1,14 @@
 /**
-	\version	3.0.1.43
-	\date		2013.10.12
+	\version	3.0.1.45
+	\date		2013.10.22
 	\author		Morochin <artamir> Artiom
 	\details	Шабон построения советника на базе фреймворка eLT 3.0.1
 				Orders in window.
 	\internal
 		Вместо отбора по локальному родителю использовать отбор по ценовому уровню.
-		>Hist:																																										
+		>Hist:																																												
+				 @3.0.1.45@2013.10.22@artamir	[]	SendParent
+				 @3.0.1.44@2013.10.22@artamir	[]	SendParent
 				 @3.0.1.43@2013.10.12@artamir	[*] Заменил Quicksort на обычную сортировку пузырьком, чтоб избавиться от рекурсии.	
 				 @3.0.1.40@2013.10.12@artamir	[*]	SendLikeOrder
 				 @3.0.1.38@2013.10.12@artamir	[!] Оптимизация по событиям ордеров.	
@@ -51,7 +53,7 @@
 	
 //{ === DEFINES
 #define EXP	"eOIW"	/** имя эксперта */
-#define VER	"3.0.1.43_2013.10.12"
+#define VER	"3.0.1.44_2013.10.22"
 #define DATE "2013.09.05"	/** extert date */	
 //}
 
@@ -377,19 +379,28 @@ void CheckNets(){
 		double aB[][OE_MAX];
 		double _lot=-1;
 		bool new_sid_false=false;
-		bool sendRevers2Step_true=true;
+		bool sendRevers_true=true;
+		int step_count=0;
+		int parent_ty=-1, revers_foty=-1;
+		double start_pr=0.00;
+		
 		if(ELT_SelectByFOTY_d2(a,aB,OP_BUYSTOP)<=0){
-			Print(fn+".OP_BUYSTOP");
-			_lot=getNextLot(OP_BUYSTOP);
-			SendParent(OP_BUYSTOP,_lot,new_sid_false,sendRevers2Step_true);
+			parent_ty=OP_BUYSTOP;
+			revers_foty=OP_SELLSTOP;
 			close_ty=OP_SELL;
 		}
 		
 		if(ELT_SelectByFOTY_d2(a,aB,OP_SELLSTOP)<=0){
-			Print(fn+".OP_SELLSTOP");
-			_lot=getNextLot(OP_SELLSTOP);
-			SendParent(OP_SELLSTOP,_lot,new_sid_false,sendRevers2Step_true);
+			parent_ty=OP_SELLSTOP;
+			revers_foty=OP_BUYSTOP;
 			close_ty=OP_BUY;
+		}
+		
+		if(parent_ty>=0){
+			_lot=getNextLot(parent_ty);
+			start_pr=CalcStartPr(revers_foty, step_count);
+			Print(fn+".start_pr="+start_pr);
+			SendParent(parent_ty,_lot,new_sid_false,sendRevers_true, step_count,start_pr);
 		}
 		
 		if(close_ty>-1){
@@ -761,19 +772,21 @@ int SendChild(int parent_ti, int step_koef=1){
 int SendParent(		int ty	/** тип родителя */
 				,	double lot=-1 /** объем родителя */
 				,	bool new_sid=false /** создавать новую сессию? */
-				,	bool sendRevers2Step=false /** выставлять реверс в 2-х шагах (для закрытия по тп)*/){
+				,	bool sendRevers=false /** выставлять реверс ордера? (для закрытия по тп)*/
+				,	int	revers_count=1	/** количество реверс-ордеров, которое будет ввыставленно */	
+				,	double start_pr=0.00 /** начальная цена для выставления родительского ордера. */){
 	/**
-		\version	0.0.0.0
-		\date		2013.09.12
+		\version	0.0.0.1
+		\date		2013.10.22
 		\author		Morochin <artamir> Artiom
 		\details	Выставление массива родительских ордеров
 		\internal
-			>Hist:
+			>Hist:	
+					 @0.0.0.1@2013.10.22@artamir	[+]	Добавлена переменная
 			>Rev:0
 	*/
 
 	double a[];
-	double start_pr=0.00;
 	double _tp=0, _sl=0;
 	string _comm="", _sy="";
 	int _mn=-1, _mode=TR_MODE_PIP, _pr_mode=TR_MODE_AVG;
@@ -793,8 +806,12 @@ int SendParent(		int ty	/** тип родителя */
 		TR_ModifyTP(a[i],TP,TR_MODE_PIP);
 		SendSTOPNet(a[i]);
 		
-		if(sendRevers2Step){
-			SendChild(a[i], 2);
+		if(sendRevers){
+			int step_koef=2;
+			for(int rev_count=0; rev_count<revers_count;rev_count++){
+				SendChild(a[i], step_koef);
+				step_koef++;
+			}	
 		}
 	}
 	
@@ -963,6 +980,50 @@ int CalcLevels(){
 			>Rev:0
 	*/
 	return(MathFloor(TP/Step)-1);
+}
+
+double CalcStartPr(int ty, int& step_count){
+	/**
+		\version	0.0.0.0
+		\date		2013.10.22
+		\author		Morochin <artamir> Artiom
+		\details	Возвращает цену открытия ближнего минусового ордера заданного типа. 
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+	string fn="CalcStartPr";
+	double nearest_pr=0.00;
+	double start_pr=0.00;
+	double aT[][OE_MAX];
+	int ti_rows=SelectExpertTickets(aT);
+	int foty = -1;
+	double aFOTY[][OE_MAX];
+	int foty_rows=ELT_SelectByFOTY_d2(aT,aFOTY,ty);
+	A_d_PrintArray2(aFOTY,4,"aFOTY");
+	if(foty_rows>0){
+		Print(fn+".foty_rows="+foty_rows);
+		double aLOSS[][OE_MAX];
+		int loss_rows=ELT_SelectInLossCP_d2(aFOTY, aLOSS) ;
+		Print(fn+".loss_rows="+loss_rows);
+		if(loss_rows<=0){
+			return(0.00);
+		}
+		
+		A_d_Sort2(aLOSS,""+OE_CP2OP+" >;");
+		nearest_pr=aLOSS[0][OE_OOP];
+		int dist=MathAbs(nearest_pr-TR_getMarketPrice(TR_MODE_AVG))/Point;
+		Print(fn+".nearest_pr="+nearest_pr);
+		Print(fn+".dist="+dist);
+		step_count=MathCeil(dist/Step);
+		Print(fn+".step_count=",step_count);
+		start_pr=nearest_pr+iif(ty==OP_SELLSTOP,1,-1)*(step_count+1)*Step*Point;
+		Print(fn+".start_pr="+start_pr);
+		step_count--;
+		return(start_pr);
+	}
+	
+	
 }
 
 void Tral(){

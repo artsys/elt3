@@ -9,6 +9,7 @@
 			system. For debugging
 */
 bool BP_SNP=false;	//Точка условной остановки. SelectNearPrice.
+bool BP_SRT=false; //Точка условной остановки SORTING
 
 void BP(string	txt	= "",
 		string	p11	= "",		string p12	= "",

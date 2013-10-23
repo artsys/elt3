@@ -1,41 +1,28 @@
 	/*
-		>Ver	:	0.1.0.54
-		>Date	:	2013.10.10
-		>Hist:																										
-				 @0.1.0.54@2013.10.10@artamir	[+]	ELT_SelectPosByTY_d2
-				 @0.1.0.53@2013.10.10@artamir	[+]	ELT_SelectClosedPos_d2
-				 @0.1.0.52@2013.10.06@artamir	[!]	Изменен параметр stacksize
-				 @0.1.0.51@2013.09.30@artamir	[+]	ELT_SelectPosBySID_d2
-				 @0.1.0.50@2013.09.06@artamir	[+]	ELT_SelectNearPrice_d2
-				 @0.1.0.49@2013.09.05@artamir	[+]	ELT_SelectByFOTY_d2
-				 @0.1.0.48@2013.09.04@artamir	[*]	ELT_init
-				 @0.1.0.47@2013.08.29@artamir	[]	ELT_start
-				 @0.1.0.46@2013.08.28@artamir	[+]	ELT_start
-				 @0.1.0.45@2013.08.20@artamir	[+]	ELT_DBFN
-				 @0.1.0.44@2013.06.28@artamir	[]	ELT_deinit
-				 @0.1.0.43@2013.06.25@artamir	[]	ELT_deinit
-				 @0.1.37@2013.04.25@artamir	[]	
-				 @0.1.36@2013.04.25@artamir	[*] sysTrades	
-				@0.1.34@2013.04.16@artamir	[*] sysELT3	
-				 @0.1.32@2013.03.06@artamir	[*] sysEvents	
-				 @0.1.31@2013.03.06@artamir	[*] sysArray	
-				 @0.1.30@2013.03.04@artamir	[]	
-				 @0.1.29@2013.02.26@artamir	[]	ELT_init
-				 @0.1.28@2013.02.26@artamir	[]	
-				 @0.1.27@2013.02.26@artamir	[*] sysTrades	
-				 @0.1.25@2013.02.23@artamir	[*] sysArray	
-				 @0.1.24@2013.02.22@artamir	[*] sysTrades: Добавлена функция открытия реверсного ордера.	
-				 @0.1.23@2013.02.22@artamir	[*] sysOrdersExtra	
-				 @0.1.22@2013.02.22@artamir	[*] sysTrades, 	
-				 @0.1.21@2013.02.22@artamir	[*] sysArray исправлена инициализация массива-фильтра в A_d_Select	
-				 @0.1.20@2013.02.21@artamir	[*] sysOrdersExtra	
-				 @0.1.19@2013.02.21@artamir	[*] 	
-				 @0.1.18@2013.02.21@artamir	[*] sysOrdersExtra - Исправлено определение статуса ордера OE_IT	
-				 @0.1.17@2013.02.20@artamir	[*] sysArray - Исправлена функция Select	
-				 @0.1.16@2013.02.20@artamir	[]	
-				 @0.1.15@2013.02.20@artamir	[*] sysArray	
-				 @0.1.14@2013.02.19@artamir	[]	
-				 @0.1.13@2013.02.16@artamir	[]	
+		>Ver	:	0.1.1.18
+		>Date	:	2013.10.23
+		>Hist:																																														
+				 @0.1.1.18@2013.10.23@artamir	[*]	ELT_SelectInLossCP_d2
+				 @0.1.1.17@2013.10.23@artamir	[*]	ELT_SelectInLoss_d2
+				 @0.1.1.16@2013.10.23@artamir	[*]	ELT_SelectInProfit_d2
+				 @0.1.1.15@2013.10.23@artamir	[*]	ELT_SelectClosedPos_d2
+				 @0.1.1.14@2013.10.23@artamir	[*]	ELT_SelectTicketsBySID_d2
+				 @0.1.1.13@2013.10.23@artamir	[*]	ELT_SelectPosBySID_d2
+				 @0.1.1.12@2013.10.23@artamir	[*]	ELT_SelectByFOTY_d2
+				 @0.1.1.11@2013.10.23@artamir	[*]	ELT_SelectByFIR_d2
+				 @0.1.1.10@2013.10.23@artamir	[*]	ELT_SelectByLP_d2
+				 @0.1.1.9@2013.10.23@artamir	[*]	ELT_SelectByMP_d2
+				 @0.1.1.8@2013.10.23@artamir	[*]	ELT_SelectByGL_d2
+				 @0.1.1.7@2013.10.23@artamir	[*]	ELT_SelectNearPrice_d2
+				 @0.1.1.6@2013.10.23@artamir	[*]	ELT_SelectByTY_d2
+				 @0.1.1.5@2013.10.23@artamir	[*]	ELT_SelectOrders_d2
+				 @0.1.1.4@2013.10.23@artamir	[*]	ELT_SelectPosByTY_d2
+				 @0.1.1.3@2013.10.23@artamir	[*]	ELT_SelectPositions_d2
+				 @0.1.1.2@2013.10.23@artamir	[*]	ELT_SelectByMethod_d2
+				 @0.1.1.1@2013.10.23@artamir	[*]	ELT_SelectByMN_d2
+				 @0.1.1.0@2013.10.23@artamir	[!] Начато переписывание процедур отбора для оптимизации скорости работы советника.
+								Цель - уменьшение запросов на отбор данных из двумерного массива.
+								В идеале 1 окончательный запрос - один запрос на отбор.	
 		>Author: Morochin <artamir> Artiom
 		>Desc:
 			Base include
@@ -48,7 +35,14 @@
 
 #property stacksize 1024			
 	
-#define	ELTVER	"0.1.0.54_2013.10.10"
+#define	ELTVER	"0.1.1.18_2013.10.23"
+
+//{ GLOBAL VARS
+	//Нужны для совместимости с пред. версиями.
+bool ELT_useEraseFilter=true; //разрешает процедурам отбора совершать очиску фильтра.
+bool ELT_useSelect=true;	//разрешает процедурам отбора совершать физический отбор.
+
+//}
 
 //{	//Include	========================================
 //{		@System	----------------------------------------
@@ -189,12 +183,13 @@ int ELT_SelectByMN_d2(		double &s[][] /** source array */
 						,	double &d[][] /** destination array */	
 						,	int mn = -1	  /** magic number*/){
 	/**
-		\version	0.0.0.1
-		\date		2013.06.25
+		\version	0.0.1.2
+		\date		2013.10.23
 		\author		Morochin <artamir> Artiom
 		\details	Отбор по магику
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.1.2@2013.10.23@artamir	[!]	Обновлено согласно 0.1.1.0 
 					 @0.0.0.1@2013.06.25@artamir	[]	ELT_deinit
 			>Rev:0
 	*/
@@ -203,11 +198,11 @@ int ELT_SelectByMN_d2(		double &s[][] /** source array */
 		mn = TR_MN;
 	}
 	
-	A_eraseFilter();										
+	if(ELT_useEraseFilter){A_eraseFilter();}
 	
 	A_FilterAdd_AND(OE_MN, mn, -1, AS_OP_EQ);
 	
-	A_d_Select(s, d);
+	if(ELT_useSelect){A_d_Select(s, d);}
 	
 	return(ArrayRange(d, 0));
 }
@@ -217,21 +212,23 @@ int ELT_SelectByMethod_d2(		double	&s[][] /** source array */
 							,	int 	method	  /** magic number*/
 							,	bool	add=false	/** добавлять результат к массиву-приемнику*/){
 	/**
-		\version	0.0.0.1
-		\date		2013.06.25
+		\version	0.0.1.1
+		\date		2013.10.23
 		\author		Morochin <artamir> Artiom
 		\details	Отбор по методу
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.1.1@2013.10.23@artamir	[]	обновлено согласно 0.1.1.0
 					 @0.0.0.1@2013.06.25@artamir	[]	ELT_deinit
 			>Rev:0
 	*/
 	
-	A_eraseFilter();										
+	
+	if(ELT_useEraseFilter){A_eraseFilter();}
 	
 	A_FilterAdd_AND(OE_AOM, method, -1, AS_OP_EQ);
 	
-	A_d_Select(s, d, add);
+	if(ELT_useSelect){A_d_Select(s, d, add);}
 	
 	return(ArrayRange(d, 0));
 }
@@ -240,22 +237,23 @@ int ELT_SelectPositions_d2(		double	&s[][] /** source array */
 							,	double	&d[][] /** destination array */	
 							,	bool 	add = false	  /** добавлять к массиву приемнику */){
 	/**
-		\version	0.0.0.1
-		\date		2013.06.25
+		\version	0.0.1.1
+		\date		2013.10.23
 		\author		Morochin <artamir> Artiom
 		\details	Отбор по рыночным ордерам, которые еще не закрыты
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.1.1@2013.10.23@artamir	[*]	обновлено согласно 0.1.1.0
 					 @0.0.0.1@2013.06.25@artamir	[]	ELT_deinit
 			>Rev:0
 	*/
 	
-	A_eraseFilter();										
+	if(ELT_useEraseFilter){A_eraseFilter();}										
 	
 	A_FilterAdd_AND(OE_IT, 1, -1, AS_OP_EQ);
 	A_FilterAdd_AND(OE_IM, 1, -1, AS_OP_EQ);
 	
-	A_d_Select(s, d, add);
+	if(ELT_useSelect){A_d_Select(s, d, add);}
 	
 	return(ArrayRange(d, 0));
 }
@@ -265,24 +263,25 @@ int ELT_SelectPosByTY_d2(		double	&s[][] /** source array */
 							,	int		ty		/** тип отбираемых позиций */
 							,	bool 	add = false	  /** добавлять к массиву приемнику */){
 	/**
-		\version	0.0.0.2
-		\date		2013.10.10
+		\version	0.0.1.1
+		\date		2013.10.23
 		\author		Morochin <artamir> Artiom
 		\details	Отбор по рыночным ордерам, которые еще не закрыты
 		\internal
-			>Hist:		
+			>Hist:			
+					 @0.0.1.1@2013.10.23@artamir	[*]	обновлено согласно 0.1.1.0
 					 @0.0.0.2@2013.10.10@artamir	[+]	
 					 
 			>Rev:0
 	*/
 	
-	A_eraseFilter();										
+	if(ELT_useEraseFilter){A_eraseFilter();}										
 	
 	A_FilterAdd_AND(OE_IT, 1, -1, AS_OP_EQ);
 	A_FilterAdd_AND(OE_IM, 1, -1, AS_OP_EQ);
 	A_FilterAdd_AND(OE_TY, ty, -1, AS_OP_EQ);
 	
-	A_d_Select(s, d, add);
+	if(ELT_useSelect){A_d_Select(s, d, add);}
 	
 	return(ArrayRange(d, 0));
 }
@@ -292,21 +291,22 @@ int ELT_SelectOrders_d2(		double	&s[][] /** source array */
 							,	double	&d[][] /** destination array */	
 							,	bool	add = false	  /** добавлять к массиву приемнику*/){
 	/**
-		\version	0.0.0.1
-		\date		2013.06.25
+		\version	0.0.1.1
+		\date		2013.10.23
 		\author		Morochin <artamir> Artiom
 		\details	Отбор по отложенным ордерам, которые еще не удалены
 		\internal
-			>Hist:	
-					 @0.0.0.1@2013.06.25@artamir	[]	ELT_deinit
+			>Hist:		
+					 @0.0.1.1@2013.10.23@artamir	[*]	обновлено согласно 0.1.1.0
+					 @0.0.0.1@2013.06.25@artamir	[+]	
 			>Rev:0
 	*/
 	
-	A_eraseFilter();										
+	if(ELT_useEraseFilter){A_eraseFilter();}										
 	A_FilterAdd_AND(OE_IT, 1, -1, AS_OP_EQ);
 	A_FilterAdd_AND(OE_IP, 1, -1, AS_OP_EQ);
 	
-	A_d_Select(s, d, add);
+	if(ELT_useSelect){A_d_Select(s, d, add);}
 	
 	return(ArrayRange(d, 0));
 }
@@ -316,23 +316,23 @@ int ELT_SelectByTY_d2(			double	&s[][]	/** source array */
 							,	int 	ty		/** first open type*/
 							,	bool	add=false	/** добавлять результат к массиву-приемнику*/){
 	/**
-		\version	0.0.0.3
-		\date		2013.09.05
+		\version	0.0.1.1
+		\date		2013.10.23
 		\author		Morochin <artamir> Artiom
 		\details	Отбор по типу тикета.
 		\internal
-			>Hist:			
-					 @0.0.0.3@2013.09.05@artamir	[]	ELT_DBFN
-					 @0.0.0.2@2013.06.28@artamir	[]	ELT_deinit
+			>Hist:				
+					 @0.0.1.1@2013.10.23@artamir	[*]	обновлено согласно 0.1.1.0
+					 @0.0.0.2@2013.06.28@artamir	[+]
 			
 			>Rev:0
 	*/
 	
-	A_eraseFilter();										
+	if(ELT_useEraseFilter){A_eraseFilter();}										
 	
 	A_FilterAdd_AND(OE_TY, ty, -1, AS_OP_EQ);
 	
-	A_d_Select(s, d, add);
+	if(ELT_useSelect){A_d_Select(s, d, add);}
 	
 	return(ArrayRange(d, 0));
 }
@@ -344,27 +344,25 @@ int ELT_SelectNearPrice_d2(double	&s[][] /** source array */
 							,	bool	add=false	/** добавлять результат к массиву-приемнику*/){
 		
 	/**
-		\version	0.0.0.1
-		\date		2013.09.06
+		\version	0.0.1.1
+		\date		2013.10.23
 		\author		Morochin <artamir> Artiom
 		\details	Фильтрация по цене открытия.
 		\internal
-			>Hist:	
-					 @0.0.0.1@2013.09.06@artamir	[]	ELT_DBFN
+			>Hist:		
+					 @0.0.1.1@2013.10.23@artamir	[*]	обновлено согласно 0.1.1.0
+					 @0.0.0.1@2013.09.06@artamir	[+]	
 			>Rev:0
 	*/
 
-	A_eraseFilter();										
+	if(ELT_useEraseFilter){A_eraseFilter();}										
 	
 	double max_pr=pr+delta_pip*Point;
 	double min_pr=pr-delta_pip*Point;
 	
 	A_FilterAdd_AND(OE_OP, max_pr, min_pr, AS_OP_IN);
-	BP_SNP=false;
-	A_d_Select(s, d, add);
-	BP_SNP=false;
-	//A_d_PrintArray2(s,4,"s");
-	//A_d_PrintArray2(d,4,"d");
+	if(ELT_useSelect){A_d_Select(s, d, add);}
+
 	return(ArrayRange(d, 0));
 }					
 
@@ -373,21 +371,22 @@ int ELT_SelectByGL_d2(		double	&s[][] /** source array */
 							,	int 	gl=0	  /** уровень сетки*/
 							,	bool	add=false	/** добавлять результат к массиву-приемнику*/){
 	/**
-		\version	0.0.0.1
-		\date		2013.06.25
+		\version	0.0.1.1
+		\date		2013.10.23
 		\author		Morochin <artamir> Artiom
 		\details	Отбор по уровню сетки
 		\internal
-			>Hist:	
-					 @0.0.0.1@2013.06.25@artamir	[]	ELT_deinit
+			>Hist:		
+					 @0.0.1.1@2013.10.23@artamir	[*]	обновлено согласно 0.1.1.0
+					 @0.0.0.1@2013.06.25@artamir	[+]	
 			>Rev:0
 	*/
 	
-	A_eraseFilter();										
+	if(ELT_useEraseFilter){A_eraseFilter();}										
 	
 	A_FilterAdd_AND(OE_GL, gl, -1, AS_OP_EQ);
 	
-	A_d_Select(s, d, add);
+	if(ELT_useSelect){A_d_Select(s, d, add);}
 	
 	return(ArrayRange(d, 0));
 }
@@ -397,21 +396,22 @@ int ELT_SelectByMP_d2(		double	&s[][] /** source array */
 							,	int 	mp=0	  /** тикет основного родителя*/
 							,	bool	add=false	/** добавлять результат к массиву-приемнику*/){
 	/**
-		\version	0.0.0.1
-		\date		2013.06.25
+		\version	0.0.1.1
+		\date		2013.10.23
 		\author		Morochin <artamir> Artiom
 		\details	Отбор по основному родителю
 		\internal
-			>Hist:	
-					 @0.0.0.1@2013.06.25@artamir	[]	ELT_deinit
+			>Hist:		
+					 @0.0.1.1@2013.10.23@artamir	[*]	обновлено согласно 0.1.1.0
+					 @0.0.0.1@2013.06.25@artamir	[+]	
 			>Rev:0
 	*/
 	
-	A_eraseFilter();										
+	if(ELT_useEraseFilter){A_eraseFilter();}										
 	
 	A_FilterAdd_AND(OE_MP, mp, -1, AS_OP_EQ);
 	
-	A_d_Select(s, d, add);
+	if(ELT_useSelect){A_d_Select(s, d, add);}
 	
 	return(ArrayRange(d, 0));
 }
@@ -421,21 +421,22 @@ int ELT_SelectByLP_d2(		double	&s[][] /** source array */
 							,	int 	lp=0	  /** тикет локального родителя*/
 							,	bool	add=false	/** добавлять результат к массиву-приемнику*/){
 	/**
-		\version	0.0.0.1
-		\date		2013.06.25
+		\version	0.0.1.1
+		\date		2013.10.23
 		\author		Morochin <artamir> Artiom
 		\details	Отбор по локальному родителю.
 		\internal
-			>Hist:	
-					 @0.0.0.1@2013.06.25@artamir	[]	ELT_deinit
+			>Hist:		
+					 @0.0.1.1@2013.10.23@artamir	[*]	обновлено согласно 0.1.1.0
+					 @0.0.0.1@2013.06.25@artamir	[+]	
 			>Rev:0
 	*/
 	
-	A_eraseFilter();										
+	if(ELT_useEraseFilter){A_eraseFilter();}										
 	
 	A_FilterAdd_AND(OE_LP, lp, -1, AS_OP_EQ);
 	
-	A_d_Select(s, d, add);
+	if(ELT_useSelect){A_d_Select(s, d, add);}
 	
 	return(ArrayRange(d, 0));
 }
@@ -446,22 +447,23 @@ int ELT_SelectByFIR_d2(		double	&s[][] /** source array */
 							,	int 	fir=1	  /** is Revers?*/
 							,	bool	add=false	/** добавлять результат к массиву-приемнику*/){
 	/**
-		\version	0.0.0.2
-		\date		2013.06.28
+		\version	0.0.1.1
+		\date		2013.10.23
 		\author		Morochin <artamir> Artiom
 		\details	Отбор по признаку реверс ордера.
 		\internal
-			>Hist:		
-					 @0.0.0.2@2013.06.28@artamir	[]	ELT_deinit
+			>Hist:			
+					 @0.0.1.1@2013.10.23@artamir	[*]	обновлено согласно 0.1.1.0
+					 @0.0.0.2@2013.06.28@artamir	[+]	
 			
 			>Rev:0
 	*/
 	
-	A_eraseFilter();										
+	if(ELT_useEraseFilter){A_eraseFilter();}										
 	
 	A_FilterAdd_AND(OE_FIR, fir, -1, AS_OP_EQ);
 	
-	A_d_Select(s, d, add);
+	if(ELT_useSelect){A_d_Select(s, d, add);}
 	
 	return(ArrayRange(d, 0));
 }
@@ -471,23 +473,22 @@ int ELT_SelectByFOTY_d2(		double	&s[][] /** source array */
 							,	int 	foty	  /** first open type*/
 							,	bool	add=false	/** добавлять результат к массиву-приемнику*/){
 	/**
-		\version	0.0.0.3
-		\date		2013.09.05
+		\version	0.0.1.1
+		\date		2013.10.23
 		\author		Morochin <artamir> Artiom
 		\details	Отбор по признаку начального типа.
 		\internal
-			>Hist:			
-					 @0.0.0.3@2013.09.05@artamir	[]	ELT_DBFN
-					 @0.0.0.2@2013.06.28@artamir	[]	ELT_deinit
-			
+			>Hist:				
+					 @0.0.1.1@2013.10.23@artamir	[*]	обновлено согласно 0.1.1.0
+					 @0.0.0.2@2013.06.28@artamir	[+]	
 			>Rev:0
 	*/
 	
-	A_eraseFilter();										
+	if(ELT_useEraseFilter){A_eraseFilter();}										
 	
 	A_FilterAdd_AND(OE_FOTY, foty, -1, AS_OP_EQ);
 	
-	A_d_Select(s, d, add);
+	if(ELT_useSelect){A_d_Select(s, d, add);}
 	
 	return(ArrayRange(d, 0));
 }
@@ -497,23 +498,23 @@ int ELT_SelectPosBySID_d2(		double	&s[][]		/** source array */
 							,	int		sid			/** ИД сессии */
 							,	bool 	add = false	/** добавлять к массиву приемнику */){
 	/**
-		\version	0.0.0.2
-		\date		2013.09.30
+		\version	0.0.1.1
+		\date		2013.10.23
 		\author		Morochin <artamir> Artiom
 		\details	Отбор по рыночным ордерам, которые еще не закрыты
 		\internal
-			>Hist:		
-					 @0.0.0.2@2013.09.30@artamir	[]	ELT_DBFN
+			>Hist:			
+					 @0.0.1.1@2013.10.23@artamir	[*]	обновлено согласно 0.1.1.0
+					 @0.0.0.2@2013.09.30@artamir	[+]	
 			>Rev:0
 	*/
 	
-	A_eraseFilter();										
+	if(ELT_useEraseFilter){A_eraseFilter();}										
 	
-	//A_FilterAdd_AND(OE_IT, 1, -1, AS_OP_EQ);
 	A_FilterAdd_AND(OE_IM, 1  , -1, AS_OP_EQ); //Выбираем все рыночные ордера
 	A_FilterAdd_AND(OE_SID, sid, -1, AS_OP_EQ); //у которых sid=
 	
-	A_d_Select(s, d, add);
+	if(ELT_useSelect){A_d_Select(s, d, add);}
 	
 	return(ArrayRange(d, 0));
 }
@@ -523,21 +524,22 @@ int ELT_SelectTicketsBySID_d2(	double	&s[][]		/** source array */
 							,	int		sid			/** ИД сессии */
 							,	bool 	add = false	/** добавлять к массиву приемнику */){
 	/**
-		\version	0.0.0.2
-		\date		2013.09.30
+		\version	0.0.1.1
+		\date		2013.10.23
 		\author		Morochin <artamir> Artiom
 		\details	Отбор по всем ордерам, у которых sid=sid
 		\internal
-			>Hist:		
-					 @0.0.0.2@2013.09.30@artamir	[]	ELT_DBFN
+			>Hist:			
+					 @0.0.1.1@2013.10.23@artamir	[*]	обновлено согласно 0.1.1.0
+					 @0.0.0.2@2013.09.30@artamir	[+]
 			>Rev:0
 	*/
 	
-	A_eraseFilter();										
+	if(ELT_useEraseFilter){A_eraseFilter();}										
 	
 	A_FilterAdd_AND(OE_SID, sid, -1, AS_OP_EQ); //Выбираем ордера с заданным sid.
 	
-	A_d_Select(s, d, add);
+	if(ELT_useSelect){A_d_Select(s, d, add);}
 	
 	return(ArrayRange(d, 0));
 }
@@ -546,22 +548,23 @@ int ELT_SelectClosedPos_d2(		double	&s[][] /** source array */
 							,	double	&d[][] /** destination array */	
 							,	bool 	add = false	  /** добавлять к массиву приемнику */){
 	/**
-		\version	0.0.0.2
-		\date		2013.10.10
+		\version	0.0.1.1
+		\date		2013.10.23
 		\author		Morochin <artamir> Artiom
 		\details	Отбор по рыночным ордерам, которые еще не закрыты
 		\internal
-			>Hist:		
+			>Hist:			
+					 @0.0.1.1@2013.10.23@artamir	[*]	обновлено согласно 0.1.1.0
 					 @0.0.0.2@2013.10.10@artamir	[+]	
 			>Rev:0
 	*/
 	
-	A_eraseFilter();										
+	if(ELT_useEraseFilter){A_eraseFilter();}										
 	
 	A_FilterAdd_AND(OE_IC, 1, -1, AS_OP_EQ);
 	A_FilterAdd_AND(OE_IM, 1, -1, AS_OP_EQ);
 	
-	A_d_Select(s, d, add);
+	if(ELT_useSelect){A_d_Select(s, d, add);}
 	
 	return(ArrayRange(d, 0));
 }
@@ -570,20 +573,21 @@ int ELT_SelectInProfit_d2(		double	&s[][] /** source array */
 							,	double	&d[][] /** destination array */	
 							,	bool	add=false	/** добавлять результат к массиву-приемнику*/){
 	/**
-		\version	0.0.0.3
-		\date		2013.09.05
+		\version	0.0.1.1
+		\date		2013.10.23
 		\author		Morochin <artamir> Artiom
 		\details	Отбор по параметру OPR>0
 		\internal
-			>Hist:			
+			>Hist:				
+					 @0.0.1.1@2013.10.23@artamir	[*]	обновлено согласно 0.1.1.0
 			>Rev:0
 	*/
 	
-	A_eraseFilter();										
+	if(ELT_useEraseFilter){A_eraseFilter();}										
 	
 	A_FilterAdd_AND(OE_OPR, 0, -1, AS_OP_ABOVE);
 	
-	A_d_Select(s, d, add);
+	if(ELT_useSelect){A_d_Select(s, d, add);}
 	
 	return(ArrayRange(d, 0));
 }
@@ -592,22 +596,52 @@ int ELT_SelectInLoss_d2(		double	&s[][] /** source array */
 							,	double	&d[][] /** destination array */	
 							,	bool	add=false	/** добавлять результат к массиву-приемнику*/){
 	/**
-		\version	0.0.0.3
-		\date		2013.09.05
+		\version	0.0.1.1
+		\date		2013.10.23
 		\author		Morochin <artamir> Artiom
 		\details	Отбор по параметру OPR>0
 		\internal
-			>Hist:			
+			>Hist:				
+					 @0.0.1.1@2013.10.23@artamir	[*]	обновлено согласно 0.1.1.0
 			>Rev:0
 	*/
 	
-	A_eraseFilter();										
+	if(ELT_useEraseFilter){A_eraseFilter();}										
 	
 	A_FilterAdd_AND(OE_OPR, 0, -1, AS_OP_UNDER);
 	
-	A_d_Select(s, d, add);
+	if(ELT_useSelect){A_d_Select(s, d, add);}
 	
 	return(ArrayRange(d, 0));
 }
 
-//}
+int ELT_SelectInLossCP_d2(		double	&s[][] /** source array */
+							,	double	&d[][] /** destination array */	
+							,	int		ty=-1 /** тип отбираемых ордеров*/
+							,	bool	add=false	/** добавлять результат к массиву-приемнику*/){
+	/**
+		\version	0.0.1.1
+		\date		2013.10.23
+		\author		Morochin <artamir> Artiom
+		\details	Отбор по параметру CP2OP<0
+		\internal
+			>Hist:					
+					 @0.0.1.1@2013.10.23@artamir	[*]	обновлено согласно 0.1.1.0
+					 @0.0.0.4@2013.10.22@artamir	[+]	
+			>Rev:0
+	*/
+	
+	if(ELT_useEraseFilter){A_eraseFilter();}										
+	
+	A_FilterAdd_AND(OE_CP2OP, 0, -1, AS_OP_UNDER);
+	
+	if(ty >= 0){
+	//	A_FilterAdd_AND(OE_FOTY, ty, -1, AS_OP_EQ);
+	}
+	
+	if(ELT_useSelect){A_d_Select(s, d, add);}
+	return(ArrayRange(d, 0));
+}
+
+
+//

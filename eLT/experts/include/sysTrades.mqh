@@ -161,7 +161,7 @@ int TR_SendBUYSTOP_array(		double &d[] //{
 	
 	double _StartPrice = StartPrice;
 	if(_StartPrice<=0){
-		_StartPrice=TR_getMarketPrice(OP_BUYSTOP, pr_mode, Sy);
+		_StartPrice=TR_getMarketPrice(pr_mode, OP_BUYSTOP, Sy);
 	}
 	
 	SendPrice = Norm_symb((_StartPrice + AddPips*Point));
@@ -260,7 +260,7 @@ int TR_SendBUYLIMIT_array(		double &d[] //{
 	
 	double _StartPrice = StartPrice;
 	if(_StartPrice<=0){
-		_StartPrice=TR_getMarketPrice(OP_BUYLIMIT, pr_mode, Sy);
+		_StartPrice=TR_getMarketPrice(pr_mode, OP_BUYLIMIT, Sy);
 	}
 	SendPrice = Norm_symb((_StartPrice + AddPips*Point));
 	
@@ -460,7 +460,7 @@ int TR_SendSELLSTOP_array(		double &d[] //{
 	
 	double _StartPrice = StartPrice;
 	if(_StartPrice<=0){
-		_StartPrice=TR_getMarketPrice(OP_SELLSTOP, pr_mode, Sy);
+		_StartPrice=TR_getMarketPrice(pr_mode, OP_SELLSTOP, Sy);
 	}
 	
 	SendPrice = Norm_symb((_StartPrice - AddPips*Point));
@@ -558,7 +558,7 @@ int TR_SendSELLLIMIT_array(		double &d[]	//{
 	
 	double _StartPrice = StartPrice;
 	if(_StartPrice<=0){
-		_StartPrice=TR_getMarketPrice(OP_SELLLIMIT, pr_mode, Sy);
+		_StartPrice=TR_getMarketPrice(pr_mode, OP_SELLLIMIT, Sy);
 	}
 	
 	SendPrice = Norm_symb((_StartPrice - AddPips*Point));
@@ -892,7 +892,7 @@ int TR_SendREVERSOrder(double &d[], int src_ti, double vol = 0.01, double lot_mu
 //}
 
 //{	//=== PRIVATE	====================================
-double TR_getMarketPrice(int ty, int mode, string sy=""){
+double TR_getMarketPrice(int mode, int ty=0, string sy=""){
 	/**
 		\version	0.0.0.1
 		\date		2013.10.03

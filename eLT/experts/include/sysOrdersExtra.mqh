@@ -1496,8 +1496,8 @@ void OE_SortDesc(int col=0){
 			>Rev:0
 	*/
 
-	//Ad_QuickSort2(aOE, -1,-1,col, A_MODE_DESC);
-	A_d_Sort2(aOE, ""+col+" >;");
+	Ad_QuickSort2(aOE, -1,-1,col, A_MODE_DESC);
+	//A_d_Sort2(aOE, ""+col+" >;");
 }
 
 void OE_RecheckStatuses(){

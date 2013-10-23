@@ -1,7 +1,8 @@
 	/*
-		>Ver	:	0.0.0.47
-		>Date	:	2013.09.13
-		>Hist	:																																
+		>Ver	:	0.0.0.48
+		>Date	:	2013.10.22
+		>Hist	:																																	
+					@0.0.0.48@2013.10.22@artamir	[!]	A_d_Select
 					@0.0.0.47@2013.09.13@artamir	[*]	A_d_Select
 					@0.0.0.46@2013.08.29@artamir	[]	A_d_Select
 					@0.0.0.45@2013.08.06@artamir	[+]	A_s_PrintArray2
@@ -15,7 +16,7 @@
 				:	d - for double arrays
 	*/
 
-#define ARRVER	"0.0.0.47_2013.09.13"
+#define ARRVER	"0.0.0.48_2013.10.22"
 	
 //{ === TEMPORAR ARRAY
 
@@ -528,10 +529,10 @@ bool A_Assertion_UNDER(double f_val /*filter value*/, double a_val /*assertion v
 	*/
 	
 	if(Norm_symb(a_val) < Norm_symb(f_val)){
-		return(True);
+		return(true);
 	}
 	
-	return(False);
+	return(false);
 }
 
 
@@ -577,14 +578,17 @@ int A_d_Select(		double	&s[][] /*source array*/
 				,	bool	need_add_rows = false
 				,	int 	mode=0 /** направление перебора (по умолчанию по возрастанию)*/){
 	/*
-		>Ver	:	0.0.0.7
-		>Date	:	2013.09.13
-		>Hist	:		
+		>Ver	:	0.0.0.8
+		>Date	:	2013.10.22
+		>Hist	:			
+					@0.0.0.8@2013.10.22@artamir	[!]	»справлено сравнение UNDER
 					@0.0.0.7@2013.09.13@artamir	[*]	удалил операцию копировани€ массива фильтра.
 					@0.0.0.6@2013.06.25@artamir	[]	A_d_Select
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:
 	*/
+	
+	string fn="A_d_Select";
 	double f[][F_TOT];
 	int s_ROWS = 0;
 	int f_ROWS = 0;
@@ -648,7 +652,8 @@ int A_d_Select(		double	&s[][] /*source array*/
 					,"f_min=",f_min
 					,"f_as=",f_as
 					,"f_sel=",f_sel
-					,"s_val=",s_val);
+					,"s_val=",s_val
+					,"f_row=",f_row);
 			}	
 			
 			if(f_as == AS_OP_EQ){
@@ -664,7 +669,7 @@ int A_d_Select(		double	&s[][] /*source array*/
 			}
 			
 			if(f_as == AS_OP_UNDER){
-				this_assertion = A_Assertion_ABOVE(f_max, s_val);
+				this_assertion = A_Assertion_UNDER(f_max, s_val);
 			}
 			
 			if(f_as == AS_OP_IN){
@@ -677,6 +682,11 @@ int A_d_Select(		double	&s[][] /*source array*/
 			
 			if(f_sel == SEL_OP_AND && (res_assertion || f_row == 0)){
 				res_assertion = this_assertion;
+				if(BP_SNP){
+					BP(fn+".SEL_OP_AND"
+						,	"this_assertion=",this_assertion
+						,	"res_assertion=",res_assertion);
+				}
 			}
 			
 			if(f_sel == SEL_OP_OR && this_assertion && !res_assertion){
@@ -717,15 +727,21 @@ void A_d_Sort2(double& a[][], string order = "0 >;"){
 			"5 >;" или "7 <=;"
 			ѕо умолчанию —ортировка 0-колонки по возрастанию
 	*/
-
+	string fn="A_d_Sort2";
 	int ROWS = ArrayRange(a, 0);
 	
 	
 	
 	for(int i = 0; i < ROWS-1; i++){
-		for(int j = 1; j < ROWS; j++){
+		for(int j = i+1; j < ROWS; j++){
 			
-			if(!A_d_Compare(a, i,j,order)){A_d_Swap2(a,i,j);}
+			if(!A_d_Compare(a, i,j,order)){
+				if(BP_SRT){
+					BP(fn+".!Compare"
+						,	"i=",i
+						,	"j=",j);
+				}
+				A_d_Swap2(a,i,j);}
 		}
 	}
 }

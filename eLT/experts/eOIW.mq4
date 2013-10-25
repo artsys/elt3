@@ -1,14 +1,20 @@
 /**
-	\version	3.0.1.45
-	\date		2013.10.22
+	\version	3.0.1.51
+	\date		2013.10.23
 	\author		Morochin <artamir> Artiom
 	\details	Шабон построения советника на базе фреймворка eLT 3.0.1
 				Orders in window.
 	\internal
 		Вместо отбора по локальному родителю использовать отбор по ценовому уровню.
-		>Hist:																																												
-				 @3.0.1.45@2013.10.22@artamir	[]	SendParent
-				 @3.0.1.44@2013.10.22@artamir	[]	SendParent
+		>Hist:																																																		
+				 @3.0.1.51@2013.10.23@artamir	[*]	getTPNet
+				 @3.0.1.50@2013.10.23@artamir	[*]	SelectPositions
+				 @3.0.1.49@2013.10.23@artamir	[*]	SelectTINearPrice
+				 @3.0.1.48@2013.10.23@artamir	[*]	SelectTIBySID
+				 @3.0.1.47@2013.10.23@artamir	[*]	SelectPosBySID
+				 @3.0.1.46@2013.10.23@artamir	[*]	SelectExpertTickets
+				 @3.0.1.45@2013.10.22@artamir	[*]	SendParent
+				 @3.0.1.44@2013.10.22@artamir	[*]	SendParent
 				 @3.0.1.43@2013.10.12@artamir	[*] Заменил Quicksort на обычную сортировку пузырьком, чтоб избавиться от рекурсии.	
 				 @3.0.1.40@2013.10.12@artamir	[*]	SendLikeOrder
 				 @3.0.1.38@2013.10.12@artamir	[!] Оптимизация по событиям ордеров.	
@@ -53,7 +59,7 @@
 	
 //{ === DEFINES
 #define EXP	"eOIW"	/** имя эксперта */
-#define VER	"3.0.1.45_2013.10.22"
+#define VER	"3.0.1.51_2013.10.23"
 #define DATE "2013.09.05"	/** extert date */	
 //}
 
@@ -399,7 +405,6 @@ void CheckNets(){
 		if(parent_ty>=0){
 			_lot=getNextLot(parent_ty);
 			start_pr=CalcStartPr(revers_foty, step_count);
-			Print(fn+".start_pr="+start_pr);
 			SendParent(parent_ty,_lot,new_sid_false,sendRevers_true, step_count,start_pr);
 		}
 		
@@ -586,116 +591,159 @@ bool isChildNearPrice(double child_op, int parent_ty){
 
 int SelectExpertTickets(double &aT[][]){
 	/**
-		\version	0.0.0.2
-		\date		2013.09.06
+		\version	0.0.0.3
+		\date		2013.10.23
 		\author		Morochin <artamir> Artiom
 		\details	возвращает количество рабочих приказов эксперта.
 		\internal
-			>Hist:		
+			>Hist:			
+					 @0.0.0.3@2013.10.23@artamir	[*]	Оптимизация по выборке из массива.
 					 @0.0.0.2@2013.09.06@artamir	[*]	SelectExpertTickets исправлен параметр функции.
 					 @0.0.0.1@2013.09.04@artamir	[+]	SelectExpertTickets
 			>Rev:0
 	*/
 	
-	double aMN[][OE_MAX];
-	int ROWS_MN = ELT_SelectByMN_d2(aOE, aMN);
+	string fn="SelectExpertTickets";
 	
-	if(!ROWS_MN){return(0);}
+	bool tmp_useEraseFilter = ELT_useEraseFilter;
+	bool tmp_useSelect = ELT_useSelect;
 	
-	ELT_SelectPositions_d2(aMN, aT);	//из аМН выбираем только позиции	
+	A_eraseFilter();
+	A_FilterAdd_AND(OE_MN, TR_MN, -1, AS_OP_EQ);	//Выбор по магику
+	A_FilterAdd_AND(OE_IT, 1	, -1, AS_OP_EQ);	//Выбор если в терминале.
+	A_d_Select(aOE, aT);
 	
-	int ROWS_T = ELT_SelectOrders_d2(aMN, aT, true);	//к ним добавляем ордера.
+	int rows_t=ArrayRange(aT,0);
 	
-	return(ROWS_T);
+	ELT_useEraseFilter = tmp_useEraseFilter;
+	ELT_useSelect=tmp_useSelect;
+	
+	return(rows_t);
 }
 
 int SelectPositions(double &a[][], int ty=-1){
 	/**
-		\version	0.0.0.1
-		\date		2013.09.05
+		\version	0.0.0.2
+		\date		2013.10.23
 		\author		Morochin <artamir> Artiom
 		\details	Выбирает живые позиции эксперта
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2013.10.23@artamir	[]	оптимизация по количеству отборов из массива.
 					 @0.0.0.1@2013.09.05@artamir	[+]	SelectPositions
 			>Rev:0
 	*/
 
-	double aMN[][OE_MAX];
-	int ROWS_MN = ELT_SelectByMN_d2(aOE, aMN);
-	if(!ROWS_MN){return(0);}
+	// double aMN[][OE_MAX];
+	// int ROWS_MN = ELT_SelectByMN_d2(aOE, aMN);
+	// if(!ROWS_MN){return(0);}
 	
-	if(ty<0){
-		ELT_SelectPositions_d2(aMN, a);	//из аМН выбираем только позиции	
-	}else{
-		ELT_SelectPosByTY_d2(aMN, a, ty);
-	}	
-	ArrayResize(aMN,0);
+	//{
+	// if(ty<0){
+		// ELT_SelectPositions_d2(aMN, a);	//из аМН выбираем только позиции	
+	// }else{
+		// ELT_SelectPosByTY_d2(aMN, a, ty);
+	// }	
+	// ArrayResize(aMN,0);
+	// return(ArrayRange(a,0));
+	
+	A_eraseFilter();
+	A_FilterAdd_AND(OE_MN, TR_MN, -1, AS_OP_EQ);	//Выбор по магику
+	A_FilterAdd_AND(OE_IT, 1	, -1, AS_OP_EQ);	//Выбор если в терминале.
+	A_FilterAdd_AND(OE_IM, 1	, -1, AS_OP_EQ);	//Выбор рыночных
+	if(ty>=0){
+		A_FilterAdd_AND(OE_TY, ty, -1, AS_OP_EQ);	//Выбор по типу ордера.
+	}
+	A_d_Select(aOE, a);
+	
 	return(ArrayRange(a,0));
 }
 
 int SelectPosBySID(double &a[][], int sid){
 	/**
-		\version	0.0.0.1
-		\date		2013.09.30
+		\version	0.0.0.2
+		\date		2013.10.23
 		\author		Morochin <artamir> Artiom
 		\details	Выбирает позиции эксперта с заданным sid
 		\internal
-			>Hist:		
+			>Hist:			
+					 @0.0.0.2@2013.10.23@artamir	[*]	Оптимизация по количеству выборок из массива.
 					 @0.0.0.1@2013.09.30@artamir	[+]	SelectPosBySID
 			>Rev:0
 	*/
 
-	double aMN[][OE_MAX];
-	int ROWS_MN = ELT_SelectByMN_d2(aOE, aMN);
-	if(!ROWS_MN){return(0);}
+	//double aMN[][OE_MAX];
+	//int ROWS_MN = ELT_SelectByMN_d2(aOE, aMN);
+	//if(!ROWS_MN){return(0);}
 	
-	ELT_SelectPosBySID_d2(aMN, a, sid);	//из аМН выбираем только позиции	
-	ArrayResize(aMN,0);
+	//ELT_SelectPosBySID_d2(aMN, a, sid);	//из аМН выбираем только позиции	
+	A_eraseFilter();
+	A_FilterAdd_AND(OE_MN	, TR_MN	, -1, AS_OP_EQ);	//Выбор по магику
+	A_FilterAdd_AND(OE_IM	, 1		, -1, AS_OP_EQ);	//Выбор по магику
+	A_FilterAdd_AND(OE_SID	, sid	, -1, AS_OP_EQ);	//Выбор по магику
+	A_d_Select(aOE, a);
+
 	return(ArrayRange(a,0));
 }
 
 int SelectTIBySID(double &a[][], int sid){
 	/**
-		\version	0.0.0.1
-		\date		2013.09.30
+		\version	0.0.0.2
+		\date		2013.10.23
 		\author		Morochin <artamir> Artiom
 		\details	Выбирает ордера эксперта с заданным sid
 		\internal
-			>Hist:		
+			>Hist:			
+					 @0.0.0.2@2013.10.23@artamir	[*]	Оптимизация по количеству отборов из массиваю
 					 @0.0.0.1@2013.09.30@artamir	[+]	SelectPosBySID
 			>Rev:0
 	*/
 
-	double aMN[][OE_MAX];
-	int ROWS_MN = ELT_SelectByMN_d2(aOE, aMN);
-	if(!ROWS_MN){return(0);}
+	//double aMN[][OE_MAX];
+	//int ROWS_MN = ELT_SelectByMN_d2(aOE, aMN);
+	//if(!ROWS_MN){return(0);}
 	
-	ELT_SelectTicketsBySID_d2(aMN, a, sid);	//из аМН выбираем только позиции	
-	ArrayResize(aMN,0);
+	//ELT_SelectTicketsBySID_d2(aMN, a, sid);	//из аМН выбираем только позиции	
+	//ArrayResize(aMN,0);
+	
+	A_eraseFilter();
+	A_FilterAdd_AND(OE_MN	, TR_MN	, -1, AS_OP_EQ);	//Выбор по магику
+	A_FilterAdd_AND(OE_SID	, sid	, -1, AS_OP_EQ);	//Выбор по sid
+	A_d_Select(aOE, a);
 	return(ArrayRange(a,0));
 }
 
 int SelectTINearPrice(double &a[][], double pr){
 	/**
-		\version	0.0.0.1
-		\date		2013.09.06
+		\version	0.0.0.2
+		\date		2013.10.23
 		\author		Morochin <artamir> Artiom
 		\details	выбор тикетов возле цены.
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2013.10.23@artamir	[*]	Оптимизация по количеству отборов из массиваю
 					 @0.0.0.1@2013.09.06@artamir	[+]	SelectTINearPrice
 			>Rev:0
 	*/
 
-	double aT[][OE_MAX];
-	int t_rows = SelectExpertTickets(aT);
+	double max_pr=pr+MarketInfo(Symbol(),MODE_SPREAD)*Point;
+	double min_pr=pr-MarketInfo(Symbol(),MODE_SPREAD)*Point;
 	
-	if(t_rows<=0){return(0);}
+	A_eraseFilter();
+	A_FilterAdd_AND(OE_MN, TR_MN	, -1		, AS_OP_EQ);	//Выбор по магику
+	A_FilterAdd_AND(OE_IT, 1		, -1		, AS_OP_EQ);	//Выбор если в терминале.
+	A_FilterAdd_AND(OE_OP, max_pr	, min_pr	, AS_OP_IN);	//Выбор ордеров в окне цен открытия.
+	A_d_Select(aOE, a);
 	
-	int np_rows = ELT_SelectNearPrice_d2(aT, a, pr);
+	return(ArrayRange(a,0));
+	//double aT[][OE_MAX];
+	//int t_rows = SelectExpertTickets(aT);
 	
-	ArrayResize(aT,0);
+	//if(t_rows<=0){return(0);}
+	
+	//int np_rows = ELT_SelectNearPrice_d2(aT, a, pr);
+	
+	//ArrayResize(aT,0);
 }
 
 int SendChild(int parent_ti, int step_koef=1){
@@ -841,41 +889,43 @@ void SendLikeOrder(int parent_ti){
 	}
 }
 
-double getTPNet(int ty){
+double getTPNet(int foty){
 	/**
-		\version	0.0.0.0
-		\date		2013.09.05
+		\version	0.0.0.1
+		\date		2013.10.23
 		\author		Morochin <artamir> Artiom
 		\details	Возвращает тп по типу ордеров в сетке.
 		\internal
-			>Hist:
+			>Hist:	
+					 @0.0.0.1@2013.10.23@artamir	[*]	оптимизация по количесву выборок из массива
 			>Rev:0
 	*/
 	
-
+	//{
+	// double aT[][OE_MAX];
+	// int ti_rows=SelectExpertTickets(aT);
+	// int foty = -1;
+	// double aFOTY[][OE_MAX];
+	// int foty_rows=ELT_SelectByFOTY_d2(aT,aFOTY,ty);
+	// if(foty_rows>0){
+		// return(aFOTY[0][OE_TP]);
+	// }
+	
+	// return(0);
+	
 	double aT[][OE_MAX];
-	int ti_rows=SelectExpertTickets(aT);
-	int foty = -1;
-	double aFOTY[][OE_MAX];
-	int foty_rows=ELT_SelectByFOTY_d2(aT,aFOTY,ty);
-	if(foty_rows>0){
-		return(aFOTY[0][OE_TP]);
+	A_eraseFilter();
+	A_FilterAdd_AND(OE_MN, TR_MN, -1, AS_OP_EQ);	//Выбор по магику
+	A_FilterAdd_AND(OE_IT, 1	, -1, AS_OP_EQ);	//Выбор если в терминале.
+	A_FilterAdd_AND(OE_FOTY, foty, -1, AS_OP_EQ);	//Выбор по FOTY
+	A_d_Select(aOE, aT);
+	
+	int rows_foty = ArrayRange(aT,0);
+	if(rows_foty>0){
+		return(aT[0][OE_TP]);
 	}
 	
 	return(0);
-	//double aGL[][OE_MAX];
-	//int gl_rows=ELT_SelectByGL_d2(aFOTY,aGL,1);
-	
-	//if(gl_rows<=0){return(0);} //нет родителя сетки.
-	
-	//double tp = aGL[0][OE_TP]; //если есть хоть один родитель сетки, то он будет в 0-м индексе.
-	
-	ArrayResize(aT,0);
-	ArrayResize(aFOTY,0);
-	//ArrayResize(aGL,0);
-	
-	//return(tp);
-	
 }
 
 int getMaxGL(int foty){
@@ -898,7 +948,7 @@ int getMaxGL(int foty){
 	if(foty_rows <= 0){return(0);}
 	
 	//Ad_QuickSort2(aFOTY, -1, -1, OE_GL, A_MODE_DESC);
-	A_d_Sort2(aFOTY, ""+OE_GL+">;");
+	A_d_Sort2(aFOTY, ""+OE_GL+" >;");
 	int res=aFOTY[0][OE_GL];
 	
 	ArrayResize(aT,0);

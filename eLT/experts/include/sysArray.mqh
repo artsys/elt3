@@ -1,7 +1,8 @@
 	/*
-		>Ver	:	0.0.0.48
-		>Date	:	2013.10.22
-		>Hist	:																																	
+		>Ver	:	0.0.0.49
+		>Date	:	2013.10.24
+		>Hist	:																																		
+					@0.0.0.49@2013.10.24@artamir	[!*]	A_d_Compare (необходимо тестирование)
 					@0.0.0.48@2013.10.22@artamir	[!]	A_d_Select
 					@0.0.0.47@2013.09.13@artamir	[*]	A_d_Select
 					@0.0.0.46@2013.08.29@artamir	[]	A_d_Select
@@ -16,7 +17,7 @@
 				:	d - for double arrays
 	*/
 
-#define ARRVER	"0.0.0.48_2013.10.22"
+#define ARRVER	"0.0.0.49_2013.10.24"
 	
 //{ === TEMPORAR ARRAY
 
@@ -316,16 +317,24 @@ void A_d_CopyRow2(double &a[][], int ifrom, int ito=-1){
 	}
 }
 
+#define A_ABOVE 0
+#define A_EQ 1
+#define A_UNDER 2
+
 bool A_d_Compare(double &a[][], int i1, int i2, string compare = ""){
 	/**
-		\version	0.0.0.2
-		\date		2013.05.20
+		\version	0.0.0.3
+		\date		2013.10.24
 		\author		Morochin <artamir> Artiom
 		\details	Сравнение двух строк массива
 		\internal
-			>Hist:		
-					 @0.0.0.2@2013.05.20@artamir	[]	A_d_Compare
-					 @0.0.0.1@2013.05.20@artamir	[]	A_d_Compare
+			>Hist:			
+					 @0.0.0.3@2013.10.24@artamir	[!*]	Сравнение по нескольким колонкам
+						колонки и операции сравнения задаются строкой вида:
+						<КолонкаИОперация>[<КолонкаИОперация>]
+						КолонкаИОперация:=<НомерКолонки><Пробел><ОперацияСравнения><ТочкаСЗапятой>
+						Если значения по текущей колонке равны, то переходим к следующей колонке из списка.
+					 @0.0.0.1@2013.05.20@artamir	[+]	A_d_Compare
 			>Rev:0
 			compare может быть строкой формата "<номер колонки для сравнения><пробел><операция сравнения><точкасзапятой>"
 			"5 >;" или "7 <=;"
@@ -349,24 +358,18 @@ bool A_d_Compare(double &a[][], int i1, int i2, string compare = ""){
 		if(co_ROWS > 0){
 			int col = StrToInteger(co[0]);
 			string op = co[1];
-			//Print ("col = ",col, " op = ",op);
-			if(op == ">"){
-				if(a[i1][col] > a[i2][col]){ 
-					return(true);
-				}else{
-					return(false);
-				}	
-			}
 			
-			if(op == "<"){
-				if(a[i1][col] < a[i2][col]){
-					return(true);
-				}else{
-					return(false);
-				}	
-			}
+			int assertion;
+			if(a[i1,col]>a[i2,col]){assertion=A_ABOVE;}
+			if(a[i1,col]==a[i2,col]){assertion=A_EQ;}
+			if(a[i1,col]<a[i2,col]){assertion=A_UNDER;}
+			//Print ("col = ",col, " op = ",op);
+			if(assertion==A_ABOVE 	&& (op==">" ||op==">=")){return(true);}
+			if(assertion==A_UNDER 	&& (op=="<" ||op=="<=")){return(true);}
+			if(assertion==A_EQ){continue;}	//значения колонок равны, но не было совпадения с операциями сравнения.
 		}
-	}	
+	}
+	return(false);
 }
 //}
 
@@ -710,7 +713,7 @@ int A_d_Select(		double	&s[][] /*source array*/
 //}
 
 //{ === SORTING FUNCTIONS
-void A_d_Sort2(double& a[][], string order = "0 >;"){
+void A_d_Sort2(double& a[][], string order = "0 <;"){
 	/**
 		\version	0.0.0.4
 		\date		2013.06.12

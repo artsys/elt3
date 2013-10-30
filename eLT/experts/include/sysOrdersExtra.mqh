@@ -1302,6 +1302,10 @@ double	OE_getOPByTicket(int ti){
 	return(val);
 }
 
+double	OE_getOOPByTicket(int ti){
+	return(OE_getOPByTicket(ti));
+}
+
 int		OE_getOTByTicket(int ti){
 	/*
 		>Ver	:	0.0.1

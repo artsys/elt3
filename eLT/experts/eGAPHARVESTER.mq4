@@ -150,7 +150,7 @@ int start(){
 	}else{
 		while(IsExpertEnabled()){
 			startext();
-			Sleep(500); //5 sec.
+			Sleep(Sleep_ms); //5 sec.
 		}
 	}
 	//------------------------------------------------------
@@ -271,17 +271,6 @@ string getExtraFN(){
 	return(fn);
 }
 
-double iif( bool condition, double ifTrue, double ifFalse ){
-	/*
-		>Ver	:	0.0.1
-		>Date	:	2012.04.04
-		>History:
-	*/
-	if( condition ) return( ifTrue );
-	//---
-	return( ifFalse );
-}
-
 //{	Expert functions
 bool isPhase1(){
 	return(CWT(DOW_Ph1, THS_Ph1, TMS_Ph1, THE_Ph1, TME_Ph1));
@@ -389,10 +378,6 @@ void	TralBSSS(){
 	
 	A_d_Sort2(d, OE_CP2OP+" <;"); //сортировка по убыванию
 	
-	if(Debug && BP_TRAL){
-		A_d_PrintArray2(d, 4, "TRAL_");
-	}
-	
 	dROWS = ArrayRange(d, 0);
 	
 	for(didx = 0; didx < dROWS; didx++){
@@ -490,10 +475,6 @@ void	TralBSSS12(){
 	getOrdersByMethod(d);	//забираем ордера с текущим магиком.
 	
 	A_d_Sort2(d, OE_CP2OP+" <;"); //сортировка по убыванию
-	
-	if(Debug && BP_TRAL){
-		A_d_PrintArray2(d, 4, "TRAL_");
-	}
 	
 	dROWS = ArrayRange(d, 0);
 	
@@ -818,10 +799,6 @@ int getOrdersByMethod(		double	&d[][]		/**	destination array*/
 	}
 	
 	A_d_Select(aOE, d);
-	
-	if(Debug && BP_AOM){
-		A_d_PrintArray2(d, 4, "SelectByMethod_"+method+"_"+magic);
-	}
 }
 
 //==========================================================

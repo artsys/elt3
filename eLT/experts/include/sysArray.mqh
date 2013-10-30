@@ -340,11 +340,12 @@ bool A_d_Compare(double &a[][], int i1, int i2, string compare = ""){
 			"5 >;" или "7 <=;"
 	*/
 
+	string fn="A_d_Compare";	
 	string subs[];
 	ArrayResize(subs,0);
 	int subs_ROWS = 0;
 	StringToArray(subs, compare, ";");	//Разбиваем на массив параметров сравнения т.е. на элементы: <НомерКолонки><Пробел><ОперацияСравнения>
-	subs_ROWS = ArrayRange(subs,0);
+	subs_ROWS = ArrayRange(subs,0)-1;
 	
 	//A_s_PrintArray1(subs, "subs");
 	
@@ -363,7 +364,7 @@ bool A_d_Compare(double &a[][], int i1, int i2, string compare = ""){
 			if(a[i1,col]>a[i2,col]){assertion=A_ABOVE;}
 			if(a[i1,col]==a[i2,col]){assertion=A_EQ;}
 			if(a[i1,col]<a[i2,col]){assertion=A_UNDER;}
-			//Print ("col = ",col, " op = ",op);
+			if(BP_SRT){Print (fn+": col = "+col, " op = "+op, " assertion="+assertion, " subs_ROWS="+subs_ROWS);}
 			if(assertion==A_ABOVE 	&& (op==">" ||op==">=")){return(true);}
 			if(assertion==A_UNDER 	&& (op=="<" ||op=="<=")){return(true);}
 			if(assertion==A_EQ){continue;}	//значения колонок равны, но не было совпадения с операциями сравнения.
@@ -737,12 +738,13 @@ void A_d_Sort2(double& a[][], string order = "0 <;"){
 	
 	for(int i = 0; i < ROWS-1; i++){
 		for(int j = i+1; j < ROWS; j++){
-			
+			if(BP_SRT){Print(fn+": ","order: "+order," i="+i, " j="+j);}
 			if(!A_d_Compare(a, i,j,order)){
 				if(BP_SRT){
 					BP(fn+".!Compare"
-						,	"i=",i
-						,	"j=",j);
+						,	"i="		,i
+						,	"j="		,j
+						,	"order="	,order);
 				}
 				A_d_Swap2(a,i,j);}
 		}

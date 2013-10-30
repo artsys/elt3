@@ -1,12 +1,14 @@
 /**
-	\version	3.0.1.51
-	\date		2013.10.23
+	\version	3.0.1.53
+	\date		2013.10.25
 	\author		Morochin <artamir> Artiom
 	\details	Шабон построения советника на базе фреймворка eLT 3.0.1
 				Orders in window.
 	\internal
 		Вместо отбора по локальному родителю использовать отбор по ценовому уровню.
-		>Hist:																																																		
+		>Hist:																																																				
+				 @3.0.1.53@2013.10.25@artamir	[+]	TralTP
+				 @3.0.1.52@2013.10.25@artamir	[+]	SelectTIInWindowTP
 				 @3.0.1.51@2013.10.23@artamir	[*]	getTPNet
 				 @3.0.1.50@2013.10.23@artamir	[*]	SelectPositions
 				 @3.0.1.49@2013.10.23@artamir	[*]	SelectTINearPrice
@@ -59,7 +61,7 @@
 	
 //{ === DEFINES
 #define EXP	"eOIW"	/** имя эксперта */
-#define VER	"3.0.1.51_2013.10.23"
+#define VER	"3.0.1.53_2013.10.25"
 #define DATE "2013.09.05"	/** extert date */	
 //}
 
@@ -197,6 +199,8 @@ int startext(){
 		if(ArrayRange(aEvents,0)<=0 && !isStarted){isStarted=0; return(0);}
 		CheckNets();
 		Convoy();
+	//..	=== Блок трала тейкпрофита
+		TralTP();
 	//..	=== Блок открытия позиций
 		Autoopen();
 	//}
@@ -532,6 +536,73 @@ void CloseRevers(){
 }
 //}
 
+//{ === Трейлинг тейкпрофита.
+void TralTP(){
+	/**
+		\version	0.0.0.1
+		\date		2013.10.25
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.10.25@artamir	[+]	
+			>Rev:0
+	*/
+	string fn="TralTP";
+	Print(fn);
+	double a[][OE_MAX];
+	double oop;
+	
+	//{ === Выборка нижнего бая и верхнего селла
+	
+	//Выбираем самый нижний Байстоп
+	double aB[][OE_MAX];
+	A_eraseFilter();
+	A_FilterAdd_AND(OE_MN	, TR_MN		, -1, AS_OP_EQ);	//с магиком советника
+	A_FilterAdd_AND(OE_IT	, 1			, -1, AS_OP_EQ);	//живой
+	A_FilterAdd_AND(OE_FOTY	, OP_BUYSTOP, -1, AS_OP_EQ);	//Байстоп
+	A_d_Select(aOE, aB);
+	A_d_Sort2(aB, ""+OE_OOP+" <;"); //Сортировка по возрастанию, т.е. самый низкий бай будет первым
+	
+	//Из массива ордеров отберем все ордера с ценой как у первого.
+	oop = aB[0][OE_OOP];
+	A_eraseFilter();
+	A_FilterAdd_AND(OE_OOP, oop, -1, AS_OP_EQ);
+	A_d_Select(aB, a);
+	
+	//Выбираем самый верхний Селлстоп
+	double aS[][OE_MAX];
+	A_eraseFilter();
+	A_FilterAdd_AND(OE_MN	, TR_MN		 , -1, AS_OP_EQ);	//с магиком советника
+	A_FilterAdd_AND(OE_IT	, 1			 , -1, AS_OP_EQ);	//живой
+	A_FilterAdd_AND(OE_FOTY	, OP_SELLSTOP, -1, AS_OP_EQ);	//Селлстоп
+	A_d_Select(aOE, aS);
+	A_d_Sort2(aS, ""+OE_OOP+" >;"); //Сортировка по Убыванию, т.е. самый Высокий селл будет первым
+	
+	//Из массива ордеров отберем все ордера с ценой как у первого.
+	oop = aS[0][OE_OOP];
+	A_eraseFilter();
+	A_FilterAdd_AND(OE_OOP, oop, -1, AS_OP_EQ);
+	A_d_Select(aS, a, true);
+	
+	//}
+	
+	//На этом этапе у нас выбраны крайние ордера.
+	int rows_a = ArrayRange(a, 0);
+	for(int i=0; i<rows_a; i++){
+		int ti = a[i][OE_TI];
+		TR_ModifyTP(ti, TP, TR_MODE_PIP);
+		OE_setStandartDataByTicket(ti);
+		double aOIW[][OE_MAX];
+		SelectTIInWindowTP(aOIW, ti);
+		int rows_oiw = ArrayRange(aOIW,0);
+		for(int j=0; j<rows_oiw; j++){
+			TR_ModifyTPByTicket(ti, aOIW[j][OE_TI]);
+		}
+	}
+}
+//}
+
 //{ === expert additional fincrions
 bool isExpertsTickets(){
 	/**
@@ -744,6 +815,46 @@ int SelectTINearPrice(double &a[][], double pr){
 	//int np_rows = ELT_SelectNearPrice_d2(aT, a, pr);
 	
 	//ArrayResize(aT,0);
+}
+
+int SelectTIInWindowTP(double &a[][], int ti){
+	/**
+		\version	0.0.0.1
+		\date		2013.10.25
+		\author		Morochin <artamir> Artiom
+		\details	Выборка ордеров с таким же foty как у заданного ордера и ценой открытия между ценой открытия ордера и его тп.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.10.25@artamir	[]	SelectTIInWindowTP
+			>Rev:0
+	*/
+
+	string fn="SelectTIInWindowTP";
+	int foty = OE_getFOTYByTicket(ti);
+	double tp = OE_getTPByTicket(ti);
+	double oop = OE_getOOPByTicket(ti);
+	int assertion_oop = AS_OP_ABOVE;
+	int assertion_tp = AS_OP_UNDER;
+	
+	if(foty == OP_BUYSTOP){
+		assertion_oop=AS_OP_ABOVE;
+		assertion_tp=AS_OP_UNDER;
+	}
+	if(foty == OP_SELLSTOP){
+		assertion_oop=AS_OP_UNDER;
+		assertion_tp=AS_OP_ABOVE;
+	}
+	
+	A_eraseFilter();
+	A_FilterAdd_AND(OE_MN	,TR_MN	,-1,AS_OP_EQ);	//Выборка с заданным магиком
+	A_FilterAdd_AND(OE_IT	,1		,-1,AS_OP_EQ);	//Выборка живых ордеров
+	A_FilterAdd_AND(OE_FOTY	,foty	,-1,AS_OP_EQ);	//Выборка с заданным foty
+	A_FilterAdd_AND(OE_OOP	,oop	,-1,assertion_oop);
+	A_FilterAdd_AND(OE_OOP	,tp		,-1,assertion_tp); 
+	
+	A_d_Select(aOE, a);
+	
+	return(ArrayRange(a,0));
 }
 
 int SendChild(int parent_ti, int step_koef=1){
@@ -1050,12 +1161,9 @@ double CalcStartPr(int ty, int& step_count){
 	int foty = -1;
 	double aFOTY[][OE_MAX];
 	int foty_rows=ELT_SelectByFOTY_d2(aT,aFOTY,ty);
-	A_d_PrintArray2(aFOTY,4,"aFOTY");
 	if(foty_rows>0){
-		Print(fn+".foty_rows="+foty_rows);
 		double aLOSS[][OE_MAX];
 		int loss_rows=ELT_SelectInLossCP_d2(aFOTY, aLOSS) ;
-		Print(fn+".loss_rows="+loss_rows);
 		if(loss_rows<=0){
 			return(0.00);
 		}
@@ -1063,12 +1171,8 @@ double CalcStartPr(int ty, int& step_count){
 		A_d_Sort2(aLOSS,""+OE_CP2OP+" >;");
 		nearest_pr=aLOSS[0][OE_OOP];
 		int dist=MathAbs(nearest_pr-TR_getMarketPrice(TR_MODE_AVG))/Point;
-		Print(fn+".nearest_pr="+nearest_pr);
-		Print(fn+".dist="+dist);
 		step_count=MathCeil(dist/Step);
-		Print(fn+".step_count=",step_count);
 		start_pr=nearest_pr+iif(ty==OP_SELLSTOP,1,-1)*(step_count+1)*Step*Point;
-		Print(fn+".start_pr="+start_pr);
 		step_count--;
 		return(start_pr);
 	}

@@ -1,7 +1,8 @@
 	/*
-		>Ver	:	0.1.1.18
-		>Date	:	2013.10.23
-		>Hist:																																														
+		>Ver	:	0.1.1.19
+		>Date	:	2013.10.30
+		>Hist:																																															
+				 @0.1.1.19@2013.10.30@artamir	[+] sysDT.mqh	
 				 @0.1.1.18@2013.10.23@artamir	[*]	ELT_SelectInLossCP_d2
 				 @0.1.1.17@2013.10.23@artamir	[*]	ELT_SelectInLoss_d2
 				 @0.1.1.16@2013.10.23@artamir	[*]	ELT_SelectInProfit_d2
@@ -35,7 +36,7 @@
 
 #property stacksize 1024			
 	
-#define	ELTVER	"0.1.1.18_2013.10.23"
+#define	ELTVER	"0.1.1.19_2013.10.30"
 
 //{ GLOBAL VARS
 	//Нужны для совместимости с пред. версиями.
@@ -52,6 +53,7 @@ bool ELT_useSelect=true;	//разрешает процедурам отбора 
 #include	<sysNormalize.mqh>								//Pref: Norm
 #include	<sysStructure.mqh>								//Pref: Struc
 #include	<sysOther.mqh>									
+#include	<sysDT.mqh>										//Pref: DT
 #include	<sysMarketInfo.mqh>								//Pref:	MI
 //----------------------------------------------------------
 #include	<sysArray.mqh>									//Pref:	A

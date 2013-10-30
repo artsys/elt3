@@ -1,10 +1,11 @@
 	/**
-		\version	0.0.0.7
-		\date		2013.08.06
+		\version	0.0.0.8
+		\date		2013.10.30
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:									
+			>Hist:										
+					 @0.0.0.8@2013.10.30@artamir	[]	SelectedSymbols
 					 @0.0.0.7@2013.08.06@artamir	[+]	UCase
 					 @0.0.0.6@2013.08.06@artamir	[+]	StringToColor
 					 @0.0.0.5@2013.08.06@artamir	[*]	StringReplace
@@ -208,12 +209,13 @@ string UCase(string str){
 
 void SelectedSymbols(){
 	/**
-		\version	0.0.0.0
-		\date		2013.08.27
+		\version	0.0.0.1
+		\date		2013.10.30
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:
+			>Hist:	
+					 @0.0.0.1@2013.10.30@artamir	[]	SelectedSymbols
 			>Rev:0
 	*/
 
@@ -231,4 +233,19 @@ void SelectedSymbols(){
 		Print(i+": "+s);						//делаем с названием что хотим.
 	}
 	FileClose(h);	//закрываем файл.
+}
+
+string Bool2Str(bool assertion){
+	/**
+		\version	0.0.0.0
+		\date		2013.10.30
+		\author		Morochin <artamir> Artiom
+		\details	Озвучка булевого результата.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	if(assertion)	return("true");
+	else 			return("false");
 }

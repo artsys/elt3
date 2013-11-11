@@ -1,7 +1,8 @@
 	/*
-		>Ver	:	0.1.1.19
-		>Date	:	2013.10.30
-		>Hist:																																															
+		>Ver	:	0.1.1.20
+		>Date	:	2013.11.08
+		>Hist:																																																
+				 @0.1.1.20@2013.11.08@artamir	[+] sysIndexedArray	
 				 @0.1.1.19@2013.10.30@artamir	[+] sysDT.mqh	
 				 @0.1.1.18@2013.10.23@artamir	[*]	ELT_SelectInLossCP_d2
 				 @0.1.1.17@2013.10.23@artamir	[*]	ELT_SelectInLoss_d2
@@ -36,7 +37,7 @@
 
 #property stacksize 1024			
 	
-#define	ELTVER	"0.1.1.19_2013.10.30"
+#define	ELTVER	"0.1.1.20_2013.11.08"
 
 //{ GLOBAL VARS
 	//Нужны для совместимости с пред. версиями.
@@ -58,6 +59,7 @@ bool ELT_useSelect=true;	//разрешает процедурам отбора 
 //----------------------------------------------------------
 #include	<sysArray.mqh>									//Pref:	A
 #include	<sysArray2.mqh>									//Pref: A
+#include	<sysIndexedArray.mqh>
 #include	<sysOrdersExtra.mqh>							//Pref:	OE
 #include	<sysTerminal.mqh>								//Pref: T
 #include	<sysEvents.mqh>									//Pref:	E

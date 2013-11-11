@@ -1,12 +1,13 @@
 /**
-	\version	3.0.1.53
-	\date		2013.10.25
+	\version	3.0.1.54
+	\date		2013.11.08
 	\author		Morochin <artamir> Artiom
 	\details	Шабон построения советника на базе фреймворка eLT 3.0.1
 				Orders in window.
 	\internal
 		Вместо отбора по локальному родителю использовать отбор по ценовому уровню.
-		>Hist:																																																				
+		>Hist:																																																					
+				 @3.0.1.54@2013.11.08@artamir	[]	SelectExpertTickets
 				 @3.0.1.53@2013.10.25@artamir	[+]	TralTP
 				 @3.0.1.52@2013.10.25@artamir	[+]	SelectTIInWindowTP
 				 @3.0.1.51@2013.10.23@artamir	[*]	getTPNet
@@ -61,7 +62,7 @@
 	
 //{ === DEFINES
 #define EXP	"eOIW"	/** имя эксперта */
-#define VER	"3.0.1.53_2013.10.25"
+#define VER	"3.0.1.54_2013.11.08"
 #define DATE "2013.09.05"	/** extert date */	
 //}
 
@@ -143,7 +144,9 @@ int start(){
 	
 	startext();
 	string comm=StringConcatenate( 	"ver: ",VER,"\n",
-									"date: ",DATE);
+									"date: ",DATE,"\n",
+									"aOE: ",ArrayRange(aOE,0),"\n",
+									"maxQScount= "+maxQScount);
 	Comment(comm);	
 	//-------------------------------------
 	return(0);
@@ -174,10 +177,12 @@ int startext(){
 	
 	OE_eraseArray();
 	
+	int ticks=GetTickCount();
 	ELT_start();
 	//-------------------------------------
 	
 	//{		=== Блок закрытия позиций
+		ticks=GetTickCount();
 		if(isExpertsTickets()){
 			if(FixProfit()){
 				isFixProfit=true;
@@ -189,20 +194,24 @@ int startext(){
 			
 			CloseRevers();
 		}
+		//Print(fn+".FixProfit ms="+(GetTickCount()-ticks));
 	//..	=== Блок сопровождения позиций
 		
 		/*	Основной блок советника.
 			Описание: для каждой живой позиции на расстоянии шага должен находиться 
 			противоположный ордер с тейком противоположной сетки.
 		*/
-		//if(ArrayRange(aEvents,0)<=0){isStarted=0; return(0);}
 		if(ArrayRange(aEvents,0)<=0 && !isStarted){isStarted=0; return(0);}
+		ticks=GetTickCount();
 		CheckNets();
 		Convoy();
+		//Print(fn+".CheckNets+Convoy="+(GetTickCount()-ticks));
 	//..	=== Блок трала тейкпрофита
-		TralTP();
+		//TralTP();
 	//..	=== Блок открытия позиций
+		ticks=GetTickCount();
 		Autoopen();
+		//Print(fn+".Autoopen ms="+(GetTickCount()-ticks));
 	//}
 	
 	
@@ -394,17 +403,21 @@ void CheckNets(){
 		int parent_ty=-1, revers_foty=-1;
 		double start_pr=0.00;
 		
+		int ticks=GetTickCount();
 		if(ELT_SelectByFOTY_d2(a,aB,OP_BUYSTOP)<=0){
 			parent_ty=OP_BUYSTOP;
 			revers_foty=OP_SELLSTOP;
 			close_ty=OP_SELL;
 		}
+		//Print(fn+".ELT_SelectByFOTY_d2 ms="+(GetTickCount()-ticks));
 		
+		ticks=GetTickCount();
 		if(ELT_SelectByFOTY_d2(a,aB,OP_SELLSTOP)<=0){
 			parent_ty=OP_SELLSTOP;
 			revers_foty=OP_BUYSTOP;
 			close_ty=OP_BUY;
 		}
+		//Print(fn+".ELT_SelectByFOTY_d2 ms="+(GetTickCount()-ticks));
 		
 		if(parent_ty>=0){
 			_lot=getNextLot(parent_ty);
@@ -413,7 +426,7 @@ void CheckNets(){
 		}
 		
 		if(close_ty>-1){
-			Print(fn);
+			//Print(fn);
 			CloseReversTP(close_ty);
 		}	
 	}
@@ -549,7 +562,7 @@ void TralTP(){
 			>Rev:0
 	*/
 	string fn="TralTP";
-	Print(fn);
+	//Print(fn);
 	double a[][OE_MAX];
 	double oop;
 	
@@ -662,12 +675,13 @@ bool isChildNearPrice(double child_op, int parent_ty){
 
 int SelectExpertTickets(double &aT[][]){
 	/**
-		\version	0.0.0.3
-		\date		2013.10.23
+		\version	0.0.0.4
+		\date		2013.11.08
 		\author		Morochin <artamir> Artiom
 		\details	возвращает количество рабочих приказов эксперта.
 		\internal
-			>Hist:			
+			>Hist:				
+					 @0.0.0.4@2013.11.08@artamir	[]	Изменена выборка на индексную
 					 @0.0.0.3@2013.10.23@artamir	[*]	Оптимизация по выборке из массива.
 					 @0.0.0.2@2013.09.06@artamir	[*]	SelectExpertTickets исправлен параметр функции.
 					 @0.0.0.1@2013.09.04@artamir	[+]	SelectExpertTickets
@@ -675,20 +689,24 @@ int SelectExpertTickets(double &aT[][]){
 	*/
 	
 	string fn="SelectExpertTickets";
-	
-	bool tmp_useEraseFilter = ELT_useEraseFilter;
-	bool tmp_useSelect = ELT_useSelect;
-	
+	int ticks=GetTickCount();
 	A_eraseFilter();
 	A_FilterAdd_AND(OE_MN, TR_MN, -1, AS_OP_EQ);	//Выбор по магику
 	A_FilterAdd_AND(OE_IT, 1	, -1, AS_OP_EQ);	//Выбор если в терминале.
-	A_d_Select(aOE, aT);
+	
+	//A_d_Select(aOE,aT);
+	
+	int aI[];
+	AId_Init2(aOE, aI);
+	//Print(fn+".Init2 ms="+(GetTickCount()-ticks));
+	ticks=GetTickCount();
+	AId_Select2(aOE, aI);
+	//Print(fn+".Select2 ms="+(GetTickCount()-ticks));
+	//ticks=GetTickCount();
+	AId_SetIndexOnArray(aOE,aI,aT);
 	
 	int rows_t=ArrayRange(aT,0);
-	
-	ELT_useEraseFilter = tmp_useEraseFilter;
-	ELT_useSelect=tmp_useSelect;
-	
+	//Print(fn+".SetIndexOnArray ms="+(GetTickCount()-ticks));
 	return(rows_t);
 }
 
@@ -725,8 +743,14 @@ int SelectPositions(double &a[][], int ty=-1){
 	if(ty>=0){
 		A_FilterAdd_AND(OE_TY, ty, -1, AS_OP_EQ);	//Выбор по типу ордера.
 	}
-	A_d_Select(aOE, a);
+	//A_d_Select(aOE, a);
 	
+	int aI[];
+	AId_Init2(aOE, aI);
+	//BP_SRT=true;
+	AId_Select2(aOE, aI);
+	AId_SetIndexOnArray(aOE,aI,a);
+	//BP_SRT=false;
 	return(ArrayRange(a,0));
 }
 
@@ -752,12 +776,18 @@ int SelectPosBySID(double &a[][], int sid){
 	A_FilterAdd_AND(OE_MN	, TR_MN	, -1, AS_OP_EQ);	//Выбор по магику
 	A_FilterAdd_AND(OE_IM	, 1		, -1, AS_OP_EQ);	//Выбор по магику
 	A_FilterAdd_AND(OE_SID	, sid	, -1, AS_OP_EQ);	//Выбор по магику
-	A_d_Select(aOE, a);
+	//A_d_Select(aOE, a);
 
+	int aI[];
+	AId_Init2(aOE, aI);
+	//BP_SRT=true;
+	AId_Select2(aOE, aI);
+	AId_SetIndexOnArray(aOE,aI,a);
+	//BP_SRT=false;	
 	return(ArrayRange(a,0));
 }
 
-int SelectTIBySID(double &a[][], int sid){
+int SelectTIBySID(double &a[][], int sid, int &aI[]){
 	/**
 		\version	0.0.0.2
 		\date		2013.10.23
@@ -780,7 +810,13 @@ int SelectTIBySID(double &a[][], int sid){
 	A_eraseFilter();
 	A_FilterAdd_AND(OE_MN	, TR_MN	, -1, AS_OP_EQ);	//Выбор по магику
 	A_FilterAdd_AND(OE_SID	, sid	, -1, AS_OP_EQ);	//Выбор по sid
-	A_d_Select(aOE, a);
+	//A_d_Select(aOE, a);
+	
+	//int aI[];
+	AId_Init2(aOE, aI);
+	//BP_SRT=true;
+	AId_Select2(aOE, aI);
+	AId_SetIndexOnArray(aOE,aI,a);
 	return(ArrayRange(a,0));
 }
 
@@ -804,7 +840,13 @@ int SelectTINearPrice(double &a[][], double pr){
 	A_FilterAdd_AND(OE_MN, TR_MN	, -1		, AS_OP_EQ);	//Выбор по магику
 	A_FilterAdd_AND(OE_IT, 1		, -1		, AS_OP_EQ);	//Выбор если в терминале.
 	A_FilterAdd_AND(OE_OP, max_pr	, min_pr	, AS_OP_IN);	//Выбор ордеров в окне цен открытия.
-	A_d_Select(aOE, a);
+	//A_d_Select(aOE, a);
+	
+	int aI[];
+	AId_Init2(aOE, aI);
+	//BP_SRT=true;
+	AId_Select2(aOE, aI);
+	AId_SetIndexOnArray(aOE,aI,a);
 	
 	return(ArrayRange(a,0));
 	//double aT[][OE_MAX];
@@ -852,7 +894,12 @@ int SelectTIInWindowTP(double &a[][], int ti){
 	A_FilterAdd_AND(OE_OOP	,oop	,-1,assertion_oop);
 	A_FilterAdd_AND(OE_OOP	,tp		,-1,assertion_tp); 
 	
-	A_d_Select(aOE, a);
+	int aI[];
+	AId_Init2(aOE, aI);
+	//BP_SRT=true;
+	AId_Select2(aOE, aI);
+	AId_SetIndexOnArray(aOE,aI,a);
+	//A_d_Select(aOE, a);
 	
 	return(ArrayRange(a,0));
 }
@@ -1029,7 +1076,13 @@ double getTPNet(int foty){
 	A_FilterAdd_AND(OE_MN, TR_MN, -1, AS_OP_EQ);	//Выбор по магику
 	A_FilterAdd_AND(OE_IT, 1	, -1, AS_OP_EQ);	//Выбор если в терминале.
 	A_FilterAdd_AND(OE_FOTY, foty, -1, AS_OP_EQ);	//Выбор по FOTY
-	A_d_Select(aOE, aT);
+	//A_d_Select(aOE, aT);
+	
+	int aI[];
+	AId_Init2(aOE, aI);
+	//BP_SRT=true;
+	AId_Select2(aOE, aI);
+	AId_SetIndexOnArray(aOE,aI,aT);
 	
 	int rows_foty = ArrayRange(aT,0);
 	if(rows_foty>0){
@@ -1059,8 +1112,13 @@ int getMaxGL(int foty){
 	if(foty_rows <= 0){return(0);}
 	
 	//Ad_QuickSort2(aFOTY, -1, -1, OE_GL, A_MODE_DESC);
-	A_d_Sort2(aFOTY, ""+OE_GL+" >;");
-	int res=aFOTY[0][OE_GL];
+	//A_d_Sort2(aFOTY, ""+OE_GL+" >;");
+	
+	int aI[];
+	AId_Init2(aFOTY,aI);
+	AId_QuickSort2(aFOTY,aI, -1, -1, OE_GL, A_MODE_DESC);
+	
+	int res=aFOTY[aI[0]][OE_GL];
 	
 	ArrayResize(aT,0);
 	ArrayResize(aFOTY,0);
@@ -1080,13 +1138,17 @@ int getMaxSID(){
 			>Rev:0
 	*/
 
-	double aT[][OE_MAX];
-	ArrayCopy(aT, aOE);
+	//double aT[][OE_MAX];
+	//ArrayCopy(aT, aOE);
 	
 	//Ad_QuickSort2(aT, -1, -1, OE_SID, A_MODE_DESC);
-	A_d_Sort2(aT,""+OE_SID+" >;");
-	int res=aT[0][OE_SID];
-	ArrayResize(aT,0);
+	//A_d_Sort2(aT,""+OE_SID+" >;");
+	
+	int aI[];
+	AId_Init2(aOE,aI);
+	AId_QuickSort2(aOE,aI, -1, -1, OE_SID, A_MODE_DESC);
+	
+	int res=aOE[aI[0]][OE_SID];
 	return(res);
 }
 
@@ -1105,8 +1167,9 @@ double getNextLot(int foty){
 	*/
 	string fn="getNextLot";
 	double aT[][OE_MAX];
+	int aI[];
 	int sid = getMaxSID();
-	int t_rows = SelectTIBySID(aT, sid);
+	int t_rows = SelectTIBySID(aT, sid, aI);
 	double aFOTY[][OE_MAX];
 	int foty_rows = ELT_SelectByFOTY_d2(aT, aFOTY, foty);
 	if(foty_rows <= 0){return(Lot);}

@@ -1,15 +1,17 @@
 	/**
-		\version	0.0.2.1
-		\date		2013.10.30
+		\version	0.0.2.3
+		\date		2013.10.31
 		\author		Morochin <artamir> Artiom
 		\details	Gap harvester v2.
 		\internal
-			>Hist:		
+			>Hist:				
+					 @0.0.2.3@2013.10.31@artamir	[]	GetAccInfo
+					 @0.0.2.2@2013.10.31@artamir	[]	getExtraFN
 					 @0.0.2.1@2013.10.30@artamir	[!]	CWT
 			$Revision$
 	*/
 #define	EXP	"eGH"
-#define	VER	"0.0.2.1_2013.10.30"
+#define	VER	"0.0.2.3_2013.10.31"
 
 //{	=== Extern 
 extern	int		DOW 	= 5;	//(Day Of Week) воскресенье-0,1,2,3,4,5,6
@@ -43,6 +45,11 @@ string	EXP_2	= "=== PHASE2_1 ==========";			//..
 string	fnExtra	= ""	;
 //----------------------------------------------------------
 bool	isStart = true	;
+
+//----------------------------------------------------------
+string  ph1_st="";
+string  ph2_st="";
+string	ph3_st="";
 //}
 
 //==========================================================
@@ -86,7 +93,7 @@ int start(){
 	}else{
 		while(IsExpertEnabled()){
 			startext();
-			Sleep(Sleep_ms); //5 sec.
+			//Sleep(Sleep_ms); //5 sec.
 		}
 	}
 	//------------------------------------------------------
@@ -108,7 +115,17 @@ int startext(){
 					 @0.0.1@2013.04.25@artamir	[]	startext
 	*/
 
-	string CommAdd = "";	
+	string 	CommAdd = "";
+			CommAdd=CommAdd+"DOW="+DOW+"\n";
+			CommAdd=CommAdd+"ST1="+ST_Ph11+" TRAL="+TRAL_DeltaPips+"\n";
+			CommAdd=CommAdd+"ST2="+ST_Ph12+" TRAL="+TRAL_DeltaPips12+"\n";
+			CommAdd=CommAdd+"ST3="+ST_Ph13+" TRAL="+TRAL_DeltaPips13+"\n";
+			CommAdd=CommAdd+"ET ="+ET+"\n";
+			CommAdd=CommAdd+"MC="+DT_Time2Str(DT_ModeledCurrent())+"\n";
+			CommAdd=CommAdd+"PH1="+ph1_st+"\n";
+			CommAdd=CommAdd+"PH2="+ph2_st+"\n";
+			CommAdd=CommAdd+"PH3="+ph3_st+"\n";
+			CommAdd=CommAdd+GetAccInfo()+"\n";
 	Comment(	"EXP ver: ",VER,"\n"
 			,	CommAdd);
 	
@@ -122,14 +139,23 @@ int startext(){
 	
 	if(isPhase11()){
 		phase = 11;
+		if(ph1_st==""){
+			ph1_st=DT_Time2Str(DT_ModeledCurrent());
+		}
 	}
 	
 	if(isPhase12()){
 		phase = 12;
+		if(ph2_st==""){
+			ph2_st=DT_Time2Str(DT_ModeledCurrent());
+		}
 	}
 	
 	if(isPhase13()){
 		phase = 13;
+		if(ph3_st==""){
+			ph3_st=DT_Time2Str(DT_ModeledCurrent());
+		}
 	}
 	
 	if(isPhase2()){
@@ -213,14 +239,17 @@ bool isPhase2(){
 //{	=== PHASE 11
 void eGH_Phase11(){											
 	/**
-		\version	0.0.0
-		\date		2013.04.25
+		\version	0.0.0.1
+		\date		2013.10.31
 		\author		Morochin <artamir> Artiom
 		\details	Must be called in begining of "start()" 
 		\internal
-			>Hist:
+			>Hist:	
+					 @0.0.0.1@2013.10.31@artamir	[]	getExtraFN
 	*/
 
+	string fn="eGH_Phase11";
+	
 	if(isOrdersByMN()){
 		TralBSSS();
 	}else{
@@ -318,7 +347,7 @@ void eGH_Phase12(){
 			>Hist:	
 					 @0.0.0.1@2013.06.11@artamir	[]	TralBSSS
 	*/
-
+	string fn="eGH_Phase12";
 	if(isOrdersByMN()){
 		TralBSSS12();
 	}else{
@@ -417,6 +446,7 @@ void eGH_Phase13(){
 					 @0.0.0.1@2013.06.11@artamir	[]	TralBSSS
 	*/
 
+	string fn="eGH_Phase13";
 	if(isOrdersByMN()){
 		TralBSSS13();
 	}else{
@@ -754,3 +784,21 @@ bool isOrdersByMN(int mn = -1){
 	}
 }
 //}
+
+string GetAccInfo(){
+	/**
+		\version	0.0.0.1
+		\date		2013.10.31
+		\author		Morochin <artamir> Artiom
+		\details	Собирает информацию по счету в зависимости от настроек советника.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.10.31@artamir	[]	GetAccInfo
+			>Rev:0
+	*/
+
+	string r="";
+	r=r+"MODE_MARGINREQUIRED="+DoubleToStr(MarketInfo(Symbol(),MODE_MARGINREQUIRED)*OPEN_FixLot,2)+"\n";
+	
+	return(r);
+}

@@ -1,7 +1,8 @@
 	/*
-		>Ver	:	0.0.0.49
-		>Date	:	2013.10.24
-		>Hist	:																																		
+		>Ver	:	0.0.0.50
+		>Date	:	2013.11.05
+		>Hist	:																																			
+					@0.0.0.50@2013.11.05@artamir	[!!]	A_d_Sort2 - Перенаправление на Ad_SortShell.
 					@0.0.0.49@2013.10.24@artamir	[!*]	A_d_Compare (необходимо тестирование)
 					@0.0.0.48@2013.10.22@artamir	[!]	A_d_Select
 					@0.0.0.47@2013.09.13@artamir	[*]	A_d_Select
@@ -17,7 +18,7 @@
 				:	d - for double arrays
 	*/
 
-#define ARRVER	"0.0.0.49_2013.10.24"
+#define ARRVER	"0.0.0.50_2013.11.05"
 	
 //{ === TEMPORAR ARRAY
 
@@ -377,13 +378,14 @@ bool A_d_Compare(double &a[][], int i1, int i2, string compare = ""){
 //{ === SELECT FUNCTIONS	============================
 
 #define SEL_OP_AND	1										/*Operation AND*/
-
-#define SEL_OP_OR	2										//Openration OR
+#define SEL_OP_OR	2										//Operation OR
 
 #define AS_OP_EQ	1										// Операция сравнения на равенство значению Макс фильтра
 #define AS_OP_NOT	2										// Операция сравнения на не равенство значению Макс фильтра
 #define AS_OP_ABOVE	5										// Больще заданного значения
+#define AS_OP_GREAT 5
 #define AS_OP_UNDER	6										// Меньше заданного значения
+#define AS_OP_LESS	6
 #define AS_OP_IN	3										// Операция сравнения на вхождение в диапазон включая границы.
 #define AS_OP_OUT	4										// значение колонки вне диапазона
 
@@ -576,6 +578,25 @@ bool A_Assertion_OUT(double		s_max_val	/*source max value*/
 	return(False);
 }
 
+bool A_Assert(int as_op, double a_val, double s_max, double s_min=-1){
+	/**
+		\version	0.0.0.0
+		\date		2013.11.08
+		\author		Morochin <artamir> Artiom
+		\details	Обобщенная функция сравнения.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+	if(as_op==AS_OP_EQ)return(A_Assertion_EQ(s_max,a_val));
+	if(as_op==AS_OP_NOT)return(A_Assertion_NOT(s_max,a_val));
+	if(as_op==AS_OP_ABOVE)return(A_Assertion_ABOVE(s_max,a_val));
+	if(as_op==AS_OP_UNDER)return(A_Assertion_UNDER(s_max,a_val));
+	if(as_op==AS_OP_IN)return(A_Assertion_IN(s_min,s_max,a_val));
+	if(as_op==AS_OP_OUT)return(A_Assertion_OUT(s_min,s_max,a_val));
+	
+	return(false);//default
+}
 
 int A_d_Select(		double	&s[][] /*source array*/
 				,	double	&d[][] /*destination array*/
@@ -623,6 +644,7 @@ int A_d_Select(		double	&s[][] /*source array*/
 	f_ROWS = ArrayRange(A_Filter,0);
 	
 	for(int i = 0; i < s_ROWS; i++){
+		//--- цикл по строкам массива-источника
 		
 		if(mode==0) s_row = i;
 		if(mode==1){s_row = s_ROWS-i;}
@@ -634,9 +656,6 @@ int A_d_Select(		double	&s[][] /*source array*/
 		
 		res_assertion = false;
 		this_assertion = false;	
-		
-		//--- цикл по строкам массива-источника
-		//--------------------------------------------------
 		
 		for(f_row = 0; f_row < f_ROWS; f_row++){
 			//--- цикл по строкам массива-фильтра
@@ -716,12 +735,13 @@ int A_d_Select(		double	&s[][] /*source array*/
 //{ === SORTING FUNCTIONS
 void A_d_Sort2(double& a[][], string order = "0 <;"){
 	/**
-		\version	0.0.0.4
-		\date		2013.06.12
+		\version	0.0.0.5
+		\date		2013.11.05
 		\author		Morochin <artamir> Artiom
 		\details	Сортировка двумерного массива по заданной колонке
 		\internal
-			>Hist:				
+			>Hist:					
+					 @0.0.0.5@2013.11.05@artamir	[]	A_d_Select
 					 @0.0.0.4@2013.06.12@artamir	[]	A_d_Select
 					 @0.0.0.3@2013.05.20@artamir	[]	A_d_Select
 					 @0.0.0.2@2013.05.20@artamir	[]	A_d_Select
@@ -732,6 +752,10 @@ void A_d_Sort2(double& a[][], string order = "0 <;"){
 			По умолчанию Сортировка 0-колонки по возрастанию
 	*/
 	string fn="A_d_Sort2";
+	
+	Ad_SortShell2(a,order);
+	return;
+	
 	int ROWS = ArrayRange(a, 0);
 	
 	
@@ -954,7 +978,7 @@ void A_d_PrintArray2(double &a[][], int d = 4, string fn = "PrintArray_"){
 	for(int idx_1 = 0; idx_1 < ROWS; idx_1++){
 		string s = "";
 		for(int idx_2 = 0; idx_2 < COLS; idx_2++){
-			s = StringConcatenate(s,"\t", "["+idx_1+"]["+idx_2+"]",DoubleToStr(a[idx_1][idx_2], d));
+			s = StringConcatenate(s,"\t", "["+idx_1+"]["+idx_2+","+OE2Str(idx_2)+"]",DoubleToStr(a[idx_1][idx_2], d));
 			//FileWrite(handle, idx_1, idx_2, DoubleToStr(a[idx_1][idx_2], d));
 		}
 		FileWrite(handle, s);

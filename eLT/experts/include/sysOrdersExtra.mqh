@@ -1,7 +1,8 @@
 	/*
-		>Ver	:	0.0.0.49
-		>Date	:	2013.09.30
-		>Hist	:																				
+		>Ver	:	0.0.0.50
+		>Date	:	2013.11.05
+		>Hist	:																					
+					@0.0.0.50@2013.11.05@artamir	[]	OE_SortDesc
 					@0.0.0.49@2013.09.30@artamir	[+]	OE_setSIDByTicket
 					@0.0.0.48@2013.09.30@artamir	[!]	OE_setCloseByTicket
 					@0.0.0.47@2013.09.30@artamir	[!]	OE_setStandartDataByOrder
@@ -38,7 +39,7 @@
 		>Desc	:
 	*/
 
-#define OE_VER	"0.0.0.49_2013.09.30"
+#define OE_VER	"0.0.0.50_2013.11.05"
 #define OE_DATE	"2013.09.06"
 	
 //{	//=== ARRAY	
@@ -66,7 +67,7 @@
 #define	OE_MP		15	//Main parent of the grid
 #define	OE_LP		16	//Local parent
 #define	OE_LP2		17	//Local parent
-#define OE_SID		18	//ИД сессии.
+#define 	OE_SID		18	//ИД сессии.
 //------ Partial close
 #define	OE_FROM		20	//If was partial close 
 //------ Grid
@@ -97,6 +98,24 @@
 //----------------------------------------------------------
 double	aOE[][OE_MAX];
 //}
+
+string OE2Str(int i){
+	switch(i){
+		case 0: return("OE_TI");
+		case 1: return("OE_TY");
+		case 2: return("OE_OOP");
+		case 3: return("OE_OOT");
+		case 4: return("OE_TP");
+		case 5: return("OE_SL");
+		case 6: return("OE_MN");
+		case 7: return("OE_LOT");
+		case 8: return("OE_OPR");
+		case 9: return("OE_IT");
+		case 10: return("OE_IM");
+		case 11: return("OE_IP");
+		default: return("UDF");
+	}
+}
 
 //{	//=== PRIVATE
 int OE_FIBT(int ti){
@@ -1490,18 +1509,20 @@ int		OE_getFOTYByTicket(int ti){
 
 void OE_SortDesc(int col=0){
 	/**
-		\version	0.0.0.1
-		\date		2013.08.29
+		\version	0.0.0.2
+		\date		2013.11.05
 		\author		Morochin <artamir> Artiom
 		\details	Сортирует массив aOE по умолчанию по измерению OE_TI по убыванию.
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2013.11.05@artamir	[]	OE_SortDesc
 					 @0.0.0.1@2013.08.29@artamir	[]	OE_SortDesc
 			>Rev:0
 	*/
 
-	Ad_QuickSort2(aOE, -1,-1,col, A_MODE_DESC);
+	//Ad_QuickSort2(aOE, -1,-1,col, A_MODE_DESC);
 	//A_d_Sort2(aOE, ""+col+" >;");
+	Ad_SortShell2(aOE, ""+col+" >;");
 }
 
 void OE_RecheckStatuses(){

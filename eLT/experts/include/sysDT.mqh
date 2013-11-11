@@ -113,6 +113,22 @@ int DT_Time2Seconds(datetime t){
 	return(res_sec);
 }
 
+string DT_Time2Str(datetime t){
+	/**
+		\version	0.0.0.0
+		\date		2013.10.31
+		\author		Morochin <artamir> Artiom
+		\details	Переводит количество секунд, прошедших с начала дня в строку формата HH:MM:SS
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+	
+	string res=TimeHour(t)+":"+TimeMinute(t)+":"+TimeSeconds(t);
+	
+	return(res);
+}
+
 bool DTs_isTimeBetween(datetime t, string st="00:00:01", string et="00:00:03"){
 	/**
 		\version	0.0.0.0

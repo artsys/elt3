@@ -1,10 +1,11 @@
 /**
-	\version	0.0.0.10
+	\version	0.0.1.0
 	\date		2013.10.10
 	\author		Morochin <artamir> Artiom
 	\details	Detailed description
 	\internal
 		>Hist:										
+				@0.0.1.0@2013.10.10@artamir	[-] Рекурсивная сортировка. -стексайз.
 				 @0.0.0.10@2013.10.10@artamir	[*] Ad_CopyRow2To2	
 				 @0.0.0.9@2013.10.07@artamir	[+]	As_addRow1
 				 @0.0.0.8@2013.10.01@artamir	[!] Ad_Sum2	
@@ -17,7 +18,7 @@
 				 @0.0.0.1@2013.08.29@artamir	[+]	
 		>Rev:0
 */
-#property stacksize 16368
+#property stacksize 2048
 
 #define A_MODE_ASC	0
 #define A_MODE_DESC	1
@@ -98,6 +99,39 @@ int Ad_CopyRow2To2(	double &s[][]	/** массив источник*/
 	return(idx_d);
 }
 
+int Ad_CopyRow2To1(double &s[][], double &d[], int sr=0){
+	/**
+		\version	0.0.0.0
+		\date		2013.11.04
+		\author		Morochin <artamir> Artiom
+		\details	Копирует строку из массива источника в массив приемник.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+	
+	ArrayResize(d,ArrayRange(s,1));
+	for(int i=0;i<ArrayRange(s,1);i++){
+		d[i]=s[sr][i];
+	}
+}
+
+int Ad_Copy1ToRow2(double &s[], double &d[][], int dr=0){
+	/**
+		\version	0.0.0.0
+		\date		2013.11.04
+		\author		Morochin <artamir> Artiom
+		\details	Копирует массив источник в строку массива приемника.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	for(int i=0; i<ArrayRange(d,1); i++){
+		d[dr][i]=s[i];
+	}
+}
+
 void Ad_Swap2(double &a[][], int i1, int i2){
 	/**
 		\version	0.0.0.3
@@ -121,6 +155,63 @@ void Ad_Swap2(double &a[][], int i1, int i2){
 	}
 
 }
+
+#define A_ABOVE 0
+#define A_EQ 1
+#define A_UNDER 2
+
+bool Ad_Compare21(double &a2[][], int i1, double &a1[], string compare = ""){
+	/**
+		\version	0.0.0.3
+		\date		2013.10.24
+		\author		Morochin <artamir> Artiom
+		\details	Сравнение двух строк массива
+		\internal
+			>Hist:			
+					 @0.0.0.3@2013.10.24@artamir	[!*]	Сравнение по нескольким колонкам
+						колонки и операции сравнения задаются строкой вида:
+						<КолонкаИОперация>[<КолонкаИОперация>]
+						КолонкаИОперация:=<НомерКолонки><Пробел><ОперацияСравнения><ТочкаСЗапятой>
+						Если значения по текущей колонке равны, то переходим к следующей колонке из списка.
+					 @0.0.0.1@2013.05.20@artamir	[+]	A_d_Compare
+			>Rev:0
+			compare может быть строкой формата "<номер колонки для сравнения><пробел><операция сравнения><точкасзапятой>"
+			"5 >;" или "7 <=;"
+	*/
+
+	string fn="A_d_Compare";	
+	string subs[];
+	ArrayResize(subs,0);
+	int subs_ROWS = 0;
+	StringToArray(subs, compare, ";");	//Разбиваем на массив параметров сравнения т.е. на элементы: <НомерКолонки><Пробел><ОперацияСравнения>
+	subs_ROWS = ArrayRange(subs,0)-1;
+	
+	//A_s_PrintArray1(subs, "subs");
+	
+	for(int i = 0; i < subs_ROWS; i++){	//цикл по количеству сравниваемых колонок.
+		string co[0];
+		ArrayResize(co,0);
+		int co_ROWS = 0;
+		StringToArray(co, subs[i], " ");	
+		co_ROWS = ArrayRange(co,0);	//Количество строк массива индексов колонок для сравнения.
+	
+		if(co_ROWS > 0){
+			int col = StrToInteger(co[0]);
+			string op = co[1];
+			
+			int assertion;
+			if(a2[i1,col]>a1[col]){assertion=A_ABOVE;}
+			if(a2[i1,col]==a1[col]){assertion=A_EQ;}
+			if(a2[i1,col]<a1[col]){assertion=A_UNDER;}
+			if(BP_SRT){Print (fn+": col = "+col, " op = "+op, " assertion="+assertion, " subs_ROWS="+subs_ROWS);}
+			if(assertion==A_ABOVE 	&& (op==">" ||op==">=")){return(true);}
+			if(assertion==A_UNDER 	&& (op=="<" ||op=="<=")){return(true);}
+			if(assertion==A_EQ){continue;}	//значения колонок равны, но не было совпадения с операциями сравнения.
+		}
+	}
+	return(false);
+}
+
 
 void Ad_QuickSort2(double &a[][], int idx_min=-1, int idx_max=-1, int col=0, int mode = 0){
 	/**
@@ -165,6 +256,49 @@ void Ad_QuickSort2(double &a[][], int idx_min=-1, int idx_max=-1, int col=0, int
 	if(i<idx_max){Ad_QuickSort2(a,i,idx_max,col, mode);}
 	if(idx_min<j){Ad_QuickSort2(a,idx_min,j,col, mode);}
 }	
+
+void Ad_SortShell2(double &a[][], string order="0 >;"){
+	/**
+		\version	0.0.0.0
+		\date		2013.11.04
+		\author		Morochin <artamir> Artiom
+		\details	Сортировка методом Шелла
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+	string fn="Ad_SortShell2";
+	//Print(fn);
+	int size=ArrayRange(a,0);
+	int gap=size/2;
+	while(gap>0){
+		for(int i=gap; i<size; i++){
+			double t[];
+			Ad_CopyRow2To1(a,t,i);
+			for(int j=i-gap;(j>=0)&&!Ad_Compare21(a, j, t, order); j-=gap){
+				Ad_Swap2(a,j+gap,j);
+			}
+			Ad_Copy1ToRow2(t,a,j+gap);
+			
+		}
+		gap=gap/2;
+	}
+}
+
+int Ad_Select2(double &s[][], double &d[][], bool add_rows=false){
+	/**
+		\version	0.0.0.0
+		\date		2013.11.05
+		\author		Morochin <artamir> Artiom
+		\details	Выборка из массива источника методом наложения фильтра
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	//произведем анализ первой операции анд.
+	
+}
 
 double Ad_Sum2(double &a[][], int col=0){
 	/**

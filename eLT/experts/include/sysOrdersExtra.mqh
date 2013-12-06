@@ -2,39 +2,7 @@
 		>Ver	:	0.0.0.50
 		>Date	:	2013.11.05
 		>Hist	:																					
-					@0.0.0.50@2013.11.05@artamir	[]	OE_SortDesc
-					@0.0.0.49@2013.09.30@artamir	[+]	OE_setSIDByTicket
-					@0.0.0.48@2013.09.30@artamir	[!]	OE_setCloseByTicket
-					@0.0.0.47@2013.09.30@artamir	[!]	OE_setStandartDataByOrder
-					@0.0.0.46@2013.09.@artamir		[!] Исправлен дефайн OrderProfit.	
-					@0.0.0.45@2013.08.29@artamir	[-] Удалены отладочные метки.	
-					@0.0.0.44@2013.08.29@artamir	[+]	OE_SortDesc
-					@0.0.0.43@2013.07.02@artamir	[*]	OE_getAOMByTicket - исправлено получение метода открытия.
-					@0.0.0.42@2013.06.28@artamir	[+]	OE_setFIRByTicket
-					@0.0.0.41@2013.05.17@artamir	[+]	OE_ClosePriceSL
-					@0.0.39@2013.03.06@artamir	[+]	OE_setGLByTicket
-					@0.0.38@2013.03.06@artamir	[+]	OE_setIMByTicket
-					@0.0.37@2013.03.06@artamir	[+]	OE_setIPByTicket
-					@0.0.36@2013.03.06@artamir	[]	
-			@0.0.35@2013.03.02@artamir	[]
-					@0.0.34@2013.02.26@artamir	[]	OE_RecheckStatuses
-					@0.0.33@2013.02.26@artamir	[]	OE_setCloseByTicket
-					@0.0.32@2013.02.26@artamir	[]	OE_setStandartDataByOrder
-					@0.0.31@2013.02.25@artamir	[]	
-					@0.0.30@2013.02.23@artamir	[]	OE_getICByTicket
-					@0.0.29@2013.02.22@artamir	[]	OE_setCPPByTicket
-					@0.0.28@2013.02.22@artamir	[*]	OE_setCloseByTicket
-					@0.0.27@2013.02.22@artamir	[+]	OE_setCTYByTicket
-					@0.0.26@2013.02.22@artamir	[+]	OE_setCPPByTicket
-					@0.0.25@2013.02.22@artamir	[]	
-					@0.0.24@2013.02.21@artamir	[]	OE_CountIT
-					@0.0.23@2013.02.21@artamir	[]	OE_setITByTicket
-					@0.0.22@2013.02.20@artamir	[]	OE_setAOMByTicket
-					@0.0.21@2013.02.20@artamir	[]	OE_setStandartDataByOrder
-					@0.0.20@2013.02.20@artamir	[+] Добавлены новые колонки	
-					@0.0.19@2013.02.16@artamir	[*]	OE_setCloseByTicket
-						Исправлены функции установки данных закрытия ордера.
-					@0.0.17@2013.02.14@artamir	[+]	OE_setFODByTicket
+			Необходимо исправление библиотеки для поиска значений функционалом библиотеки sysIndexedArray.mqh
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:
 	*/
@@ -68,6 +36,7 @@
 #define	OE_LP		16	//Local parent
 #define	OE_LP2		17	//Local parent
 #define 	OE_SID		18	//ИД сессии.
+#define OE_SSP		19	//Session Start Price/(для eOIW2. Цена старта новой сессии.)
 //------ Partial close
 #define	OE_FROM		20	//If was partial close 
 //------ Grid

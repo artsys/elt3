@@ -266,6 +266,106 @@ void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, in
 	
 }
 
+//------------------------------------------------------------------------
+#define AI_SEL_OP_AND	1										//{ //Operation AND 
+#define AI_SEL_OP_OR	2										//} //Operation OR		
+
+#define AI_AS_OP_EQ		1										//{ // Операция сравнения на равенство значению Макс фильтра
+#define AI_AS_OP_NOT	2										// Операция сравнения на не равенство значению Макс фильтра
+#define AI_AS_OP_ABOVE	5										// Больще заданного значения
+#define AI_AS_OP_GREAT 	5
+#define AI_AS_OP_UNDER	6										// Меньше заданного значения
+#define AI_AS_OP_LESS	6
+#define AI_AS_OP_IN		3										// Операция сравнения на вхождение в диапазон включая границы.
+#define AI_AS_OP_OUT	4										//} // значение колонки вне диапазона
+
+//===	Filter array cols
+#define AIF_COL		0										//{ //колонка фильтра
+#define AIF_MIN		1										//мин. значение фильтра
+#define AIF_MAX		2										//макс. значение фильтра
+#define AIF_SEL_OP	3										//операция объединения условий (or and)
+#define AIF_AS_OP	4										//} //операция проверки значения ячейки.
+#define AIF_TOT		5
+
+double	AId_Filter[][AIF_TOT];
+
+int AId_eraseFilter(){
+	/*
+		>Ver	:	0.0.1
+		>Date	:	2012.10.05
+		>Hist	:
+			@0.0.1@2012.10.05@artamir	[]
+		>Author	:	Morochin <artamir> Artiom
+		>Desc	:
+	*/
+	
+	//------------------------------------------------------
+	ArrayResize(AId_Filter, 0);
+	
+	//------------------------------------------------------
+	return(0);
+}
+
+int AId_FilterAdd(int COL, double MIN, double MAX, int as_OP, int sel_OP){
+	/**
+		\version	0.0.0.0
+		\date		2013.11.11
+		\author		Morochin <artamir> Artiom
+		\details	Добавляет значения фильтра в новую строку.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+	
+	//------------------------------------------------------
+	int idx = Ad_addRow2(AId_Filter);
+	
+	//------------------------------------------------------
+	AId_Filter[idx][AIF_COL]=COL;
+	AId_Filter[idx][AIF_MIN]=MIN;
+	AId_Filter[idx][AIF_MAX]=MAX;
+	AId_Filter[idx][AIF_SEL_OP]=sel_OP;
+	AId_Filter[idx][AIF_AS_OP]=as_OP;
+	
+	//------------------------------------------------------
+	return(idx);
+
+}
+
+int AId_FilterAdd_AND(int COL, double MIN = 0, double MAX = 0, int as_OP = 3б bool erase=false){
+	/**
+		\version	0.0.0.0
+		\date		2013.11.11
+		\author		Morochin <artamir> Artiom
+		\details	Добавляет новую строку фильтра с предварительным очищением массива-фильтра.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+	if(erase)AId_eraseFilter();
+	
+	//--------------------------------------
+	return(AId_FilterAdd(COL,MIN,MAX,as_OP, AI_SEL_OP_AND));
+}
+
+int AId_FilterAdd_OR(int COL, double MIN = 0, double MAX = 0, int as_OP = 3, bool erase=false){
+	/**
+		\version	0.0.0.0
+		\date		2013.11.11
+		\author		Morochin <artamir> Artiom
+		\details	Добавляет новую строку фильтра с предварительным очищением массива-фильтра.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+	if(erase)AId_eraseFilter();
+	
+	//--------------------------------------
+	return(AId_FilterAdd(COL,MIN,MAX,as_OP, AI_SEL_OP_OR));
+}
+
+
+//------------------------------------------------------------------------
 int AId_QuickSearch(double &a[][], int &aI[], int col, double element){
 	/**
 		\version	0.0.0.1
@@ -390,16 +490,16 @@ void AId_Select2(double &a[][], int &aI[]){
 	*/
 	string fn="AId_Select2";
 	
-	for(int row_f=0;row_f<ArrayRange(A_Filter,0);row_f++){
+	for(int row_f=0;row_f<ArrayRange(AId_Filter,0);row_f++){
 		if(ArrayRange(aI,0)<=0){
 			continue;
 		}
 		//--------------------------------------------------
-		int f_col=A_Filter[row_f][F_COL];//{ Запоминаем текущие значения массива-фильтра.
-		double f_min=A_Filter[row_f][F_MIN];
-		double f_max=A_Filter[row_f][F_MAX];
-		int f_select_operation=A_Filter[row_f][F_SEL_OP];
-		int f_assertion_operation=A_Filter[row_f][F_AS_OP];//}
+		int f_col=AId_Filter[row_f][AIF_COL];//{ Запоминаем текущие значения массива-фильтра.
+		double f_min=AId_Filter[row_f][AIF_MIN];
+		double f_max=AId_Filter[row_f][AIF_MAX];
+		int f_select_operation=AId_Filter[row_f][AIF_SEL_OP];
+		int f_assertion_operation=AId_Filter[row_f][AIF_AS_OP];//}
 	
 		string order=f_col+" <;";//сортировка по возрастанию
 		//Print(fn+".order="+order
@@ -421,8 +521,8 @@ void AId_Select2(double &a[][], int &aI[]){
 		int first=0,last=ArrayRange(aI,0); //в общем случае границы задаются размером массива-индексов.
 	
 		//--- установка границ в зависимости от операций сравнения (assertion)
-		if(f_select_operation==SEL_OP_AND){
-			if(f_assertion_operation==AS_OP_EQ){
+		if(f_select_operation==AI_SEL_OP_AND){
+			if(f_assertion_operation==AI_AS_OP_EQ){
 				AId_SearchInterval(first,last,a,aI,f_col,f_max);
 				//нашли границы значения, можно обрезать основной индекс и аерейти к след. фильтру
 				AI_IndexSetInterval(aI,first,last);
@@ -432,7 +532,7 @@ void AId_Select2(double &a[][], int &aI[]){
 				continue;
 			}
 		
-			if(f_assertion_operation==AS_OP_GREAT){
+			if(f_assertion_operation==AI_AS_OP_GREAT){
 				//все значения больше или равные заданному начинаются с индекса первого совпавшег элемента до конца массива.
 				first=AId_SearchFirst(a,aI,f_col, f_max);
 				
@@ -441,7 +541,7 @@ void AId_Select2(double &a[][], int &aI[]){
 				continue;
 			}
 		
-			if(f_assertion_operation==AS_OP_LESS){
+			if(f_assertion_operation==AI_AS_OP_LESS){
 				//все значения меньше или равные заданному начинаются с индекса последнего совпавшег элемента до начала массива.
 				last=AId_SearchLast(a,aI,f_col, f_max);
 				
@@ -450,7 +550,7 @@ void AId_Select2(double &a[][], int &aI[]){
 				continue;
 			}
 		
-			if(f_assertion_operation==AS_OP_IN){
+			if(f_assertion_operation==AI_AS_OP_IN){
 				first=AId_SearchFirst(a,aI,f_col,f_min);
 				last=AId_SearchLast(a,aI,f_col,f_max);
 				
@@ -498,6 +598,7 @@ void AId_SetIndexOnArray(double &s[][], int aI[], double &d[][], bool addResult=
 	}
 }
 
+//------------------------------------------------------------------------
 void AId_Print2(double &a[][], int &aI[], int d = 4, string fn = "AId_PrintArray_"){
 	/**
 		\version	0.0.0.0

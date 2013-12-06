@@ -18,7 +18,6 @@
 				 @0.0.0.1@2013.08.29@artamir	[+]	
 		>Rev:0
 */
-#property stacksize 2048
 
 #define A_MODE_ASC	0
 #define A_MODE_DESC	1

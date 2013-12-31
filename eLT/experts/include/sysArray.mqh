@@ -1,7 +1,8 @@
 	/*
-		>Ver	:	0.0.0.50
-		>Date	:	2013.11.05
-		>Hist	:																																			
+		>Ver	:	0.0.0.51
+		>Date	:	2013.12.30
+		>Hist	:																																				
+					@0.0.0.51@2013.12.30@artamir	[]	A_d_Select
 					@0.0.0.50@2013.11.05@artamir	[!!]	A_d_Sort2 - Перенаправление на Ad_SortShell.
 					@0.0.0.49@2013.10.24@artamir	[!*]	A_d_Compare (необходимо тестирование)
 					@0.0.0.48@2013.10.22@artamir	[!]	A_d_Select
@@ -17,8 +18,8 @@
 		>Pref	:	A
 				:	d - for double arrays
 	*/
-
-#define ARRVER	"0.0.0.50_2013.11.05"
+	
+#define ARRVER	"0.0.0.51_2013.12.30"
 	
 //{ === TEMPORAR ARRAY
 
@@ -780,9 +781,10 @@ void A_d_Sort2(double& a[][], string order = "0 <;"){
 
 void A_d_SaveToFile2(double &a[][], string fn, int d = 4){
 	/*
-		>Ver	:	0.0.3
-		>Date	:	2013.02.16
-		>Hist:
+		>Ver	:	0.0.0.4
+		>Date	:	2013.12.30
+		>Hist:	
+				 @0.0.0.4@2013.12.30@artamir	[]	A_d_Select
 			@0.0.2@2012.10.03@artamir	[]
 			@0.0.1@2012.09.04@artamir	[]
 		>Desc:
@@ -824,7 +826,8 @@ void A_d_SaveToFile2(double &a[][], string fn, int d = 4){
 			//----------------------------------------------
 			string str = "@idx1_"+idx1
 						+"@idx2_"+idx2
-						+"@val_"+DoubleToStr(a[idx1][idx2], d);
+						+"@val_"+DoubleToStr(a[idx1][idx2], d)
+						+"@des_"+OE2Str(idx2);
 						
 			//----------------------------------------------
 			FileWrite(H, str);

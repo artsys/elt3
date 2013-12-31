@@ -1,10 +1,11 @@
 /**
-	\version	0.0.1.0
-	\date		2013.10.10
+	\version	0.0.1.1
+	\date		2013.12.17
 	\author		Morochin <artamir> Artiom
 	\details	Detailed description
 	\internal
-		>Hist:										
+		>Hist:											
+				 @0.0.1.1@2013.12.17@artamir	[]	Ad_CrossByIdx
 				@0.0.1.0@2013.10.10@artamir	[-] Рекурсивная сортировка. -стексайз.
 				 @0.0.0.10@2013.10.10@artamir	[*] Ad_CopyRow2To2	
 				 @0.0.0.9@2013.10.07@artamir	[+]	As_addRow1
@@ -476,23 +477,101 @@ int Ad_CrossByIdx(double &f[], double &s[], int idx){
 
 //.. === Строковой
 //{		=== двумерный массив
+void As_PrintArray2(string &a[][], string fn = "PrintArray_"){
+	/*
+		>Ver	:	0.0.5
+		>Date	:	2013.02.16
+		>Hist:
+			@0.0.3@2012.08.15@artamir	[]
+			@0.0.2@2012.08.15@artamir	[]
+			@0.0.1@2012.08.08@artamir	[]
+		>Descr:
+			Printing array to filE_
+		>VARS:
+			&a[][]  :	array
+			d		:	count of digits.
+			fn		:	filename
+	*/
+
+	static int	i;
+	
+	i++;
+	//------------------------------------------------------
+	int ROWS = ArrayRange(a, 0);
+	int COLS = ArrayRange(a,1);
+	
+	//------------------------------------------------------
+	fn = i+"_"+fn+".arr";
+	
+	//------------------------------------------------------
+	int handle = FileOpen(fn, FILE_CSV|FILE_WRITE, "\t");
+	for(int idx_1 = 0; idx_1 < ROWS; idx_1++){
+		string s = "";
+		for(int idx_2 = 0; idx_2 < COLS; idx_2++){
+			s = StringConcatenate(s,"\t", "["+idx_1+"]["+idx_2+","+idx_2+"]",a[idx_1][idx_2]);
+			//FileWrite(handle, idx_1, idx_2, DoubleToStr(a[idx_1][idx_2], d));
+		}
+		FileWrite(handle, s);
+	}
+	
+	if(handle != 0) FileClose(handle);
+	
+}
+
 //..	=== одномерный массив
-int As_addRow1(string &a[]){
+int As_addRow1(string &a[], string val=""){
 	/**
-		\version	0.0.0.1
-		\date		2013.10.07
+		\version	0.0.0.2
+		\date		2013.12.17
 		\author		Morochin <artamir> Artiom
 		\details	Изменяет размерность массива на +1. Возвращает индекс последнего элемента.
+					присваивает новому элементу значение переданное в параметре val.
 		\internal
-			>Hist:		
+			>Hist:			
+					 @0.0.0.2@2013.12.17@artamir	[*]	Присвоение значения по умолчанию.
 					 @0.0.0.1@2013.10.07@artamir	[+]	As_addRow1
 			>Rev:0
 	*/
 
 	int rows=ArrayRange(a,0)+1;
-			 ArrayResize(a,rows);
-			 
+		ArrayResize(a,rows);
+		a[(rows-1)]=val;	 
 	return(rows-1);		 
+}
+
+int As_findIndexByVal(string &a[], string val=""){
+	/*
+		>Ver	:	0.0.0.2
+		>Date	:	2013.08.29
+		>Hist	:	
+					@0.0.0.2@2013.08.29@artamir	[]	TMR_findIndexByName
+			@0.0.1@2012.10.08@artamir	[]
+		>Author	:	Morochin <artamir> Artiom
+		>Desc	:
+	*/
+	
+	//------------------------------------------------------
+	int ROWS = ArrayRange(a,0);
+	
+	//------------------------------------------------------
+	int		idx = -1;
+	bool	isFind = false;
+	
+	//------------------------------------------------------
+	for(int i=0; i<ROWS && !isFind;i++){
+		
+		//--------------------------------------------------
+		string el = a[i];
+		
+		//--------------------------------------------------
+		if(el == val){
+			isFind = true;
+			idx = i;
+		}
+	}
+	
+	//------------------------------------------------------
+	return(idx);
 }
 //}
 //}	

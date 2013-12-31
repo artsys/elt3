@@ -1,7 +1,9 @@
 /*
-	>Ver	:	0.0.0.20
-	>Date	:	2013.08.29
-	>Hist	:					
+	>Ver	:	0.0.0.22
+	>Date	:	2013.12.24
+	>Hist	:							
+				@0.0.0.22@2013.12.24@artamir	[*]	T_getTickets
+				@0.0.0.21@2013.12.24@artamir	[*]	T_FillRow
 				@0.0.0.20@2013.08.29@artamir	[-] удалены отладочныее метки.	
 				@0.0.0.19@2013.08.28@artamir	[+]	T_getTickets
 				@0.0.0.18@2013.05.20@artamir	[]	T_End
@@ -305,12 +307,13 @@ bool	T_SelOrderByTicket(int ti){
 
 int		T_getTickets(double &a[]){
 	/**
-		\version	0.0.0.1
-		\date		2013.08.28
+		\version	0.0.0.2
+		\date		2013.12.24
 		\author		Morochin <artamir> Artiom
 		\details	Заполнение массива тикетов ордеров.
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2013.12.24@artamir	[*]	обрабатываются ордера только нашего инструмента.
 					 @0.0.0.1@2013.08.28@artamir	[]	T_getTickets
 			>Rev:0
 	*/
@@ -320,6 +323,8 @@ int		T_getTickets(double &a[]){
 	
 	for(int i = t; i>=0; i--){
 		if(!OrderSelect(i, SELECT_BY_POS, MODE_TRADES)) continue;
+		
+		if(OrderSymbol()!=Symbol()) continue; //Пропускаем ордера не нашего инструмента.
 		
 		a[i] = OrderTicket();
 	}
@@ -366,17 +371,17 @@ int T_FillArrayCurOrders(){
 //==========================================================
 int T_FillRow(){
 	/*
-		>Ver	:	0.0.1
-		>Date	:	2012.10.02
-		>Hist	:
-			@0.0.1@2012.10.02@artamir	[]
+		>Ver	:	0.0.0.2
+		>Date	:	2013.12.24
+		>Hist	:	
+					@0.0.0.2@2013.12.24@artamir	[+] Добавлена проверка на текущий символ. 	
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:	Заполнение строки массива текущих ордеров данными выбранного ордера
 	*/
 	
 	//------------------------------------------------------
 	string fn = "T_FillRow";
-	
+	if(OrderSymbol() != Symbol()) return(0);
 	//------------------------------------------------------
 	A_d_setArray(aCurOrders);	//setting temporar array to work with
 	
@@ -394,7 +399,9 @@ int T_FillRow(){
 	
 	//------------------------------------------------------
 	A_d_releaseArray(aCurOrders);	// release temporar array and copy temporar array to 
+	
 
+	return(0);
 }
 	
 //}

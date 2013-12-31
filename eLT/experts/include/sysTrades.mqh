@@ -1,40 +1,13 @@
 	/**
-		\version	0.0.0.35
-		\date		2013.10.04
+		\version	0.0.0.38
+		\date		2013.12.24
 		\author		Morochin <artamir> Artiom
 		\details	Trading functtions.
 		\
-			Revision: 265
 			$Revision$
-			>Hist:																																			
-					 @0.0.0.35@2013.10.04@artamir	[]	TR_SendSELLLIMIT_array
-					 @0.0.0.34@2013.10.04@artamir	[]	TR_SendSELLSTOP_array
-					 @0.0.0.33@2013.10.04@artamir	[]	TR_SendBUYLIMIT_array
-					 @0.0.0.32@2013.10.04@artamir	[]	TR_SendBUYSTOP_array
-					 @0.0.0.31@2013.10.04@artamir	[*]	TR_SendPending_array
-					 @0.0.0.30@2013.10.03@artamir	[*]	TR_SendSELLSTOP_array
-					 @0.0.0.29@2013.10.03@artamir	[*]	TR_SendBUYLIMIT_array
-					 @0.0.0.28@2013.10.03@artamir	[*]	TR_SendBUYSTOP_array
-					 @0.0.0.27@2013.10.03@artamir	[+]	TR_getMarketPrice
-					 @0.0.0.26@2013.10.03@artamir	[+] ƒобавлены константы типов цен открыти€.
-														ƒл€ использовани€ в сеточных советниках.
-					 @0.0.0.25@2013.09.29@artamir	[+]	TR_CloseAll
-					 @0.0.0.24@2013.09.18@artamir	[*]	TR_SendSELLLIMIT_array
-					 @0.0.0.23@2013.09.18@artamir	[*]	TR_SendSELLSTOP_array
-					 @0.0.0.22@2013.09.18@artamir	[*]	TR_SendBUYLIMIT_array
-					 @0.0.0.21@2013.09.18@artamir	[*]	TR_SendBUYSTOP_array
-					 @0.0.0.20@2013.09.18@artamir	[*]	TR_SendPending_array
-					 @0.0.0.19@2013.09.18@artamir	[*]	TR_SendPendingLikeOrder
-					 @0.0.0.18@2013.09.17@artamir	[*]	TR_SendPendingLikeOrder
-					 @0.0.0.17@2013.09.16@artamir	[+]	TR_SendPendingLikeOrder
-					 @0.0.0.16@2013.09.16@artamir	[*]	TR_SendSELLLIMIT_array
-					 @0.0.0.15@2013.09.16@artamir	[*]	TR_SendSELLSTOP_array
-					 @0.0.0.14@2013.09.16@artamir	[*]	TR_SendBUYLIMIT_array
-					 @0.0.0.13@2013.09.16@artamir	[*]	TR_SendBUYSTOP_array
-					 @0.0.0.12@2013.09.16@artamir	[*]	TR_SendPending_array
-					 @0.0.0.11@2013.09.05@artamir	[*]	_OrderSend
-					 @0.0.0.10@2013.09.04@artamir	[*]	TR_SendSELLSTOP_array
-					 @0.0.0.9@2013.09.04@artamir	[*]	TR_SendBUYSTOP_array
+			>Hist:																																						
+					 @0.0.0.38@2013.12.24@artamir	[*]	TR_SendBUY
+					 @0.0.0.37@2013.12.24@artamir	[*]	TR_SendSELL
 	*/
 
 #define TR_MODE_PRICE 1
@@ -779,32 +752,56 @@ int TR_SendPendingLikeOrder(double &d[], int src_ti=0, int AddPips=0){
 
 //{	//====== MARKET ORDERS	============================
 
-int TR_SendBUY(double vol = 0.01){
+int TR_SendBUY(double vol = 0.01, int mn=-1){
 	/*
-		>Ver	:	0.0.1
-		>Date	:	2012.09.10
-		>Hist:
-			@0.0.1@2012.09.10@artamir	[]
+		>Ver	:	0.0.0.2
+		>Date	:	2013.12.24
+		>Hist:	
+				 @0.0.0.2@2013.12.24@artamir	[+]	ƒобавлено выставление магика дл€ ордера.
 	*/
 
-	int ticket = _OrderSend(Symbol(), OP_BUY, vol);
+	if(mn==-1)mn=TR_MN;
+	double sl=0.0,tp=0.0;
+	string comm="";
+	int ticket = _OrderSend(Symbol(), OP_BUY, vol, 0,0,sl,tp,comm,mn);
 	
 	//------------------------------------------------------
 	return(ticket);
 }
 
-int TR_SendSELL(double vol = 0.01){
+int TR_SendSELL(double vol = 0.01, int mn=-1){
 	/*
-		>Ver	:	0.0.1
-		>Date	:	2012.09.10
-		>Hist:
-			@0.0.1@2012.09.10@artamir	[]
+		>Ver	:	0.0.0.2
+		>Date	:	2013.12.24
+		>Hist:	
+				 @0.0.0.2@2013.12.24@artamir	[+]	ƒобавлено выставление магика дл€ ордера.
 	*/
-
-	int ticket = _OrderSend(Symbol(), OP_SELL, vol);
+	if(mn==-1)mn=TR_MN;
+	double sl=0.0,tp=0.0;
+	string comm="";
+	int ticket = _OrderSend(Symbol(), OP_SELL, vol,0,0,sl,tp,comm,mn);
 	
 	//------------------------------------------------------
 	return(ticket);
+}
+
+int TR_SendMarket(int op=OP_BUY, double vol=0.01){
+	/**
+		\version	0.0.0.1
+		\date		2013.12.07
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.12.07@artamir	[+]	TR_SendMarket
+			>Rev:0
+	*/
+	int res=-1;
+	if(op==OP_BUY)res=TR_SendBUY(vol);
+	if(op==OP_SELL)res=TR_SendSELL(vol);
+	
+	//------------------------------------------
+	return(res);
 }
 
 //}
@@ -982,6 +979,8 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 	// ѕредопределенные переменные
 	//-----------------------------------------------------------
 	
+	string fn="_OrderSend";
+	
 	//-----------------------------------------------------------
 	// Ѕлок проверок на правильность переданных параметров.
 	//-----------------------------------------------------------
@@ -1086,6 +1085,11 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 	
 	//------------------------------------------------------
 	int err = GetLastError();
+	
+	if(err>0 && res<=0){
+		Print(fn,": ERR send order!");
+		Print(fn,". ERR=",err);
+	}
 	
 	//------------------------------------------------------
 	if(err == 130){

@@ -1,10 +1,11 @@
 	/**
-		\version	0.0.0.3
-		\date		2013.11.07
+		\version	0.0.0.4
+		\date		2013.12.13
 		\author		Morochin <artamir> Artiom
 		\details	Работа с индексированным массивом.
 		\internal
-			>Hist:			
+			>Hist:				
+					 @0.0.0.4@2013.12.13@artamir	[]	AId_SearchFirst
 					 @0.0.0.3@2013.11.07@artamir	[+]	AId_SearchFirst
 					 @0.0.0.2@2013.11.06@artamir	[+]	AId_Swap
 					 @0.0.0.1@2013.11.06@artamir	[+]	AId_Init2
@@ -62,7 +63,7 @@ void AI_SetIndex(int &sI[], int &dI[]){
 	// ArrayCopy(d,AI_idx);
 // }
 
-void AI_IndexSetInterval(int &aI[], int first, int last){
+void AI_IndexSetInterval(int &aI[], int first=-2, int last=-2){
 	/*
 		\version	0.0.0.0
 		\date		2013.11.07
@@ -73,7 +74,7 @@ void AI_IndexSetInterval(int &aI[], int first, int last){
 			>Rev:0
 	*/
 	string fn="AI_IndexSetInterval";
-	if(first<=-1&&last<=-1){
+	if(first==-1||last==-1){
 		ArrayResize(aI,0);
 		return;
 	}
@@ -318,7 +319,7 @@ int AId_FilterAdd(int COL, double MIN, double MAX, int as_OP, int sel_OP){
 	*/
 	
 	//------------------------------------------------------
-	int idx = Ad_addRow2(AId_Filter);
+	int idx = Ad_AddRow2(AId_Filter);
 	
 	//------------------------------------------------------
 	AId_Filter[idx][AIF_COL]=COL;
@@ -332,7 +333,7 @@ int AId_FilterAdd(int COL, double MIN, double MAX, int as_OP, int sel_OP){
 
 }
 
-int AId_FilterAdd_AND(int COL, double MIN = 0, double MAX = 0, int as_OP = 3б bool erase=false){
+int AId_FilterAdd_AND(int COL, double MIN = 0, double MAX = 0, int as_OP = 3, bool erase=false){
 	/**
 		\version	0.0.0.0
 		\date		2013.11.11
@@ -406,31 +407,37 @@ int AId_QuickSearch(double &a[][], int &aI[], int col, double element){
 
 int AId_SearchFirst(double &a[][], int &aI[], int col, double element){
 	/**
-		\version	0.0.0.1
-		\date		2013.11.07
+		\version	0.0.0.2
+		\date		2013.12.13
 		\author		Morochin <artamir> Artiom
 		\details	Устойчивый поиск первого совпадения с заданным значением.
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2013.12.13@artamir	[]	AId_SearchFirst
 					 @0.0.0.1@2013.11.07@artamir	[]	AId_SearchFirst
 			>Rev:0
 	*/
+	string fn="AId_SearchFirst";
+	
 	int pos;
 //--- check
-   if(ArrayRange(aI,0)==0)
-      return(-1);
+	if(ArrayRange(aI,0)==0) return(-1);
+   
 //--- search
-   pos=AId_QuickSearch(a, aI, col, element);
-   if(a[aI[pos]][col]==element)
-     {
-      //--- compare with delta
+	pos=AId_QuickSearch(a, aI, col, element);
+	if(BP_SRT){
+		Print(fn,".pos=",pos);
+		Print(fn,".a[",aI[pos],"][",col,"]=",a[aI[pos]][col],"; .element=",element);
+	}
+	if(a[aI[pos]][col]>=element){
+		//--- compare with delta
 		while(MathAbs(a[aI[pos]][col]-element)<=0){
 			pos--;
 			if(pos==-1)
 				break;
 		}	
-      return(pos+1);
-     }
+		return(pos+1);
+	}
 //--- not found
    return(-1);
 }
@@ -464,6 +471,45 @@ int AId_SearchLast(double &a[][], int &aI[], int col, double element){
      }
 //--- not found
    return(-1);
+}
+
+int AId_SearchGreat(double &a[][], int &aI[], int col, double element){
+	/**
+		\version	0.0.0.0
+		\date		2013.12.18
+		\author		Morochin <artamir> Artiom
+		\details	Поиск в отсортированном массиве ближайшего большего элемента.
+		сортировка и размерность передается в массиве aI[]
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+	string fn="AId_SearchGreat";
+	
+	int l=0;
+	int r=ArrayRange(aI,0)-1;
+	
+	while(l!=r){
+		int m=(l+r)/2;
+		if(a[aI[m]][col]<=element){
+			l=m+1;
+		}else{
+			r=m;
+		}
+	}
+	
+	Print(fn+".l="+l+"; .r="+r);
+	if(a[aI[l]][col]<=element){
+		return(-1);
+	}
+	
+	while(a[aI[r]][col]>element && r>=l){
+		r--;
+	}
+	
+	r++;
+	
+	return(r);
 }
 
 void AId_SearchInterval(int &first, int &last, double &a[][], int &aI[], int col, double el){
@@ -502,12 +548,12 @@ void AId_Select2(double &a[][], int &aI[]){
 		int f_assertion_operation=AId_Filter[row_f][AIF_AS_OP];//}
 	
 		string order=f_col+" <;";//сортировка по возрастанию
-		//Print(fn+".order="+order
-		//,"; .sop="+f_select_operation
-		//,"; .aop="+f_assertion_operation
-		//,"; .f_col="+f_col
-		//,"; .f_min="+f_min
-		//,"; .f_max="+f_max);
+		// Print(fn+".order="+order
+		// ,"; .sop="+f_select_operation
+		// ,"; .aop="+f_assertion_operation
+		// ,"; .f_col="+f_col
+		// ,"; .f_min="+f_min
+		// ,"; .f_max="+f_max);
 		
 		//--- Сортировка заданной колонки в пределах массива-индекса.
 		
@@ -534,7 +580,7 @@ void AId_Select2(double &a[][], int &aI[]){
 		
 			if(f_assertion_operation==AI_AS_OP_GREAT){
 				//все значения больше или равные заданному начинаются с индекса первого совпавшег элемента до конца массива.
-				first=AId_SearchFirst(a,aI,f_col, f_max);
+				first=AId_SearchGreat(a,aI,f_col, f_max);
 				
 				//теперь можем обрезать основной индекс по найденому интервалу и перейти к след фильтру
 				AI_IndexSetInterval(aI,first,last);

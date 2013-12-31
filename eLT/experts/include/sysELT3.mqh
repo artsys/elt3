@@ -1,31 +1,8 @@
 	/*
 		>Ver	:	0.1.1.20
 		>Date	:	2013.11.08
-		>Hist:																																																
-				 @0.1.1.20@2013.11.08@artamir	[+] sysIndexedArray	
-				 @0.1.1.19@2013.10.30@artamir	[+] sysDT.mqh	
-				 @0.1.1.18@2013.10.23@artamir	[*]	ELT_SelectInLossCP_d2
-				 @0.1.1.17@2013.10.23@artamir	[*]	ELT_SelectInLoss_d2
-				 @0.1.1.16@2013.10.23@artamir	[*]	ELT_SelectInProfit_d2
-				 @0.1.1.15@2013.10.23@artamir	[*]	ELT_SelectClosedPos_d2
-				 @0.1.1.14@2013.10.23@artamir	[*]	ELT_SelectTicketsBySID_d2
-				 @0.1.1.13@2013.10.23@artamir	[*]	ELT_SelectPosBySID_d2
-				 @0.1.1.12@2013.10.23@artamir	[*]	ELT_SelectByFOTY_d2
-				 @0.1.1.11@2013.10.23@artamir	[*]	ELT_SelectByFIR_d2
-				 @0.1.1.10@2013.10.23@artamir	[*]	ELT_SelectByLP_d2
-				 @0.1.1.9@2013.10.23@artamir	[*]	ELT_SelectByMP_d2
-				 @0.1.1.8@2013.10.23@artamir	[*]	ELT_SelectByGL_d2
-				 @0.1.1.7@2013.10.23@artamir	[*]	ELT_SelectNearPrice_d2
-				 @0.1.1.6@2013.10.23@artamir	[*]	ELT_SelectByTY_d2
-				 @0.1.1.5@2013.10.23@artamir	[*]	ELT_SelectOrders_d2
-				 @0.1.1.4@2013.10.23@artamir	[*]	ELT_SelectPosByTY_d2
-				 @0.1.1.3@2013.10.23@artamir	[*]	ELT_SelectPositions_d2
-				 @0.1.1.2@2013.10.23@artamir	[*]	ELT_SelectByMethod_d2
-				 @0.1.1.1@2013.10.23@artamir	[*]	ELT_SelectByMN_d2
-				 @0.1.1.0@2013.10.23@artamir	[!] Начато переписывание процедур отбора для оптимизации скорости работы советника.
-								Цель - уменьшение запросов на отбор данных из двумерного массива.
-								В идеале 1 окончательный запрос - один запрос на отбор.	
 		>Author: Morochin <artamir> Artiom
+		>Hist:																					
 		>Desc:
 			Base include
 			Manager for system include files.

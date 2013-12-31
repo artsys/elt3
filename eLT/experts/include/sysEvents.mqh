@@ -253,6 +253,8 @@ void onCloseOrder(int ti){
 	//TODO: написать обработчик закрытого ордера.
 	//1.обновление статуса IsClosed массива экстраордеров.
 	//2.добавление нового события в массив событий
+	string fn="onCloseOrder";
+	Print(fn,".ti=",ti);
 	int idx=Ad_AddRow2(aEvents);
 	aEvents[idx][E_TI]=ti;
 	aEvents[idx][E_EVENT]=EVENT_CO;

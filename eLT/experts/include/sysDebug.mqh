@@ -32,6 +32,7 @@ void BP(string	txt	= "",
 		>Description:
 			Break poinT_ Use with vizualization.
 		*/
+		
 		//--------------------------------------------------
 		if(!useDebug) return;
 		

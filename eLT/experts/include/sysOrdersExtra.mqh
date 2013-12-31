@@ -45,6 +45,7 @@
 //------ First open data (FOD)
 #define	OE_FOP		30	//First open price
 #define	OE_FOT		31	//First	open time
+#define	OE_FOOT		31	//First	open time
 #define	OE_FOTY		32	//First open type
 #define	OE_FOTI		33	//First open ticket
 #define	OE_FOL		34	//First open lot
@@ -82,6 +83,15 @@ string OE2Str(int i){
 		case 9: return("OE_IT");
 		case 10: return("OE_IM");
 		case 11: return("OE_IP");
+		case 12: return("OE_CT");
+		case 13: return("OE_CP");
+		case 14: return("OE_IC");
+		
+		case 45: return("OE_CPP(close profit in pips)");
+		case 46: return("OE_CTY(closing type)");
+		case 47: return("OE_CP2SL");
+		case 48: return("OE_CP2TP");
+		case 49: return("OE_CP2OP");
 		default: return("UDF");
 	}
 }
@@ -890,6 +900,40 @@ int OE_setFIRByTicket(int ti, int fir = 0){
 	//------------------------------------------------------
 	return(idx);
 }
+
+int OE_setFOOTByTicket(int ti, int foot = 0){
+	/**
+		\version	0.0.0.1
+		\date		2013.06.28
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.06.28@artamir	[]	OE_setFOOTByTicket
+			>Rev:0
+	*/
+
+	
+	//------------------------------------------------------
+	if(foot <= -1){
+		return(-1);
+	}
+	
+	//------------------------------------------------------
+	int idx = OE_findIndexByTicket(ti);
+	
+	//------------------------------------------------------
+	if(idx <= -1){
+		return(-1);
+	}
+	
+	//------------------------------------------------------
+	aOE[idx][OE_FOOT] = foot;
+	
+	//------------------------------------------------------
+	return(idx);
+}
+
 
 int OE_setSIDByTicket(int ti, int sid = 0){
 	/**

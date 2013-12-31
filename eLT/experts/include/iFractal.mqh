@@ -1,446 +1,297 @@
-	/*
-		>Ver	:	0.0.0.18
-		>Date	:	2013.10.12
-		>Hist	:	
-					@0.0.0.18@2013.10.12@artamir	[!] Добавлена возможность задать пару для поиска фрактала. 	
-			@0.0.17@2013.01.18@artamir	[+] цена расчета фрактала 
-			@0.0.12@2013.01.11@artamir	[*] Исправления из поста: http://forum.roboforex.ru/showthread.php?t=1997&p=87457&viewfull=1#post87457
-			@0.0.8@2013.01.10@artamir	[+]	Добавились две функции определения фракталов в классическом описании.
-										[*] Изменились названия функций предыдущего варианта определения фракталов.
-			@0.0.5@2012.11.13@artamir	[]
-			@0.0.4@2012.11.13@artamir	[]
-			@0.0.3@2012.11.13@artamir	[]
-			@0.0.2@2012.11.13@artamir	[]
-			@0.0.1@2012.11.13@artamir	[]
-		>Author	:	Morochin <artamir> Artiom
-		>Desc	:	Advanced fractal function
-		>Благодарности:	vov4ik за проявленный интерес ;)	
+	/**
+		\version	0.0.1.4
+		\date		2013.12.27
+		\author		Morochin <artamir> Artiom
+		\details	Настраиваемый фрактал
+		\internal
+			>Hist:				
+					 @0.0.1.4@2013.12.27@artamir	[+]	iFR_getNearestDwBarTF
+					 @0.0.1.3@2013.12.27@artamir	[+]	iFR_getNearestUpBarTF
+					 @0.0.1.2@2013.12.27@artamir	[+]	aFR_getTF
+					 @0.0.1.1@2013.12.27@artamir	[+]	aFR_getSY
+			>Rev:0
 	*/
-	
-	#define iFR.MODE_STD	1								//Фрактал в классическом понимании. Наивысший максимум или наинизший минимум среди заданного количества баров
-	#define iFR.MODE_HL		2								//Наивысший максимум среди последовательно поднимающихся а затем последовательно опускающихся максимумов. 
-	#define iFR.PR_HL		1								//По типу цены: хай, лоу
-	#define iFR.PR_C		2								//По закрытию
-	
-	int iFR.NL		= 1;									//Nearest left bars
-	int	iFR.NR		= 1;									//Nearest right bars
-	int iFR.Mode	= 2;									//Mode for find fractal.
-	int iFR.Pr		= 1;									//Price for find fractal.
-	string sFR.Sy	= "";
-	
 
-	void iFR.Set(int nl=1, int nr=1, int mode = 1, int price = 1, string sy=""){
-	/*
-		>Ver	:	0.0.3
-		>Date	:	2013.01.18
-		>Author	:	Morochin <artamir> Artiom
-		>Desc	:	set fractal bars.
-	*/
-		iFR.NL = nl;
-		iFR.NR = nr;
-		iFR.Mode = mode;
-		iFR.Pr = price;
-		if(sy=""){
-			sy=Symbol();
-		}
-		sFR.Sy=sy;
-	}
+#define FR_MODE_STD 1	//Поиск фрактала в классическом понимании.
+#define FR_MODE_HL 2 //Поиск по последовательным хаям/лоу
 	
-	bool iFR.IsUpMode1(int fb = 1){
-	/*
-		>Ver	:	0.0.3
-		>Date	:	2013.01.18
-		>Hist	:
-			@0.0.3@2013.01.18@artamir	[+] Добавлен тип цены: закрытие
-			@0.0.2@2013.01.11@artamir	[]
-			@0.0.1@2013.01.10@artamir	[]
-		>Author	:	Morochin <artamir> Artiom
-		>Desc	:	Определение верхнего фрактала в классическом описании. 
-	*/
-		//--------------------------------------------------
-		bool 	f	= true;
-		double	h	= 0;
-		double fbH	= 0;
-		
-		//--------------------------------------------------
-		int idx = 0;
-		
-		//--------------------------------------------------
-		if(fb < iFR.NR){
-			return(false);									//нехватает количества баров справа для определения фрактала.
-		}
-		
-		//--------------------------------------------------
-		if(iFR.Pr == iFR.PR_HL){
-			fbH = iHigh(sFR.Sy, 0, fb);						//Хай заданного бара.
-		}	
-		if(iFR.Pr == iFR.PR_C){
-			fbH = iClose(sFR.Sy, 0, fb);						//Закрытие заданного бара.
-		}
-		
-		
-		//--------------------------------------------------
-		for(idx = fb-1; idx >= (fb-iFR.NR); idx--){
-			
-			//----------------------------------------------
-			if(iFR.Pr == iFR.PR_HL){
-				h = iHigh(sFR.Sy, 0, idx);
-			}	
-			
-			if(iFR.Pr == iFR.PR_C){
-				h = MathMax(iClose(sFR.Sy, 0, idx),iOpen(sFR.Sy, 0, idx));
-			}
-			//----------------------------------------------
-			if(h >= fbH){
-				f = false;									// Не прошли условие, что заданный бар самый высокий слева на право 
-			}
-		}	
-		
-		//----------------------------------------------
-		if(!f){
-			return(false);
-		}
-			
-		//----------------------------------------------
-		for(idx = fb+1; idx <= (fb+iFR.NL); idx++){
-		
-			//----------------------------------------------
-			if(iFR.Pr == iFR.PR_HL){
-				h = iHigh(sFR.Sy, 0, idx);
-			}
-			if(iFR.Pr == iFR.PR_C){
-				h = MathMax(iClose(sFR.Sy, 0, idx),iOpen(sFR.Sy, 0, idx));
-			}
-			
-			//----------------------------------------------
-			if(h >= fbH){
-				f = false;
-			}
-		}	
-		
-		//--------------------------------------------------
-		return(f);
-		
-	}
+string aFrSets[];
 	
-	bool iFR.IsDwMode1(int fb = 1){
-	/*
-		>Ver	:	0.0.3
-		>Date	:	2013.01.18
-		>Hist	:
-			@0.0.3@2013.01.18@artamir	[+] Добавлен тип цены: Закрытие
-			@0.0.2@2013.01.11@artamir	[]
-			@0.0.1@2013.01.10@artamir	[]
-		>Author	:	Morochin <artamir> Artiom
-		>Desc	:	Определение нижнего фрактала в классическом описании. 
+void aFR_init(){
+	/**
+		\version	0.0.0.0
+		\date		2013.05.20
+		\author		Morochin <artamir> Artiom
+		\details	Очищает стринговый массив.-хранилище настроек.
+		\internal
+			>Hist:
+			>Rev:0
 	*/
-		//--------------------------------------------------
-		bool 	f	= true;
-		double	l	= 0;
-		double fbL	= 0; 
-		
-		//--------------------------------------------------
-		int idx = 0;
-		
-		//--------------------------------------------------
-		if(fb <= iFR.NR){
-			return(false);									//нехватает количества баров справа для определения фрактала.
-		}
-		
-		//--------------------------------------------------
-		if(iFR.Pr == iFR.PR_HL){
-			fbL = iLow(sFR.Sy, 0, fb);						//Лоу заданного бара.
-		}
-		if(iFR.Pr == iFR.PR_C){
-			fbL = iClose(sFR.Sy, 0, fb);						//Закрытие заданного бара.
-		}
-		
-		//--------------------------------------------------
-		for(idx = fb-1; idx >= (fb-iFR.NR); idx--){
-			
-			//----------------------------------------------
-			if(iFR.Pr == iFR.PR_HL){
-				l = iLow(sFR.Sy, 0, idx);
-			}
-			if(iFR.Pr == iFR.PR_C){
-				l = MathMin(iClose(sFR.Sy, 0, idx),iOpen(sFR.Sy, 0, idx));
-			}
 
-			
-			//----------------------------------------------
-			if(l < fbL){
-				f = false;									// Не прошли условие, что заданный бар самый высокий слева на право 
-			}
-		}	
-		
-		//----------------------------------------------
-		if(!f){
-			return(false);
-		}
-			
-		//----------------------------------------------
-		for(idx = fb+1; idx <= (fb+iFR.NL); idx++){
-		
-			//----------------------------------------------
-			if(iFR.Pr == iFR.PR_HL){
-				l = iLow(sFR.Sy, 0, idx);
-			}
-			if(iFR.Pr == iFR.PR_C){
-				l = MathMin(iClose(sFR.Sy, 0, idx),iOpen(sFR.Sy, 0, idx));
-			}
-			
-			//----------------------------------------------
-			if(l <= fbL){
-				f = false;
-			}
-		}	
-		
-		//--------------------------------------------------
-		return(f);
-		
+	ArrayResize(aFrSets,0);
+}
+
+int aFR_set(		int nl	= 2				/** количество ближайших баров слева*/
+				,	int	nr	= 2				/** количество ближайших баров справа */
+				,	int tf = 0				/** таймфрейм в минутах */
+				,	string sy = ""			/** валютная пара */
+				,	int shift = 3			/** спещение относительно начала графика в право в барах. */
+				,	int mode = 1			/** метод поиска фрактала */
+			){
+	/**
+		\version	0.0.0.0
+		\date		2013.07.25
+		\author		Morochin <artamir> Artiom
+		\details	Сохраняет настройку FR в массив настроек. Возвращает индекс настройки в массиве.
+		\internal
+			>Hist:			
+			>Rev:0
+	*/
+
+	int new_row=As_addRow1(aFrSets);
+	
+	if(sy == ""){
+		sy=Symbol();
 	}
 	
-	bool iFR.IsUpMode2(int fb = 1){
-	/*
-		>Ver	:	0.0.3
-		>Date	:	2013.01.18
-		>Hist	:
-			@0.0.3@2013.01.18@artamir	[+] Добавлен тип цены: Закрытие
-			@0.0.2@2013.01.11@artamir	[]
-			@0.0.1@2012.11.13@artamir	[]
-		>Author	:	Morochin <artamir> Artiom
-		>Desc	:	check if bar with index fb is up fractal
-	*/
+	string s = "";
+	s=s+"@nl"+nl;
+	s=s+"@nr"+nr;
+	s=s+"@mo"+mode;
 	
-		bool f = true;
-		
-		int i = -1;
-		
-		//-------------------------------------------------
-		if(fb < iFR.NR){
-			return(false);
-		}
-		
-		//--------------------------------------------------
-		for(i = fb; i > fb - iFR.NR; i--){
-			
-			//----------------------------------------------
-			if(iFR.Pr == iFR.PR_HL){
-				if(iHigh(sFR.Sy, 0, i) < iHigh(sFR.Sy, 0, i-1)){
-					f = false;
-				}
-			}
-			if(iFR.Pr == iFR.PR_C){
-				if(iClose(sFR.Sy, 0, i) < MathMax(iClose(sFR.Sy, 0, i-1),iOpen(sFR.Sy, 0, i-1))){
-					f = false;
-				}
-			}
-		}
-		
-		if(!f){
-			return(false);
-		}
-		
-		//--------------------------------------------------
-		if(f){
-			for(i = fb; i < fb + iFR.NL; i++){
-				if(iFR.Pr == iFR.PR_HL){
-					if(iHigh(sFR.Sy, 0, i) < iHigh(sFR.Sy, 0, i+1)){
-						f = false;
-					}
-				}
-				if(iFR.Pr == iFR.PR_C){
-					if(iClose(sFR.Sy, 0, i) < MathMax(iClose(sFR.Sy, 0, i+1),iOpen(sFR.Sy, 0, i+1))){
-						f = false;
-					}
-				}				
-			}
-		}
-		
-		return(f);
+	if(sy=="")sy=Symbol();
+	s=s+"@sy"+sy;
+	s=s+"@tf"+tf;
+	s=s+"@sh"+shift;
+	
+	aFrSets[new_row]=s;
+	return(new_row);
+}
+
+string aFR_getSY(int h){
+	/**
+		\version	0.0.0.1
+		\date		2013.12.27
+		\author		Morochin <artamir> Artiom
+		\details	Возвращает символ из настроек фрактала
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.12.27@artamir	[+]	aFR_getSY
+			>Rev:0
+	*/
+
+	string fn="aFR_getSY";
+	
+	string sy=Struc_KeyValue_string(aFrSets[h],"@sy");
+	
+	return(sy);
+}
+
+int aFR_getTF(int h){
+	/**
+		\version	0.0.0.1
+		\date		2013.12.27
+		\author		Morochin <artamir> Artiom
+		\details	Возвращает таймфрейм из настроек фрактала
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.12.27@artamir	[+]	aFR_getTF
+			>Rev:0
+	*/
+
+	string fn="aFR_getTF";
+	
+	int tf=0;
+	tf=Struc_KeyValue_int(aFrSets[h],"@tf",0);
+	
+	return(tf);
+}
+
+bool iFR_isUP(int h=0 /** handle */
+			, int shift=-1
+			, bool use_synchro=true){
+	/**
+		\version	0.0.0.0
+		\date		2013.12.19
+		\author		Morochin <artamir> Artiom
+		\details	Возвращает да, если на заданном баре сформирован верхний фрактал.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	string fn="iFR_isUP";
+	
+	int 	nl=Struc_KeyValue_int(		aFrSets[h],"@nl");
+	int 	nr=Struc_KeyValue_int(		aFrSets[h],"@nr");
+	int 	mo=Struc_KeyValue_int(		aFrSets[h],"@mo");
+	string 	sy=Struc_KeyValue_string(	aFrSets[h],"@sy");
+	int 	tf=Struc_KeyValue_int(		aFrSets[h],"@tf");
+	int 	sh=Struc_KeyValue_int(		aFrSets[h],"@sh");
+	
+	if(shift>-1){
+		sh=shift;
 	}
 	
-	bool iFR.IsDwMode2(int fb = 1){
-	/*
-		>Ver	:	0.0.3
-		>Date	:	2013.01.18
-		>Hist	:
-			@0.0.3@2013.01.18@artamir	[+] Добавлен тип цены: Закрытие
-			@0.0.2@2013.01.11@artamir	[]
-			@0.0.1@2012.11.13@artamir	[]
-		>Author	:	Morochin <artamir> Artiom
-		>Desc	:	check if bar with index fb is down fractal
-	*/
-	
-		bool f = true;
-		
-		int i = -1;
-		
-		//-------------------------------------------------
-		if(fb < iFR.NR){
-			return(false);
-		}
-		
-		//--------------------------------------------------
-		for(i = fb; i > fb - iFR.NR; i--){
-			
-			//----------------------------------------------
-			if(iFR.Pr == iFR.PR_HL){
-				if(iLow(sFR.Sy, 0, i) > iLow(sFR.Sy, 0, i-1)){
-					f = false;
-				}
-			}
-			if(iFR.Pr == iFR.PR_C){
-				if(iClose(sFR.Sy, 0, i) > MathMin(iClose(sFR.Sy, 0, i-1),iOpen(sFR.Sy, 0, i-1))){
-					f = false;
-				}
-			}
-		}
-		
-		//--------------------------------------------------
-		if(!f){
-			return(false);
-		}
-		
-		//--------------------------------------------------
-		if(f){
-			for(i = fb; i < fb + iFR.NL; i++){
-				if(iFR.Pr == iFR.PR_HL){
-					if(iLow(sFR.Sy, 0, i) > iLow(sFR.Sy, 0, i+1)){
-						f = false;
-					}
-				}
-				if(iFR.Pr == iFR.PR_C){
-					if(iClose(sFR.Sy, 0, i) > MathMin(iClose(sFR.Sy, 0, i+1),iOpen(sFR.Sy, 0, i+1))){
-						f = false;
-					}
-				}
-			}
-		}
-		
-		return(f);
+	if(use_synchro){
+		sh=iBarShift(sy, tf, iTime(sy, 0, sh));
 	}
 	
-	bool iFR.IsUp(int fb = 1){
-	/*
-		>Ver	:	0.0.1
-		>Date	:	2013.01.10
-		>Hist	:
-			@0.0.1@2013.01.10@artamir	[]
-		>Author	:	Morochin <artamir> Artiom
-		>Desc	:	Обертка для вызова функции определения верхнего фрактала в зависимости от режима. 
+	if(sh<=nr)return(false);
+	
+	bool f=true;
+	double fbp=iHigh(sy,tf,sh);
+	
+	if(sh!=iHighest(sy,tf,MODE_HIGH,nr+1,sh-nr))f=false;
+
+	if(f)
+		if(sh!=iHighest(sy,tf,MODE_HIGH,nl+1,sh))f=false;
+	
+	return(f);
+}
+
+bool iFR_isDW(int h=0 /** handle */
+			, int shift=-1
+			, bool use_synchro=true){
+	/**
+		\version	0.0.0.0
+		\date		2013.12.19
+		\author		Morochin <artamir> Artiom
+		\details	Возвращает да, если на заданном баре сформирован нижний фрактал.
+		\internal
+			>Hist:
+			>Rev:0
 	*/
-		
-		//--------------------------------------------------
-		if(iFR.Mode == iFR.MODE_STD){
-			return(iFR.IsUpMode1(fb));
-		}
-		
-		//--------------------------------------------------
-		if(iFR.Mode == iFR.MODE_HL){
-			return(iFR.IsUpMode2(fb));
-		}
+
+	string fn="iFR_isDW";
+	
+	int 	nl=Struc_KeyValue_int(		aFrSets[h],"@nl");
+	int 	nr=Struc_KeyValue_int(		aFrSets[h],"@nr");
+	int 	mo=Struc_KeyValue_int(		aFrSets[h],"@mo");
+	string 	sy=Struc_KeyValue_string(	aFrSets[h],"@sy");
+	int 	tf=Struc_KeyValue_int(		aFrSets[h],"@tf");
+	int 	sh=Struc_KeyValue_int(		aFrSets[h],"@sh");
+	
+	if(shift>-1){
+		sh=shift;
 	}
 	
-	bool iFR.IsDw(int fb = 1){
-	/*
-		>Ver	:	0.0.1
-		>Date	:	2013.01.10
-		>Hist	:
-			@0.0.1@2013.01.10@artamir	[]
-		>Author	:	Morochin <artamir> Artiom
-		>Desc	:	Обертка для вызова функции определения нижнего фрактала в зависимости от режима. 
-	*/
-		
-		//--------------------------------------------------
-		if(iFR.Mode == iFR.MODE_STD){
-			return(iFR.IsDwMode1(fb));
-		}
-		
-		//--------------------------------------------------
-		if(iFR.Mode == iFR.MODE_HL){
-			return(iFR.IsDwMode2(fb));
-		}
+	if(use_synchro){
+		sh=iBarShift(sy, tf, iTime(sy, 0, sh));
 	}
 	
-	int iFR.getNearstUp(int startBar = 1){
-	/*
-		>Ver	:	0.0.1
-		>Date	:	2012.11.13
-		>Hist	:
-			@0.0.1@2012.11.13@artamir	[]
-		>Author	:	Morochin <artamir> Artiom
-		>Desc	:	return index of bar of nearst up fractal
-					Возвращает номер бара ближайшего верхнего фрактала.
-	*/
+	if(sh<=nr)return(false);
 	
-		bool f = false;
-		int i = startBar-1;
-		
-		while(!f && i < Bars){
-			i++;
-			
-			if(iFR.IsUp(i)){
-				f = true;
-			}
-		}
-		
+	bool f=true;
+	double fbp=iLow(sy,tf,sh);
+	if(sh!=iLowest(sy,tf,MODE_LOW,nr+1,sh-nr))f=false;
+	
+	if(f)
+		if(sh!=iLowest(sy,tf,MODE_LOW,nl+1,sh))f=false;
+	
+	return(f);
+}
+
+int iFR_getNearestUpBar(int h, int start_bar=0){
+	/**
+		\version	0.0.0.0
+		\date		2013.12.23
+		\author		Morochin <artamir> Artiom
+		\details	Возвращает номер ближайшего верхнего фрактала, начиная с заданного.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	bool isFind=false;
+	int i=start_bar;
+	while(i<Bars && !isFind) {
+		isFind=iFR_isUP(h,i);
+		i++;
+	}	
+	
+	if(isFind){
+		i--;
 		return(i);
 	}
 	
-	int iFR.getNearstDw(int startBar = 1){
-	/*
-		>Ver	:	0.0.1
-		>Date	:	2012.11.13
-		>Hist	:
-			@0.0.1@2012.11.13@artamir	[]
-		>Author	:	Morochin <artamir> Artiom
-		>Desc	:	return index of bar of nearst down fractal
-					Возвращает номер бара ближайшего верхнего фрактала.
+	return(-1);
+}
+
+int iFR_getNearestDwBar(int h, int start_bar=0){
+	/**
+		\version	0.0.0.0
+		\date		2013.12.23
+		\author		Morochin <artamir> Artiom
+		\details	Возвращает номер ближайшего нижнего фрактала, начиная с заданного.
+		\internal
+			>Hist:
+			>Rev:0
 	*/
+
+	bool isFind=false;
+	int i=start_bar;
+	while(i<Bars && !isFind) {
+		isFind=iFR_isDW(h,i);
+		i++;
+	}	
 	
-		bool f = false;
-		int i = startBar-1;
-		
-		while(!f && i < Bars){
-			i++;
-			
-			if(iFR.IsDw(i)){
-				f = true;
-			}
-		}
-		
+	if(isFind){
+		i--;
 		return(i);
 	}
 	
-	double iFR.getNearestUpPrice(int startBar){
-	/*
-		>Ver	:	0.0.1
-		>Date	:	2012.11.13
-		>Hist	:
-			@0.0.1@2012.11.13@artamir	[]
-		>Author	:	Morochin <artamir> Artiom
-		>Desc	:	return price by nearest up fractal
-					Возвращает цену ближайшего верхнего фрактала
+	return(-1);
+}
+
+int iFR_getNearestUpBarTF(int h, int start_bar){
+	/**
+		\version	0.0.0.1
+		\date		2013.12.27
+		\author		Morochin <artamir> Artiom
+		\details	Возвращает номер бара фрактала на заданном в настройках таймфрейме.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.12.27@artamir	[+]	iFR_getNearestUpBarTF
+			>Rev:0
 	*/
+
+	int i=iFR_getNearestUpBar(h, start_bar);
+	int res=-1;
 	
-		int fb = iFR.getNearstUp(startBar);
-		
-		return(iHigh(sFR.Sy, 0, fb));
+	string sy=aFR_getSY(h);
+	int tf=aFR_getTF(h);
+	
+	if(i>-1){
+		res=iBarShift(sy,tf,iTime(sy,0,i));
+		return(res);
 	}
 	
-	double iFR.getNearestDwPrice(int startBar){
-	/*
-		>Ver	:	0.0.2
-		>Date	:	2012.11.13
-		>Hist	:
-			@0.0.2@2012.11.13@artamir	[]
-			@0.0.1@2012.11.13@artamir	[]
-		>Author	:	Morochin <artamir> Artiom
-		>Desc	:	return price by nearest down fractal
-					Возвращает цену ближайшего нижнего фрактала
+	return(-1);
+}
+
+int iFR_getNearestDwBarTF(int h, int start_bar){
+	/**
+		\version	0.0.0.2
+		\date		2013.12.27
+		\author		Morochin <artamir> Artiom
+		\details	Возвращает номер бара фрактала на заданном в настройках таймфрейме.
+		\internal
+			>Hist:		
+					 @0.0.0.2@2013.12.27@artamir	[+]	iFR_getNearestDwBarTF
+			>Rev:0
 	*/
+
+	int i=iFR_getNearestDwBar(h, start_bar);
+	int res=-1;
 	
-		int fb = iFR.getNearstDw(startBar);
-		return(iLow(sFR.Sy, 0, fb));
+	string sy=aFR_getSY(h);
+	int tf=aFR_getTF(h);
+	
+	if(i>-1){
+		res=iBarShift(sy,tf,iTime(sy,0,i));
+		return(res);
 	}
+	
+	return(-1);
+}

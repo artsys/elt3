@@ -27,7 +27,7 @@ int StringToArray(string &a[], string s, string del = ";"){
 					 @0.0.0.1@2013.06.12@artamir	[]	StringToArray
 			>Rev:0
 	*/
-	
+	string fn="StringToArray";
 	int pR = StringFind(s, del, 0);
 	int ROWS = ArrayRange(a,0);
 	int lastROW = ROWS-1;
@@ -37,7 +37,7 @@ int StringToArray(string &a[], string s, string del = ";"){
 		
 		lastROW++;
 		a[lastROW] = StringSubstr(s, 0, pR);
-		s=StringSubstr(s, pR+1, StringLen(s)-pR+1);
+		s=StringSubstr(s, pR+StringLen(del), StringLen(s)-pR+StringLen(del));
 		StringToArray(a, s, del);
 	}else{
 		ROWS = ROWS + 1;

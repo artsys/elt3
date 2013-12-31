@@ -4,6 +4,7 @@
 		\author		Morochin <artamir> Artiom
 		\details	Советник работает по индикатору StohCross
 		\internal
+			$Revision: 275 $
 			>Hist:														
 					 @1.0.0.18@2013.12.31@artamir	[!!]	Tral
 					 @1.0.0.17@2013.12.30@artamir	[!!]	Tral_Fr

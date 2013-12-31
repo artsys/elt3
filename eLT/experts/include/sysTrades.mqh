@@ -3,9 +3,9 @@
 		\date		2013.12.24
 		\author		Morochin <artamir> Artiom
 		\details	Trading functtions.
-		\
-			$Revision$
-			>Hist:																																						
+		\internal
+				$Revision$
+				>Hist:									
 					 @0.0.0.38@2013.12.24@artamir	[*]	TR_SendBUY
 					 @0.0.0.37@2013.12.24@artamir	[*]	TR_SendSELL
 	*/

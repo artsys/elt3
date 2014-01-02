@@ -1,11 +1,13 @@
 	/**
-		\version	1.0.0.18
+		\version	1.0.0.20
 		\date		2013.12.31
 		\author		Morochin <artamir> Artiom
 		\details	Советник работает по индикатору StohCross
 		\internal
 			$Revision: 275 $
-			>Hist:														
+			>Hist:																
+					 @1.0.0.20@2013.12.31@artamir	[+]	GetSignal
+					 @1.0.0.19@2013.12.31@artamir	[*]	Autoopen
 					 @1.0.0.18@2013.12.31@artamir	[!!]	Tral
 					 @1.0.0.17@2013.12.30@artamir	[!!]	Tral_Fr
 					 @1.0.0.16@2013.12.30@artamir	[!]	Tral_Fr
@@ -29,7 +31,7 @@ datetime lastBarTime=0;
 int hfr=-1;
 
 #define EXP	"eVVSS_StohCross"	
-#define VER	"1.0.0.18_2013.12.31"
+#define VER	"1.0.0.20_2013.12.31"
 
 extern	string	s1="==== MAIN ====="; //{
 extern	int SL=50;
@@ -42,15 +44,23 @@ extern int       Slowing1     =  3;
 extern int       MAMethod1    =   0;
 extern int       PriceField1  =   1;
 extern bool		CloseOnRevers=false;
+extern int	BarsShift=1;
+extern string s2="=== FILTER VininIHMA ===";
+//---- input parameters
+extern bool FHMA_use=false; 
+extern int FHMA_period=16; 
+extern int FHMA_method=3; // MODE_SMA 
+extern int FHMA_price=0; // PRICE_CLOSE 
+extern int FHMA_sdvig=0;
+extern int FHMA_CheckBar=1; 
+extern string e2="========================";
 
 //-----
-extern int	BarsShift=1;
 
-
-bool		TRAL_Use=false;
+extern bool		TRAL_Use=false;
 int			TRAL_Begin_pip=0;
-int			TRAL_DeltaPips=10;
-int			TRAL_Step_pip=5;
+extern int			TRAL_DeltaPips=10;
+extern int			TRAL_Step_pip=5;
 
 extern bool		TRAL_Fr_Use=false;
 extern int		TRAL_Fr_TF=0;	//таймфрейм расчета фракталов.
@@ -132,6 +142,7 @@ int startext(){
 			>Hist:
 			>Rev:0
 	*/
+	
 	if(Autoclose()){
 		return(0);
 	}
@@ -144,12 +155,13 @@ int startext(){
 
 void Autoopen(){
 	/**
-		\version	0.0.0.1
-		\date		2013.12.13
+		\version	0.0.0.2
+		\date		2013.12.31
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2013.12.31@artamir	[*]	Исправлена проверка , что ордер выставлен на текущем баре.
 					 @0.0.0.1@2013.12.13@artamir	[+]	Добавлен выбор объема ордера.
 			>Rev:0
 	*/
@@ -172,19 +184,19 @@ void Autoopen(){
 	int ti=-1;
 	if(isNewBar()){ 
 		ti=TR_SendMarket(op, LOT);
-	}	
-	
-	if(ti<=0){
-		Print(fn,": Cant send order");
-		Print(fn,".err=",GetLastError());
-		Print(fn,".op=",op);
-		return;
+		
+		if(ti<=0){
+			Print(fn,": Cant send order");
+			Print(fn,".err=",GetLastError());
+			Print(fn,".op=",op);
+			return;
+		}
+		
+		TR_ModifyTP(ti,TP,TR_MODE_PIP);
+		TR_ModifySL(ti,SL,TR_MODE_PIP);
+		OE_setFODByTicket(ti);
+		OE_setFOOTByTicket(ti, Time[BarsShift]);
 	}
-	
-	TR_ModifyTP(ti,TP,TR_MODE_PIP);
-	TR_ModifySL(ti,SL,TR_MODE_PIP);
-	OE_setFODByTicket(ti);
-	OE_setFOOTByTicket(ti, Time[BarsShift]);
 }
 
 bool Autoclose(){
@@ -258,6 +270,7 @@ void Tral(){
 		f=OE_IT+"==1 AND "+OE_MN+"=="+TR_MN+" AND "+OE_CP2SL+">>"+(TRAL_Begin_pip+TRAL_DeltaPips)+" AND "+OE_CP2OP+">>"+TRAL_DeltaPips;
 		
 		int aI[];
+		ArrayResize(aI,0);
 		AId_Init2(aOE, aI);
 		
 		//-------------------------------------------
@@ -289,7 +302,7 @@ void Tral(){
 	rows = ArrayRange(d, 0);
 	
 	for(idx = 0; idx < rows; idx++){
-		ti = d[aI[idx]][OE_TI];
+		ti = d[idx][OE_TI];
 		TR_ModifySLByPrice(ti, TRAL_Step_pip);
 	}
 	//}
@@ -445,12 +458,13 @@ bool isNewBar(){
 
 int GetSignal(){
 	/**
-		\version	0.0.0.0
-		\date		2013.12.06
+		\version	0.0.0.1
+		\date		2013.12.31
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:
+			>Hist:	
+					 @0.0.0.1@2013.12.31@artamir	[!]	Добавлен фильтр по HMA
 			>Rev:0
 	*/
 	
@@ -469,7 +483,22 @@ int GetSignal(){
 	if(upArrow>0 && upArrow!=EMPTY_VALUE){signal=OP_BUY; }//Print("up");}
 	if(dwArrow>0 && dwArrow!=EMPTY_VALUE){signal=OP_SELL; }//Print("down");}
 	
-	
+	if(FHMA_use){
+		double upHMA=iCustom(NULL,0,"VininIHMA",FHMA_period,FHMA_method,FHMA_price,FHMA_sdvig,FHMA_CheckBar,1,1);
+		double dwHMA=iCustom(NULL,0,"VininIHMA",FHMA_period,FHMA_method,FHMA_price,FHMA_sdvig,FHMA_CheckBar,2,1);
+		
+		if(signal==OP_BUY){
+			if(upHMA<=0 || upHMA==EMPTY_VALUE){
+				signal=-1;
+			}
+		}
+		
+		if(signal==OP_SELL){
+			if(dwHMA<=0 || dwHMA==EMPTY_VALUE){
+				signal=-1;
+			}
+		}
+	}
 	//--------------------------------------
 	return(signal);
 }

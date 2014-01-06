@@ -1,11 +1,14 @@
 	/**
-		\version	1.0.0.20
-		\date		2013.12.31
+		\version	1.0.0.23
+		\date		2014.01.06
 		\author		Morochin <artamir> Artiom
 		\details	Советник работает по индикатору StohCross
 		\internal
 			$Revision: 275 $
-			>Hist:																
+			>Hist:																			
+					 @1.0.0.23@2014.01.06@artamir	[+] Добавлена настройка открытия реверсного ордера.	
+					 @1.0.0.22@2014.01.06@artamir	[]	Tral
+					 @1.0.0.21@2014.01.06@artamir	[*] Исправлен IndexedArray	
 					 @1.0.0.20@2013.12.31@artamir	[+]	GetSignal
 					 @1.0.0.19@2013.12.31@artamir	[*]	Autoopen
 					 @1.0.0.18@2013.12.31@artamir	[!!]	Tral
@@ -31,7 +34,7 @@ datetime lastBarTime=0;
 int hfr=-1;
 
 #define EXP	"eVVSS_StohCross"	
-#define VER	"1.0.0.20_2013.12.31"
+#define VER	"1.0.0.22_2014.01.06"
 
 extern	string	s1="==== MAIN ====="; //{
 extern	int SL=50;
@@ -66,6 +69,8 @@ extern bool		TRAL_Fr_Use=false;
 extern int		TRAL_Fr_TF=0;	//таймфрейм расчета фракталов.
 extern int		TRAL_Fr_R=2;	//количество баров справа для определения фрактала
 extern int		TRAL_Fr_L=2;	//количество баров слева для определения фрактала
+
+extern bool		use_Revers=false;
 extern	string	e1="==== EXPERT END =====";//}
 
 #include <sysELT3.mqh>
@@ -248,12 +253,13 @@ bool Autoclose(){
 
 void Tral(){
 	/**
-		\version	0.0.0.2
-		\date		2013.12.31
+		\version	0.0.0.3
+		\date		2014.01.06
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:							
+			>Hist:								
+					 @0.0.0.3@2014.01.06@artamir	[!]	Исправлена работа трала при СЛ>0
 					 @0.0.0.2@2013.12.31@artamir	[!]	Исправлена работа трала.
 					 @0.0.0.1@2013.12.13@artamir	[+]	Tral
 			>Rev:0
@@ -276,13 +282,10 @@ void Tral(){
 		//-------------------------------------------
 		Select(aOE, aI, f);
 		int rows=ArrayRange(aI,0);
-		if(rows>0){ 
-			AId_SetIndexOnArray(aOE,aI,d);
-		}
 		
 		
 		for(int idx = 0; idx < rows; idx++){
-			int ti = d[aI[idx]][OE_TI];
+			int ti = aOE[aI[idx]][OE_TI];
 			TR_ModifySLByPrice(ti, TRAL_Step_pip);
 		}
 	//}

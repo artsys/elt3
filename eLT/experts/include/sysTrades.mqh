@@ -1,11 +1,12 @@
 	/**
-		\version	0.0.0.38
-		\date		2013.12.24
+		\version	0.0.0.39
+		\date		2013.12.31
 		\author		Morochin <artamir> Artiom
 		\details	Trading functtions.
 		\internal
 				$Revision$
-				>Hist:									
+				>Hist:										
+						 @0.0.0.39@2013.12.31@artamir	[]	_OrderModify
 					 @0.0.0.38@2013.12.24@artamir	[*]	TR_SendBUY
 					 @0.0.0.37@2013.12.24@artamir	[*]	TR_SendSELL
 	*/
@@ -938,7 +939,8 @@ double TR_getMarketPrice(int mode, int ty=0, string sy=""){
 int	_TR_CountOrdersToSend(double all_vol = 0){
 	/*
 		>Ver	:	0.0.0.1
-		>Date	:	2013.07.02
+		>Date	:
+	2013.07.02
 		>Hist	:	
 					@0.0.0.1@2013.07.02@artamir	[]	изменен алгоритм нахождени€ количества выставл€емых ордеров.
 		>Author	:	Morochin <artamir> Artiom
@@ -1107,9 +1109,10 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 
 bool _OrderModify(int ticket, double price, double stoploss, double takeprofit, datetime expiration, color clr=CLR_NONE){
 	/*
-		>Ver	:	0.0.4
-		>Date	:	2012.10.01
-		>History:
+		>Ver	:	0.0.0.5
+		>Date	:	2013.12.31
+		>History:	
+					@0.0.0.5@2013.12.31@artamir	[*]	ƒобавлена проверка, если ордер уже закрыт.
 			@0.0.4@2012.10.01@artamir	[*] critical change
 			@0.0.3@2012.09.20@artamir	[]
 			@0.0.2@2012.09.20@artamir	[+] add normalizing for double values
@@ -1122,6 +1125,8 @@ bool _OrderModify(int ticket, double price, double stoploss, double takeprofit, 
 	*/
 	//------------------------------------------------------
 	if(!OrderSelect(ticket, SELECT_BY_TICKET)) return(true);
+	
+	if(OrderCloseTime()>0) return(true);	//ордер уже закрыт и нефик его модифицировать.
 	
 	//------------------------------------------------------
 	int type = OrderType();

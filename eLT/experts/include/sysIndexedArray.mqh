@@ -74,11 +74,21 @@ void AI_IndexSetInterval(int &aI[], int first=-2, int last=-2){
 			>Rev:0
 	*/
 	string fn="AI_IndexSetInterval";
+	if(BP_SRT){
+		Print(fn);
+	}
 	if(first==-1||last==-1){
 		ArrayResize(aI,0);
 		return;
 	}
 	
+	if(last==-2){
+		last=ArrayRange(aI,0)-1;
+	}
+	
+	if(first==-2){
+		first=0;
+	}
 	
 	int temp[];
 	ArrayResize(temp,last-first+1);
@@ -498,7 +508,6 @@ int AId_SearchGreat(double &a[][], int &aI[], int col, double element){
 		}
 	}
 	
-	Print(fn+".l="+l+"; .r="+r);
 	if(a[aI[l]][col]<=element){
 		return(-1);
 	}
@@ -581,9 +590,11 @@ void AId_Select2(double &a[][], int &aI[]){
 			if(f_assertion_operation==AI_AS_OP_GREAT){
 				//все значения больше или равные заданному начинаются с индекса первого совпавшег элемента до конца массива.
 				first=AId_SearchGreat(a,aI,f_col, f_max);
-				
 				//теперь можем обрезать основной индекс по найденому интервалу и перейти к след фильтру
-				AI_IndexSetInterval(aI,first,last);
+				AI_IndexSetInterval(aI,first);
+				if(BP_SRT){AId_Print2(a, aI, 4, "AId_SearchInterval("+f_col+","+first+","+last+")");
+					AI_PrintIndex(aI,fn);
+				}
 				continue;
 			}
 		

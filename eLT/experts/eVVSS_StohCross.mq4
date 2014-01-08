@@ -1,16 +1,19 @@
 	/**
-		\version	1.0.0.25
-		\date		2014.01.06
+		\version	1.0.0.28
+		\date		2014.01.08
 		\author		Morochin <artamir> Artiom
-		\details	РЎРѕРІРµС‚РЅРёРє СЂР°Р±РѕС‚Р°РµС‚ РїРѕ РёРЅРґРёРєР°С‚РѕСЂСѓ StohCross
+		\details	Советник работает по индикатору StohCross
 		\internal
 			$Revision: 275 $
-			>Hist:																					
+			>Hist:																								
+					 @1.0.0.28@2014.01.08@artamir	[]	start
+					 @1.0.0.27@2014.01.08@artamir	[+]	Select_SessionTI
+					 @1.0.0.26@2014.01.08@artamir	[+]	Добавлен трал по АТР
 					 @1.0.0.25@2014.01.06@artamir	[]	Tral_Fr
 					 @1.0.0.24@2014.01.06@artamir	[!]	Tral_Fr
-					 @1.0.0.23@2014.01.06@artamir	[+] Р”РѕР±Р°РІР»РµРЅР° РЅР°СЃС‚СЂРѕР№РєР° РѕС‚РєСЂС‹С‚РёСЏ СЂРµРІРµСЂСЃРЅРѕРіРѕ РѕСЂРґРµСЂР°.	
+					 @1.0.0.23@2014.01.06@artamir	[+] Добавлена настройка открытия реверсного ордера.	
 					 @1.0.0.22@2014.01.06@artamir	[]	Tral
-					 @1.0.0.21@2014.01.06@artamir	[*] РСЃРїСЂР°РІР»РµРЅ IndexedArray	
+					 @1.0.0.21@2014.01.06@artamir	[*] Исправлен IndexedArray	
 					 @1.0.0.20@2013.12.31@artamir	[+]	GetSignal
 					 @1.0.0.19@2013.12.31@artamir	[*]	Autoopen
 					 @1.0.0.18@2013.12.31@artamir	[!!]	Tral
@@ -19,11 +22,11 @@
 					 @1.0.0.15@2013.12.30@artamir	[*]	start
 					 @1.0.0.14@2013.12.30@artamir	[]	Autoclose
 					 @1.0.0.13@2013.12.30@artamir	[+]	Autoclose
-					 @1.0.0.12@2013.12.30@artamir	[-] РћСЃС‚Р°РІР»РµРЅ С‚РѕР»СЊРєРѕ С‚СЂРµР№Р»РёРЅРі СЃС‚РѕРї РїРѕ С„СЂР°РєС‚Р°Р»Р°Рј.	
+					 @1.0.0.12@2013.12.30@artamir	[-] Оставлен только трейлинг стоп по фракталам.	
 					 @1.0.0.11@2013.12.30@artamir	[]	
-					 @1.0.0.10@2013.12.27@artamir	[+]	РґРѕР±Р°РІР»РµРЅР° РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ Р°Р»СЊС‚РµСЂРЅР°С‚РёРІРЅРѕРіРѕ РѕРїСЂРµРґРµР»РµРЅРёСЏ С„СЂР°РєС‚Р°Р»РѕРІ.
+					 @1.0.0.10@2013.12.27@artamir	[+]	добавлена возможность альтернативного определения фракталов.
 					 @1.0.0.6@2013.12.23@artamir	[]	
-					 @1.0.0.4@2013.12.18@artamir	[+] Р”РѕР±Р°РІР»РµРЅ С‚СЂРµР№Р»РёРЅРі, РґРѕР±Р°РІР»РµРЅРѕ СЃРјРµС‰РµРЅРёРµ РЅР° Р·Р°РґР°РЅРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ Р±Р°СЂРѕРІ РґР»СЏ РѕС‚РєСЂС‹С‚РёСЏ РѕСЂРґРµСЂР° РїРѕ СЂС‹РЅРєСѓ.
+					 @1.0.0.4@2013.12.18@artamir	[+] Добавлен трейлинг, добавлено смещение на заданное количество баров для открытия ордера по рынку.
 					 @1.0.0.3@2013.12.13@artamir	[+]	Select
 					 @1.0.0.2@2013.12.13@artamir	[+]	Tral
 					 @0.0.0.1@2013.12.13@artamir	[+]	Autoopen
@@ -35,8 +38,10 @@ datetime lastBarTime=0;
 
 int hfr=-1;
 
+int session_id=0;
+
 #define EXP	"eVVSS_StohCross"	
-#define VER	"1.0.0.25_2014.01.06"
+#define VER	"1.0.0.28_2014.01.08"
 
 extern	string	s1="==== MAIN ====="; //{
 extern	int SL=50;
@@ -68,9 +73,16 @@ extern int			TRAL_DeltaPips=10;
 extern int			TRAL_Step_pip=5;
 
 extern bool		TRAL_Fr_Use=false;
-extern int		TRAL_Fr_TF=0;	//С‚Р°Р№РјС„СЂРµР№Рј СЂР°СЃС‡РµС‚Р° С„СЂР°РєС‚Р°Р»РѕРІ.
-extern int		TRAL_Fr_R=2;	//РєРѕР»РёС‡РµСЃС‚РІРѕ Р±Р°СЂРѕРІ СЃРїСЂР°РІР° РґР»СЏ РѕРїСЂРµРґРµР»РµРЅРёСЏ С„СЂР°РєС‚Р°Р»Р°
-extern int		TRAL_Fr_L=2;	//РєРѕР»РёС‡РµСЃС‚РІРѕ Р±Р°СЂРѕРІ СЃР»РµРІР° РґР»СЏ РѕРїСЂРµРґРµР»РµРЅРёСЏ С„СЂР°РєС‚Р°Р»Р°
+extern int		TRAL_Fr_TF=0;	//таймфрейм расчета фракталов.
+extern int		TRAL_Fr_R=2;	//количество баров справа для определения фрактала
+extern int		TRAL_Fr_L=2;	//количество баров слева для определения фрактала
+
+extern bool		TRAL_ATR_use=false;
+extern int		TRAL_ATR_TF=0;
+extern int		TRAL_ATR1_Per=5;
+extern int		TRAL_ATR2_Per=20;
+extern double	TRAL_ATR_COEF=1;
+extern bool		TRAL_ATR_INLOSS=false;
 
 extern bool		use_Revers=false;
 extern	string	e1="==== EXPERT END =====";//}
@@ -116,23 +128,34 @@ int deinit(){
 
 int start(){
 	/**
-		\version	0.0.0.1
-		\date		2013.12.30
+		\version	0.0.0.2
+		\date		2014.01.08
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:	
-					 @0.0.0.1@2013.12.30@artamir	[+]	Р”РѕР±Р°РІР»РµРЅР° РїСЂРѕРІРµСЂРєР° СЃС‚Р°С‚СѓСЃРѕРІ РѕСЂРґРµСЂРѕРІ Р±Рґ.
+			>Hist:		
+					 @0.0.0.2@2014.01.08@artamir	[!]	start
+					 @0.0.0.1@2013.12.30@artamir	[+]	Добавлена проверка статусов ордеров бд.
 			>Rev:0
 	*/
-
+	string fn="start";
 	ELT_start();
 	if(OrdersTotal()>0){
 		//DrawTable();
 		//A_d_PrintArray2(aOE,4,"OE");
 	}
+	
+	
+	OE_delClosed();
+	
 	OE_eraseArray();
+	
 	OE_RecheckStatuses();
+	
+	if(OrdersTotal() <=0){
+		session_id++;
+	}
+	
 	int ret = startext();
 	
 	//-------------------------------------------
@@ -141,20 +164,26 @@ int start(){
 
 int startext(){
 	/**
-		\version	0.0.0.0
-		\date		2013.12.06
+		\version	0.0.0.1
+		\date		2014.01.08
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:
+			>Hist:	
+					 @0.0.0.1@2014.01.08@artamir	[]	startext
 			>Rev:0
 	*/
+	
+	string fn="startext";
 	
 	if(Autoclose()){
 		return(0);
 	}
+	
 	Tral();
 	Tral_Fr();
+	Tral_ATR();
+	
 	Autoopen();
 	//-------------------------------------------
 	return(0);
@@ -168,8 +197,8 @@ void Autoopen(){
 		\details	Detailed description
 		\internal
 			>Hist:		
-					 @0.0.0.2@2013.12.31@artamir	[*]	РСЃРїСЂР°РІР»РµРЅР° РїСЂРѕРІРµСЂРєР° , С‡С‚Рѕ РѕСЂРґРµСЂ РІС‹СЃС‚Р°РІР»РµРЅ РЅР° С‚РµРєСѓС‰РµРј Р±Р°СЂРµ.
-					 @0.0.0.1@2013.12.13@artamir	[+]	Р”РѕР±Р°РІР»РµРЅ РІС‹Р±РѕСЂ РѕР±СЉРµРјР° РѕСЂРґРµСЂР°.
+					 @0.0.0.2@2013.12.31@artamir	[*]	Исправлена проверка , что ордер выставлен на текущем баре.
+					 @0.0.0.1@2013.12.13@artamir	[+]	Добавлен выбор объема ордера.
 			>Rev:0
 	*/
 	
@@ -194,7 +223,7 @@ void Autoopen(){
 		
 	//-------------------------------------------
 	Select(aOE, aI, f);
-	if(ArrayRange(aI,0)>0) return; //РµСЃС‚СЊ РѕСЂРґРµСЂР°, РѕС‚РєСЂС‹С‚С‹Рµ РїРѕ СЌС‚РѕРјСѓ СЃРёРіРЅР°Р»Сѓ РЅР° С‚РµРє. Р±Р°СЂРµ. 
+	if(ArrayRange(aI,0)>0) return; //есть ордера, открытые по этому сигналу на тек. баре. 
 	
 	int ti=-1;
 	if(isNewBar()){ 
@@ -219,7 +248,7 @@ bool Autoclose(){
 		\version	0.0.0.1
 		\date		2013.12.30
 		\author		Morochin <artamir> Artiom
-		\details	РђРІС‚РѕР·Р°РєСЂС‹С‚РёРµ РѕСЂРґРµСЂРѕРІ.
+		\details	Автозакрытие ордеров.
 		\internal
 			>Hist:	
 					 @0.0.0.1@2013.12.30@artamir	[+]	Autoclose
@@ -229,7 +258,7 @@ bool Autoclose(){
 	
 	bool res=false;
 	
-	if(!CloseOnRevers)return;
+	if(!CloseOnRevers)return(false);
 	
 	int op=GetSignal();
 	
@@ -255,7 +284,7 @@ bool Autoclose(){
 		
 	//-------------------------------------------
 	Select(aOE, aI, f);
-	if(ArrayRange(aI,0)<=0) return; //РЅРµС‚ РѕСЂРґРµСЂРѕРІ, СѓРґРѕРІР»РµС‚РІРѕСЂСЏСЋС‰РёС… Р·Р°РїСЂРѕСЃСѓ
+	if(ArrayRange(aI,0)<=0) return; //нет ордеров, удовлетворяющих запросу
 	
 	int rows=ArrayRange(aI,0);
 	for(int i=0;i<rows;i++){
@@ -275,8 +304,8 @@ void Tral(){
 		\details	Detailed description
 		\internal
 			>Hist:								
-					 @0.0.0.3@2014.01.06@artamir	[!]	РСЃРїСЂР°РІР»РµРЅР° СЂР°Р±РѕС‚Р° С‚СЂР°Р»Р° РїСЂРё РЎР›>0
-					 @0.0.0.2@2013.12.31@artamir	[!]	РСЃРїСЂР°РІР»РµРЅР° СЂР°Р±РѕС‚Р° С‚СЂР°Р»Р°.
+					 @0.0.0.3@2014.01.06@artamir	[!]	Исправлена работа трала при СЛ>0
+					 @0.0.0.2@2013.12.31@artamir	[!]	Исправлена работа трала.
 					 @0.0.0.1@2013.12.13@artamir	[+]	Tral
 			>Rev:0
 	*/
@@ -288,7 +317,7 @@ void Tral(){
 	
 	string	f="";
 			
-	//{ --- Р•СЃР»Рё РЎР› > 0
+	//{ --- Если СЛ > 0
 		f=OE_IT+"==1 AND "+OE_MN+"=="+TR_MN+" AND "+OE_CP2SL+">>"+(TRAL_Step_pip+TRAL_DeltaPips)+" AND "+OE_CP2OP+">>"+(TRAL_Step_pip+TRAL_DeltaPips);
 		
 		int aI[];
@@ -306,7 +335,7 @@ void Tral(){
 		}
 	//}
 	
-	//{ --- Р•СЃР»Рё РЎР› = 0
+	//{ --- Если СЛ = 0
 	ArrayResize(d, 0);
 	
 	A_eraseFilter();										
@@ -334,12 +363,12 @@ void Tral_Fr(){
 		\version	0.0.0.4
 		\date		2014.01.06
 		\author		Morochin <artamir> Artiom
-		\details	РўСЂР°Р» РїРѕ С„СЂР°РєС‚Р°Р»Р°Рј
+		\details	Трал по фракталам
 		\internal
 			>Hist:									
 					 @0.0.0.4@2014.01.06@artamir	[!]	Tral_Fr
 					 @0.0.0.3@2013.12.30@artamir	[!!]	Tral_Fr
-					 @0.0.0.2@2013.12.30@artamir	[!]	РСЃРїСЂР°РІР»РµРЅ С‚СЂР°Р» СЃРµР»Р» РѕСЂРґРµСЂРѕРІ.
+					 @0.0.0.2@2013.12.30@artamir	[!]	Исправлен трал селл ордеров.
 					 @0.0.0.1@2013.12.13@artamir	[+]	Tral
 			>Rev:0
 	*/
@@ -357,7 +386,7 @@ void Tral_Fr(){
 	
 	string	f="";
 			
-	//{ --- РўСЂР°Р»РёРј Р±Р°Рё
+	//{ --- Тралим баи
 		f=StringConcatenate(	OE_IT,"==1"
 							,	" AND "
 							,	OE_MN,"==",TR_MN
@@ -383,7 +412,7 @@ void Tral_Fr(){
 	//}
 	
 	f="";
-	//{ --- РўСЂР°Р»РёРј СЃРµР»Р»С‹
+	//{ --- Тралим селлы
 		f=StringConcatenate(	OE_IT,"==1"
 							,	" AND "
 							,	OE_MN,"==",TR_MN
@@ -410,6 +439,41 @@ void Tral_Fr(){
 	ArrayResize(d,0);
 }	
 
+void Tral_ATR(){
+	/**
+		\version	0.0.0.0
+		\date		2014.01.08
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+	
+	if(!TRAL_ATR_use) return;
+	//Выбираем живые ордера и тралим их.
+	string f="";
+	f=StringConcatenate(	OE_IT,"==1"
+							,	" AND "
+							,	OE_MN,"==",TR_MN);
+		
+		int aI[];
+		ArrayResize(aI,0);
+		AId_Init2(aOE, aI);
+		
+		//-------------------------------------------
+		Select(aOE, aI, f);
+		int rows=ArrayRange(aI,0);
+		
+		for(int idx = 0; idx < rows; idx++){
+			int ti = aOE[aI[idx]][OE_TI];
+			
+			TrailingByATR(ti, TRAL_ATR_TF, TRAL_ATR1_Per, 0, TRAL_ATR2_Per, 0, TRAL_ATR_COEF, TRAL_ATR_INLOSS);
+			
+			
+		}
+	
+}
 
 void Select(double &a[][], int &aI[], string f){
 	/**
@@ -419,13 +483,13 @@ void Select(double &a[][], int &aI[], string f){
 		\details	Detailed description
 		\internal
 			>Hist:	
-					 @0.0.0.1@2013.12.13@artamir	[!]	Р”РѕР±Р°РІР»РµРЅ СЂР°Р·Р±РѕСЂ >> Рё ==
+					 @0.0.0.1@2013.12.13@artamir	[!]	Добавлен разбор >> и ==
 			>Rev:0
 	*/
 
 	AId_eraseFilter();
 	
-	//1. Р Р°СЃРєР»Р°РґС‹РІР°РµРј СЃС‚СЂРѕРєСѓ f РїРѕ СЂР°Р·РґРµР»РёС‚РµР»СЋ " AND "
+	//1. Раскладываем строку f по разделителю " AND "
 	string del=" AND ";
 	string aAnd[];
 	ArrayResize(aAnd,0);
@@ -484,7 +548,7 @@ int GetSignal(){
 		\details	Detailed description
 		\internal
 			>Hist:	
-					 @0.0.0.1@2013.12.31@artamir	[!]	Р”РѕР±Р°РІР»РµРЅ С„РёР»СЊС‚СЂ РїРѕ HMA
+					 @0.0.0.1@2013.12.31@artamir	[!]	Добавлен фильтр по HMA
 			>Rev:0
 	*/
 	
@@ -522,6 +586,155 @@ int GetSignal(){
 	//--------------------------------------
 	return(signal);
 }
+
+int Select_SessionTI(int &aI[]){
+	/**
+		\version	0.0.0.1
+		\date		2014.01.08
+		\author		Morochin <artamir> Artiom
+		\details	Выборка ордеров с заданным значением сессии.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.01.08@artamir	[+]	Select_SessionTI
+			>Rev:0
+	*/
+
+	string fn="Select_SessionTI";
+	
+	string f="";
+	
+	f=StringConcatenate(f,
+		 OE_MN,"==",TR_MN
+		," AND "
+		,OE_SID,"==",session_id);
+		
+	ArrayResize(aI,0);
+	AId_Init2(aOE, aI);
+	
+	//-------------------------------------------
+	Select(aOE, aI, f);
+	int rows=ArrayRange(aI,0);
+	
+	return(rows);
+}
+
+//+------------------------------------------------------------------+
+//| ТРЕЙЛИНГ ПО ATR (Average True Range, Средний истинный диапазон)  |
+//| Функции передаётся тикет позиции, период АТR и коэффициент, на   |
+//| который умножается ATR. Т.о. стоплосс "тянется" на расстоянии    |
+//| ATR х N от текущего курса; перенос - на новом баре (т.е. от цены |
+//| открытия очередного бара)                                        |
+//+------------------------------------------------------------------+
+void TrailingByATR(int ticket,int atr_timeframe,int atr1_period,int atr1_shift,int atr2_period,int atr2_shift,double coeff,bool trlinloss)
+   {
+   // проверяем переданные значения   
+   if ((ticket==0) || (atr1_period<1) || (atr2_period<1) || (coeff<=0) || (!OrderSelect(ticket,SELECT_BY_TICKET)) || 
+   ((atr_timeframe!=1) && (atr_timeframe!=5) && (atr_timeframe!=15) && (atr_timeframe!=30) && (atr_timeframe!=60) && 
+   (atr_timeframe!=240) && (atr_timeframe!=1440) && (atr_timeframe!=10080) && (atr_timeframe!=43200)) || (atr1_shift<0) || (atr2_shift<0))
+      {
+      Print("Трейлинг функцией TrailingByATR() невозможен из-за некорректности значений переданных ей аргументов.");
+      return(0);
+      }
+   
+   double curr_atr1; // текущее значение ATR - 1
+   double curr_atr2; // текущее значение ATR - 2
+   double best_atr; // большее из значений ATR
+   double atrXcoeff; // результат умножения большего из ATR на коэффициент
+   double newstop; // новый стоплосс
+   
+   // текущее значение ATR-1, ATR-2
+   curr_atr1 = iATR(Symbol(),atr_timeframe,atr1_period,atr1_shift);
+   curr_atr2 = iATR(Symbol(),atr_timeframe,atr2_period,atr2_shift);
+   
+   // большее из значений
+   best_atr = MathMax(curr_atr1,curr_atr2);
+   
+   // после умножения на коэффициент
+   atrXcoeff = best_atr * coeff;
+              
+   // если длинная позиция (OP_BUY)
+   if (OrderType()==OP_BUY)
+      {
+      // откладываем от текущего курса (новый стоплосс)
+      newstop = Bid - atrXcoeff;           
+      
+      // если trlinloss==true (т.е. следует тралить в зоне лоссов), то
+      if (trlinloss==true)      
+         {
+         // если стоплосс неопределен, то тралим в любом случае
+         if ((OrderStopLoss()==0) && (newstop<Bid-MarketInfo(Symbol(),MODE_STOPLEVEL)*Point))
+            {
+            if (!OrderModify(ticket,OrderOpenPrice(),newstop,OrderTakeProfit(),OrderExpiration()))
+            Print("Не удалось модифицировать ордер №",OrderTicket(),". Ошибка: ",GetLastError());
+            }
+         // иначе тралим только если новый стоп лучше старого
+         else
+            {
+            if ((newstop>OrderStopLoss()) && (newstop<Bid-MarketInfo(Symbol(),MODE_STOPLEVEL)*Point))
+            if (!OrderModify(ticket,OrderOpenPrice(),newstop,OrderTakeProfit(),OrderExpiration()))
+            Print("Не удалось модифицировать ордер №",OrderTicket(),". Ошибка: ",GetLastError());
+            }
+         }
+      else
+         {
+         // если стоплосс неопределен, то тралим, если стоп лучше открытия
+         if ((OrderStopLoss()==0) && (newstop>OrderOpenPrice()) && (newstop<Bid-MarketInfo(Symbol(),MODE_STOPLEVEL)*Point))
+            {
+            if (!OrderModify(ticket,OrderOpenPrice(),newstop,OrderTakeProfit(),OrderExpiration()))
+            Print("Не удалось модифицировать ордер №",OrderTicket(),". Ошибка: ",GetLastError());
+            }
+         // если стоп не равен 0, то меняем его, если он лучше предыдущего и курса открытия
+         else
+            {
+            if ((newstop>OrderStopLoss()) && (newstop>OrderOpenPrice()) && (newstop<Bid-MarketInfo(Symbol(),MODE_STOPLEVEL)*Point))
+            if (!OrderModify(ticket,OrderOpenPrice(),newstop,OrderTakeProfit(),OrderExpiration()))
+            Print("Не удалось модифицировать ордер №",OrderTicket(),". Ошибка: ",GetLastError());
+            }
+         }
+      }
+      
+   // если короткая позиция (OP_SELL)
+   if (OrderType()==OP_SELL)
+      {
+      // откладываем от текущего курса (новый стоплосс)
+      newstop = Ask + atrXcoeff;
+      
+      // если trlinloss==true (т.е. следует тралить в зоне лоссов), то
+      if (trlinloss==true)      
+         {
+         // если стоплосс неопределен, то тралим в любом случае
+         if ((OrderStopLoss()==0) && (newstop>Ask+MarketInfo(Symbol(),MODE_STOPLEVEL)*Point))
+            {
+            if (!OrderModify(ticket,OrderOpenPrice(),newstop,OrderTakeProfit(),OrderExpiration()))
+            Print("Не удалось модифицировать ордер №",OrderTicket(),". Ошибка: ",GetLastError());
+            }
+         // иначе тралим только если новый стоп лучше старого
+         else
+            {
+            if ((newstop<OrderStopLoss()) && (newstop>Ask+MarketInfo(Symbol(),MODE_STOPLEVEL)*Point))
+            if (!OrderModify(ticket,OrderOpenPrice(),newstop,OrderTakeProfit(),OrderExpiration()))
+            Print("Не удалось модифицировать ордер №",OrderTicket(),". Ошибка: ",GetLastError());
+            }
+         }
+      else
+         {
+         // если стоплосс неопределен, то тралим, если стоп лучше открытия
+         if ((OrderStopLoss()==0) && (newstop<OrderOpenPrice()) && (newstop>Ask+MarketInfo(Symbol(),MODE_STOPLEVEL)*Point))
+            {
+            if (!OrderModify(ticket,OrderOpenPrice(),newstop,OrderTakeProfit(),OrderExpiration()))
+            Print("Не удалось модифицировать ордер №",OrderTicket(),". Ошибка: ",GetLastError());
+            }
+         // если стоп не равен 0, то меняем его, если он лучше предыдущего и курса открытия
+         else
+            {
+            if ((newstop<OrderStopLoss()) && (newstop<OrderOpenPrice()) && (newstop>Ask+MarketInfo(Symbol(),MODE_STOPLEVEL)*Point))
+            if (!OrderModify(ticket,OrderOpenPrice(),newstop,OrderTakeProfit(),OrderExpiration()))
+            Print("Не удалось модифицировать ордер №",OrderTicket(),". Ошибка: ",GetLastError());
+            }
+         }
+      }      
+   }
+//+------------------------------------------------------------------+
 
 int DrawTable(){
 	/**

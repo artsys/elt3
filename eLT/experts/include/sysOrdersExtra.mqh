@@ -1,13 +1,14 @@
 	/*
-		>Ver	:	0.0.0.50
-		>Date	:	2013.11.05
-		>Hist	:																					
+		>Ver	:	0.0.0.51
+		>Date	:	2014.01.08	
+		>Hist	:																						
+					@0.0.0.51@2014.01.08@artamir	[+]	OE_delClosed
 			Необходимо исправление библиотеки для поиска значений функционалом библиотеки sysIndexedArray.mqh
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:
 	*/
 
-#define OE_VER	"0.0.0.50_2013.11.05"
+#define OE_VER	"0.0.0.51_2014.01.08"
 #define OE_DATE	"2013.09.06"
 	
 //{	//=== ARRAY	
@@ -1636,4 +1637,95 @@ void OE_eraseArray(){
 			ArrayResize(aOE, 0);
 		}
 	}
+}
+
+void OE_delClosed(){
+	/**
+		\version	0.0.0.1
+		\date		2014.01.08
+		\author		Morochin <artamir> Artiom
+		\details	Удаление закрытых ордеров из массива.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.01.08@artamir	[]	OE_delClosed
+			>Rev:0
+	*/
+
+	string fn="OE_delClosed";
+	double t[][OE_MAX];
+	ArrayResize(t,0);
+	
+	string f="";
+	f=StringConcatenate(	OE_IT,"==1");
+		
+		int aI[];
+		ArrayResize(aI,0);
+		AId_Init2(aOE, aI);
+		
+		//-------------------------------------------
+		OE_Select(aOE, aI, f);
+		int rows=ArrayRange(aI,0);
+		
+		if(rows<=0)return;
+		
+		for(int idx = 0; idx < rows; idx++){
+			Ad_CopyRow2To2(aOE, t, aI[idx]);
+		}	
+		
+		ArrayResize(aOE,0);
+		ArrayCopy(aOE,t,0,0,WHOLE_ARRAY);
+}
+
+void OE_Select(double &a[][], int &aI[], string f){
+	/**
+		\version	0.0.0.1
+		\date		2013.12.13
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:	
+					 @0.0.0.1@2013.12.13@artamir	[!]	Добавлен разбор >> и ==
+			>Rev:0
+	*/
+
+	AId_eraseFilter();
+	
+	//1. Раскладываем строку f по разделителю " AND "
+	string del=" AND ";
+	string aAnd[];
+	ArrayResize(aAnd,0);
+	StringToArray(aAnd, f, del);
+	int and_rows=ArrayRange(aAnd,0);
+
+	for(int i=0;i<and_rows;i++){
+		string e=aAnd[i];
+		string aE[];
+		
+		//{		EQ "=="
+		ArrayResize(aE,0);
+		StringToArray(aE,e,"==");
+		int e_rows=ArrayRange(aE,0);
+		if(e_rows>1){
+			int col=StrToInteger(aE[0]);
+			double val=StrToDouble(aE[1]);
+			
+			AId_FilterAdd_AND(col,val,val,AI_AS_OP_EQ);	
+		}
+		
+		//..	GREAT ">>"
+		ArrayResize(aE,0);
+		StringToArray(aE,e,">>");
+		e_rows=ArrayRange(aE,0);
+		if(e_rows>1){
+			col=StrToInteger(aE[0]);
+			val=StrToDouble(aE[1]);
+			
+			AId_FilterAdd_AND(col,val,val,AI_AS_OP_GREAT);	
+		}	
+		//}
+	
+	}
+	
+	//-------------------------------------------
+	AId_Select2(a,aI);
 }

@@ -1,11 +1,13 @@
 	/**
-		\version	1.0.0.23
+		\version	1.0.0.25
 		\date		2014.01.06
 		\author		Morochin <artamir> Artiom
 		\details	Советник работает по индикатору StohCross
 		\internal
 			$Revision: 275 $
-			>Hist:																			
+			>Hist:																					
+					 @1.0.0.25@2014.01.06@artamir	[]	Tral_Fr
+					 @1.0.0.24@2014.01.06@artamir	[!]	Tral_Fr
 					 @1.0.0.23@2014.01.06@artamir	[+] Добавлена настройка открытия реверсного ордера.	
 					 @1.0.0.22@2014.01.06@artamir	[]	Tral
 					 @1.0.0.21@2014.01.06@artamir	[*] Исправлен IndexedArray	
@@ -34,7 +36,7 @@ datetime lastBarTime=0;
 int hfr=-1;
 
 #define EXP	"eVVSS_StohCross"	
-#define VER	"1.0.0.22_2014.01.06"
+#define VER	"1.0.0.25_2014.01.06"
 
 extern	string	s1="==== MAIN ====="; //{
 extern	int SL=50;
@@ -177,7 +179,15 @@ void Autoopen(){
 	//-------------------------------------------
 	if(op<0) return;
 	
-	string f=OE_IT+"==1 AND "+OE_IM+"==1 AND "+OE_FOTY+"=="+op+" AND "+OE_FOOT+"=="+Time[BarsShift];
+	string f="";
+	if(use_Revers){
+		if(op==OP_BUY)op=OP_SELL;
+		else
+			if(op==OP_SELL)op=OP_BUY;
+	}	
+	
+	f=OE_IT+"==1 AND "+OE_IM+"==1 AND "+OE_FOTY+"=="+op+" AND "+OE_FOOT+"=="+Time[BarsShift];
+	
 	int aI[];
 	ArrayResize(aI,0);
 	AId_Init2(aOE, aI);
@@ -224,6 +234,12 @@ bool Autoclose(){
 	int op=GetSignal();
 	
 	if(op<=-1){return(false);}
+	
+	if(use_Revers){
+		if(op==OP_BUY)op=OP_SELL;
+		else 
+			if(op==OP_SELL)op=OP_BUY;
+	}
 	
 	if(op==OP_BUY)op=OP_SELL;
 	else
@@ -273,7 +289,7 @@ void Tral(){
 	string	f="";
 			
 	//{ --- Если СЛ > 0
-		f=OE_IT+"==1 AND "+OE_MN+"=="+TR_MN+" AND "+OE_CP2SL+">>"+(TRAL_Begin_pip+TRAL_DeltaPips)+" AND "+OE_CP2OP+">>"+TRAL_DeltaPips;
+		f=OE_IT+"==1 AND "+OE_MN+"=="+TR_MN+" AND "+OE_CP2SL+">>"+(TRAL_Step_pip+TRAL_DeltaPips)+" AND "+OE_CP2OP+">>"+(TRAL_Step_pip+TRAL_DeltaPips);
 		
 		int aI[];
 		ArrayResize(aI,0);
@@ -315,12 +331,13 @@ void Tral(){
 
 void Tral_Fr(){
 	/**
-		\version	0.0.0.3
-		\date		2013.12.30
+		\version	0.0.0.4
+		\date		2014.01.06
 		\author		Morochin <artamir> Artiom
 		\details	Трал по фракталам
 		\internal
-			>Hist:								
+			>Hist:									
+					 @0.0.0.4@2014.01.06@artamir	[!]	Tral_Fr
 					 @0.0.0.3@2013.12.30@artamir	[!!]	Tral_Fr
 					 @0.0.0.2@2013.12.30@artamir	[!]	Исправлен трал селл ордеров.
 					 @0.0.0.1@2013.12.13@artamir	[+]	Tral
@@ -354,14 +371,14 @@ void Tral_Fr(){
 		//-------------------------------------------
 		Select(aOE, aI, f);
 		int rows=ArrayRange(aI,0);
-		if(rows>0){ 
-			AId_SetIndexOnArray(aOE,aI,d);
-		}
-		
 		
 		for(int idx = 0; idx < rows; idx++){
-			int ti = d[aI[idx]][OE_TI];
-			TR_ModifySL(ti, fDw);
+			int ti = aOE[aI[idx]][OE_TI];
+			
+			if(use_Revers)
+				TR_ModifyTP(ti, fUp);
+			else	
+				TR_ModifySL(ti, fDw);
 		}
 	//}
 	
@@ -379,14 +396,14 @@ void Tral_Fr(){
 		//-------------------------------------------
 		Select(aOE, aI, f);
 		rows=ArrayRange(aI,0);
-		if(rows>0){ 
-			AId_SetIndexOnArray(aOE,aI,d);
-		}
-		
 		
 		for(idx = 0; idx < rows; idx++){
-			ti = d[aI[idx]][OE_TI];
-			TR_ModifySL(ti, fUp);
+			ti = aOE[aI[idx]][OE_TI];
+			
+			if(use_Revers)
+				TR_ModifyTP(ti, fDw);
+			else
+				TR_ModifySL(ti, fUp);
 		}
 	//}
 	

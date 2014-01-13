@@ -1,10 +1,12 @@
 	/**
-		\version	0.0.0.4
-		\date		2013.12.13
+		\version	0.0.0.6
+		\date		2014.01.09
 		\author		Morochin <artamir> Artiom
 		\details	Работа с индексированным массивом.
 		\internal
-			>Hist:				
+			>Hist:						
+					 @0.0.0.6@2014.01.09@artamir	[]	AId_SearchFirst
+					 @0.0.0.5@2014.01.09@artamir	[]	AId_SearchLast
 					 @0.0.0.4@2013.12.13@artamir	[]	AId_SearchFirst
 					 @0.0.0.3@2013.11.07@artamir	[+]	AId_SearchFirst
 					 @0.0.0.2@2013.11.06@artamir	[+]	AId_Swap
@@ -427,12 +429,13 @@ int AId_QuickSearch(double &a[][], int &aI[], int col, double element){
 
 int AId_SearchFirst(double &a[][], int &aI[], int col, double element){
 	/**
-		\version	0.0.0.2
-		\date		2013.12.13
+		\version	0.0.0.3
+		\date		2014.01.09
 		\author		Morochin <artamir> Artiom
 		\details	Устойчивый поиск первого совпадения с заданным значением.
 		\internal
-			>Hist:		
+			>Hist:			
+					 @0.0.0.3@2014.01.09@artamir	[]	AId_SearchFirst
 					 @0.0.0.2@2013.12.13@artamir	[]	AId_SearchFirst
 					 @0.0.0.1@2013.11.07@artamir	[]	AId_SearchFirst
 			>Rev:0
@@ -443,6 +446,13 @@ int AId_SearchFirst(double &a[][], int &aI[], int col, double element){
 //--- check
 	if(ArrayRange(aI,0)==0) return(-1);
    
+	if(ArrayRange(aI,0)==1){
+		if(a[aI[0]][col]==element){
+			return(0);
+		}else{
+			return(-1);
+		}
+	}
 //--- search
 	pos=AId_QuickSearch(a, aI, col, element);
 	if(BP_SRT){
@@ -464,12 +474,13 @@ int AId_SearchFirst(double &a[][], int &aI[], int col, double element){
 
 int AId_SearchLast(double &a[][], int &aI[], int col, double element){
 	/**
-		\version	0.0.0.1
-		\date		2013.11.07
+		\version	0.0.0.2
+		\date		2014.01.09
 		\author		Morochin <artamir> Artiom
 		\details	Устойчивый поиск первого совпадения с заданным значением.
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2014.01.09@artamir	[]	AId_SearchLast
 					 @0.0.0.1@2013.11.07@artamir	[]	AId_SearchFirst
 			>Rev:0
 	*/
@@ -477,6 +488,14 @@ int AId_SearchLast(double &a[][], int &aI[], int col, double element){
 //--- check
    if(ArrayRange(aI,0)==0)
       return(-1);
+	  
+	if(ArrayRange(aI,0)==1){
+		if(a[aI[0]][col]==element){
+			return(0);
+		}else{
+			return(-1);
+		}
+	}  
 //--- search
    pos=AId_QuickSearch(a, aI, col, element);
    if(a[aI[pos]][col]==element)
@@ -532,7 +551,15 @@ int AId_SearchGreat(double &a[][], int &aI[], int col, double element){
 }
 
 void AId_SearchInterval(int &first, int &last, double &a[][], int &aI[], int col, double el){
+	string fn="AId_SearchInterval";
+	
+	if(BP_SEL){
+		Print(fn,"-> AId_SearchFirst(a,aI,col,el)");
+	}
 	first=AId_SearchFirst(a,aI,col,el);
+	if(BP_SEL){
+		Print(fn,"-> AId_SearchLast(a,aI,col,el)");
+	}
 	last=AId_SearchLast(a,aI,col,el);
 }
 
@@ -579,7 +606,7 @@ void AId_Select2(double &a[][], int &aI[]){
 		int ticks=GetTickCount();
 		//AId_SortShell2(a, aI, order);
 		AId_QuickSort2(a, aI, -1, -1, f_col);
-		if(BP_SRT)AId_Print2(a,aI,4,"after_QS("+f_col+")");
+		if(BP_SRT || BP_SEL)AId_Print2(a,aI,4,"after_QS("+f_col+")");
 		//Print(fn+".AId_QuickSort2 ("+order+")ms="+(GetTickCount()-ticks));
 		
 		//--- Задание границ отбора по заданной колонке.
@@ -588,10 +615,13 @@ void AId_Select2(double &a[][], int &aI[]){
 		//--- установка границ в зависимости от операций сравнения (assertion)
 		if(f_select_operation==AI_SEL_OP_AND){
 			if(f_assertion_operation==AI_AS_OP_EQ){
+				if(BP_SEL){
+					Print(fn,"-> AId_SearchInterval(first,last,a,aI,f_col="+f_col+",f_max="+f_max+")");
+				}
 				AId_SearchInterval(first,last,a,aI,f_col,f_max);
 				//нашли границы значения, можно обрезать основной индекс и аерейти к след. фильтру
 				AI_IndexSetInterval(aI,first,last);
-				if(BP_SRT){AId_Print2(a, aI, 4, "AId_SearchInterval("+f_col+","+first+","+last+")");
+				if(BP_SRT || BP_SEL){AId_Print2(a, aI, 4, "AId_SearchInterval("+f_col+","+first+","+last+")");
 					AI_PrintIndex(aI,fn);
 				}
 				continue;
@@ -602,7 +632,7 @@ void AId_Select2(double &a[][], int &aI[]){
 				first=AId_SearchGreat(a,aI,f_col, f_max);
 				//теперь можем обрезать основной индекс по найденому интервалу и перейти к след фильтру
 				AI_IndexSetInterval(aI,first);
-				if(BP_SRT){AId_Print2(a, aI, 4, "AId_SearchInterval("+f_col+","+first+","+last+")");
+				if(BP_SRT || BP_SEL){AId_Print2(a, aI, 4, "AId_SearchInterval("+f_col+","+first+","+last+")");
 					AI_PrintIndex(aI,fn);
 				}
 				continue;

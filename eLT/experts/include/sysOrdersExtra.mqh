@@ -88,6 +88,8 @@ string OE2Str(int i){
 		case 13: return("OE_CP");
 		case 14: return("OE_IC");
 		
+		case 32: return("OE_FOTY");
+		
 		case 45: return("OE_CPP(close profit in pips)");
 		case 46: return("OE_CTY(closing type)");
 		case 47: return("OE_CP2SL");

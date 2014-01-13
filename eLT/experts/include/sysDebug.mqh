@@ -10,6 +10,7 @@
 */
 bool BP_SNP=false;	//Точка условной остановки. SelectNearPrice.
 bool BP_SRT=false; //Точка условной остановки SORTING
+bool BP_SEL=false;
 
 void BP(string	txt	= "",
 		string	p11	= "",		string p12	= "",

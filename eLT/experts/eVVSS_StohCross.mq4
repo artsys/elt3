@@ -1,11 +1,13 @@
 	/**
-		\version	1.0.0.28
+		\version	1.0.1.2
 		\date		2014.01.08
 		\author		Morochin <artamir> Artiom
 		\details	Советник работает по индикатору StohCross
 		\internal
 			$Revision: 275 $
-			>Hist:																								
+			>Hist:																										
+					 @1.0.1.2@2014.01.08@artamir	[]	Tral_ATR
+					 @1.0.1.1@2014.01.08@artamir	[]	FIXProfit
 					 @1.0.0.28@2014.01.08@artamir	[]	start
 					 @1.0.0.27@2014.01.08@artamir	[+]	Select_SessionTI
 					 @1.0.0.26@2014.01.08@artamir	[+]	Добавлен трал по АТР
@@ -41,12 +43,14 @@ int hfr=-1;
 int session_id=0;
 
 #define EXP	"eVVSS_StohCross"	
-#define VER	"1.0.0.28_2014.01.08"
+#define VER	"1.0.1.2_2014.01.08"
 
 extern	string	s1="==== MAIN ====="; //{
 extern	int SL=50;
 extern	int TP=50;
 extern	double LOT=0.01;
+extern	bool FIXProfit_use=false;	//Закрывать все ордера при достижении заданного профита.
+extern	double FIXProfit_amount=500; //Значение фиксированного профита для закрытия всех ордеров.
 
 extern int       KPeriod1     =  8;
 extern int       DPeriod1     =  3;
@@ -145,8 +149,8 @@ int start(){
 		//A_d_PrintArray2(aOE,4,"OE");
 	}
 	
-	
-	OE_delClosed();
+	if(!FIXProfit_use)
+		OE_delClosed();
 	
 	OE_eraseArray();
 	
@@ -176,15 +180,27 @@ int startext(){
 	
 	string fn="startext";
 	
+	//Print(fn,"-> Autoclose()");
 	if(Autoclose()){
 		return(0);
 	}
 	
+	//Print(fn,"-> FIXProfit()");
+	if(FIXProfit())return(0);
+	
+	//Print(fn,"-> Tral()");
 	Tral();
+	
+	//Print(fn,"-> Tral_Fr()");
 	Tral_Fr();
+	
+	//Print(fn,"-> Tral_ATR()");
 	Tral_ATR();
 	
+	//Print(fn,"-> Autoopen()");
+	//BP_SEL=true;
 	Autoopen();
+	BP_SEL=false;
 	//-------------------------------------------
 	return(0);
 }
@@ -203,6 +219,7 @@ void Autoopen(){
 	*/
 	
 	string fn="Autoopen";
+	//Print(fn,"-> GetSignal()");
 	int op=GetSignal();
 	
 	//-------------------------------------------
@@ -218,14 +235,22 @@ void Autoopen(){
 	f=OE_IT+"==1 AND "+OE_IM+"==1 AND "+OE_FOTY+"=="+op+" AND "+OE_FOOT+"=="+Time[BarsShift];
 	
 	int aI[];
+	
+	//Print(fn,"-> ArrayResize(aI,0)");
 	ArrayResize(aI,0);
+	
+	//Print(fn,"-> AId_Init2(aOE, aI)");
 	AId_Init2(aOE, aI);
 		
 	//-------------------------------------------
+	
+	//Print(fn,"-> Select(aOE, aI, f)");
 	Select(aOE, aI, f);
 	if(ArrayRange(aI,0)>0) return; //есть ордера, открытые по этому сигналу на тек. баре. 
 	
 	int ti=-1;
+	
+	//Print(fn,"-> isNewBar()");
 	if(isNewBar()){ 
 		ti=TR_SendMarket(op, LOT);
 		
@@ -441,12 +466,13 @@ void Tral_Fr(){
 
 void Tral_ATR(){
 	/**
-		\version	0.0.0.0
+		\version	0.0.0.1
 		\date		2014.01.08
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:
+			>Hist:	
+					 @0.0.0.1@2014.01.08@artamir	[]	Tral_ATR
 			>Rev:0
 	*/
 	
@@ -475,6 +501,67 @@ void Tral_ATR(){
 	
 }
 
+bool FIXProfit(){
+	/**
+		\version	0.0.0.1
+		\date		2014.01.08
+		\author		Morochin <artamir> Artiom
+		\details	Закрытие ордеров при достижении фикс профита.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.01.08@artamir	[]	FIXProfit
+			>Rev:0
+	*/
+
+	string fn="FIXProfit";
+	
+	if(!FIXProfit_use)return;
+	
+	double profit=Ad_Sum2(aOE,OE_OPR);
+	
+	Comment("profit=",profit);
+	
+	if(profit<FIXProfit_amount)return(false);
+	
+	CloseAllOrders();
+	
+	return(true);
+}
+
+void CloseAllOrders(){
+	/**
+		\version	0.0.0.0
+		\date		2014.01.08
+		\author		Morochin <artamir> Artiom
+		\details	Закрывает все ордера.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+	string fn="CloseAllOrders";
+	
+	string f="";
+	f=StringConcatenate(f
+		,OE_IT,"==1"
+		," AND "
+		,OE_MN,"==",TR_MN);
+		
+	int aI[];
+	ArrayResize(aI,0);
+	AId_Init2(aOE, aI);
+		
+	//-------------------------------------------
+	Select(aOE, aI, f);
+	int rows=ArrayRange(aI,0);
+	Print(fn, ".rows=",rows);
+	for(int idx = 0; idx < rows; idx++){
+		int ti = aOE[aI[idx]][OE_TI];
+		
+		TR_CloseByTicket(ti);
+	}
+		
+}
+
 void Select(double &a[][], int &aI[], string f){
 	/**
 		\version	0.0.0.1
@@ -487,12 +574,21 @@ void Select(double &a[][], int &aI[], string f){
 			>Rev:0
 	*/
 
+	string fn="Select";
+	
+	if(BP_SEL){
+		Print(fn,"-> AId_eraseFilter()");
+	}	
 	AId_eraseFilter();
 	
 	//1. Раскладываем строку f по разделителю " AND "
 	string del=" AND ";
 	string aAnd[];
 	ArrayResize(aAnd,0);
+	
+	if(BP_SEL){
+		Print(fn,"-> StringToArray(aAnd, f, del)");
+	}
 	StringToArray(aAnd, f, del);
 	int and_rows=ArrayRange(aAnd,0);
 
@@ -526,6 +622,9 @@ void Select(double &a[][], int &aI[], string f){
 	}
 	
 	//-------------------------------------------
+	if(BP_SEL){
+		Print(fn,"-> AId_Select2(a,aI)");
+	}
 	AId_Select2(a,aI);
 }
 

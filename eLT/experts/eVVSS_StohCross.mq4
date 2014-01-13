@@ -1,39 +1,15 @@
 	/**
-		\version	1.0.1.4
+		\version	1.0.1.5
 		\date		2014.01.13
 		\author		Morochin <artamir> Artiom
 		\details	Советник работает по индикатору StohCross
 		\internal
-			$Revision$
-			>Hist:																												
+		>Hist:																													
+				 @1.0.1.5@2014.01.13@artamir	[+]	GetSignal
 					 @1.0.1.4@2014.01.13@artamir	[!]	GetSignal
 					 @1.0.1.3@2014.01.13@artamir	[!]	isNewBar
 					 @1.0.1.2@2014.01.08@artamir	[]	Tral_ATR
 					 @1.0.1.1@2014.01.08@artamir	[]	FIXProfit
-					 @1.0.0.28@2014.01.08@artamir	[]	start
-					 @1.0.0.27@2014.01.08@artamir	[+]	Select_SessionTI
-					 @1.0.0.26@2014.01.08@artamir	[+]	Добавлен трал по АТР
-					 @1.0.0.25@2014.01.06@artamir	[]	Tral_Fr
-					 @1.0.0.24@2014.01.06@artamir	[!]	Tral_Fr
-					 @1.0.0.23@2014.01.06@artamir	[+] Добавлена настройка открытия реверсного ордера.	
-					 @1.0.0.22@2014.01.06@artamir	[]	Tral
-					 @1.0.0.21@2014.01.06@artamir	[*] Исправлен IndexedArray	
-					 @1.0.0.20@2013.12.31@artamir	[+]	GetSignal
-					 @1.0.0.19@2013.12.31@artamir	[*]	Autoopen
-					 @1.0.0.18@2013.12.31@artamir	[!!]	Tral
-					 @1.0.0.17@2013.12.30@artamir	[!!]	Tral_Fr
-					 @1.0.0.16@2013.12.30@artamir	[!]	Tral_Fr
-					 @1.0.0.15@2013.12.30@artamir	[*]	start
-					 @1.0.0.14@2013.12.30@artamir	[]	Autoclose
-					 @1.0.0.13@2013.12.30@artamir	[+]	Autoclose
-					 @1.0.0.12@2013.12.30@artamir	[-] Оставлен только трейлинг стоп по фракталам.	
-					 @1.0.0.11@2013.12.30@artamir	[]	
-					 @1.0.0.10@2013.12.27@artamir	[+]	добавлена возможность альтернативного определения фракталов.
-					 @1.0.0.6@2013.12.23@artamir	[]	
-					 @1.0.0.4@2013.12.18@artamir	[+] Добавлен трейлинг, добавлено смещение на заданное количество баров для открытия ордера по рынку.
-					 @1.0.0.3@2013.12.13@artamir	[+]	Select
-					 @1.0.0.2@2013.12.13@artamir	[+]	Tral
-					 @0.0.0.1@2013.12.13@artamir	[+]	Autoopen
 			>Rev:0
 	*/
 	
@@ -45,7 +21,7 @@ int hfr=-1;
 int session_id=0;
 
 #define EXP	"eVVSS_StohCross"	
-#define VER	"1.0.1.4_2014.01.13"
+#define VER	"1.0.1.5_2014.01.13"
 
 extern	string	s1="==== MAIN ====="; //{
 extern	int SL=50;
@@ -61,7 +37,7 @@ extern int       MAMethod1    =   0;
 extern int       PriceField1  =   1;
 extern bool		CloseOnRevers=false;
 extern int	BarsShift=1;
-extern string s2="=== FILTER VininIHMA ===";
+extern string fs1="=== FILTER VininIHMA ===";
 //---- input parameters
 extern bool FHMA_use=false; 
 extern int FHMA_period=16; 
@@ -69,8 +45,14 @@ extern int FHMA_method=3; // MODE_SMA
 extern int FHMA_price=0; // PRICE_CLOSE 
 extern int FHMA_sdvig=0;
 extern int FHMA_CheckBar=1; 
-extern string e2="========================";
+extern string fe1="========================";
 
+extern string fs2="=== FILTER Trendsignal ===";
+extern bool FTS_use=false;
+extern int FTS_RISK=3;
+extern int FTS_CountBars=300;
+extern int FTS_SignalBar = 1; 
+extern string fe2="========================";
 //-----
 
 extern bool		TRAL_Use=false;
@@ -656,12 +638,13 @@ bool isNewBar(){
 
 int GetSignal(){
 	/**
-		\version	0.0.0.2
+		\version	0.0.0.3
 		\date		2014.01.13
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:		
+			>Hist:			
+					 @0.0.0.3@2014.01.13@artamir	[+]	Добавлен фильтр по Trendsignal
 					 @0.0.0.2@2014.01.13@artamir	[!]	Исправлена передача настроек в индикатор StohCross.
 					 @0.0.0.1@2013.12.31@artamir	[!]	Добавлен фильтр по HMA
 			>Rev:0
@@ -682,7 +665,7 @@ int GetSignal(){
 	if(upArrow>0 && upArrow!=EMPTY_VALUE){signal=OP_BUY; }//Print("up");}
 	if(dwArrow>0 && dwArrow!=EMPTY_VALUE){signal=OP_SELL; }//Print("down");}
 	
-	if(FHMA_use){
+	if(FHMA_use && signal>-1){
 		double upHMA=iCustom(NULL,0,"VininIHMA",FHMA_period,FHMA_method,FHMA_price,FHMA_sdvig,FHMA_CheckBar,1,1);
 		double dwHMA=iCustom(NULL,0,"VininIHMA",FHMA_period,FHMA_method,FHMA_price,FHMA_sdvig,FHMA_CheckBar,2,1);
 		
@@ -697,6 +680,29 @@ int GetSignal(){
 				signal=-1;
 			}
 		}
+	}
+	
+	if(FTS_use && signal>-1){
+		double fts_up=0, fts_dw=0;
+		int i=0;
+		bool isfind=false;
+		while(!isfind){
+			fts_up=iCustom(Symbol(),0,"Trendsignal_e",FTS_RISK,FTS_CountBars,FTS_SignalBar,1,i);
+			fts_dw=iCustom(Symbol(),0,"Trendsignal_e",FTS_RISK,FTS_CountBars,FTS_SignalBar,0,i);
+			
+			if(fts_up==EMPTY_VALUE)fts_up=0.0;
+			if(fts_dw==EMPTY_VALUE)fts_dw=0.0;
+			
+			if(fts_up>0 || fts_dw>0){
+				isfind=true;
+			}
+			
+			i++;
+		}
+		
+		if(fts_up==0&&fts_dw==0)signal=-1;
+		if(fts_up>0&&signal!=OP_BUY)signal=-1;
+		if(fts_dw>0&&signal!=OP_SELL)signal=-1;
 	}
 	//--------------------------------------
 	return(signal);

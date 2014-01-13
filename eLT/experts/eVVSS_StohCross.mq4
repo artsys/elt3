@@ -1,11 +1,13 @@
 	/**
-		\version	1.0.1.2
-		\date		2014.01.08
+		\version	1.0.1.4
+		\date		2014.01.13
 		\author		Morochin <artamir> Artiom
 		\details	Советник работает по индикатору StohCross
 		\internal
-			$Revision: 275 $
-			>Hist:																										
+			$Revision$
+			>Hist:																												
+					 @1.0.1.4@2014.01.13@artamir	[!]	GetSignal
+					 @1.0.1.3@2014.01.13@artamir	[!]	isNewBar
 					 @1.0.1.2@2014.01.08@artamir	[]	Tral_ATR
 					 @1.0.1.1@2014.01.08@artamir	[]	FIXProfit
 					 @1.0.0.28@2014.01.08@artamir	[]	start
@@ -43,7 +45,7 @@ int hfr=-1;
 int session_id=0;
 
 #define EXP	"eVVSS_StohCross"	
-#define VER	"1.0.1.2_2014.01.08"
+#define VER	"1.0.1.4_2014.01.13"
 
 extern	string	s1="==== MAIN ====="; //{
 extern	int SL=50;
@@ -629,6 +631,18 @@ void Select(double &a[][], int &aI[], string f){
 }
 
 bool isNewBar(){
+	/**
+		\version	0.0.0.1
+		\date		2014.01.13
+		\author		Morochin <artamir> Artiom
+		\details	Определяет факт открытия нового бара.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.01.13@artamir	[]	isNewBar
+			>Rev:0
+	*/
+
+	
 	if(Time[0]!=lastBarTime){
 		IsNewBar=true;
 		lastBarTime=Time[0];
@@ -636,17 +650,19 @@ bool isNewBar(){
 		IsNewBar=false;
 	}
 	
-	return(IsNewBar);
+	//return(IsNewBar);
+	return(true);
 }
 
 int GetSignal(){
 	/**
-		\version	0.0.0.1
-		\date		2013.12.31
+		\version	0.0.0.2
+		\date		2014.01.13
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2014.01.13@artamir	[!]	Исправлена передача настроек в индикатор StohCross.
 					 @0.0.0.1@2013.12.31@artamir	[!]	Добавлен фильтр по HMA
 			>Rev:0
 	*/
@@ -658,8 +674,8 @@ int GetSignal(){
 	
 	//Print(fn);
 	//int tmr=GetTickCount();
-	double upArrow=iCustom(NULL,0,"StochCrossingf_e",KPeriod1,DPeriod1,Slowing1,PriceField1,0,BarsShift);
-	double dwArrow=iCustom(NULL,0,"StochCrossingf_e",KPeriod1,DPeriod1,Slowing1,PriceField1,1,BarsShift);
+	double upArrow=iCustom(NULL,0,"StochCrossingf_e",KPeriod1,DPeriod1,Slowing1,MAMethod1,PriceField1,0,BarsShift);
+	double dwArrow=iCustom(NULL,0,"StochCrossingf_e",KPeriod1,DPeriod1,Slowing1,MAMethod1,PriceField1,1,BarsShift);
 	
 	//Print(fn,".getting indicator data tmr=",(GetTickCount()-tmr)/100," sec.");
 	

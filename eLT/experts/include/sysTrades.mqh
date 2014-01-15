@@ -1,11 +1,12 @@
 	/**
-		\version	0.0.0.39
-		\date		2013.12.31
+		\version	0.0.0.40
+		\date		2014.01.15
 		\author		Morochin <artamir> Artiom
 		\details	Trading functtions.
 		\internal
 				$Revision$
-				>Hist:										
+				>Hist:											
+						 @0.0.0.40@2014.01.15@artamir	[*]	TR_CloseByTicket
 						 @0.0.0.39@2013.12.31@artamir	[]	_OrderModify
 					 @0.0.0.38@2013.12.24@artamir	[*]	TR_SendBUY
 					 @0.0.0.37@2013.12.24@artamir	[*]	TR_SendSELL
@@ -1564,9 +1565,10 @@ bool TR_ModifySLByPrice(int ti, int minus_pip = 0){
 
 bool TR_CloseByTicket(int ticket){
 	/*
-		>Ver	:	0.0.7
-		>Date	:	2013.02.24
-		>Hist:
+		>Ver	:	0.0.0.8
+		>Date	:	2014.01.15
+		>Hist:	
+				 @0.0.0.8@2014.01.15@artamir	[!]	Добавлена проверка на время закрытия ордера.
 			@0.0.6@2012.10.04@artamir	[]
 			@0.0.5@2012.10.01@artamir	[]
 			@0.0.4@2012.10.01@artamir	[+] add checking on err 138 
@@ -1577,8 +1579,14 @@ bool TR_CloseByTicket(int ticket){
 		Закрытие ордера по тикету. Если ордер - рыночный, то закрытие происходит по рынку, если ордер - отложенный, то он удаляется
 	*/
 	
+	string fn="TR_CloseByTicket";
 	//------------------------------------------------------
-	if(!OrderSelect(ticket, SELECT_BY_TICKET)) return(false);
+	if(!OrderSelect(ticket, SELECT_BY_TICKET)) return(true);
+	
+	if(OrderCloseTime()>0){
+		OE_setCloseByTicket(ticket);
+		return(true);
+	}	
 	
 	//------------------------------------------------------
 	if(OrderType() != OP_BUY && OrderType() != OP_SELL){
@@ -1639,6 +1647,10 @@ bool TR_CloseByTicket(int ticket){
 	//------------------------------------------------------
 	if(res){
 		OE_setCloseByTicket(ticket);
+	}
+	
+	if(!res){
+		Print(fn," ERR:"+GetLastError());
 	}
 	
 	//------------------------------------------------------

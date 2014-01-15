@@ -1,10 +1,12 @@
 	/**
-		\version	1.0.1.9
+		\version	1.0.1.11
 		\date		2014.01.15
 		\author		Morochin <artamir> Artiom
 		\details	Советник работает по индикатору StohCross
 		\internal
-		>Hist:																																	
+		>Hist:																																			
+				 @1.0.1.11@2014.01.15@artamir	[]	start
+				 @1.0.1.10@2014.01.15@artamir	[]	CMFB
 				 @1.0.1.9@2014.01.15@artamir	[!]	GetSignal
 				 @1.0.1.8@2014.01.15@artamir	[+]	GetSignal
 				 @1.0.1.7@2014.01.15@artamir	[+]	CMFB
@@ -25,9 +27,10 @@ int hfr=-1;
 int session_id=0;
 
 double ZeroBalance=0;
+bool needEraseOE=false;
 
 #define EXP	"eVVSS_StohCross"	
-#define VER	"1.0.1.9_2014.01.15"
+#define VER	"1.0.1.11_2014.01.15"
 
 extern	string	s1="==== MAIN ====="; //{
 extern	int SL=50;
@@ -132,12 +135,13 @@ int deinit(){
 
 int start(){
 	/**
-		\version	0.0.0.2
-		\date		2014.01.08
+		\version	0.0.0.3
+		\date		2014.01.15
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:		
+			>Hist:			
+					 @0.0.0.3@2014.01.15@artamir	[+]	добавлена очистка массива aOE по needEraseOE.
 					 @0.0.0.2@2014.01.08@artamir	[!]	start
 					 @0.0.0.1@2013.12.30@artamir	[+]	Добавлена проверка статусов ордеров бд.
 			>Rev:0
@@ -154,6 +158,11 @@ int start(){
 		//----------------------
 		OE_delClosed();
 	}	
+	
+	if(needEraseOE){
+		OE_delClosed();
+		needEraseOE=false;
+	}
 	
 	OE_eraseArray();
 	
@@ -213,13 +222,14 @@ int startext(){
 
 void CMFB(){
 	/**
-		\version	0.0.0.1
+		\version	0.0.0.2
 		\date		2014.01.15
 		\author		Morochin <artamir> Artiom
 		\details	Закрытие минусовых ордеров из средств баланса.
 		\internal
-			>Hist:	
-					 @0.0.0.1@2014.01.15@artamir	[]	CMFB
+			>Hist:		
+					 @0.0.0.2@2014.01.15@artamir	[+]	Добавлено удаление закрытых ордеров, после закрытия хоть одного минусового ордера, если профит по закрытым ордерам не превышает 1.
+					 @0.0.0.1@2014.01.15@artamir	[+]	CMFB
 			>Rev:0
 	*/
 
@@ -247,8 +257,6 @@ void CMFB(){
 	double profit=AId_Sum(aOE, aI, OE_OPR);
 	//Comment("Closed profit=",profit);
 	
-	if(profit<=0)return;
-	
 	//Выбираем ордера которые ушли в минус больше заданного значения.
 	f="";
 	f=StringConcatenate(f
@@ -268,22 +276,30 @@ void CMFB(){
 	Select(aOE,aI,f);
 	BP_SEL=false;
 	rows=ArrayRange(aI,0);
-	
+	Comment("Count orders in minus=",rows,"\n"
+			,"profit=",profit);
+			
+	if(profit<=0)return;		
 	if(rows<=0)return; //нет таких ордеров.
 	int i=0;
 	while(profit>0&&i<rows){
 		int ti=aOE[aI[i]][OE_TI];
 		double opr=aOE[aI[i]][OE_OPR];
 		if(MathAbs(opr)<=profit){
-			TR_CloseByTicket(ti);
-			profit=profit-MathAbs(opr);
+			if(TR_CloseByTicket(ti)){
+				profit=profit-MathAbs(opr);
+				needEraseOE=true;
+			}	
 		}else{
 			break;
 		}
 	}
 	
-	Comment("Count orders in minus=",rows,"\n"
-			,"profit=",profit);
+	if(needEraseOE){
+		if(profit>0){
+			needEraseOE=false;
+		}
+	}
 }
 
 void Autoopen(){
@@ -605,7 +621,7 @@ bool FIXProfit(){
 	if(profit<FIXProfit_amount)return(false);
 	
 	CloseAllOrders();
-	
+	needEraseOE=true;
 	return(true);
 }
 

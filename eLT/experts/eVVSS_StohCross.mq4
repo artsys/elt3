@@ -817,8 +817,8 @@ int GetSignal(){
 		i=0;
 		isfind=false;
 		while(!isfind){
-			fia_up=iCustom(Symbol(),0,"indiAlert_e",FIA_ExtDepth,FIA_ExtDeviation,FIA_ExtBackstep,FIA_SIGNAL_BAR,1,i);
-			fia_dw=iCustom(Symbol(),0,"indiAlert_e",FIA_ExtDepth,FIA_ExtDeviation,FIA_ExtBackstep,FIA_SIGNAL_BAR,0,i);
+			fia_up=iCustom(Symbol(),0,"indiAlert_e",FIA_ExtDepth,FIA_ExtDeviation,FIA_ExtBackstep,FIA_SIGNAL_BAR,0,i);
+			fia_dw=iCustom(Symbol(),0,"indiAlert_e",FIA_ExtDepth,FIA_ExtDeviation,FIA_ExtBackstep,FIA_SIGNAL_BAR,1,i);
 			
 			if(fia_up==EMPTY_VALUE)fia_up=0.0;
 			if(fia_dw==EMPTY_VALUE)fia_dw=0.0;

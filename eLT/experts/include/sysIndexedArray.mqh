@@ -1,10 +1,12 @@
 	/**
-		\version	0.0.0.6
-		\date		2014.01.09
+		\version	0.0.0.8
+		\date		2014.01.13
 		\author		Morochin <artamir> Artiom
 		\details	Работа с индексированным массивом.
 		\internal
-			>Hist:						
+			>Hist:								
+					 @0.0.0.8@2014.01.13@artamir	[+]	AId_SearchLess
+					 @0.0.0.7@2014.01.13@artamir	[+]	AId_Sum
 					 @0.0.0.6@2014.01.09@artamir	[]	AId_SearchFirst
 					 @0.0.0.5@2014.01.09@artamir	[]	AId_SearchLast
 					 @0.0.0.4@2013.12.13@artamir	[]	AId_SearchFirst
@@ -125,6 +127,29 @@ void AI_PrintIndex(int &aI[], string fn="AI_PrintIndex"){
 		s=s+" "+aI[i];
 	}
 	Print(s);
+}
+
+double AId_Sum(double &a[][], int &aI[], int col=0){
+	/**
+		\version	0.0.0.1
+		\date		2014.01.13
+		\author		Morochin <artamir> Artiom
+		\details	Возвращает сумму по заданной колонке с учетом массива индексов.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.01.13@artamir	[]	AId_Sum
+			>Rev:0
+	*/
+	
+	string fn="AId_Sum";
+	double res=0;
+	
+	int rows=ArrayRange(aI,0);
+	for(int i=0;i<rows;i++){
+		res=res+a[aI[i]][col];
+	}
+	
+	return(res);
 }
 
 #define AI_ABOVE	0
@@ -550,6 +575,66 @@ int AId_SearchGreat(double &a[][], int &aI[], int col, double element){
 	return(r);
 }
 
+int AId_SearchLess(double &a[][], int &aI[], int col, double element){
+	/**
+		\version	0.0.0.1
+		\date		2014.01.13
+		\author		Morochin <artamir> Artiom
+		\details	Поиск в отсортированном массиве ближайшего меньшего элемента.
+		сортировка и размерность передается в массиве aI[]
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.01.13@artamir	[+]	AId_SearchLess
+			>Rev:0
+	*/
+	string fn="AId_SearchLess";
+	
+	int l=0;
+	int size=ArrayRange(aI,0)-1;
+	int r=size;
+	int m=-1;
+	
+	if(BP_SEL){
+		Print(fn);
+		Print(fn,".l="+l,"; .r="+r);
+		Print(fn,".while()");
+	}
+	
+	while(l<=r){
+		m=(l+r)/2;
+		if(m<0||m>=size)break;
+		
+		double t=a[aI[m]][col];
+		
+		if(BP_SEL){
+			Print(fn,".l="+l,"; .r="+r,"; .m="+m,"; .t="+t);
+		}	
+		
+		if(t>=element){
+			r=m-1;
+		}else{
+			r=m;
+			break;
+		}
+	}
+	
+	if(a[aI[m]][col]>=element){
+		return(-1);
+	}
+	
+	while(r>=m){
+		t=a[aI[m]][col];
+		if(t>=element)break;
+		
+		//-------------------
+		m++;
+	}
+	
+	m--;
+	return(m);
+}
+
+
 void AId_SearchInterval(int &first, int &last, double &a[][], int &aI[], int col, double el){
 	string fn="AId_SearchInterval";
 	
@@ -640,10 +725,13 @@ void AId_Select2(double &a[][], int &aI[]){
 		
 			if(f_assertion_operation==AI_AS_OP_LESS){
 				//все значения меньше или равные заданному начинаются с индекса последнего совпавшег элемента до начала массива.
-				last=AId_SearchLast(a,aI,f_col, f_max);
+				last=AId_SearchLess(a,aI,f_col, f_max);
 				
 				//теперь можем обрезать основной индекс по найденому интервалу и перейти к след фильтру
 				AI_IndexSetInterval(aI,first,last);
+				if(BP_SRT || BP_SEL){AId_Print2(a, aI, 4, "AId_AId_SearchLess("+f_col+","+first+","+last+")");
+					AI_PrintIndex(aI,fn);
+				}
 				continue;
 			}
 		

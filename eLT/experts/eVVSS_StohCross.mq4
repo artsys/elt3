@@ -1,10 +1,13 @@
 	/**
-		\version	1.0.1.5
-		\date		2014.01.13
+		\version	1.0.1.8
+		\date		2014.01.15
 		\author		Morochin <artamir> Artiom
 		\details	Советник работает по индикатору StohCross
 		\internal
-		>Hist:																													
+		>Hist:																																
+				 @1.0.1.8@2014.01.15@artamir	[+]	GetSignal
+				 @1.0.1.7@2014.01.15@artamir	[+]	CMFB
+				 @1.0.1.6@2014.01.13@artamir	[+]	startext
 				 @1.0.1.5@2014.01.13@artamir	[+]	GetSignal
 					 @1.0.1.4@2014.01.13@artamir	[!]	GetSignal
 					 @1.0.1.3@2014.01.13@artamir	[!]	isNewBar
@@ -20,8 +23,10 @@ int hfr=-1;
 
 int session_id=0;
 
+double ZeroBalance=0;
+
 #define EXP	"eVVSS_StohCross"	
-#define VER	"1.0.1.5_2014.01.13"
+#define VER	"1.0.1.8_2014.01.15"
 
 extern	string	s1="==== MAIN ====="; //{
 extern	int SL=50;
@@ -29,6 +34,8 @@ extern	int TP=50;
 extern	double LOT=0.01;
 extern	bool FIXProfit_use=false;	//Закрывать все ордера при достижении заданного профита.
 extern	double FIXProfit_amount=500; //Значение фиксированного профита для закрытия всех ордеров.
+extern bool		CMFB_use=false; //закрывать минусовые ордера из средств баланса.
+extern int		CMFB_pips=50; //закрывать ордера, ушедшие в минуз больше заданного значения (в пунктах)
 
 extern int       KPeriod1     =  8;
 extern int       DPeriod1     =  3;
@@ -53,6 +60,14 @@ extern int FTS_RISK=3;
 extern int FTS_CountBars=300;
 extern int FTS_SignalBar = 1; 
 extern string fe2="========================";
+
+extern string fs3="=== FILTER indiAlert ===";
+extern bool FIA_use=false;
+extern int FIA_ExtDepth = 37;
+extern int FIA_ExtDeviation = 13;
+extern int FIA_ExtBackstep = 5;
+extern int FIA_SIGNAL_BAR = 1 ;
+extern string fe3="========================";
 //-----
 
 extern bool		TRAL_Use=false;
@@ -133,8 +148,11 @@ int start(){
 		//A_d_PrintArray2(aOE,4,"OE");
 	}
 	
-	if(!FIXProfit_use)
+	if(	!FIXProfit_use&&!CMFB_use){
+		
+		//----------------------
 		OE_delClosed();
+	}	
 	
 	OE_eraseArray();
 	
@@ -152,13 +170,14 @@ int start(){
 
 int startext(){
 	/**
-		\version	0.0.0.1
-		\date		2014.01.08
+		\version	0.0.0.2
+		\date		2014.01.13
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:	
-					 @0.0.0.1@2014.01.08@artamir	[]	startext
+			>Hist:		
+					 @0.0.0.2@2014.01.13@artamir	[+]	CloseMinusFromBalance.
+					 @0.0.0.1@2014.01.08@artamir	[+]	startext
 			>Rev:0
 	*/
 	
@@ -171,6 +190,8 @@ int startext(){
 	
 	//Print(fn,"-> FIXProfit()");
 	if(FIXProfit())return(0);
+	
+	CMFB();
 	
 	//Print(fn,"-> Tral()");
 	Tral();
@@ -187,6 +208,81 @@ int startext(){
 	BP_SEL=false;
 	//-------------------------------------------
 	return(0);
+}
+
+void CMFB(){
+	/**
+		\version	0.0.0.1
+		\date		2014.01.15
+		\author		Morochin <artamir> Artiom
+		\details	Закрытие минусовых ордеров из средств баланса.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.01.15@artamir	[]	CMFB
+			>Rev:0
+	*/
+
+	string fn="CMFB";
+	
+	if(!CMFB_use)return;
+	
+	//Получаем сумму всех закрытых ордеров сессии.
+	string f="";
+	f=StringConcatenate(f
+		,OE_MN,"==",TR_MN
+		," AND "
+		,OE_IC,"==1");
+		
+	int aI[];
+	ArrayResize(aI,0);
+	AId_Init2(aOE,aI);
+	
+	Select(aOE,aI,f);
+	
+	int rows=ArrayRange(aI,0);
+	
+	if(rows<=0)return; //Значит у нас нет профита для закрытия минусов.
+	
+	double profit=AId_Sum(aOE, aI, OE_OPR);
+	//Comment("Closed profit=",profit);
+	
+	if(profit<=0)return;
+	
+	//Выбираем ордера которые ушли в минус больше заданного значения.
+	f="";
+	f=StringConcatenate(f
+		,OE_MN,"==",TR_MN
+		," AND "
+		,OE_IT,"==1"
+		," AND "
+		,OE_IM,"==1"
+		," AND "
+		//,OE_OPR,"<<0"
+		//," AND "
+		,OE_CP2OP,"<<",-CMFB_pips);
+	ArrayResize(aI,0);
+	AId_Init2(aOE,aI);
+	
+	//BP_SEL=true;
+	Select(aOE,aI,f);
+	BP_SEL=false;
+	rows=ArrayRange(aI,0);
+	
+	if(rows<=0)return; //нет таких ордеров.
+	int i=0;
+	while(profit>0&&i<rows){
+		int ti=aOE[aI[i]][OE_TI];
+		double opr=aOE[aI[i]][OE_OPR];
+		if(MathAbs(opr)<=profit){
+			TR_CloseByTicket(ti);
+			profit=profit-MathAbs(opr);
+		}else{
+			break;
+		}
+	}
+	
+	Comment("Count orders in minus=",rows,"\n"
+			,"profit=",profit);
 }
 
 void Autoopen(){
@@ -601,6 +697,16 @@ void Select(double &a[][], int &aI[], string f){
 			
 			AId_FilterAdd_AND(col,val,val,AI_AS_OP_GREAT);	
 		}	
+		//..	LESS "<<"
+		ArrayResize(aE,0);
+		StringToArray(aE,e,"<<");
+		e_rows=ArrayRange(aE,0);
+		if(e_rows>1){
+			col=StrToInteger(aE[0]);
+			val=StrToDouble(aE[1]);
+			
+			AId_FilterAdd_AND(col,val,val,AI_AS_OP_LESS);	
+		}	
 		//}
 	
 	}
@@ -638,12 +744,13 @@ bool isNewBar(){
 
 int GetSignal(){
 	/**
-		\version	0.0.0.3
-		\date		2014.01.13
+		\version	0.0.0.4
+		\date		2014.01.15
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:			
+			>Hist:				
+					 @0.0.0.4@2014.01.15@artamir	[+]	Добавлен фильтр по indiAlert
 					 @0.0.0.3@2014.01.13@artamir	[+]	Добавлен фильтр по Trendsignal
 					 @0.0.0.2@2014.01.13@artamir	[!]	Исправлена передача настроек в индикатор StohCross.
 					 @0.0.0.1@2013.12.31@artamir	[!]	Добавлен фильтр по HMA
@@ -703,6 +810,29 @@ int GetSignal(){
 		if(fts_up==0&&fts_dw==0)signal=-1;
 		if(fts_up>0&&signal!=OP_BUY)signal=-1;
 		if(fts_dw>0&&signal!=OP_SELL)signal=-1;
+	}
+	
+	if(FIA_use && signal>-1){
+		double fia_up=0, fia_dw=0;
+		i=0;
+		isfind=false;
+		while(!isfind){
+			fia_up=iCustom(Symbol(),0,"indiAlert_e",FIA_ExtDepth,FIA_ExtDeviation,FIA_ExtBackstep,FIA_SIGNAL_BAR,1,i);
+			fia_dw=iCustom(Symbol(),0,"indiAlert_e",FIA_ExtDepth,FIA_ExtDeviation,FIA_ExtBackstep,FIA_SIGNAL_BAR,0,i);
+			
+			if(fia_up==EMPTY_VALUE)fia_up=0.0;
+			if(fia_dw==EMPTY_VALUE)fia_dw=0.0;
+			
+			if(fia_up>0 || fia_dw>0){
+				isfind=true;
+			}
+			
+			i++;
+		}
+		
+		if(fia_up==0&&fia_dw==0)signal=-1;
+		if(fia_up>0&&signal!=OP_BUY)signal=-1;
+		if(fia_dw>0&&signal!=OP_SELL)signal=-1;
 	}
 	//--------------------------------------
 	return(signal);

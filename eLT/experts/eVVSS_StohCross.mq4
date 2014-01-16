@@ -1,5 +1,5 @@
 	/**
-		\version	1.0.1.11
+		\version	1.0.2.1
 		\date		2014.01.15
 		\author		Morochin <artamir> Artiom
 		\details	Советник работает по индикатору StohCross

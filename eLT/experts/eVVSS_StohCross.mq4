@@ -1,10 +1,12 @@
 	/**
-		\version	1.0.2.2
-		\date		2014.01.16
+		\version	1.0.3.1
+		\date		2014.01.17
 		\author		Morochin <artamir> Artiom
 		\details	Советник работает по индикатору StohCross
 		\internal
-		>Hist:																																				
+		>Hist:																																						
+				 @1.0.2.4@2014.01.17@artamir	[!]	init
+				 @1.0.2.3@2014.01.17@artamir	[!]	start
 				 @1.0.2.2@2014.01.16@artamir	[]	GetSignal
 				 @1.0.1.11@2014.01.15@artamir	[]	start
 				 @1.0.1.10@2014.01.15@artamir	[]	CMFB
@@ -31,7 +33,7 @@ double ZeroBalance=0;
 bool needEraseOE=false;
 
 #define EXP	"eVVSS_StohCross"	
-#define VER	"1.0.2.2_2014.01.16"
+#define VER	"1.0.3.1_2014.01.17"
 
 extern	string	s1="==== MAIN ====="; //{
 extern	int SL=50;
@@ -42,21 +44,21 @@ extern	double FIXProfit_amount=500; //Значение фиксированного профита для закрыт
 extern bool		CMFB_use=false; //закрывать минусовые ордера из средств баланса.
 extern int		CMFB_pips=50; //закрывать ордера, ушедшие в минуз больше заданного значения (в пунктах)
 
-extern int       KPeriod1     =  8;
-extern int       DPeriod1     =  3;
-extern int       Slowing1     =  3;
-extern int       MAMethod1    =   0;
-extern int       PriceField1  =   1;
-extern bool		CloseOnRevers=false;
-extern int	BarsShift=1;
+extern int       KPeriod1    	 =  8;
+extern int       DPeriod1    	 =  3;
+extern int       Slowing1    	 =  3;
+extern int       MAMethod1    	=   0;
+extern int       PriceField1  	=   1;
+extern bool		CloseOnRevers	=false;
+extern int		BarsShift		=1;
 extern string fs1="=== FILTER VininIHMA ===";
 //---- input parameters
-extern bool FHMA_use=false; 
-extern int FHMA_period=16; 
-extern int FHMA_method=3; // MODE_SMA 
-extern int FHMA_price=0; // PRICE_CLOSE 
-extern int FHMA_sdvig=0;
-extern int FHMA_CheckBar=1; 
+extern bool FHMA_use		=false; 
+extern int 	FHMA_period		=16; 
+extern int 	FHMA_method		=3; // MODE_SMA 
+extern int 	FHMA_price		=0; // PRICE_CLOSE 
+extern int 	FHMA_sdvig		=0;
+extern int 	FHMA_CheckBar	=1; 
 extern string fe1="========================";
 
 extern string fs2="=== FILTER Trendsignal ===";
@@ -67,30 +69,29 @@ extern int FTS_SignalBar = 1;
 extern string fe2="========================";
 
 extern string fs3="=== FILTER indiAlert ===";
-extern bool FIA_use=false;
-extern int FIA_ExtDepth = 37;
-extern int FIA_ExtDeviation = 13;
-extern int FIA_ExtBackstep = 5;
-extern int FIA_SIGNAL_BAR = 1 ;
+extern bool FIA_use				=false;
+extern int 	FIA_ExtDepth 		= 37;
+extern int 	FIA_ExtDeviation 	= 13;
+extern int 	FIA_ExtBackstep 	= 5;
+extern int 	FIA_SIGNAL_BAR 		= 1 ;
 extern string fe3="========================";
 //-----
 
-extern bool		TRAL_Use=false;
-int			TRAL_Begin_pip=0;
-extern int			TRAL_DeltaPips=10;
-extern int			TRAL_Step_pip=5;
+extern bool		TRAL_Use		=false;
+extern int		TRAL_DeltaPips	=10;
+extern int		TRAL_Step_pip	=5;
 
-extern bool		TRAL_Fr_Use=false;
-extern int		TRAL_Fr_TF=0;	//таймфрейм расчета фракталов.
-extern int		TRAL_Fr_R=2;	//количество баров справа для определения фрактала
-extern int		TRAL_Fr_L=2;	//количество баров слева для определения фрактала
+extern bool		TRAL_Fr_Use	=false;
+extern int		TRAL_Fr_TF	=0;	//таймфрейм расчета фракталов.
+extern int		TRAL_Fr_R	=2;	//количество баров справа для определения фрактала
+extern int		TRAL_Fr_L	=2;	//количество баров слева для определения фрактала
 
-extern bool		TRAL_ATR_use=false;
-extern int		TRAL_ATR_TF=0;
-extern int		TRAL_ATR1_Per=5;
-extern int		TRAL_ATR2_Per=20;
-extern double	TRAL_ATR_COEF=1;
-extern bool		TRAL_ATR_INLOSS=false;
+extern bool		TRAL_ATR_use	=false;
+extern int		TRAL_ATR_TF		=0;
+extern int		TRAL_ATR1_Per	=5;
+extern int		TRAL_ATR2_Per	=20;
+extern double	TRAL_ATR_COEF	=1;
+extern bool		TRAL_ATR_INLOSS	=false;
 
 extern bool		use_Revers=false;
 extern	string	e1="==== EXPERT END =====";//}
@@ -102,28 +103,258 @@ extern	string	e1="==== EXPERT END =====";//}
 string a[][9];
 int htable = -1;
 
+//{--- Функции установки внешних настроек эксперта.
+
+string eVVSSSC_Ver_get(){
+	return(VER);
+}
+string eVVSSSC_Exp_get(){
+	return(EXP);
+}
+
+void eVVSSSC_SL_set(int val){
+	SL=val;
+}
+void eVVSSSC_TP_set(int val){
+	if(val==EMPTY_VALUE)return;
+	TP=val;
+}
+void eVVSSSC_LOT_set(double val){
+	if(val==EMPTY_VALUE)return;
+	LOT=val;
+}
+
+void eVVSSSC_FIXProfit_use_set(bool val){
+	if(val==EMPTY_VALUE)return;
+	FIXProfit_use=val;
+}
+void eVVSSSC_FIXProfit_amount_set(double val){
+	if(val==EMPTY_VALUE)return;
+	FIXProfit_amount=val;
+}
+
+void eVVSSSC_CMFB_use_set(bool val){
+	if(val==EMPTY_VALUE)return;
+	CMFB_use=val;
+}
+void eVVSSSC_CMFB_pips_set(int val){
+	if(val==EMPTY_VALUE)return;
+	CMFB_pips=val;
+}
+
+void eVVSSSC_KPeriod1_set(int val){
+	if(val==EMPTY_VALUE)return;
+	KPeriod1=val;
+}
+void eVVSSSC_DPeriod1_set(int val){
+	if(val==EMPTY_VALUE)return;
+	DPeriod1=val;
+}
+void eVVSSSC_Slowing1_set(int val){
+	if(val==EMPTY_VALUE)return;
+	Slowing1=val;
+}
+void eVVSSSC_MAMethod1_set(int val){
+	if(val==EMPTY_VALUE)return;
+	MAMethod1=val;
+}
+void eVVSSSC_PriceField1_set(int val){
+	if(val==EMPTY_VALUE)return;
+	PriceField1=val;
+}
+
+void eVVSSSC_CloseOnRevers_set(bool val){
+	if(val==EMPTY_VALUE)return;
+	CloseOnRevers=val;
+}
+void eVVSSSC_BarsShift_set(int val){
+	if(val==EMPTY_VALUE)return;
+	BarsShift=val;
+}
+
+void eVVSSSC_FHMA_use_set(bool val){
+	if(val==EMPTY_VALUE)return;
+	FHMA_use=val;
+}
+void eVVSSSC_FHMA_period_set(int val){
+	if(val==EMPTY_VALUE)return;
+	FHMA_period=val;
+}
+void eVVSSSC_FHMA_method_set(int val){
+	if(val==EMPTY_VALUE)return;
+	FHMA_method=val;
+}
+void eVVSSSC_FHMA_price_set(int val){
+	if(val==EMPTY_VALUE)return;
+	FHMA_price=val;
+}
+void eVVSSSC_FHMA_sdvig_set(int val){
+	if(val==EMPTY_VALUE)return;
+	FHMA_sdvig=val;
+}
+void eVVSSSC_FHMA_CheckBar_set(int val){
+	if(val==EMPTY_VALUE)return;
+	FHMA_CheckBar=val;
+}
+
+void eVVSSSC_FIA_use_set(bool val){
+	if(val==EMPTY_VALUE)return;
+	FIA_use=val;
+}
+void eVVSSSC_FIA_ExtDepth_set(int val){
+	if(val==EMPTY_VALUE)return;
+	FIA_ExtDepth =val;
+}
+void eVVSSSC_FIA_ExtDeviation_set(int val){
+	if(val==EMPTY_VALUE)return;
+	FIA_ExtDeviation=val;
+}
+void eVVSSSC_FIA_ExtBackstep_set(int val){
+	if(val==EMPTY_VALUE)return;
+	FIA_ExtBackstep=val;
+}	
+void eVVSSSC_FIA_SIGNAL_BAR_set(int val){
+	if(val==EMPTY_VALUE)return;
+	FIA_SIGNAL_BAR =val;
+}	
+
+void eVVSSSC_TRAL_Use_set(bool val){
+	if(val==EMPTY_VALUE)return;
+	TRAL_Use=val;
+}	
+void eVVSSSC_TRAL_DeltaPips_set(int val){
+	if(val==EMPTY_VALUE)return;
+	TRAL_DeltaPips=val;
+}	
+void eVVSSSC_TRAL_Step_pip_set(int val){
+	if(val==EMPTY_VALUE)return;
+	TRAL_Step_pip=val;
+}		
+
+void eVVSSSC_TRAL_Fr_Use_set(bool val){
+	if(val==EMPTY_VALUE)return;
+	TRAL_Fr_Use=val;
+}		
+void eVVSSSC_TRAL_Fr_TF_set(int val){
+	if(val==EMPTY_VALUE)return;
+	TRAL_Fr_TF=val;
+}		
+void eVVSSSC_TRAL_Fr_R_set(int val){
+	if(val==EMPTY_VALUE)return;
+	TRAL_Fr_R=val;
+}		
+void eVVSSSC_TRAL_Fr_L_set(int val){
+	if(val==EMPTY_VALUE)return;
+	TRAL_Fr_L=val;
+}			
+
+void eVVSSSC_TRAL_ATR_use_set(bool val){
+	if(val==EMPTY_VALUE)return;
+	TRAL_ATR_use=val;
+}			
+void eVVSSSC_TRAL_ATR_TF_set(int val){
+	if(val==EMPTY_VALUE)return;
+	TRAL_ATR_TF=val;
+}			
+void eVVSSSC_TRAL_ATR1_Per_set(int val){
+	if(val==EMPTY_VALUE)return;
+	TRAL_ATR1_Per=val;
+}			
+void eVVSSSC_TRAL_ATR2_Per_set(int val){
+	if(val==EMPTY_VALUE)return;
+	TRAL_ATR2_Per=val;
+}
+void eVVSSSC_TRAL_ATR_COEF_set(double val){
+	if(val==EMPTY_VALUE)return;
+	TRAL_ATR_COEF=val;
+}			
+void eVVSSSC_TRAL_ATR_INLOSS_set(bool val){
+	if(val==EMPTY_VALUE)return;
+	TRAL_ATR_INLOSS=val;
+}			
+
+void eVVSSSC_use_Revers_set(bool val){
+	if(val==EMPTY_VALUE)return;
+	use_Revers=val;
+}			
+
+//}
+
 int init(){
 	/**
-		\version	0.0.0.2
-		\date		2013.12.30
+		\version	0.0.1.1
+		\date		2014.01.17
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:		
+			>Hist:			
+					 @0.0.1.1@2014.01.17@artamir	[!]	Добавлены функции для реализации внешнего запуска эксперта.
 					 @0.0.0.2@2013.12.30@artamir	[]	init
 					 @0.0.0.1@2013.12.27@artamir	[*]	init
 			>Rev:0
 	*/
-
+	string fn="init";
 	ArrayResize(a, 0);
 	ArrayResize(a,2);
-	Print("init");
+	Print(fn);
 	int tmr=GetTickCount();
 	double i=iCustom(NULL,0,"StochCrossingf_e",KPeriod1,DPeriod1,Slowing1,PriceField1,0,BarsShift);
 	Print("tmr=",(GetTickCount()-tmr)/100," sec.");
 	
 	aFR_init();
 	hfr=aFR_set(TRAL_Fr_L,TRAL_Fr_R,TRAL_Fr_TF);
+	
+	//-------------------
+	eVVSSSC_SL_set(EMPTY_VALUE); //{
+	eVVSSSC_TP_set(EMPTY_VALUE);
+	eVVSSSC_LOT_set(EMPTY_VALUE);
+	eVVSSSC_FIXProfit_use_set(EMPTY_VALUE);
+	eVVSSSC_FIXProfit_amount_set(EMPTY_VALUE);
+	eVVSSSC_CMFB_use_set(EMPTY_VALUE);
+	eVVSSSC_CMFB_pips_set(EMPTY_VALUE); //}
+	
+	eVVSSSC_KPeriod1_set(EMPTY_VALUE); //{
+	eVVSSSC_DPeriod1_set(EMPTY_VALUE);
+	eVVSSSC_Slowing1_set(EMPTY_VALUE);
+	eVVSSSC_MAMethod1_set(EMPTY_VALUE);
+	eVVSSSC_PriceField1_set(EMPTY_VALUE); //}
+	
+	eVVSSSC_CloseOnRevers_set(EMPTY_VALUE); //{
+	eVVSSSC_BarsShift_set(EMPTY_VALUE); //}
+	
+	eVVSSSC_FHMA_use_set(EMPTY_VALUE); //{
+	eVVSSSC_FHMA_period_set(EMPTY_VALUE);
+	eVVSSSC_FHMA_method_set(EMPTY_VALUE);
+	eVVSSSC_FHMA_price_set(EMPTY_VALUE);
+	eVVSSSC_FHMA_sdvig_set(EMPTY_VALUE);
+	eVVSSSC_FHMA_CheckBar_set(EMPTY_VALUE); //}
+	
+	eVVSSSC_FIA_use_set(EMPTY_VALUE); //{			
+	eVVSSSC_FIA_ExtDepth_set(EMPTY_VALUE);		
+	eVVSSSC_FIA_ExtDeviation_set(EMPTY_VALUE);	
+    eVVSSSC_FIA_ExtBackstep_set(EMPTY_VALUE);	
+    eVVSSSC_FIA_SIGNAL_BAR_set(EMPTY_VALUE); //}
+
+	eVVSSSC_TRAL_Use_set(EMPTY_VALUE);	//{	
+	eVVSSSC_TRAL_DeltaPips_set(EMPTY_VALUE);	
+	eVVSSSC_TRAL_Step_pip_set(EMPTY_VALUE);	//}	
+	
+	eVVSSSC_TRAL_Fr_Use_set(EMPTY_VALUE); //{
+	eVVSSSC_TRAL_Fr_TF_set(EMPTY_VALUE);	
+	eVVSSSC_TRAL_Fr_R_set(EMPTY_VALUE);	
+	eVVSSSC_TRAL_Fr_L_set(EMPTY_VALUE);	//}
+	
+	eVVSSSC_TRAL_ATR_use_set(EMPTY_VALUE); //{		
+	eVVSSSC_TRAL_ATR_TF_set(EMPTY_VALUE);			
+	eVVSSSC_TRAL_ATR1_Per_set(EMPTY_VALUE);		
+	eVVSSSC_TRAL_ATR2_Per_set(EMPTY_VALUE);		
+	eVVSSSC_TRAL_ATR_COEF_set(EMPTY_VALUE);		
+	eVVSSSC_TRAL_ATR_INLOSS_set(EMPTY_VALUE); //}		
+	
+	eVVSSSC_use_Revers_set(EMPTY_VALUE);
+	//-------------------
+	eVVSSSC_Ver_get();
+	eVVSSSC_Exp_get();
 	
 	return(0);
 }
@@ -136,47 +367,23 @@ int deinit(){
 
 int start(){
 	/**
-		\version	0.0.0.3
-		\date		2014.01.15
+		\version	0.0.0.4
+		\date		2014.01.17
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:			
+			>Hist:				
+					 @0.0.0.4@2014.01.17@artamir	[!]	Содержимое перенесено в функцию startextern(для возможности вызова из внешнего эксперта)
 					 @0.0.0.3@2014.01.15@artamir	[+]	добавлена очистка массива aOE по needEraseOE.
 					 @0.0.0.2@2014.01.08@artamir	[!]	start
 					 @0.0.0.1@2013.12.30@artamir	[+]	Добавлена проверка статусов ордеров бд.
 			>Rev:0
 	*/
 	string fn="start";
-	ELT_start();
-	if(OrdersTotal()>0){
-		//DrawTable();
-		//A_d_PrintArray2(aOE,4,"OE");
-	}
 	
-	if(	!FIXProfit_use&&!CMFB_use){
-		
-		//----------------------
-		OE_delClosed();
-	}	
+	int res=eVVSSSC_startextern();
 	
-	if(needEraseOE){
-		OE_delClosed();
-		needEraseOE=false;
-	}
-	
-	OE_eraseArray();
-	
-	OE_RecheckStatuses();
-	
-	if(OrdersTotal() <=0){
-		session_id++;
-	}
-	
-	int ret = startext();
-	
-	//-------------------------------------------
-	return(ret);
+	return(res);
 }
 
 int startext(){
@@ -219,6 +426,42 @@ int startext(){
 	BP_SEL=false;
 	//-------------------------------------------
 	return(0);
+}
+
+int eVVSSSC_startextern(){
+	string fn="startextern";
+	Comment(fn+":"+Time[0],"\n"
+			,"use_Revers=",use_Revers);
+	
+	ELT_start();
+	if(OrdersTotal()>0){
+		//DrawTable();
+		//A_d_PrintArray2(aOE,4,"OE");
+	}
+	
+	if(	!FIXProfit_use&&!CMFB_use){
+		
+		//----------------------
+		OE_delClosed();
+	}	
+	
+	if(needEraseOE){
+		OE_delClosed();
+		needEraseOE=false;
+	}
+	
+	OE_eraseArray();
+	
+	OE_RecheckStatuses();
+	
+	if(OrdersTotal() <=0){
+		session_id++;
+	}
+	
+	int ret = startext();
+	
+	//-------------------------------------------
+	return(ret);
 }
 
 void CMFB(){
@@ -1031,7 +1274,6 @@ int DrawTable(){
 		a[idx][4] = OrderType();
 		a[idx][5] = DoubleToStr(OrderProfit(),0);
 		a[idx][6] = "IT:"+DoubleToStr(OE_getPropByIndex(OE_FIBT(OrderTicket()), OE_IT),0);
-		a[idx][7] = "CP2SL:"+DoubleToStr(OE_getPropByIndex(OE_FIBT(OrderTicket()), OE_CP2SL),0)+">>"+DoubleToStr((TRAL_Begin_pip+TRAL_DeltaPips),0);
 		a[idx][8] = "CP2OP:"+DoubleToStr(OE_getPropByIndex(OE_FIBT(OrderTicket()), OE_CP2OP),0)+">>"+DoubleToStr((TRAL_DeltaPips),0);
 		idx++;
 	}

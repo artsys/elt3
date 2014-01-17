@@ -1,10 +1,11 @@
 	/**
-		\version	1.0.2.1
-		\date		2014.01.15
+		\version	1.0.2.2
+		\date		2014.01.16
 		\author		Morochin <artamir> Artiom
 		\details	Советник работает по индикатору StohCross
 		\internal
-		>Hist:																																			
+		>Hist:																																				
+				 @1.0.2.2@2014.01.16@artamir	[]	GetSignal
 				 @1.0.1.11@2014.01.15@artamir	[]	start
 				 @1.0.1.10@2014.01.15@artamir	[]	CMFB
 				 @1.0.1.9@2014.01.15@artamir	[!]	GetSignal
@@ -30,7 +31,7 @@ double ZeroBalance=0;
 bool needEraseOE=false;
 
 #define EXP	"eVVSS_StohCross"	
-#define VER	"1.0.1.11_2014.01.15"
+#define VER	"1.0.2.2_2014.01.16"
 
 extern	string	s1="==== MAIN ====="; //{
 extern	int SL=50;
@@ -761,12 +762,13 @@ bool isNewBar(){
 
 int GetSignal(){
 	/**
-		\version	0.0.0.5
-		\date		2014.01.15
+		\version	0.0.0.6
+		\date		2014.01.16
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:					
+			>Hist:						
+					 @0.0.0.6@2014.01.16@artamir	[*]	Исправлен поиск сигнала индикатора indi.
 					 @0.0.0.5@2014.01.15@artamir	[!]	Изменено начало поиска направления торгов по индикатору indiAlert.
 					 @0.0.0.4@2014.01.15@artamir	[+]	Добавлен фильтр по indiAlert
 					 @0.0.0.3@2014.01.13@artamir	[+]	Добавлен фильтр по Trendsignal
@@ -834,7 +836,7 @@ int GetSignal(){
 		double fia_up=0, fia_dw=0;
 		i=FIA_SIGNAL_BAR;
 		isfind=false;
-		while(!isfind){
+		while(!isfind && i<Bars){
 			fia_up=iCustom(Symbol(),0,"indiAlert_e",FIA_ExtDepth,FIA_ExtDeviation,FIA_ExtBackstep,FIA_SIGNAL_BAR,0,i);
 			fia_dw=iCustom(Symbol(),0,"indiAlert_e",FIA_ExtDepth,FIA_ExtDeviation,FIA_ExtBackstep,FIA_SIGNAL_BAR,1,i);
 			

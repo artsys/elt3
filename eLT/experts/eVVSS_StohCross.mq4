@@ -1,10 +1,12 @@
 	/**
-		\version	1.0.3.1
+		\version	1.0.3.4
 		\date		2014.01.17
 		\author		Morochin <artamir> Artiom
 		\details	—оветник работает по индикатору StohCross
 		\internal
-		>Hist:																																						
+		>Hist:																																									
+				 @1.0.3.4@2014.01.17@artamir	[!]	»справление в функци€х нужных дл€ шаблона.
+				 @1.0.3.3@2014.01.17@artamir	[*]	Autoclose
 				 @1.0.2.4@2014.01.17@artamir	[!]	init
 				 @1.0.2.3@2014.01.17@artamir	[!]	start
 				 @1.0.2.2@2014.01.16@artamir	[]	GetSignal
@@ -33,7 +35,7 @@ double ZeroBalance=0;
 bool needEraseOE=false;
 
 #define EXP	"eVVSS_StohCross"	
-#define VER	"1.0.3.1_2014.01.17"
+#define VER	"1.0.3.4_2014.01.17"
 
 extern	string	s1="==== MAIN ====="; //{
 extern	int SL=50;
@@ -50,6 +52,7 @@ extern int       Slowing1    	 =  3;
 extern int       MAMethod1    	=   0;
 extern int       PriceField1  	=   1;
 extern bool		CloseOnRevers	=false;
+extern int		MinClosePips 	=5; //ћинимальное количество пунктов, ближе которых к цене открыти€ ордер закрыватьс€ не будет по обратному сигналу.
 extern int		BarsShift		=1;
 extern string fs1="=== FILTER VininIHMA ===";
 //---- input parameters
@@ -113,6 +116,7 @@ string eVVSSSC_Exp_get(){
 }
 
 void eVVSSSC_SL_set(int val){
+	if(val==EMPTY_VALUE)return;
 	SL=val;
 }
 void eVVSSSC_TP_set(int val){
@@ -611,12 +615,13 @@ void Autoopen(){
 
 bool Autoclose(){
 	/**
-		\version	0.0.0.1
-		\date		2013.12.30
+		\version	0.0.0.2
+		\date		2014.01.17
 		\author		Morochin <artamir> Artiom
 		\details	јвтозакрытие ордеров.
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2014.01.17@artamir	[+]	ƒобавлена проверка на минимальное количество пунктов дл€ закрыти€ ордера.
 					 @0.0.0.1@2013.12.30@artamir	[+]	Autoclose
 			>Rev:0
 	*/
@@ -655,6 +660,13 @@ bool Autoclose(){
 	int rows=ArrayRange(aI,0);
 	for(int i=0;i<rows;i++){
 		int ti=aOE[aI[i]][OE_TI];
+		
+		if(MinClosePips>0){
+			int pips=aOE[aI[i]][OE_CP2OP];
+			pips=MathAbs(pips);
+			if(pips<MinClosePips)continue;
+		}
+		
 		TR_CloseByTicket(ti);
 		res=true;
 	}

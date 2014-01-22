@@ -1,3 +1,16 @@
+	/**
+		\version	1.0.0.0
+		\date		2014.01.17
+		\author		Morochin <artamir> Artiom
+		\details	Советник-шаблон использования внешних вызовов eVVSS_StohCross
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+#define	EXP "eVVSS_StohCross_tpl"
+#define VER "1.0.0.0_2014.01.17"
+
 #import "eVVSS_StohCross.ex4" //{
 		//Внешние настройки эксперта
 		string eVVSSSC_Ver_get(); //для контроля версии основного советника.
@@ -31,25 +44,25 @@
 		void eVVSSSC_FIA_ExtDepth_set		(int val);
 		void eVVSSSC_FIA_ExtDeviation_set	(int val);
 		void eVVSSSC_FIA_ExtBackstep_set	(int val);
-		void eVVSSSC_FIA_SIGNAL_BAR_set	(int val);
+		void eVVSSSC_FIA_SIGNAL_BAR_set		(int val);
 		
-		void eVVSSSC_TRAL_Use_set		(bool val);
-		void eVVSSSC_TRAL_DeltaPips_set	(int val);
-		void eVVSSSC_TRAL_Step_pip_set	(int val);
+		void eVVSSSC_TRAL_Use_set			(bool val);
+		void eVVSSSC_TRAL_DeltaPips_set		(int val);
+		void eVVSSSC_TRAL_Step_pip_set		(int val);
 		
-		void eVVSSSC_TRAL_Fr_Use_set	(bool val);
-		void eVVSSSC_TRAL_Fr_TF_set		(int val);
-		void eVVSSSC_TRAL_Fr_R_set		(int val);
-		void eVVSSSC_TRAL_Fr_L_set		(int val);
+		void eVVSSSC_TRAL_Fr_Use_set		(bool val);
+		void eVVSSSC_TRAL_Fr_TF_set			(int val);
+		void eVVSSSC_TRAL_Fr_R_set			(int val);
+		void eVVSSSC_TRAL_Fr_L_set			(int val);
 		
-		void eVVSSSC_TRAL_ATR_use_set	(bool val);
-		void eVVSSSC_TRAL_ATR_TF_set	(int val);
-		void eVVSSSC_TRAL_ATR1_Per_set	(int val);
-		void eVVSSSC_TRAL_ATR2_Per_set	(int val);
-		void eVVSSSC_TRAL_ATR_COEF_set	(double val);
-		void eVVSSSC_TRAL_ATR_INLOSS_set(bool val);
+		void eVVSSSC_TRAL_ATR_use_set		(bool val);
+		void eVVSSSC_TRAL_ATR_TF_set		(int val);
+		void eVVSSSC_TRAL_ATR1_Per_set		(int val);
+		void eVVSSSC_TRAL_ATR2_Per_set		(int val);
+		void eVVSSSC_TRAL_ATR_COEF_set		(double val);
+		void eVVSSSC_TRAL_ATR_INLOSS_set	(bool val);
 		
-		void eVVSSSC_use_Revers_set		(bool val);
+		void eVVSSSC_use_Revers_set			(bool val);
 		
 		int  eVVSSSC_startextern();
 #import //}

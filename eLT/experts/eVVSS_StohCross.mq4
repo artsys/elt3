@@ -1,10 +1,12 @@
 	/**
-		\version	1.0.3.4
-		\date		2014.01.17
+		\version	1.0.3.6
+		\date		2014.01.22
 		\author		Morochin <artamir> Artiom
 		\details	Советник работает по индикатору StohCross
 		\internal
-		>Hist:																																									
+		>Hist:																																											
+				 @1.0.3.6@2014.01.22@artamir	[]	Tral_Fr
+				 @1.0.3.5@2014.01.22@artamir	[*]	Tral_Fr
 				 @1.0.3.4@2014.01.17@artamir	[!]	Исправление в функциях нужных для шаблона.
 				 @1.0.3.3@2014.01.17@artamir	[*]	Autoclose
 				 @1.0.2.4@2014.01.17@artamir	[!]	init
@@ -35,7 +37,7 @@ double ZeroBalance=0;
 bool needEraseOE=false;
 
 #define EXP	"eVVSS_StohCross"	
-#define VER	"1.0.3.4_2014.01.17"
+#define VER	"1.0.3.6_2014.01.22"
 
 extern	string	s1="==== MAIN ====="; //{
 extern	int SL=50;
@@ -88,6 +90,7 @@ extern bool		TRAL_Fr_Use	=false;
 extern int		TRAL_Fr_TF	=0;	//таймфрейм расчета фракталов.
 extern int		TRAL_Fr_R	=2;	//количество баров справа для определения фрактала
 extern int		TRAL_Fr_L	=2;	//количество баров слева для определения фрактала
+extern int		TRAL_Fr_Filter_pip=0; //количество пунктов фильтра для установки стоплосса. К ценовуму уровню хая или лоу фрактала добавляется или отнимается заданное количество пунктов.  
 
 extern bool		TRAL_ATR_use	=false;
 extern int		TRAL_ATR_TF		=0;
@@ -738,12 +741,14 @@ void Tral(){
 
 void Tral_Fr(){
 	/**
-		\version	0.0.0.4
-		\date		2014.01.06
+		\version	0.0.0.6
+		\date		2014.01.22
 		\author		Morochin <artamir> Artiom
 		\details	Трал по фракталам
 		\internal
-			>Hist:									
+			>Hist:											
+					 @0.0.0.6@2014.01.22@artamir	[+]	Добавлен фильтр для установки сл или тп
+					 @0.0.0.5@2014.01.22@artamir	[*]	Исправлен расчет Миниального и максимального бара.
 					 @0.0.0.4@2014.01.06@artamir	[!]	Tral_Fr
 					 @0.0.0.3@2013.12.30@artamir	[!!]	Tral_Fr
 					 @0.0.0.2@2013.12.30@artamir	[!]	Исправлен трал селл ордеров.
@@ -756,11 +761,14 @@ void Tral_Fr(){
 	
 	double d[][OE_MAX];
 	
-	int bUP=iHighest(Symbol(), TRAL_Fr_TF, MODE_HIGH, iFR_getNearestUpBarTF(hfr,1),0);
-	int bDW=iLowest(Symbol(), TRAL_Fr_TF, MODE_LOW, iFR_getNearestDwBarTF(hfr,1),0);
+	int bUP=iFR_getNearestUpBarTF(hfr,1);//iHighest(Symbol(), TRAL_Fr_TF, MODE_HIGH, iFR_getNearestUpBarTF(hfr,1)+1,0);
+	int bDW=iFR_getNearestDwBarTF(hfr,1);//iLowest(Symbol(), TRAL_Fr_TF, MODE_LOW, iFR_getNearestDwBarTF(hfr,1)+1,0);
 	
-	double fUp=iHigh(Symbol(), TRAL_Fr_TF, bUP);
-	double fDw=iLow(Symbol(), TRAL_Fr_TF, bDW);
+	double fUp=iHigh(Symbol(), TRAL_Fr_TF, bUP)+TRAL_Fr_Filter_pip*Point;
+	double fDw=iLow(Symbol(), TRAL_Fr_TF, bDW)-TRAL_Fr_Filter_pip*Point;
+	
+	Print(fn,".fUp="+fUp,"; .bUP="+bUP);
+	Print(fn,".fDw="+fDw,"; .bDW="+bDW);
 	
 	string	f="";
 			

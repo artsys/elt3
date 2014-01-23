@@ -1,10 +1,12 @@
 	/**
-		\version	0.0.1.4
-		\date		2013.12.27
+		\version	0.0.1.6
+		\date		2014.01.23
 		\author		Morochin <artamir> Artiom
 		\details	Настраиваемый фрактал
 		\internal
-			>Hist:				
+			>Hist:						
+					 @0.0.1.6@2014.01.23@artamir	[]	iFR_isUP Ужесточился метод определения нижнего и верхнего фрактклов.
+					 @0.0.1.5@2014.01.23@artamir	[]	iFR_isDW
 					 @0.0.1.4@2013.12.27@artamir	[+]	iFR_getNearestDwBarTF
 					 @0.0.1.3@2013.12.27@artamir	[+]	iFR_getNearestUpBarTF
 					 @0.0.1.2@2013.12.27@artamir	[+]	aFR_getTF
@@ -111,12 +113,13 @@ bool iFR_isUP(int h=0 /** handle */
 			, int shift=-1
 			, bool use_synchro=true){
 	/**
-		\version	0.0.0.0
-		\date		2013.12.19
+		\version	0.0.0.1
+		\date		2014.01.23
 		\author		Morochin <artamir> Artiom
 		\details	Возвращает да, если на заданном баре сформирован верхний фрактал.
 		\internal
-			>Hist:
+			>Hist:	
+					 @0.0.0.1@2014.01.23@artamir	[]	iFR_isUP
 			>Rev:0
 	*/
 
@@ -142,10 +145,19 @@ bool iFR_isUP(int h=0 /** handle */
 	bool f=true;
 	double fbp=iHigh(sy,tf,sh);
 	
-	if(sh!=iHighest(sy,tf,MODE_HIGH,nr+1,sh-nr))f=false;
-
-	if(f)
-		if(sh!=iHighest(sy,tf,MODE_HIGH,nl+1,sh))f=false;
+	//if(sh!=iHighest(sy,tf,MODE_HIGH,nr+1,sh-nr))f=false;
+	for(int i=sh-nr;i<sh&&f;i++){
+		double hp=iHigh(sy,tf,i);
+		if(fbp<=hp) f=false;
+	}
+	
+	if(f){
+		//if(sh!=iHighest(sy,tf,MODE_HIGH,nl+1,sh))f=false;
+		for(i=sh+1;i<=(sh+nl)&&f;i++){
+			hp=iHigh(sy,tf,i);
+			if(fbp<=hp)f=false;
+		}
+	}	
 	
 	return(f);
 }
@@ -154,12 +166,13 @@ bool iFR_isDW(int h=0 /** handle */
 			, int shift=-1
 			, bool use_synchro=true){
 	/**
-		\version	0.0.0.0
-		\date		2013.12.19
+		\version	0.0.0.1
+		\date		2014.01.23
 		\author		Morochin <artamir> Artiom
 		\details	Возвращает да, если на заданном баре сформирован нижний фрактал.
 		\internal
-			>Hist:
+			>Hist:	
+					 @0.0.0.1@2014.01.23@artamir	[]	iFR_isDW
 			>Rev:0
 	*/
 
@@ -184,11 +197,19 @@ bool iFR_isDW(int h=0 /** handle */
 	
 	bool f=true;
 	double fbp=iLow(sy,tf,sh);
-	if(sh!=iLowest(sy,tf,MODE_LOW,nr+1,sh-nr))f=false;
+	//if(sh!=iLowest(sy,tf,MODE_LOW,nr+1,sh-nr))f=false;
+	for(int i=sh-nr;i<sh&&f;i++){
+		double l=iLow(sy,tf,i);
+		if(fbp>=l) f=false;
+	}
 	
-	if(f)
-		if(sh!=iLowest(sy,tf,MODE_LOW,nl+1,sh))f=false;
-	
+	if(f){
+		//if(sh!=iLowest(sy,tf,MODE_LOW,nl+1,sh))f=false;
+		for(i=sh+1;i<=(sh+nl)&&f;i++){
+			l=iLow(sy,tf,i);
+			if(fbp>=l) f=false;
+		}
+	}
 	return(f);
 }
 

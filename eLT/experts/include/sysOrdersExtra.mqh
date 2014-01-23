@@ -1,14 +1,15 @@
 	/*
-		>Ver	:	0.0.0.51
-		>Date	:	2014.01.08	
-		>Hist	:																						
+		>Ver	:	0.0.0.52
+		>Date	:	2014.01.23	
+		>Hist	:																							
+					@0.0.0.52@2014.01.23@artamir	[+]	OE_setPropByTI
 					@0.0.0.51@2014.01.08@artamir	[+]	OE_delClosed
 			Необходимо исправление библиотеки для поиска значений функционалом библиотеки sysIndexedArray.mqh
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:
 	*/
 
-#define OE_VER	"0.0.0.51_2014.01.08"
+#define OE_VER	"0.0.0.52_2014.01.23"
 #define OE_DATE	"2013.09.06"
 	
 //{	//=== ARRAY	
@@ -36,7 +37,7 @@
 #define	OE_MP		15	//Main parent of the grid
 #define	OE_LP		16	//Local parent
 #define	OE_LP2		17	//Local parent
-#define 	OE_SID		18	//ИД сессии.
+#define OE_SID		18	//ИД сессии.
 #define OE_SSP		19	//Session Start Price/(для eOIW2. Цена старта новой сессии.)
 //------ Partial close
 #define	OE_FROM		20	//If was partial close 
@@ -51,6 +52,9 @@
 #define	OE_FOTI		33	//First open ticket
 #define	OE_FOL		34	//First open lot
 #define OE_FIR		35	//First is Revers? 0-main order, 1-revers order.
+//------ Сигналы на открытие.
+#define OE_SIOB		36  //Время возникновения сигнала на открытие бай
+#define OE_SIOS		37  //Время возникновения сигнала на открытие селл
 //------ Auto open data (AOD)
 #define OE_AOM		40	//Auto open method
 #define OE_AOTY		41	//Auto open type
@@ -89,6 +93,9 @@ string OE2Str(int i){
 		case 14: return("OE_IC");
 		
 		case 32: return("OE_FOTY");
+		
+		case 36: return("OE_SIOB");
+		case 37: return("OE_SIOS");
 		
 		case 45: return("OE_CPP(close profit in pips)");
 		case 46: return("OE_CTY(closing type)");
@@ -441,6 +448,27 @@ int OE_setChangeTYBuTicket(int ti, int new_ty = -1, int old_ty = -1){
 //}
 
 //{	//=== SET PROPERTIES
+
+int OE_setPropByTI(int ti, int prop, double val){
+	/**
+		\version	0.0.0.1
+		\date		2014.01.23
+		\author		Morochin <artamir> Artiom
+		\details	Устанавливает свойство по тикету.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.01.23@artamir	[+]	OE_setPropByTI
+			>Rev:0
+	*/
+	
+	string fn="OE_setPropByTI";
+	
+	int idx=OE_FIBT(ti);
+	
+	aOE[idx][prop]=val;
+	
+	return(idx);
+}
 
 int	OE_setTYByTicket(int ti, int ty){
 	/*

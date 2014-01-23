@@ -131,8 +131,6 @@ int ELT_start(){
 	double a[];
 	int t = T_getTickets(a);
 
-	
-	
 	for(int i=0; i<t; i++){
 		OE_setStandartDataByTicket(a[i]);
 	}

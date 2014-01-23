@@ -1,11 +1,13 @@
 	/**
-		\version	1.0.3.6
+		\version	1.0.3.8
 		\date		2014.01.22
 		\author		Morochin <artamir> Artiom
 		\details	Советник работает по индикатору StohCross
 		\internal
-		>Hist:																																											
-				 @1.0.3.6@2014.01.22@artamir	[]	Tral_Fr
+		>Hist:																																													
+				 @1.0.3.8@2014.01.22@artamir	[*]	Tral_Fr
+				 @1.0.3.7@2014.01.22@artamir	[*]	Tral_Fr
+				 @1.0.3.6@2014.01.22@artamir	[*]	Tral_Fr
 				 @1.0.3.5@2014.01.22@artamir	[*]	Tral_Fr
 				 @1.0.3.4@2014.01.17@artamir	[!]	Исправление в функциях нужных для шаблона.
 				 @1.0.3.3@2014.01.17@artamir	[*]	Autoclose
@@ -37,7 +39,7 @@ double ZeroBalance=0;
 bool needEraseOE=false;
 
 #define EXP	"eVVSS_StohCross"	
-#define VER	"1.0.3.6_2014.01.22"
+#define VER	"1.0.3.8_2014.01.22"
 
 extern	string	s1="==== MAIN ====="; //{
 extern	int SL=50;
@@ -741,12 +743,13 @@ void Tral(){
 
 void Tral_Fr(){
 	/**
-		\version	0.0.0.6
+		\version	0.0.0.7
 		\date		2014.01.22
 		\author		Morochin <artamir> Artiom
 		\details	Трал по фракталам
 		\internal
-			>Hist:											
+			>Hist:												
+					 @0.0.0.7@2014.01.22@artamir	[*]	Стоплоссы трялятся только в направлении получения профита по ордеру.
 					 @0.0.0.6@2014.01.22@artamir	[+]	Добавлен фильтр для установки сл или тп
 					 @0.0.0.5@2014.01.22@artamir	[*]	Исправлен расчет Миниального и максимального бара.
 					 @0.0.0.4@2014.01.06@artamir	[!]	Tral_Fr
@@ -767,8 +770,8 @@ void Tral_Fr(){
 	double fUp=iHigh(Symbol(), TRAL_Fr_TF, bUP)+TRAL_Fr_Filter_pip*Point;
 	double fDw=iLow(Symbol(), TRAL_Fr_TF, bDW)-TRAL_Fr_Filter_pip*Point;
 	
-	Print(fn,".fUp="+fUp,"; .bUP="+bUP);
-	Print(fn,".fDw="+fDw,"; .bDW="+bDW);
+	//Print(fn,".fUp="+fUp,"; .bUP="+bUP);
+	//Print(fn,".fDw="+fDw,"; .bDW="+bDW);
 	
 	string	f="";
 			
@@ -789,11 +792,14 @@ void Tral_Fr(){
 		
 		for(int idx = 0; idx < rows; idx++){
 			int ti = aOE[aI[idx]][OE_TI];
-			
+			double sl=aOE[aI[idx]][OE_SL];
+			double tp=aOE[aI[idx]][OE_TP];
 			if(use_Revers)
 				TR_ModifyTP(ti, fUp);
-			else	
-				TR_ModifySL(ti, fDw);
+			else
+				if(fDw>sl){
+					TR_ModifySL(ti, fDw);
+				}	
 		}
 	//}
 	
@@ -814,11 +820,13 @@ void Tral_Fr(){
 		
 		for(idx = 0; idx < rows; idx++){
 			ti = aOE[aI[idx]][OE_TI];
-			
+			sl = aOE[aI[idx]][OE_SL];
 			if(use_Revers)
 				TR_ModifyTP(ti, fDw);
 			else
-				TR_ModifySL(ti, fUp);
+				if(fUp<sl){
+					TR_ModifySL(ti, fUp);
+				}	
 		}
 	//}
 	

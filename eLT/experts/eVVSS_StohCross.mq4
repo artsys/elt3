@@ -1,10 +1,11 @@
 	/**
-		\version	1.0.3.8
-		\date		2014.01.22
+		\version	1.0.3.9
+		\date		2014.01.23
 		\author		Morochin <artamir> Artiom
 		\details	Советник работает по индикатору StohCross
 		\internal
-		>Hist:																																													
+		>Hist:																																														
+				 @1.0.3.9@2014.01.23@artamir	[!] Ужесточились правила расчета фрактала.	
 				 @1.0.3.8@2014.01.22@artamir	[*]	Tral_Fr
 				 @1.0.3.7@2014.01.22@artamir	[*]	Tral_Fr
 				 @1.0.3.6@2014.01.22@artamir	[*]	Tral_Fr
@@ -39,7 +40,7 @@ double ZeroBalance=0;
 bool needEraseOE=false;
 
 #define EXP	"eVVSS_StohCross"	
-#define VER	"1.0.3.8_2014.01.22"
+#define VER	"1.0.3.9_2014.01.23"
 
 extern	string	s1="==== MAIN ====="; //{
 extern	int SL=50;

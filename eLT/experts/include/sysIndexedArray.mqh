@@ -1,10 +1,11 @@
 	/**
-		\version	0.0.0.8
-		\date		2014.01.13
+		\version	0.0.0.9
+		\date		2014.01.28
 		\author		Morochin <artamir> Artiom
 		\details	Работа с индексированным массивом.
 		\internal
-			>Hist:								
+			>Hist:									
+					 @0.0.0.9@2014.01.28@artamir	[+]	AI_Union
 					 @0.0.0.8@2014.01.13@artamir	[+]	AId_SearchLess
 					 @0.0.0.7@2014.01.13@artamir	[+]	AId_Sum
 					 @0.0.0.6@2014.01.09@artamir	[]	AId_SearchFirst
@@ -51,6 +52,38 @@ void AI_SetIndex(int &sI[], int &dI[]){
 	*/
 	ArrayResize(dI,ArrayRange(sI,0));
 	ArrayCopy(dI,sI);
+}
+
+int AI_Union(int &s1[], int &s2[], int &d[]){
+	/**
+		\version	0.0.0.1
+		\date		2014.01.28
+		\author		Morochin <artamir> Artiom
+		\details	Объединяет массивы индексов в результирующий массив.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.01.28@artamir	[+]	AI_Union
+			>Rev:0
+	*/
+
+	string fn="AI_Union";
+	
+	rows_d=ArrayRange(d,0);
+	rows_s1=ArrayRange(s1,0);
+	rows_s2=ArrayRange(s2,0);
+	
+	rows_total=rows_d+rows_s1+rows_s2;
+	ArrayResize(d,rows_total);
+	
+	for(int i=0;i<rows_s1;i++){
+		d[(rows_d+i)]=s1[i];
+	}
+	
+	for(i=0;i<rows_s2;i++){
+		d[(rows_d+rows_s1+i)]=s2[i];
+	}
+	
+	return(rows_total);
 }
 
 // void AI_ReturnIndexArray(int &d[]){

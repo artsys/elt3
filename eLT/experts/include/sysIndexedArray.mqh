@@ -1,10 +1,11 @@
 	/**
-		\version	0.0.0.9
-		\date		2014.01.28
+		\version	0.0.0.10
+		\date		2014.01.31
 		\author		Morochin <artamir> Artiom
 		\details	Работа с индексированным массивом.
 		\internal
-			>Hist:									
+			>Hist:										
+					 @0.0.0.10@2014.01.31@artamir	[]	AI_Union
 					 @0.0.0.9@2014.01.28@artamir	[+]	AI_Union
 					 @0.0.0.8@2014.01.13@artamir	[+]	AId_SearchLess
 					 @0.0.0.7@2014.01.13@artamir	[+]	AId_Sum
@@ -56,23 +57,24 @@ void AI_SetIndex(int &sI[], int &dI[]){
 
 int AI_Union(int &s1[], int &s2[], int &d[]){
 	/**
-		\version	0.0.0.1
-		\date		2014.01.28
+		\version	0.0.0.2
+		\date		2014.01.31
 		\author		Morochin <artamir> Artiom
 		\details	Объединяет массивы индексов в результирующий массив.
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2014.01.31@artamir	[]	AI_Union
 					 @0.0.0.1@2014.01.28@artamir	[+]	AI_Union
 			>Rev:0
 	*/
 
 	string fn="AI_Union";
 	
-	rows_d=ArrayRange(d,0);
-	rows_s1=ArrayRange(s1,0);
-	rows_s2=ArrayRange(s2,0);
+	int rows_d=ArrayRange(d,0);
+	int rows_s1=ArrayRange(s1,0);
+	int rows_s2=ArrayRange(s2,0);
 	
-	rows_total=rows_d+rows_s1+rows_s2;
+	int rows_total=rows_d+rows_s1+rows_s2;
 	ArrayResize(d,rows_total);
 	
 	for(int i=0;i<rows_s1;i++){

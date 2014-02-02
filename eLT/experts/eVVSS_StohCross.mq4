@@ -1,10 +1,12 @@
 	/**
-		\version	1.0.3.9
-		\date		2014.01.23
+		\version	1.0.3.11
+		\date		2014.01.31
 		\author		Morochin <artamir> Artiom
 		\details	Советник работает по индикатору StohCross
 		\internal
-		>Hist:																																														
+		>Hist:																																																
+				 @1.0.3.11@2014.01.31@artamir	[!]	Autoopen
+				 @1.0.3.10@2014.01.31@artamir	[+]	GetLot
 				 @1.0.3.9@2014.01.23@artamir	[!] Ужесточились правила расчета фрактала.	
 				 @1.0.3.8@2014.01.22@artamir	[*]	Tral_Fr
 				 @1.0.3.7@2014.01.22@artamir	[*]	Tral_Fr
@@ -40,12 +42,15 @@ double ZeroBalance=0;
 bool needEraseOE=false;
 
 #define EXP	"eVVSS_StohCross"	
-#define VER	"1.0.3.9_2014.01.23"
+#define VER	"1.0.3.11_2014.01.31"
 
 extern	string	s1="==== MAIN ====="; //{
 extern	int SL=50;
 extern	int TP=50;
 extern	double LOT=0.01;
+extern	bool Autolot_use=false; //Разрешает использовать автоматический расчет объема выставляемой позиции.
+extern double MaxRisk=1; //Процент от свободных средств, которые можно использовать для открытия позиции.
+
 extern	bool FIXProfit_use=false;	//Закрывать все ордера при достижении заданного профита.
 extern	double FIXProfit_amount=500; //Значение фиксированного профита для закрытия всех ордеров.
 extern bool		CMFB_use=false; //закрывать минусовые ордера из средств баланса.
@@ -558,12 +563,13 @@ void CMFB(){
 
 void Autoopen(){
 	/**
-		\version	0.0.0.2
-		\date		2013.12.31
+		\version	0.0.0.3
+		\date		2014.01.31
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:		
+			>Hist:			
+					 @0.0.0.3@2014.01.31@artamir	[!]	Добавлен автолот.
 					 @0.0.0.2@2013.12.31@artamir	[*]	Исправлена проверка , что ордер выставлен на текущем баре.
 					 @0.0.0.1@2013.12.13@artamir	[+]	Добавлен выбор объема ордера.
 			>Rev:0
@@ -603,7 +609,7 @@ void Autoopen(){
 	
 	//Print(fn,"-> isNewBar()");
 	if(isNewBar()){ 
-		ti=TR_SendMarket(op, LOT);
+		ti=TR_SendMarket(op, GetLot());
 		
 		if(ti<=0){
 			Print(fn,": Cant send order");
@@ -1128,6 +1134,29 @@ int GetSignal(){
 	}
 	//--------------------------------------
 	return(signal);
+}
+
+double GetLot(){
+	/**
+		\version	0.0.0.1
+		\date		2014.01.31
+		\author		Morochin <artamir> Artiom
+		\details	Расчет объема открываемой позиции. 
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.01.31@artamir	[+]	GetLot
+			>Rev:0
+	*/
+	string fn="GetLot";
+	
+	if(!Autolot_use)return(LOT);
+	
+	double _Free=AccountFreeMargin();
+	double _One_Lot=MarketInfo(Symbol(),MODE_MARGINREQUIRED);
+	double _Step=MarketInfo(Symbol(),MODE_LOTSTEP);
+	double l =MathFloor(_Free*MaxRisk/100/_One_Lot/_Step)*_Step;
+	
+	return(l);
 }
 
 int Select_SessionTI(int &aI[]){

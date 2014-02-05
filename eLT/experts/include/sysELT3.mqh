@@ -363,7 +363,7 @@ int ELT_SelectByGL_d2(		double	&s[][] /** source array */
 	
 	if(ELT_useEraseFilter){A_eraseFilter();}										
 	
-	A_FilterAdd_AND(OE_GL, gl, -1, AS_OP_EQ);
+	A_FilterAdd_AND(OE_GLV, gl, -1, AS_OP_EQ);
 	
 	if(ELT_useSelect){A_d_Select(s, d, add);}
 	

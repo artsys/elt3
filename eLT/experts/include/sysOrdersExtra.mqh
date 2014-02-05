@@ -1,7 +1,8 @@
 	/*
-		>Ver	:	0.0.0.52
-		>Date	:	2014.01.23	
-		>Hist	:																							
+		>Ver	:	0.0.0.53
+		>Date	:	2014.02.03	
+		>Hist	:																								
+					@0.0.0.53@2014.02.03@artamir	[+]	OE_setGTYByTicket
 					@0.0.0.52@2014.01.23@artamir	[+]	OE_setPropByTI
 					@0.0.0.51@2014.01.08@artamir	[+]	OE_delClosed
 			Необходимо исправление библиотеки для поиска значений функционалом библиотеки sysIndexedArray.mqh
@@ -9,8 +10,12 @@
 		>Desc	:
 	*/
 
-#define OE_VER	"0.0.0.52_2014.01.23"
+#define OE_VER	"0.0.0.53_2014.02.03"
 #define OE_DATE	"2013.09.06"
+
+#define OE_G_MARKET 0
+#define OE_G_LIMIT	2
+#define OE_G_STOP	4
 	
 //{	//=== ARRAY	
 #define OE_NULL -19801028
@@ -42,8 +47,8 @@
 //------ Partial close
 #define	OE_FROM		20	//If was partial close 
 //------ Grid
-#define	OE_GT		25	//Grid type
-#define	OE_GL		26	//Grid level
+#define	OE_GTY		25	//Grid type
+#define	OE_GLV		26	//Grid level
 //------ First open data (FOD)
 #define	OE_FOP		30	//First open price
 #define	OE_FOT		31	//First	open time
@@ -91,6 +96,9 @@ string OE2Str(int i){
 		case 12: return("OE_CT");
 		case 13: return("OE_CP");
 		case 14: return("OE_IC");
+		
+		case 25: return("OE_GTY");
+		case 26: return("OE_GLV");
 		
 		case 32: return("OE_FOTY");
 		
@@ -869,7 +877,7 @@ int	OE_setIPByTicket(int ti, int status = -1){
 	return(idx);
 }
 
-int	OE_setGLByTicket(int ti, int gl = -1){
+int	OE_setGLVByTicket(int ti, int gl = -1){
 	/*
 		>Ver	:	0.0.2
 		>Date	:	2013.03.06
@@ -893,11 +901,43 @@ int	OE_setGLByTicket(int ti, int gl = -1){
 	}
 	
 	//------------------------------------------------------
-	aOE[idx][OE_GL] = gl;
+	aOE[idx][OE_GLV] = gl;
 	
 	//------------------------------------------------------
 	return(idx);
 }
+
+int	OE_setGTYByTicket(int ti, int gty = -1){
+	/*
+		>Ver	:	0.0.0.3
+		>Date	:	2014.02.03
+		>Hist	:	
+					@0.0.0.3@2014.02.03@artamir	[]	OE_setGTYByTicket
+					@0.0.1@2012.10.03@artamir	[+]
+		>Author	:	Morochin <artamir> Artiom
+		>Desc	:
+	*/
+	
+	//------------------------------------------------------
+	if(gty <= -1){
+		return(-1);
+	}
+	
+	//------------------------------------------------------
+	int idx = OE_findIndexByTicket(ti);
+	
+	//------------------------------------------------------
+	if(idx <= -1){
+		return(-1);
+	}
+	
+	//------------------------------------------------------
+	aOE[idx][OE_GTY] = gty;
+	
+	//------------------------------------------------------
+	return(idx);
+}
+
 
 int OE_setFIRByTicket(int ti, int fir = 0){
 	/**
@@ -964,7 +1004,6 @@ int OE_setFOOTByTicket(int ti, int foot = 0){
 	//------------------------------------------------------
 	return(idx);
 }
-
 
 int OE_setSIDByTicket(int ti, int sid = 0){
 	/**
@@ -1521,7 +1560,7 @@ int		OE_getMPByTicket(int ti){
 	return(val);
 }
 
-int		OE_getGLByTicket(int ti){
+int		OE_getGLVByTicket(int ti){
 	/*
 		>Ver	:	0.0.1
 		>Date	:	2013.03.01
@@ -1530,7 +1569,7 @@ int		OE_getGLByTicket(int ti){
 		>Desc	:
 	*/
 	int idx = OE_FIBT(ti);
-	int val = OE_getPropByIndex(idx, OE_GL);
+	int val = OE_getPropByIndex(idx, OE_GLV);
 	
 	return(val);
 }

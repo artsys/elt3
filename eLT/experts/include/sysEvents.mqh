@@ -49,6 +49,7 @@ void E_Start(){
 		>Desc	:	Start func.
 	*/
 	//----------------------------------------------------------------------------------------------
+	string fn="E_Start";
 	A_d_eraseArray2(aEvents);								
 	
 	//----------------------------------------------------------------------------------------------
@@ -67,6 +68,7 @@ void E_FillEventsArray(){
 		>Pendings	: 
 						#include <sysTerminal.mqh>
 	*/
+	string fn="E_FillEventsArray";
 	
 	int cur.idx;
 	int old_idx;
@@ -193,7 +195,7 @@ void onChangeType(int ti, int ty_new, int ty_old = -1){
 		>Author	:	Morochin <artamir> Artiom
 		>Desc	:
 	*/
-	
+	string fn="onChangeType";
 	//------------------------------------------------------
 	//TODO: написать обработчик изменения типа ордера.
 	//1.добавление в массив екстраордеров
@@ -203,6 +205,7 @@ void onChangeType(int ti, int ty_new, int ty_old = -1){
 	aEvents[idx][E_TI]=ti;
 	aEvents[idx][E_EVENT]=EVENT_CHTY;
 	OE_setChangeTYBuTicket(ti, ty_new);
+	
 }
 
 void onChangeOP(int ticket, double op.new, double op.old = -1){

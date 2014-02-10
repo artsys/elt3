@@ -1,10 +1,13 @@
 	/**
-		\version	1.0.3.11
-		\date		2014.01.31
+		\version	1.509.4.4
+		\date		2014.02.06
 		\author		Morochin <artamir> Artiom
 		\details	—оветник работает по индикатору StohCross
 		\internal
-		>Hist:																																																
+		>Hist:																																																			
+				 @1.509.4.4@2014.02.06@artamir	[]	MOIS_check
+				 @1.509.4.3@2014.02.06@artamir	[]	MOIS_main
+				 @1.509.4.2@2014.02.06@artamir	[*]	Autoopen
 				 @1.0.3.11@2014.01.31@artamir	[!]	Autoopen
 				 @1.0.3.10@2014.01.31@artamir	[+]	GetLot
 				 @1.0.3.9@2014.01.23@artamir	[!] ”жесточились правила расчета фрактала.	
@@ -41,8 +44,11 @@ int session_id=0;
 double ZeroBalance=0;
 bool needEraseOE=false;
 
+int MOIS_count=0;
+int MOIS_type=-1;
+
 #define EXP	"eVVSS_StohCross"	
-#define VER	"1.0.3.11_2014.01.31"
+#define VER	"1.509.4.4_2014.02.06"
 
 extern	string	s1="==== MAIN ====="; //{
 extern	int SL=50;
@@ -55,6 +61,9 @@ extern	bool FIXProfit_use=false;	//«акрывать все ордера при достижении заданного
 extern	double FIXProfit_amount=500; //«начение фиксированного профита дл€ закрыти€ всех ордеров.
 extern bool		CMFB_use=false; //закрывать минусовые ордера из средств баланса.
 extern int		CMFB_pips=50; //закрывать ордера, ушедшие в минуз больше заданного значени€ (в пунктах)
+
+extern bool MOIS_use=false; //–азрешает советнику использовать максимальное количество ордеров в серии.
+extern int	MOIS_amount=50; //ћаксимальное количество ордеров в серии.
 
 extern int       KPeriod1    	 =  8;
 extern int       DPeriod1    	 =  3;
@@ -609,6 +618,9 @@ void Autoopen(){
 	
 	//Print(fn,"-> isNewBar()");
 	if(isNewBar()){ 
+		
+		if(!MOIS_check(op))return;
+		
 		ti=TR_SendMarket(op, GetLot());
 		
 		if(ti<=0){
@@ -622,7 +634,52 @@ void Autoopen(){
 		TR_ModifySL(ti,SL,TR_MODE_PIP);
 		OE_setFODByTicket(ti);
 		OE_setFOOTByTicket(ti, Time[BarsShift]);
+		
+		MOIS_main(op);
 	}
+}
+
+void MOIS_main(int ty){
+	/**
+		\version	0.0.0.1
+		\date		2014.02.06
+		\author		Morochin <artamir> Artiom
+		\details	”чет серии ордеров.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.02.06@artamir	[+]	MOIS_main
+			>Rev:0
+	*/
+
+	if(!MOIS_use) return;
+	
+	if(ty!=MOIS_type){
+		MOIS_count=1;
+		MOIS_type=ty;
+	}else{
+		MOIS_count++;
+	}
+	
+}
+
+bool MOIS_check(int op){
+	/**
+		\version	0.0.0.1
+		\date		2014.02.06
+		\author		Morochin <artamir> Artiom
+		\details	¬озвращае тру, если можно откывать ордер в заданном направлении.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.02.06@artamir	[+]	MOIS_check
+			>Rev:0
+	*/
+	if(!MOIS_use)return(true);
+	
+	if(MOIS_type!=op)return(true);
+	
+	if(MOIS_count<MOIS_amount)return(true);
+	
+	return(false);
 }
 
 bool Autoclose(){

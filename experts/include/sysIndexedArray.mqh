@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.2
+		\version	3.1.0.3
 		\date		2014.02.25
 		\author		Morochin <artamir> Artiom
 		\details	Работа с индексированным массивом.
 		\internal
-			>Hist:		
+			>Hist:			
+					 @3.1.0.3@2014.02.25@artamir	[+]	
 					 @3.1.0.2@2014.02.25@artamir	[+]	AI_Swap
 					 @3.1.0.1@2014.02.25@artamir	[+]	AI_setInterval
 			>Rev:0
@@ -27,6 +28,23 @@ void AId_Init2(double &a[][], int &aI[]){
 		aI[i]=i;
 	}
 }
+
+double AId_get2(double &a[][], int &aI[], int idx=0, int col=0){
+	/**
+		\version	0.0.0.1
+		\date		2014.02.25
+		\author		Morochin <artamir> Artiom
+		\details	Возвращает значение элемента исходного массива через индекс
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.02.25@artamir	[+]	
+			>Rev:0
+	*/
+
+	string fn="AId_get2";
+	return(a[aI[idx]][col]);
+}
+
 
 #define AI_WHOLEARRAY -256
 #define AI_EMPTY -1024

@@ -47,10 +47,9 @@ double AId_get2(double &a[][], int &aI[], int idx=0, int col=0){
 	return(a[aI[idx]][col]);
 }
 
-#define AI_EQ 0
-#define AI_GREAT 1
-#define AI_LESS
-
+#define AI_EQ		0
+#define AI_GREAT	1
+#define AI_LESS		2
 double AId_Compare(double v1, double v2){
 	/**
 		\version	0.0.0.1
@@ -72,8 +71,8 @@ double AId_Compare(double v1, double v2){
 
 }
 
-#define AI_WHOLEARRAY -256
-#define AI_EMPTY -1024
+#define AI_WHOLEARRAY	-256
+#define AI_EMPTY		-1024
 int AI_setInterval(int &aI[], int start_idx=0, int end_idx=-256){
 	/**
 		\version	0.0.0.1
@@ -133,6 +132,8 @@ int AI_Swap(int &aI, int i=0, int j=0){
 	aI[j]=t;
 }
 
+#define AI_ASC	0
+#define AI_DESC	1
 bool isNewQS=true;
 void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, int col=0, int mode=0){
 	/**
@@ -162,13 +163,14 @@ void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, in
 	int idx_pivot = MathRound((i+j)/2);
 	double pivot_value = (AId_get2(a,aI,i,col)+AId_get2(a,aI,j,col)+AId_get2(a,aI,idx_pivot,col))/3; //усредненное значение первого, последнего и среднего элемента массива. 
 	while(i<j){
-		if(mode == A_MODE_ASC){
-			while(AId_get2(a,aI,i,col)<pivot_value){i++;}
-			while(AId_get2(a,aI,j,col)>pivot_value){j--;}
+		double vi=AId_get2(a,aI,i,col),vj=AId_get2(a,aI,j,col);
+		if(mode == AI_ASC){
+			while(AId_Compare(vi,pivot_value)==AI_LESS ){i++;}
+			while(AId_Compare(vj,pivot_value)==AI_GREAT){j--;}
 		}
-		if(mode == A_MODE_DESC){
-			while(AId_get2(a,aI,i,col)>pivot_value){i++;}
-			while(AId_get2(a,aI,j,col)<pivot_value){j--;}
+		if(mode == AI_DESC){
+			while(AId_Compare(vi,pivot_value)==AI_GREAT){i++;}
+			while(AId_Compare(vj,pivot_value)==AI_LESS ){j--;}
 		}
 		if(i<j){
 			AId_Swap(aI, i,j);i++;j--;
@@ -179,8 +181,6 @@ void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, in
 	isNewQS=true;
 	isNewQS=false;
 	if(idx_min<j){AId_QuickSort2(a,aI,idx_min,j,col, mode);}
-	isNewQS=true;
-	
-	
+	isNewQS=true;	
 }
 

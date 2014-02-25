@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.4
+		\version	3.1.0.5
 		\date		2014.02.25
 		\author		Morochin <artamir> Artiom
 		\details	Работа с индексированным массивом.
 		\internal
-			>Hist:				
+			>Hist:					
+					 @3.1.0.5@2014.02.25@artamir	[+]	AId_Compare
 					 @3.1.0.4@2014.02.25@artamir	[+]	AId_QuickSort2
 					 @3.1.0.3@2014.02.25@artamir	[+]	AId_get2
 					 @3.1.0.2@2014.02.25@artamir	[+]	AI_Swap
@@ -46,6 +47,30 @@ double AId_get2(double &a[][], int &aI[], int idx=0, int col=0){
 	return(a[aI[idx]][col]);
 }
 
+#define AI_EQ 0
+#define AI_GREAT 1
+#define AI_LESS
+
+double AId_Compare(double v1, double v2){
+	/**
+		\version	0.0.0.1
+		\date		2014.02.25
+		\author		Morochin <artamir> Artiom
+		\details	Возвращает результат сравнения двух вещественных параметров.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.02.25@artamir	[+]	AId_Compare
+			>Rev:0
+	*/
+	
+	string fn="AId_Compare";
+	if(MathAbs(v1-v2)<=0.00001)return(AI+EQ);
+	
+	if(v1>v2)return(AI_GREAT);
+	
+	return(AI_LESS);
+
+}
 
 #define AI_WHOLEARRAY -256
 #define AI_EMPTY -1024

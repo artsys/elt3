@@ -1,11 +1,12 @@
 	/**
-		\version	3.1.0.3
+		\version	3.1.0.4
 		\date		2014.02.25
 		\author		Morochin <artamir> Artiom
 		\details	–абота с индексированным массивом.
 		\internal
-			>Hist:			
-					 @3.1.0.3@2014.02.25@artamir	[+]	
+			>Hist:				
+					 @3.1.0.4@2014.02.25@artamir	[+]	AId_QuickSort2
+					 @3.1.0.3@2014.02.25@artamir	[+]	AId_get2
 					 @3.1.0.2@2014.02.25@artamir	[+]	AI_Swap
 					 @3.1.0.1@2014.02.25@artamir	[+]	AI_setInterval
 			>Rev:0
@@ -107,5 +108,54 @@ int AI_Swap(int &aI, int i=0, int j=0){
 	aI[j]=t;
 }
 
-
+bool isNewQS=true;
+void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, int col=0, int mode=0){
+	/**
+		\version	0.0.0.1
+		\date		2014.02.25
+		\author		Morochin <artamir> Artiom
+		\details	јлгоритм сортировки "быстра€ сортировка". ѕо умолчанию сортируетс€ 0-€ колонка
+		по возрастанию.
+		\internal
+			>Hist:		
+					 @0.0.0.1@2014.02.25@artamir	[+]	AId_QuickSort2
+	*/
+	static int count;
+	if(isNewQS)count=0;
+	count++;
+	maxQScount=MathMax(maxQScount,count);
+	string fn="Ad_QuickSort2";
+	
+	if(ArrayRange(aI,0)<2){
+		return;
+	}
+	
+	if(idx_min<0){idx_min=0;}
+	if(idx_max<0){idx_max=ArrayRange(aI,0)-1;}
+	
+	int i=idx_min, j=idx_max;
+	int idx_pivot = MathRound((i+j)/2);
+	double pivot_value = (AId_get2(a,aI,i,col)+AId_get2(a,aI,j,col)+AId_get2(a,aI,idx_pivot,col))/3; //усредненное значение первого, последнего и среднего элемента массива. 
+	while(i<j){
+		if(mode == A_MODE_ASC){
+			while(AId_get2(a,aI,i,col)<pivot_value){i++;}
+			while(AId_get2(a,aI,j,col)>pivot_value){j--;}
+		}
+		if(mode == A_MODE_DESC){
+			while(AId_get2(a,aI,i,col)>pivot_value){i++;}
+			while(AId_get2(a,aI,j,col)<pivot_value){j--;}
+		}
+		if(i<j){
+			AId_Swap(aI, i,j);i++;j--;
+		}
+	}
+	isNewQS=false;
+	if(i<idx_max){AId_QuickSort2(a,aI,i,idx_max,col, mode);}
+	isNewQS=true;
+	isNewQS=false;
+	if(idx_min<j){AId_QuickSort2(a,aI,idx_min,j,col, mode);}
+	isNewQS=true;
+	
+	
+}
 

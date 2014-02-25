@@ -7,6 +7,7 @@
 			>Hist:	
 					 @3.1.0.1@2014.02.25@artamir	[+]	AI_setInterval
 			>Rev:0
+			$Revision$
 	*/
 	
 void AId_Init2(double &a[][], int &aI[]){

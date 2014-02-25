@@ -1,13 +1,13 @@
 	/**
-		\version	3.1.0.1
+		\version	3.1.0.2
 		\date		2014.02.25
 		\author		Morochin <artamir> Artiom
 		\details	Работа с индексированным массивом.
 		\internal
-			>Hist:	
+			>Hist:		
+					 @3.1.0.2@2014.02.25@artamir	[+]	AI_Swap
 					 @3.1.0.1@2014.02.25@artamir	[+]	AI_setInterval
 			>Rev:0
-			$Revision:$
 	*/
 	
 void AId_Init2(double &a[][], int &aI[]){
@@ -71,4 +71,23 @@ int AI_setInterval(int &aI[], int start_idx=0, int end_idx=-256){
 	ArrayCopy(aI,aT,0,0,WHOLE_ARRAY);
 	return(range);
 }
+
+int AI_Swap(int &aI, int i=0, int j=0){
+	/**
+		\version	0.0.0.1
+		\date		2014.02.25
+		\author		Morochin <artamir> Artiom
+		\details	Меняет местами два индекса
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.02.25@artamir	[+]	AI_Swap
+			>Rev:307
+	*/
+	string fn="AI_Swap";
+	int t=aI[i];
+	aI[i]=aI[j];
+	aI[j]=t;
+}
+
+
 

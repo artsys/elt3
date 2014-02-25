@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.5
-		\date		2014.02.25
+		\version	3.1.0.6
+		\date		2014.02.26
 		\author		Morochin <artamir> Artiom
 		\details	–абота с индексированным массивом.
 		\internal
-			>Hist:					
+			>Hist:						
+					 @3.1.0.6@2014.02.26@artamir	[+]	AId_QuickSearch2
 					 @3.1.0.5@2014.02.25@artamir	[+]	AId_Compare
 					 @3.1.0.4@2014.02.25@artamir	[+]	AId_QuickSort2
 					 @3.1.0.3@2014.02.25@artamir	[+]	AId_get2
@@ -184,3 +185,40 @@ void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, in
 	isNewQS=true;	
 }
 
+#define AI_NONE -2048
+int AId_QuickSearch2(double &a[][], int &aI[], int col=0, double element=0.0, int mode=AI_EQ){
+	/**
+		\version	0.0.0.1
+		\date		2014.02.26
+		\author		Morochin <artamir> Artiom
+		\details	Ѕыстрый поиск в отсортированном массиве.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.02.26@artamir	[+]	AId_QuickSearch2
+			>Rev:0
+	*/
+	string fn="AId_QuickSearch2";
+	int size=ArrayRange(aI,0);
+	
+	if(size<=0)return(AI_NONE);
+	
+	int l=0,r=size,m=l+(r-l)/2;
+	
+	if(mode==AI_EQ){
+		while(l<r){
+			int c=AId_Compare(AId_get2(a,aI,m,col), element);
+			if(c==AI_LESS){
+				r=m;
+			}else{
+				l=m+1;
+			}
+			m=l+(r-l)/2;
+		}
+		
+		c=AId_Compare(AId_get2(a,aI,r,col), element);
+		if(c==AI_EQ)return(r);
+		else return(AI_NONE);	
+	}
+	//------------------------------------------------
+	return(AI_NONE);
+}

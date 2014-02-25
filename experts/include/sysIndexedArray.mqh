@@ -70,3 +70,4 @@ int AI_setInterval(int &aI[], int start_idx=0, int end_idx=-256){
 	ArrayCopy(aI,aT,0,0,WHOLE_ARRAY);
 	return(range);
 }
+

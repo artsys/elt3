@@ -286,9 +286,11 @@ int AId_SearchFirst2(double &a[][], int &aI[], int col=0, double element=0.0){
 	if(found_index==AI_NONE)return(AI_NONE);
 	
 	int r=found_index;
-	while(AId_Compare(AId_get2(a,aI,r,col), element)==AI_EQ && r>0){
+	while(r>=0&&AId_Compare(AId_get2(a,aI,r,col), element)==AI_EQ){
 		r--;
 	}
+	
+	if(r<=-1)r=0;
 	
 	while(AId_Compare(AId_get2(a,aI,r,col), element)!=AI_EQ){
 		r++;
@@ -317,11 +319,13 @@ int AId_SearchLast2(double &a[][], int &aI[], int col=0, double element=0.0){
 	int size=ArrayRange(aI,0);
 	
 	int l=found_index;
-	while(AId_Compare(AId_get2(a,aI,r,col), element)==AI_EQ && l<size){
+	while(l<size&&AId_Compare(AId_get2(a,aI,l,col), element)==AI_EQ){
 		l++;
 	}
 	
-	while(AId_Compare(AId_get2(a,aI,r,col), element)!=AI_EQ && l>=0){
+	if(l>=size)l=size-1;
+	
+	while(l>=0&&AId_Compare(AId_get2(a,aI,l,col), element)!=AI_EQ){
 		l--;
 	}
 	

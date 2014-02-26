@@ -1,12 +1,13 @@
 	/**
-		\version	3.1.0.9
+		\version	3.1.0.10
 		\date		2014.02.26
 		\author		Morochin <artamir> Artiom
 		\details	Работа с индексированным массивом.
 		\internal
-			>Hist:									
-					 @3.1.0.9@2014.02.26@artamir	[]	AId_SearchFirst2
-					 @3.1.0.8@2014.02.26@artamir	[]	AId_QuickSearch2
+			>Hist:										
+					 @3.1.0.10@2014.02.26@artamir	[+]	AId_SearchLast2
+					 @3.1.0.9@2014.02.26@artamir	[+]	AId_SearchFirst2
+					 @3.1.0.8@2014.02.26@artamir	[*]	AId_QuickSearch2
 					 @3.1.0.7@2014.02.26@artamir	[*]	AId_QuickSearch2
 					 @3.1.0.6@2014.02.26@artamir	[+]	AId_QuickSearch2
 					 @3.1.0.5@2014.02.25@artamir	[+]	AId_Compare
@@ -267,7 +268,7 @@ int AId_QuickSearch2(double &a[][], int &aI[], int col=0, double element=0.0, in
 	return(AI_NONE);
 }
 
-int AId_SearchFirst2(double &a[][], int aI[], int col=0, double elevent=0.0){
+int AId_SearchFirst2(double &a[][], int &aI[], int col=0, double element=0.0){
 	/**
 		\version	0.0.0.1
 		\date		2014.02.26
@@ -289,5 +290,40 @@ int AId_SearchFirst2(double &a[][], int aI[], int col=0, double elevent=0.0){
 		r--;
 	}
 	
+	while(AId_Compare(AId_get2(a,aI,r,col), element)!=AI_EQ){
+		r++;
+	}
+	
 	return(r);
+}
+
+int AId_SearchLast2(double &a[][], int &aI[], int col=0, double element=0.0){
+	/**
+		\version	0.0.0.1
+		\date		2014.02.26
+		\author		Morochin <artamir> Artiom
+		\details	Поиск самого первого совпадения.
+		\internal
+			>Hist:		
+					 @0.0.0.1@2014.02.26@artamir	[]	AId_SearchLast2
+			>Rev:0
+	*/
+	
+	string fn="AId_SearchLast2";
+	
+	int found_index=AId_QuickSearch2(a,aI,col,element,AI_EQ);
+	if(found_index==AI_NONE)return(AI_NONE);
+	
+	int size=ArrayRange(aI,0);
+	
+	int l=found_index;
+	while(AId_Compare(AId_get2(a,aI,r,col), element)==AI_EQ && l<size){
+		l++;
+	}
+	
+	while(AId_Compare(AId_get2(a,aI,r,col), element)!=AI_EQ && l>=0){
+		l--;
+	}
+	
+	return(l);
 }

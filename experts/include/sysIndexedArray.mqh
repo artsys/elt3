@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.7
+		\version	3.1.0.8
 		\date		2014.02.26
 		\author		Morochin <artamir> Artiom
 		\details	Работа с индексированным массивом.
 		\internal
-			>Hist:							
+			>Hist:								
+					 @3.1.0.8@2014.02.26@artamir	[]	AId_QuickSearch2
 					 @3.1.0.7@2014.02.26@artamir	[*]	AId_QuickSearch2
 					 @3.1.0.6@2014.02.26@artamir	[+]	AId_QuickSearch2
 					 @3.1.0.5@2014.02.25@artamir	[+]	AId_Compare
@@ -51,7 +52,7 @@ double AId_get2(double &a[][], int &aI[], int idx=0, int col=0){
 
 #define AI_EQ		0
 #define AI_GREAT	1
-#define AI_LESS	2
+#define AI_LESS		2
 double AId_Compare(double v1, double v2){
 	/**
 		\version	0.0.0.1
@@ -189,12 +190,13 @@ void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, in
 #define AI_NONE -2048
 int AId_QuickSearch2(double &a[][], int &aI[], int col=0, double element=0.0, int mode=AI_EQ){
 	/**
-		\version	0.0.0.2
+		\version	0.0.0.3
 		\date		2014.02.26
 		\author		Morochin <artamir> Artiom
 		\details	Быстрый поиск в отсортированном массиве.
 		\internal
-			>Hist:		
+			>Hist:			
+					 @0.0.0.3@2014.02.26@artamir	[+]	Добавлен поиск любого меншего индекса.
 					 @0.0.0.2@2014.02.26@artamir	[+]	Добавлен поиск любого большего индекса.
 					 @0.0.0.1@2014.02.26@artamir	[+]	AId_QuickSearch2
 			>Rev:0
@@ -235,6 +237,23 @@ int AId_QuickSearch2(double &a[][], int &aI[], int col=0, double element=0.0, in
 				l=m;
 			}else{
 				l=m+1;   
+			}
+			m=l+(r-l)/2;
+		}
+		
+		int c=AId_Compare(AId_get2(a,aI,r,col), element);
+		if(c==AI_GREAT)return(r);
+		else return(AI_NONE);	
+	}
+	
+	if(mode==AI_LESS){
+		while(l<r){
+			int c=AId_Compare(AId_get2(a,aI,m,col), element);
+			if(c==AI_LESS){
+				r=m;
+				l=m;
+			}else{
+				r=m;   
 			}
 			m=l+(r-l)/2;
 		}

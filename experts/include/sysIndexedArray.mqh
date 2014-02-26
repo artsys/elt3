@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.11
+		\version	3.1.0.12
 		\date		2014.02.26
 		\author		Morochin <artamir> Artiom
 		\details	Работа с индексированным массивом.
 		\internal
-			>Hist:											
+			>Hist:												
+					 @3.1.0.12@2014.02.26@artamir	[+]	AId_SearchLess2
 					 @3.1.0.11@2014.02.26@artamir	[+]	AId_SearchGreat2
 					 @3.1.0.10@2014.02.26@artamir	[+]	AId_SearchLast2
 					 @3.1.0.9@2014.02.26@artamir	[+]	AId_SearchFirst2
@@ -362,4 +363,37 @@ int AId_SearchGreat2(double &a[][], int &aI[], int col=0, double element=0.0){
 	}
 	
 	return(r);
+}
+
+int AId_SearchLess2(double &a[][], int &aI[], int col=0, double element=0.0){
+	/**
+		\version	0.0.0.1
+		\date		2014.02.26
+		\author		Morochin <artamir> Artiom
+		\details	Поиск самого первого совпадения.
+		\internal
+			>Hist:			
+					 @0.0.0.1@2014.02.26@artamir	[+]	AId_SearchLess2
+			>Rev:0
+	*/
+	
+	string fn="AId_SearchLess2";
+	
+	int found_index=AId_QuickSearch2(a,aI,col,element,AI_LESS);
+	if(found_index==AI_NONE)return(AI_NONE);
+	
+	int size=ArrayRange(aI,0);
+	
+	int l=found_index;
+	while(l<size&&AId_Compare(AId_get2(a,aI,l,col), element)==AI_LESS){
+		l++;
+	}
+	
+	if(l>=size)l=size-1;
+	
+	while(l>=0&&AId_Compare(AId_get2(a,aI,l,col), element)!=AI_LESS){
+		l--;
+	}
+	
+	return(l);
 }

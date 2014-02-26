@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.6
+		\version	3.1.0.7
 		\date		2014.02.26
 		\author		Morochin <artamir> Artiom
 		\details	–абота с индексированным массивом.
 		\internal
-			>Hist:						
+			>Hist:							
+					 @3.1.0.7@2014.02.26@artamir	[*]	AId_QuickSearch2
 					 @3.1.0.6@2014.02.26@artamir	[+]	AId_QuickSearch2
 					 @3.1.0.5@2014.02.25@artamir	[+]	AId_Compare
 					 @3.1.0.4@2014.02.25@artamir	[+]	AId_QuickSort2
@@ -50,7 +51,7 @@ double AId_get2(double &a[][], int &aI[], int idx=0, int col=0){
 
 #define AI_EQ		0
 #define AI_GREAT	1
-#define AI_LESS		2
+#define AI_LESS	2
 double AId_Compare(double v1, double v2){
 	/**
 		\version	0.0.0.1
@@ -64,7 +65,7 @@ double AId_Compare(double v1, double v2){
 	*/
 	
 	string fn="AId_Compare";
-	if(MathAbs(v1-v2)<=0.00001)return(AI+EQ);
+	if(MathAbs(v1-v2)<=0.00001)return(AI_EQ);
 	
 	if(v1>v2)return(AI_GREAT);
 	
@@ -116,7 +117,7 @@ int AI_setInterval(int &aI[], int start_idx=0, int end_idx=-256){
 	return(range);
 }
 
-int AI_Swap(int &aI, int i=0, int j=0){
+void AI_Swap(int &aI[], int i=0, int j=0){
 	/**
 		\version	0.0.0.1
 		\date		2014.02.25
@@ -135,7 +136,7 @@ int AI_Swap(int &aI, int i=0, int j=0){
 
 #define AI_ASC	0
 #define AI_DESC	1
-bool isNewQS=true;
+bool isNewQS=true; int maxQScount=0;
 void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, int col=0, int mode=0){
 	/**
 		\version	0.0.0.1
@@ -174,7 +175,7 @@ void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, in
 			while(AId_Compare(vj,pivot_value)==AI_LESS ){j--;}
 		}
 		if(i<j){
-			AId_Swap(aI, i,j);i++;j--;
+			AI_Swap(aI, i,j);i++;j--;
 		}
 	}
 	isNewQS=false;
@@ -188,12 +189,13 @@ void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, in
 #define AI_NONE -2048
 int AId_QuickSearch2(double &a[][], int &aI[], int col=0, double element=0.0, int mode=AI_EQ){
 	/**
-		\version	0.0.0.1
+		\version	0.0.0.2
 		\date		2014.02.26
 		\author		Morochin <artamir> Artiom
 		\details	Ѕыстрый поиск в отсортированном массиве.
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2014.02.26@artamir	[+]	ƒобавлен поиск любого большего индекса.
 					 @0.0.0.1@2014.02.26@artamir	[+]	AId_QuickSearch2
 			>Rev:0
 	*/
@@ -202,21 +204,43 @@ int AId_QuickSearch2(double &a[][], int &aI[], int col=0, double element=0.0, in
 	
 	if(size<=0)return(AI_NONE);
 	
-	int l=0,r=size,m=l+(r-l)/2;
+	int l=0,r=size-1,m=l+(r-l)/2;
 	
 	if(mode==AI_EQ){
 		while(l<r){
 			int c=AId_Compare(AId_get2(a,aI,m,col), element);
-			if(c==AI_LESS){
+			if(c==AI_GREAT){
 				r=m;
 			}else{
-				l=m+1;
+			   if(c==AI_LESS){
+					l=m+1;
+				}else{
+					l=m;
+					r=m;
+				}   
 			}
 			m=l+(r-l)/2;
 		}
 		
-		c=AId_Compare(AId_get2(a,aI,r,col), element);
+		int c=AId_Compare(AId_get2(a,aI,r,col), element);
 		if(c==AI_EQ)return(r);
+		else return(AI_NONE);	
+	}
+	
+	if(mode==AI_GREAT){
+		while(l<r){
+			int c=AId_Compare(AId_get2(a,aI,m,col), element);
+			if(c==AI_GREAT){
+				r=m;
+				l=m;
+			}else{
+				l=m+1;   
+			}
+			m=l+(r-l)/2;
+		}
+		
+		int c=AId_Compare(AId_get2(a,aI,r,col), element);
+		if(c==AI_GREAT)return(r);
 		else return(AI_NONE);	
 	}
 	//------------------------------------------------

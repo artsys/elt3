@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.8
+		\version	3.1.0.9
 		\date		2014.02.26
 		\author		Morochin <artamir> Artiom
 		\details	Работа с индексированным массивом.
 		\internal
-			>Hist:								
+			>Hist:									
+					 @3.1.0.9@2014.02.26@artamir	[]	AId_SearchFirst2
 					 @3.1.0.8@2014.02.26@artamir	[]	AId_QuickSearch2
 					 @3.1.0.7@2014.02.26@artamir	[*]	AId_QuickSearch2
 					 @3.1.0.6@2014.02.26@artamir	[+]	AId_QuickSearch2
@@ -259,9 +260,34 @@ int AId_QuickSearch2(double &a[][], int &aI[], int col=0, double element=0.0, in
 		}
 		
 		int c=AId_Compare(AId_get2(a,aI,r,col), element);
-		if(c==AI_GREAT)return(r);
+		if(c==AI_LESS)return(r);
 		else return(AI_NONE);	
 	}
 	//------------------------------------------------
 	return(AI_NONE);
+}
+
+int AId_SearchFirst2(double &a[][], int aI[], int col=0, double elevent=0.0){
+	/**
+		\version	0.0.0.1
+		\date		2014.02.26
+		\author		Morochin <artamir> Artiom
+		\details	Поиск самого первого совпадения.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.02.26@artamir	[]	AId_SearchFirst2
+			>Rev:0
+	*/
+	
+	string fn="AId_SearchFirst2";
+	
+	int found_index=AId_QuickSearch2(a,aI,col,element,AI_EQ);
+	if(found_index==AI_NONE)return(AI_NONE);
+	
+	int r=found_index;
+	while(AId_Compare(AId_get2(a,aI,r,col), element)==AI_EQ && r>0){
+		r--;
+	}
+	
+	return(r);
 }

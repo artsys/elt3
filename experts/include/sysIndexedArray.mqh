@@ -85,7 +85,8 @@ double AId_Compare(double v1, double v2){
 }
 
 #define AI_WHOLEARRAY	-256
-#define AI_EMPTY		-1024
+#define AI_EMPTY		   -1024
+#define AI_NONE         -2048
 int AI_setInterval(int &aI[], int start_idx=0, int end_idx=-256){
 	/**
 		\version	0.0.0.1
@@ -107,7 +108,7 @@ int AI_setInterval(int &aI[], int start_idx=0, int end_idx=-256){
 		return(0);	//массив индексов обнуляется
 	}
 	
-	int s=0,e=0,t=0;
+	int s=start_idx,e=end_idx,t=0;
 	if(start_idx==AI_WHOLEARRAY){
 		return(ArrayRange(aI,0)); //массив индексов не изменяется. 
 	}
@@ -148,16 +149,17 @@ void AI_Swap(int &aI[], int i=0, int j=0){
 #define AI_ASC	0
 #define AI_DESC	1
 bool isNewQS=true; int maxQScount=0;
-void AId_QuickSort2(double &a[][], int &aI[], int col=0, int idx_min=-1, int idx_max=-1, int mode=0){
+void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, int col=0, int mode=0){
 	/**
 		\version	0.0.0.1
-		\date		2014.02.25
+		\date		2013.08.29
 		\author		Morochin <artamir> Artiom
 		\details	Алгоритм сортировки "быстрая сортировка". По умолчанию сортируется 0-я колонка
 		по возрастанию.
 		\internal
-			>Hist:		
-					 @0.0.0.1@2014.02.25@artamir	[+]	AId_QuickSort2
+			>Hist:	
+					 @0.0.0.1@2013.08.29@artamir	[+]	
+			>Rev:0
 	*/
 	static int count;
 	if(isNewQS)count=0;
@@ -166,6 +168,14 @@ void AId_QuickSort2(double &a[][], int &aI[], int col=0, int idx_min=-1, int idx
 	string fn="Ad_QuickSort2";
 	
 	if(ArrayRange(aI,0)<2){
+		// string	order="";
+				// order=order+col+" ";
+				// if(mode==A_MODE_ASC)
+					// order=order+">;";
+				// else
+					// order=order+"<;";
+		// AId_SortShell2(a, aI, order);
+		
 		return;
 	}
 	
@@ -174,16 +184,15 @@ void AId_QuickSort2(double &a[][], int &aI[], int col=0, int idx_min=-1, int idx
 	
 	int i=idx_min, j=idx_max;
 	int idx_pivot = MathRound((i+j)/2);
-	double pivot_value = (AId_get2(a,aI,i,col)+AId_get2(a,aI,j,col)+AId_get2(a,aI,idx_pivot,col))/3; //усредненное значение первого, последнего и среднего элемента массива. 
+	double pivot_value = (a[aI[i]][col]+a[aI[j]][col]+a[aI[idx_pivot]][col])/3; //усредненное значение первого, последнего и среднего элемента массива. 
 	while(i<j){
-		double vi=AId_get2(a,aI,i,col),vj=AId_get2(a,aI,j,col);
 		if(mode == AI_ASC){
-			while(AId_Compare(vi,pivot_value)==AI_LESS ){i++;}
-			while(AId_Compare(vj,pivot_value)==AI_GREAT){j--;}
+			while(a[aI[i]][col]<pivot_value){i++;}
+			while(a[aI[j]][col]>pivot_value){j--;}
 		}
 		if(mode == AI_DESC){
-			while(AId_Compare(vi,pivot_value)==AI_GREAT){i++;}
-			while(AId_Compare(vj,pivot_value)==AI_LESS ){j--;}
+			while(a[aI[i]][col]>pivot_value){i++;}
+			while(a[aI[j]][col]<pivot_value){j--;}
 		}
 		if(i<j){
 			AI_Swap(aI, i,j);i++;j--;
@@ -194,10 +203,9 @@ void AId_QuickSort2(double &a[][], int &aI[], int col=0, int idx_min=-1, int idx
 	isNewQS=true;
 	isNewQS=false;
 	if(idx_min<j){AId_QuickSort2(a,aI,idx_min,j,col, mode);}
-	isNewQS=true;	
+	isNewQS=true;
 }
 
-#define AI_NONE -2048
 int AId_QuickSearch2(double &a[][], int &aI[], int col=0, double element=0.0, int mode=AI_EQ){
 	/**
 		\version	0.0.0.3
@@ -442,13 +450,14 @@ int AIF_addRow(void){
 	int t=ArrayRange(AIF_filter,0);
 	t++;
 	ArrayResize(AIF_filter,t);
-	return(t--);
+	t--;
+	return(t);
 }
 
 #define AI_AND	0
 #define AI_OR	1 //Пока не используется
 
-void AIF_filterAdd(int col, int aop=AI_EQ, double min, double max, int sop=AI_AND){
+void AIF_filterAdd(int col, int aop=AI_EQ, double min=0, double max=0, int sop=AI_AND){
 	/**
 		\version	0.0.0.1
 		\date		2014.02.28
@@ -470,7 +479,7 @@ void AIF_filterAdd(int col, int aop=AI_EQ, double min, double max, int sop=AI_AN
 	AIF_filter[row][AIF_SOP]=sop;
 }
 
-void AIF_filterAdd_AND(int col, int aop=AI_EQ, double min, double max){
+void AIF_filterAdd_AND(int col, int aop=AI_EQ, double min=0, double max=0){
 	/**
 		\version	0.0.0.1
 		\date		2014.02.28
@@ -565,7 +574,7 @@ void AId_Print2(double &a[][], int &aI[], int d = 4, string fn = "AId_PrintArray
 	for(int idx_1 = 0; idx_1 < ROWS; idx_1++){
 		string s = "";
 		for(int idx_2 = 0; idx_2 < COLS; idx_2++){
-			s = StringConcatenate(s,"\t", "["+idx_1+","+aI[idx_1]+"]["+idx_2+","+OE2Str(idx_2)+"]",DoubleToStr(a[aI[idx_1]][idx_2], d));
+			s = StringConcatenate(s,"\t", "["+idx_1+","+aI[idx_1]+"]["+idx_2+"]",DoubleToStr(a[aI[idx_1]][idx_2], d));
 		}
 		FileWrite(handle, s);
 	}

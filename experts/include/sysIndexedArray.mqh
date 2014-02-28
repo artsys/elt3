@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.17
+		\version	3.1.0.18
 		\date		2014.02.28
 		\author		Morochin <artamir> Artiom
 		\details	Работа с индексированным массивом.
 		\internal
-			>Hist:																	
+			>Hist:																		
+					 @3.1.0.18@2014.02.28@artamir	[+]	AId_Print2
 					 @3.1.0.17@2014.02.28@artamir	[+]	AId_Select2
 					 @3.1.0.16@2014.02.28@artamir	[+]	AIF_filterAdd_AND
 					 @3.1.0.15@2014.02.28@artamir	[+]	AIF_filterAdd
@@ -534,4 +535,41 @@ void AId_Select2(double &a[][], int &aI[]){
 	
 		AI_setInterval(aI,first,last);
 	}
+}
+
+void AId_Print2(double &a[][], int &aI[], int d = 4, string fn = "AId_PrintArray_"){
+	/**
+		\version	0.0.0.1
+		\date		2014.02.28
+		\author		Morochin <artamir> Artiom
+		\details	Печать в файл двумерного массива согласно индексам.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.02.28@artamir	[+]	AId_Print2
+			>Rev:0
+	*/
+
+
+	static int	i;
+	
+	i++;
+	//------------------------------------------------------
+	int ROWS = ArrayRange(aI, 0);
+	int COLS = ArrayRange(a,1);
+	
+	//------------------------------------------------------
+	fn = i+"_"+fn+".iar";
+	
+	//------------------------------------------------------
+	int handle = FileOpen(fn, FILE_CSV|FILE_WRITE, "\t");
+	for(int idx_1 = 0; idx_1 < ROWS; idx_1++){
+		string s = "";
+		for(int idx_2 = 0; idx_2 < COLS; idx_2++){
+			s = StringConcatenate(s,"\t", "["+idx_1+","+aI[idx_1]+"]["+idx_2+","+OE2Str(idx_2)+"]",DoubleToStr(a[aI[idx_1]][idx_2], d));
+		}
+		FileWrite(handle, s);
+	}
+	
+	if(handle != 0) FileClose(handle);
+	
 }

@@ -1,10 +1,15 @@
 	/**
-		\version	3.1.0.12
-		\date		2014.02.26
+		\version	3.1.0.17
+		\date		2014.02.28
 		\author		Morochin <artamir> Artiom
 		\details	Работа с индексированным массивом.
 		\internal
-			>Hist:												
+			>Hist:																	
+					 @3.1.0.17@2014.02.28@artamir	[+]	AId_Select2
+					 @3.1.0.16@2014.02.28@artamir	[+]	AIF_filterAdd_AND
+					 @3.1.0.15@2014.02.28@artamir	[+]	AIF_filterAdd
+					 @3.1.0.14@2014.02.28@artamir	[+]	AIF_AddRow
+					 @3.1.0.13@2014.02.28@artamir	[+]	AIF_init
 					 @3.1.0.12@2014.02.26@artamir	[+]	AId_SearchLess2
 					 @3.1.0.11@2014.02.26@artamir	[+]	AId_SearchGreat2
 					 @3.1.0.10@2014.02.26@artamir	[+]	AId_SearchLast2
@@ -96,7 +101,7 @@ int AI_setInterval(int &aI[], int start_idx=0, int end_idx=-256){
 	int aT[];
 	ArrayResize(aT,0);
 	
-	if(start_idx==AI_EMPTY || end_idx==AI_EMPTY){
+	if((start_idx==AI_EMPTY || start_idx==AI_NONE) || (end_idx==AI_EMPTY || end_idx==AI_NONE)){
 		ArrayResize(aI,0);
 		return(0);	//массив индексов обнуляется
 	}
@@ -142,7 +147,7 @@ void AI_Swap(int &aI[], int i=0, int j=0){
 #define AI_ASC	0
 #define AI_DESC	1
 bool isNewQS=true; int maxQScount=0;
-void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, int col=0, int mode=0){
+void AId_QuickSort2(double &a[][], int &aI[], int col=0, int idx_min=-1, int idx_max=-1, int mode=0){
 	/**
 		\version	0.0.0.1
 		\date		2014.02.25
@@ -396,4 +401,137 @@ int AId_SearchLess2(double &a[][], int &aI[], int col=0, double element=0.0){
 	}
 	
 	return(l);
+}
+
+#define AIF_COL	0	//Индекс колонки по которой будет происходить отбор.
+#define AIF_MIN 1	//Возможное минимальное значение элемента массива
+#define AIF_MAX 2	//Возможное максимальное значение элемента массива.
+#define AIF_AOP	3	//Операция сравнения.
+#define AIF_SOP 4	//Операция соединения строк массива-фильтров
+#define AIF_TOT 5
+double AIF_filter[][AIF_TOT];	//Массив-фильтр для отбора по заданным значениям.
+
+void AIF_init(void){
+	/**
+		\version	0.0.0.1
+		\date		2014.02.28
+		\author		Morochin <artamir> Artiom
+		\details	Очищение массива-фильтров.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.02.28@artamir	[+]	AIF_init
+			>Rev:0
+	*/
+	ArrayResize(AIF_filter,0);
+}
+
+int AIF_addRow(void){
+	/**
+		\version	0.0.0.1
+		\date		2014.02.28
+		\author		Morochin <artamir> Artiom
+		\details	Добавление новой строки к массиву-фильтру. Изменение размерности массива-фильтров. Возвращает индекс созданной строки.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.02.28@artamir	[+]	AIF_AddRow
+			>Rev:0
+	*/
+
+	string fn="AIF_addRow";
+	int t=ArrayRange(AIF_filter,0);
+	t++;
+	ArrayResize(AIF_filter,t);
+	return(t--);
+}
+
+#define AI_AND	0
+#define AI_OR	1 //Пока не используется
+
+void AIF_filterAdd(int col, int aop=AI_EQ, double min, double max, int sop=AI_AND){
+	/**
+		\version	0.0.0.1
+		\date		2014.02.28
+		\author		Morochin <artamir> Artiom
+		\details	Добавляет в массив-фильтров новую строку с переданными параметрами.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.02.28@artamir	[+]	AIF_filterAdd
+			>Rev:0
+	*/
+	
+	string fn="AIF_filterAdd";
+	
+	int row=AIF_addRow();
+	AIF_filter[row][AIF_COL]=col;
+	AIF_filter[row][AIF_MIN]=min;
+	AIF_filter[row][AIF_MAX]=max;
+	AIF_filter[row][AIF_AOP]=aop;
+	AIF_filter[row][AIF_SOP]=sop;
+}
+
+void AIF_filterAdd_AND(int col, int aop=AI_EQ, double min, double max){
+	/**
+		\version	0.0.0.1
+		\date		2014.02.28
+		\author		Morochin <artamir> Artiom
+		\details	Добавляет к массиву фильтров строку с соединением AND
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.02.28@artamir	[+]	AIF_filterAdd_AND
+			>Rev:0
+	*/
+	string fn="AIF_filterAdd_AND";
+	AIF_filterAdd(col, aop, min, max, AI_AND);
+}
+
+void AId_Select2(double &a[][], int &aI[]){
+	/**
+		\version	0.0.0.1
+		\date		2014.02.28
+		\author		Morochin <artamir> Artiom
+		\details	Выборка из двумерного массива по заданному массив-фильтров. После выполнения остается отобранный массив индексов.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.02.28@artamir	[+]	AId_Select2
+			>Rev:0
+	*/
+	
+	string fn="AId_Select2";
+	int filter_rows=ArrayRange(AIF_filter,0);
+	
+	if(filter_rows<=0){
+		return; //Если массив-фильтров не задан, то выходим из процедуры.
+	}	
+	
+	for(int filter_idx=0; filter_idx<filter_rows; filter_idx++){
+		int		f_col=AIF_filter[filter_idx][AIF_COL];
+		int		f_aop=AIF_filter[filter_idx][AIF_AOP];
+		double	f_min=AIF_filter[filter_idx][AIF_MIN];
+		double	f_max=AIF_filter[filter_idx][AIF_MAX];
+		
+		//----------------------------------------------
+		//Далее отсортируем по возрастанию значение 
+		//колонки f_col
+		
+		AId_QuickSort2(a, aI, f_col);
+		
+		int first=AI_NONE, last=AI_NONE;
+		
+		if(f_aop==AI_EQ){
+			first=AId_SearchFirst2(a, aI, f_col, f_min);
+			last=AId_SearchLast2(a, aI, f_col, f_min);
+		}
+		
+		if(f_aop==AI_GREAT){
+			first=AId_SearchGreat2(a,aI,f_col,f_min);
+			last=AI_WHOLEARRAY;
+		}
+		
+		if(f_aop==AI_LESS){
+			first=0;
+			last=AId_SearchLess2(a,aI,f_col,f_min);
+		}
+	
+		AI_setInterval(aI,first,last);
+	}
 }

@@ -168,14 +168,6 @@ void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, in
 	string fn="Ad_QuickSort2";
 	
 	if(ArrayRange(aI,0)<2){
-		// string	order="";
-				// order=order+col+" ";
-				// if(mode==A_MODE_ASC)
-					// order=order+">;";
-				// else
-					// order=order+"<;";
-		// AId_SortShell2(a, aI, order);
-		
 		return;
 	}
 	

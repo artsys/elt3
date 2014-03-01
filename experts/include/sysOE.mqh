@@ -1,10 +1,13 @@
 	/**
-		\version	0.0.0.1
+		\version	3.1.0.4
 		\date		2014.03.01
 		\author		Morochin <artamir> Artiom
 		\details	Расширенная информация об ордерах.
 		\internal
-			>Hist:	
+			>Hist:				
+					 @0.0.0.4@2014.03.01@artamir	[+]	OE_addRow
+					 @0.0.0.3@2014.03.01@artamir	[+]	OE_setPBT
+					 @0.0.0.2@2014.03.01@artamir	[+]	OE_FIBT
 					 @0.0.0.1@2014.03.01@artamir	[+]	OE_init
 			>Rev:0
 	*/
@@ -53,5 +56,58 @@ void OE_init(void){
 	ArrayRange(aOE,0);
 }
 
+int OE_addRow(int ti){
+	/**
+		\version	0.0.0.1
+		\date		2014.03.01
+		\author		Morochin <artamir> Artiom
+		\details	Добавляет новую строку к массиву ордеров и устанавливает значение свойства тикет.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.03.01@artamir	[+]	OE_addRow
+			>Rev:0
+	*/
+	string fn="OE_addRow";
+	int t=ArrayRange(aOE);t++;
+	ArrayResize(aOE,t);t--;
+	return(t);
+}
 
-	
+int OE_FIBT(int ti){
+	/**
+		\version	0.0.0.1
+		\date		2014.03.01
+		\author		Morochin <artamir> Artiom
+		\details	Поиск индекса элемента с заданным значением 
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.03.01@artamir	[+]	OE_FIBT
+			>Rev:0
+	*/
+	string fn="OE_FIBT";
+	int aI[];
+	ArrayResize(aI,0);
+	AId_init2(aOE,aI);
+	int idx=AId_SearchFirst2(aOE,aI,OE_TI,ti);
+	if(idx==AI_NONE){
+		idx=OE_addRow(ti);
+	}
+	return(idx);
+}
+
+int OE_setPBT(int ti, int prop, double val){
+	/**
+		\version	0.0.0.1
+		\date		2014.03.01
+		\author		Morochin <artamir> Artiom
+		\details	Установка значения заданного свойства по тикету ордера.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.03.01@artamir	[+]	OE_setPBT
+			>Rev:0
+	*/
+	string fn="OE_setPBT";
+	int idx=OE_FIBT(ti);
+	aOE[idx][prop]=val;
+	return(idx);
+}	

@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.4
+		\version	3.1.0.5
 		\date		2014.03.01
 		\author		Morochin <artamir> Artiom
 		\details	Расширенная информация об ордерах.
 		\internal
-			>Hist:				
+			>Hist:					
+					 @3.1.0.5@2014.03.01@artamir	[+]	OE_setPBI
 					 @0.0.0.4@2014.03.01@artamir	[+]	OE_addRow
 					 @0.0.0.3@2014.03.01@artamir	[+]	OE_setPBT
 					 @0.0.0.2@2014.03.01@artamir	[+]	OE_FIBT
@@ -111,3 +112,31 @@ int OE_setPBT(int ti, int prop, double val){
 	aOE[idx][prop]=val;
 	return(idx);
 }	
+
+int OE_setPBI(int idx, int prop, double val){
+	/**
+		\version	0.0.0.1
+		\date		2014.03.01
+		\author		Morochin <artamir> Artiom
+		\details	Устанавливает значение заданного свойства по переданному индексу строки.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.03.01@artamir	[+]	OE_setPBI
+			>Rev:0
+	*/
+	aOE[idxx][prop]=val;
+}
+
+void OE_setSTD(int ti){
+	/**
+		\version	0.0.0.0
+		\date		2014.03.01
+		\author		Morochin <artamir> Artiom
+		\details	Рассчитывает и устанавливает стандартные данные по ордеру.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+	string fn="OE_setSTD";
+	int idx=OE_FIBT(ti);
+}

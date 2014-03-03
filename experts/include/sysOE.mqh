@@ -35,7 +35,7 @@
 #define	OE_CTY		16	//Closed by sl/tp/from market (1,2,3);
 #define OE_CP2SL	17	//–азность между ценой закрыти€ и сл в пунктах
 #define OE_CP2TP	18	//–азность между ценой закрыти€ и тп в пунктах
-#define OE_CP2OP	19	//–азность между ценой закрыти€ и ценой открыти€ в пунктах }
+#define OE_CP2OOP	19	//–азность между ценой закрыти€ и ценой открыти€ в пунктах }
 #define OE_MAX		20
 
 double	aOE[][OE_MAX];
@@ -67,7 +67,7 @@ int OE_addRow(int ti){
 			>Rev:0
 	*/
 	string fn="OE_addRow";
-	int t=ArrayRange(aOE);t++;
+	int t=ArrayRange(aOE,0);t++;
 	ArrayResize(aOE,t);t--;
 	return(t);
 }
@@ -86,7 +86,7 @@ int OE_FIBT(int ti){
 	string fn="OE_FIBT";
 	int aI[];
 	ArrayResize(aI,0);
-	AId_init2(aOE,aI);
+	AId_Init2(aOE,aI);
 	int idx=AId_SearchFirst2(aOE,aI,OE_TI,ti);
 	if(idx==AI_NONE){
 		idx=OE_addRow(ti);
@@ -113,7 +113,7 @@ int OE_setPBT(int ti, int prop, double val){
 	return(idx);
 }	
 
-int OE_setPBI(int idx, int prop, double val){
+void OE_setPBI(int idx, int prop, double val){
 	/**
 		\version	0.0.0.1
 		\date		2014.03.01
@@ -124,7 +124,7 @@ int OE_setPBI(int idx, int prop, double val){
 					 @0.0.0.1@2014.03.01@artamir	[+]	OE_setPBI
 			>Rev:0
 	*/
-	aOE[idxx][prop]=val;
+	aOE[idx][prop]=val;
 }
 
 void OE_setSTD(int ti){
@@ -176,6 +176,15 @@ void OE_setSTD(int ti){
 	}
 
 	aOE[idx][OE_CP2OOP]	=	MathAbs((OrderClosePrice()-OrderOpenPrice())/Point);
-	aOE[idx][OE_CP2SL]	=	MathAbs((OrderClosePrice()-OrderStopLoss())/Point);
-	aOE[idx][OE_CP2TP]	=	MathAbs((OrderClosePrice()-OrderTakeProfit())/Point);
+	if(OrderStopLoss()>0){
+		aOE[idx][OE_CP2SL]	=	MathAbs((OrderClosePrice()-OrderStopLoss())/Point);
+	}else{
+		aOE[idx][OE_CP2SL]	=	0;
+	}	
+	
+	if(OrderTakeProfit()>0){
+		aOE[idx][OE_CP2TP]	=	MathAbs((OrderClosePrice()-OrderTakeProfit())/Point);
+	}else{
+		aOE[idx][OE_CP2TP]	=	0;
+	}
 }

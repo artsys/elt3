@@ -566,7 +566,7 @@ void AId_Print2(double &a[][], int &aI[], int d = 4, string fn = "AId_PrintArray
 	for(int idx_1 = 0; idx_1 < ROWS; idx_1++){
 		string s = "";
 		for(int idx_2 = 0; idx_2 < COLS; idx_2++){
-			s = StringConcatenate(s,"\t", "["+idx_1+","+aI[idx_1]+"]["+idx_2+"]",DoubleToStr(a[aI[idx_1]][idx_2], d));
+			s = StringConcatenate(s,"\t", "[aI["+idx_1+"],"+aI[idx_1]+"]["+idx_2+"]",DoubleToStr(a[aI[idx_1]][idx_2], d));
 		}
 		FileWrite(handle, s);
 	}

@@ -79,7 +79,7 @@ int AId_AddRow2(double &a[][]){
 	return(t);
 }
 
-int AId_CopyRow2(double &s[][], int &aI[], double d[][], int i=0){
+int AId_CopyRow2(double &s[][], double d[][], int i=0){
 	/**
 		\version	0.0.0.1
 		\date		2014.03.03
@@ -95,7 +95,7 @@ int AId_CopyRow2(double &s[][], int &aI[], double d[][], int i=0){
 	int idx=AId_AddRow2(d);
 	int cols=ArrayRange(s,1);
 	for(int c=0;c<cols;c++){
-		d[idx][c]=AId_get2(s,aI,i,c);
+		d[idx][c]=s[i][c];
 	}
 	
 	return(idx);

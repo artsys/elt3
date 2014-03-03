@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.5
-		\date		2014.03.01
+		\version	3.1.0.6
+		\date		2014.03.03
 		\author		Morochin <artamir> Artiom
 		\details	Расширенная информация об ордерах.
 		\internal
-			>Hist:					
+			>Hist:						
+					 @3.1.0.6@2014.03.03@artamir	[!]	OE_init
 					 @3.1.0.5@2014.03.01@artamir	[+]	OE_setPBI
 					 @0.0.0.4@2014.03.01@artamir	[+]	OE_addRow
 					 @0.0.0.3@2014.03.01@artamir	[+]	OE_setPBT
@@ -42,17 +43,18 @@ double	aOE[][OE_MAX];
 
 void OE_init(void){
 	/**
-		\version	0.0.0.1
-		\date		2014.03.01
+		\version	0.0.0.2
+		\date		2014.03.03
 		\author		Morochin <artamir> Artiom
 		\details	Инициализация массива ордеров.
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2014.03.03@artamir	[!]	Исправлена критическая ошибка.
 					 @0.0.0.1@2014.03.01@artamir	[+]	OE_init
 			>Rev:0
 	*/
 	string fn="OE_init";
-	ArrayRange(aOE,0);
+	ArrayResize(aOE,0);
 }
 
 int OE_addRow(int ti){

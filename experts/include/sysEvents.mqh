@@ -13,6 +13,11 @@
 double 	aEC[][OE_MAX];
 double	aEO[][OE_MAX];
 
+#define E_TI	0
+#define E_EVT	1
+#define	E_MAX	2
+double	aE[][E_MAX];
+
 void E_Init(void){
 	/**
 		\version	0.0.0.1
@@ -26,6 +31,7 @@ void E_Init(void){
 	*/
 	ArrayResize(aEC,0);
 	ArrayResize(aEO,0);
+	ArrayResize(aE,0);
 }
 
 void E_Start(void){
@@ -62,5 +68,7 @@ void E_Events(void){
 			>Hist:
 			>Rev:0
 	*/
-
+	string fn="E_Events";
+	
+	
 }

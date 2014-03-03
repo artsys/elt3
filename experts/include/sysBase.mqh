@@ -26,7 +26,9 @@
 #include <sysIndexedArray.mqh>
 
 #include <sysOE.mqh>
-#include <sysEvents.mqh> //}	
+#include <sysEvents.mqh> 
+
+#include <sysTrades.mqh>//}	
 
 void B_Init(){
 	/**

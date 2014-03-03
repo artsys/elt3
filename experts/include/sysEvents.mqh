@@ -78,7 +78,11 @@ void E_End(){
 					 @0.0.0.1@2014.03.03@artamir	[+]	E_End
 			>Rev:0
 	*/
-
+	string fn="E_End";
+	ArrayResize(aEO,0);
+	if(ArrayRange(aEC,0)>0){
+		ArrayCopy(aEO,aEC,0,0,WHOLE_ARRAY);
+	}
 }
 
 void E_Events(void){

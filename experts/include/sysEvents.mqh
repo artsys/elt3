@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.3
+		\version	3.1.0.4
 		\date		2014.03.03
 		\author		Morochin <artamir> Artiom
 		\details	События ордеров. Для работы библиотеки требуется библиотека sysOE.mqh
 		\internal
-			>Hist:			
+			>Hist:				
+					 @3.1.0.4@2014.03.03@artamir	[+]	E_End
 					 @3.1.0.3@2014.03.03@artamir	[+]	E_Events
 					 @3.1.0.2@2014.03.03@artamir	[+]	E_Start
 					 @3.1.0.1@2014.03.03@artamir	[+]	aE_Init
@@ -66,7 +67,22 @@ void E_Start(void){
 	E_End();
 }
 
+void E_End(){
+	/**
+		\version	0.0.0.1
+		\date		2014.03.03
+		\author		Morochin <artamir> Artiom
+		\details	Detailed description
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.03.03@artamir	[+]	E_End
+			>Rev:0
+	*/
+
+}
+
 void E_Events(void){
+
 	/**
 		\version	0.0.0.1
 		\date		2014.03.03

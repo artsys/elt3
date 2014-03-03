@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.6
+		\version	3.1.0.7
 		\date		2014.03.03
 		\author		Morochin <artamir> Artiom
 		\details	Расширенная информация об ордерах.
 		\internal
-			>Hist:						
+			>Hist:							
+					 @3.1.0.7@2014.03.03@artamir	[+]	OE2Str
 					 @3.1.0.6@2014.03.03@artamir	[!]	OE_init
 					 @3.1.0.5@2014.03.01@artamir	[+]	OE_setPBI
 					 @0.0.0.4@2014.03.01@artamir	[+]	OE_addRow
@@ -40,6 +41,45 @@
 #define OE_MAX		20
 
 double	aOE[][OE_MAX];
+
+string OE2Str(int i){
+	/**
+		\version	0.0.0.1
+		\date		2014.03.03
+		\author		Morochin <artamir> Artiom
+		\details	Строковое представление контсант-индексов колонок
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.03.03@artamir	[+]	OE2Str
+			>Rev:0
+	*/
+
+	switch(i){
+		case 0: return("OE_TI");
+		case 1: return("OE_TY");
+		case 2: return("OE_OOP");
+		case 3: return("OE_OOT");
+		case 4: return("OE_TP");
+		case 5: return("OE_SL");
+		case 6: return("OE_MN");
+		case 7: return("OE_LOT");
+		case 8: return("OE_OPR");
+		case 9: return("OE_IT");
+		case 10: return("OE_IM");
+		case 11: return("OE_IP");
+		case 12: return("OE_CT");
+		case 13: return("OE_CP");
+		case 14: return("OE_IC");
+		
+		case 15: return("OE_CPP(close profit in pips)");
+		case 16: return("OE_CTY(closing type)");
+		case 17: return("OE_CP2SL");
+		case 18: return("OE_CP2TP");
+		case 19: return("OE_CP2OP");
+		default: return("UDF");
+	}
+}
+
 
 void OE_init(void){
 	/**

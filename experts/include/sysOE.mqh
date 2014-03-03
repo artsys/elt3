@@ -16,9 +16,8 @@
 //--- Main info
 #define	OE_TI	0	//OrderTicket()
 #define	OE_TY	1	//OrderType()
-#define	OE_OP	2	//OrderOpenPrice()
 #define OE_OOP	2	//то же самое что и пункт выше.
-#define	OE_OT	3	//OrderOpenTime()
+#define	OE_OOT	3	//OrderOpenTime()
 #define	OE_TP	4	//OrderTakeProfit()
 #define	OE_SL	5	//OrderStopLoss()
 #define	OE_MN	6	//OrderMagicNumber()
@@ -27,8 +26,8 @@
 #define	OE_IT	9	//Is in Terminal() if order is in terminal
 #define	OE_IM	10	//IsMarket() if order type is OP_BUY || OP_SELL
 #define	OE_IP	11	//IsPending() if order type >= 2
-#define OE_CT	12	//CloseTime()
-#define OE_CP	13	//ClosePrice()
+#define OE_OCT	12	//CloseTime()
+#define OE_OCP	13	//ClosePrice()
 #define OE_IC	14	//IsClosed()
 
 //------ Close data
@@ -92,6 +91,8 @@ int OE_FIBT(int ti){
 	int idx=AId_SearchFirst2(aOE,aI,OE_TI,ti);
 	if(idx==AI_NONE){
 		idx=OE_addRow(ti);
+	}else{
+		idx=aI[idx];
 	}
 	return(idx);
 }
@@ -138,5 +139,40 @@ void OE_setSTD(int ti){
 			>Rev:0
 	*/
 	string fn="OE_setSTD";
+	if(!OrderSelect(ti, SELECT_BY_TICKET)) return; //если ордер не найден, то выходим.
 	int idx=OE_FIBT(ti);
+	
+	aOE[idx][OE_TI]	=		OrderTicket();
+	aOE[idx][OE_TY]	=		OrderType();
+	aOE[idx][OE_OOP]=		OrderOpenPrice();
+	aOE[idx][OE_OOT]=(int)	OrderOpenTime();
+	aOE[idx][OE_TP]	=		OrderTakeProfit();
+	aOE[idx][OE_SL]	=		OrderStopLoss();
+	aOE[idx][OE_MN]	=		OrderMagicNumber();
+	aOE[idx][OE_LOT]=		OrderLots();
+	aOE[idx][OE_OPR]=		OrderProfit();
+	aOE[idx][OE_OCP]=		OrderClosePrice();
+	aOE[idx][OE_OCT]=		OrderCloseTime();
+	
+	if(OrderCloseTime() == 0){
+		aOE[idx][OE_IT]=	1;
+		aOE[idx][OE_IC]=	0;
+	}else{
+		aOE[idx][OE_IT]=	0;
+		aOE[idx][OE_IC]=	1;
+	}
+	
+	if(OrderType()<=1){
+		aOE[idx][OE_IM]=	1;
+		aOE[idx][OE_IP]=	0;
+	}else{
+		aOE[idx][OE_IM]=	0;
+		aOE[idx][OE_IP]=	1;
+	}
+	
+	if(OrderType()==OP_BUY || OrderType()==OP_BUYLIMIT || OrderType()==OP_BUYSTOP){
+		aOE[idx][OE_CPP]=	(OrderClosePrice()-OrderOpenPrice())/Point;
+	}else{
+		aOE[idx][OE_CPP]=	(OrderOpenPrice()-OrderClosePrice())/Point;
+	}
 }

@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.4
+		\version	3.1.0.5
 		\date		2014.03.03
 		\author		Morochin <artamir> Artiom
 		\details	—обыти€ ордеров. ƒл€ работы библиотеки требуетс€ библиотека sysOE.mqh
 		\internal
-			>Hist:				
+			>Hist:					
+					 @3.1.0.5@2014.03.03@artamir	[]	E_End
 					 @3.1.0.4@2014.03.03@artamir	[+]	E_End
 					 @3.1.0.3@2014.03.03@artamir	[+]	E_Events
 					 @3.1.0.2@2014.03.03@artamir	[+]	E_Start
@@ -69,17 +70,18 @@ void E_Start(void){
 
 void E_End(){
 	/**
-		\version	0.0.0.1
+		\version	0.0.0.2
 		\date		2014.03.03
 		\author		Morochin <artamir> Artiom
-		\details	Detailed description
+		\details	 опирование текущих ордеров в массив aEO
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2014.03.03@artamir	[*]	»справлено копирование массива текущих ордеров.
 					 @0.0.0.1@2014.03.03@artamir	[+]	E_End
 			>Rev:0
 	*/
 	string fn="E_End";
-	ArrayResize(aEO,0);
+	ArrayResize(aEO,ArrayRange(aEC,0));
 	if(ArrayRange(aEC,0)>0){
 		ArrayCopy(aEO,aEC,0,0,WHOLE_ARRAY);
 	}

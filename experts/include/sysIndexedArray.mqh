@@ -1,10 +1,12 @@
 	/**
-		\version	3.1.0.18
-		\date		2014.02.28
+		\version	3.1.0.20
+		\date		2014.03.03
 		\author		Morochin <artamir> Artiom
 		\details	Работа с индексированным массивом.
 		\internal
-			>Hist:																		
+			>Hist:																				
+					 @3.1.0.20@2014.03.03@artamir	[+]	AId_CopyRow2
+					 @3.1.0.19@2014.03.03@artamir	[+]	AId_AddRow2
 					 @3.1.0.18@2014.02.28@artamir	[+]	AId_Print2
 					 @3.1.0.17@2014.02.28@artamir	[+]	AId_Select2
 					 @3.1.0.16@2014.02.28@artamir	[+]	AIF_filterAdd_AND
@@ -58,6 +60,45 @@ double AId_get2(double &a[][], int &aI[], int idx=0, int col=0){
 
 	string fn="AId_get2";
 	return(a[aI[idx]][col]);
+}
+
+int AId_AddRow2(double &a[][]){
+	/**
+		\version	0.0.0.1
+		\date		2014.03.03
+		\author		Morochin <artamir> Artiom
+		\details	Добавляет новую строку к массиву. 069011273
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.03.03@artamir	[+]	AId_AddRow2
+			>Rev:0
+	*/
+	string fn="AId_AddRow2";
+	int t=ArrayRange(a,0);t++;
+	ArrayResize(a,t);t--;
+	return(t);
+}
+
+int AId_CopyRow2(double &s[][], int &aI[], double d[][], int i=0){
+	/**
+		\version	0.0.0.1
+		\date		2014.03.03
+		\author		Morochin <artamir> Artiom
+		\details	Копирование строки с заданным индексом в массиве индеков из массива источника в новую строку массива приемника.
+		Второе измерение массива приемника должно быть больше или равно второму измерению массива источника.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.03.03@artamir	[+]	AId_CopyRow2
+			>Rev:0
+	*/
+	string fn="AId_CopyRow2";
+	int idx=AId_AddRow2(d);
+	int cols=ArrayRange(s,1);
+	for(int c=0;c<cols;c++){
+		d[idx][c]=AId_get2(s,aI,i,c);
+	}
+	
+	return(idx);
 }
 
 #define AI_EQ		0

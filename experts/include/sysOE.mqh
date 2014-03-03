@@ -175,4 +175,8 @@ void OE_setSTD(int ti){
 	}else{
 		aOE[idx][OE_CPP]=	(OrderOpenPrice()-OrderClosePrice())/Point;
 	}
+
+	aOE[idx][OE_CP2OOP]	=	MathAbs((OrderClosePrice()-OrderOpenPrice())/Point);
+	aOE[idx][OE_CP2SL]	=	MathAbs((OrderClosePrice()-OrderStopLoss())/Point);
+	aOE[idx][OE_CP2TP]	=	MathAbs((OrderClosePrice()-OrderTakeProfit())/Point);
 }

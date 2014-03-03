@@ -1,10 +1,13 @@
 	/**
-		\version	3.1.0.21
+		\version	3.1.0.24
 		\date		2014.03.03
 		\author		Morochin <artamir> Artiom
 		\details	Работа с индексированным массивом.
 		\internal
-			>Hist:																					
+			>Hist:																								
+					 @3.1.0.24@2014.03.03@artamir	[!]	AId_SearchLess2
+					 @3.1.0.23@2014.03.03@artamir	[!]	AId_SearchGreat2
+					 @3.1.0.22@2014.03.03@artamir	[!]	AId_SearchLast2
 					 @3.1.0.21@2014.03.03@artamir	[!]	AId_SearchFirst2
 					 @3.1.0.20@2014.03.03@artamir	[+]	AId_CopyRow2
 					 @3.1.0.19@2014.03.03@artamir	[+]	AId_AddRow2
@@ -329,7 +332,7 @@ int AId_SearchFirst2(double &a[][], int &aI[], int col=0, double element=0.0){
 		\details	Поиск самого первого совпадения.
 		\internal
 			>Hist:		
-					 @0.0.0.2@2014.03.03@artamir	[!]	Добавлена проверка 
+					 @0.0.0.2@2014.03.03@artamir	[!]	Добавлена проверка на размерность массива индексов.
 					 @0.0.0.1@2014.02.26@artamir	[]	AId_SearchFirst2
 			>Rev:0
 	*/
@@ -357,17 +360,20 @@ int AId_SearchFirst2(double &a[][], int &aI[], int col=0, double element=0.0){
 
 int AId_SearchLast2(double &a[][], int &aI[], int col=0, double element=0.0){
 	/**
-		\version	0.0.0.1
-		\date		2014.02.26
+		\version	0.0.0.2
+		\date		2014.03.03
 		\author		Morochin <artamir> Artiom
 		\details	Поиск самого первого совпадения.
 		\internal
-			>Hist:		
-					 @0.0.0.1@2014.02.26@artamir	[]	AId_SearchLast2
+			>Hist:			
+					 @0.0.0.2@2014.03.03@artamir	[!]	Добавлена проверка на размерность массива индексов.
+					 @0.0.0.1@2014.02.26@artamir	[+]	AId_SearchLast2
 			>Rev:0
 	*/
 	
 	string fn="AId_SearchLast2";
+	
+	if(ArrayRange(aI,0)<=0)return(AI_NONE);
 	
 	int found_index=AId_QuickSearch2(a,aI,col,element,AI_EQ);
 	if(found_index==AI_NONE)return(AI_NONE);
@@ -390,17 +396,20 @@ int AId_SearchLast2(double &a[][], int &aI[], int col=0, double element=0.0){
 
 int AId_SearchGreat2(double &a[][], int &aI[], int col=0, double element=0.0){
 	/**
-		\version	0.0.0.1
-		\date		2014.02.26
+		\version	0.0.0.2
+		\date		2014.03.03
 		\author		Morochin <artamir> Artiom
 		\details	Поиск первого сэлемента, большего чем заданный.
 		\internal
-			>Hist:		
+			>Hist:			
+					 @0.0.0.2@2014.03.03@artamir	[!]	Добавлена проверка на размерность массива индексов.
 					 @0.0.0.1@2014.02.26@artamir	[+]	AId_SearchGreat2
 			>Rev:0
 	*/
 	
 	string fn="AId_SearchGreat2";
+	
+	if(ArrayRange(aI,0)<=0)return(AI_NONE)
 	
 	int found_index=AId_QuickSearch2(a,aI,col,element,AI_GREAT);
 	if(found_index==AI_NONE)return(AI_NONE);
@@ -421,17 +430,20 @@ int AId_SearchGreat2(double &a[][], int &aI[], int col=0, double element=0.0){
 
 int AId_SearchLess2(double &a[][], int &aI[], int col=0, double element=0.0){
 	/**
-		\version	0.0.0.1
-		\date		2014.02.26
+		\version	0.0.0.2
+		\date		2014.03.03
 		\author		Morochin <artamir> Artiom
 		\details	Поиск самого первого совпадения.
 		\internal
-			>Hist:			
+			>Hist:				
+					 @0.0.0.2@2014.03.03@artamir	[!]	Добавлена проверка на размерность массива индексов.
 					 @0.0.0.1@2014.02.26@artamir	[+]	AId_SearchLess2
 			>Rev:0
 	*/
 	
 	string fn="AId_SearchLess2";
+	
+	if(ArrayRange(aI,0)<=0)return(AI_NONE);
 	
 	int found_index=AId_QuickSearch2(a,aI,col,element,AI_LESS);
 	if(found_index==AI_NONE)return(AI_NONE);

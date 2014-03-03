@@ -1,11 +1,12 @@
 	/**
-		\version	0.0.0.3
+		\version	0.0.0.4
 		\date		2014.03.03
 		\author		Morochin <artamir> Artiom
 		\details	База для советников. Сборник сервисных процедур/функций.
 		Для правильной работы необходимо, чтоб в советниках были определены константы: EXP - Уникальное имя эксперта, нужное для создания файлов данных эксперта.
 		\internal
-			>Hist:			
+			>Hist:				
+					 @0.0.0.4@2014.03.03@artamir	[+]	B_Start
 					 @0.0.0.3@2014.03.03@artamir	[+]	B_Init
 					 @0.0.0.2@2014.03.03@artamir	[+]	B_Deinit
 					 @0.0.0.1@2014.03.03@artamir	[+]	B_DBOE
@@ -58,6 +59,21 @@ void B_Deinit(){
 	*/
 	string file_oe=B_DBOE();
 	AId_STF2(aOE,file_oe);
+}
+
+void B_Start(){
+	/**
+		\version	0.0.0.1
+		\date		2014.03.03
+		\author		Morochin <artamir> Artiom
+		\details	Вызывается из функции старт советника.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.03.03@artamir	[+]	B_Start
+			>Rev:0
+	*/
+
+	E_Start()$
 }
 
 string B_DBOE(){

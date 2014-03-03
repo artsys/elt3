@@ -409,7 +409,7 @@ int AId_SearchGreat2(double &a[][], int &aI[], int col=0, double element=0.0){
 	
 	string fn="AId_SearchGreat2";
 	
-	if(ArrayRange(aI,0)<=0)return(AI_NONE)
+	if(ArrayRange(aI,0)<=0)return(AI_NONE);
 	
 	int found_index=AId_QuickSearch2(a,aI,col,element,AI_GREAT);
 	if(found_index==AI_NONE)return(AI_NONE);

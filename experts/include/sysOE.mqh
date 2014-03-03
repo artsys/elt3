@@ -213,11 +213,13 @@ int OE_setSTD(int ti){
 	
 	if(OrderType()==OP_BUY || OrderType()==OP_BUYLIMIT || OrderType()==OP_BUYSTOP){
 		aOE[idx][OE_CPP]=	(OrderClosePrice()-OrderOpenPrice())/Point;
+		aOE[idx][OE_CP2OOP]	=	(OrderClosePrice()-OrderOpenPrice())/Point;
 	}else{
 		aOE[idx][OE_CPP]=	(OrderOpenPrice()-OrderClosePrice())/Point;
+		aOE[idx][OE_CP2OOP]	=	(OrderOpenPrice()-OrderClosePrice())/Point;
 	}
 
-	aOE[idx][OE_CP2OOP]	=	MathAbs((OrderClosePrice()-OrderOpenPrice())/Point);
+	
 	if(OrderStopLoss()>0){
 		aOE[idx][OE_CP2SL]	=	MathAbs((OrderClosePrice()-OrderStopLoss())/Point);
 	}else{

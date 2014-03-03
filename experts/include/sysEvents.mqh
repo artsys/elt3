@@ -2,7 +2,7 @@
 		\version	3.1.0.4
 		\date		2014.03.03
 		\author		Morochin <artamir> Artiom
-		\details	РЎРѕР±С‹С‚РёСЏ РѕСЂРґРµСЂРѕРІ. Р”Р»СЏ СЂР°Р±РѕС‚С‹ Р±РёР±Р»РёРѕС‚РµРєРё С‚СЂРµР±СѓРµС‚СЃСЏ Р±РёР±Р»РёРѕС‚РµРєР° sysOE.mqh
+		\details	События ордеров. Для работы библиотеки требуется библиотека sysOE.mqh
 		\internal
 			>Hist:				
 					 @3.1.0.4@2014.03.03@artamir	[+]	E_End
@@ -29,7 +29,7 @@ void E_Init(void){
 		\version	0.0.0.1
 		\date		2014.03.03
 		\author		Morochin <artamir> Artiom
-		\details	РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РјР°СЃСЃРёРІРѕРІ.
+		\details	Инициализация массивов.
 		\internal
 			>Hist:	
 					 @0.0.0.1@2014.03.03@artamir	[+]	
@@ -45,7 +45,7 @@ void E_Start(void){
 		\version	0.0.0.1
 		\date		2014.03.03
 		\author		Morochin <artamir> Artiom
-		\details	РџРѕ РёРґРµРµ РґРѕР»Р¶РЅР° РІС‹Р·С‹РІР°С‚СЊСЃСЏ РІ РЅР°С‡Р°Р»Рµ РєР°Р¶РґРѕРіРѕ С†РёРєР»Р° СЂР°Р±РѕС‚С‹ СЃРѕРІРµС‚РЅРёРєР°. (С„-С†РёСЏ СЃС‚Р°СЂС‚)
+		\details	По идее должна вызываться в начале каждого цикла работы советника. (ф-ция старт)
 		\internal
 			>Hist:	
 					 @0.0.0.1@2014.03.03@artamir	[+]	E_Start
@@ -53,7 +53,7 @@ void E_Start(void){
 	*/
 	string fn="aE_Start";
 	
-	ArrayResize(aEC,0);	//РћР±РЅСѓР»РёР»Рё РјР°СЃСЃРёРІ С‚РµРєСѓС‰РёС… РѕСЂРґРµСЂРѕРІ, РєРѕС‚РѕСЂС‹Рµ РµСЃС‚СЊ РІ С‚РµСЂРјРёРЅР°Р»Рµ.
+	ArrayResize(aEC,0);	//Обнулили массив текущих ордеров, которые есть в терминале.
 	
 	for(int i=0;i<=OrdersTotal();i++){
 		if(!OrderSelect(i,SELECT_BY_POS,MODE_TRADES)) continue;
@@ -107,7 +107,7 @@ void E_Events(void){
 			EVENT_New(cti);
 		}
 	
-		//РР·РјРµРЅРёР»СЃСЏ С‚РёРї РѕСЂРґРµСЂР°.
+		//Изменился тип ордера.
 		int cty=AId_Get2(aEC,aIC,ic,OE_TY);
 		int oty=AId_Get2(aEO,aIO,io,OE_TY);
 		if(cty!=oty){
@@ -126,13 +126,13 @@ void E_Events(void){
 	
 }
 
-//РЎРѕР±С‹С‚РёСЏ
+//События
 void EVENT_New(int ti){
 	/**
 		\version	0.0.0.0
 		\date		2014.03.03
 		\author		Morochin <artamir> Artiom
-		\details	РЎРѕР±С‹С‚РёРµ - РѕС‚РєСЂС‹С‚РёРµ РЅРѕРІРѕР№ РїРѕР·РёС†РёРё/РѕСЂРґРµСЂР°.
+		\details	Событие - открытие новой позиции/ордера.
 		\internal
 			>Hist:
 			>Rev:0
@@ -148,7 +148,7 @@ void EVENT_ChTY(int ti){
 		\version	0.0.0.0
 		\date		2014.03.03
 		\author		Morochin <artamir> Artiom
-		\details	РЎРѕР±С‹С‚РёРµ - РёР·РјРµРЅРµРЅРёРµ С‚РёРїР° РїРѕР·РёС†РёРё/РѕСЂРґРµСЂР°.
+		\details	Событие - изменение типа позиции/ордера.
 		\internal
 			>Hist:
 			>Rev:0
@@ -164,7 +164,7 @@ void EVENT_Closed(int ti){
 		\version	0.0.0.0
 		\date		2014.03.03
 		\author		Morochin <artamir> Artiom
-		\details	РЎРѕР±С‹С‚РёРµ - Р·Р°РєСЂС‹С‚РёРµ/СѓРґР°Р»РµРЅРёРµ РїРѕР·РёС†РёРё/РѕСЂРґРµСЂР°.
+		\details	Событие - закрытие/удаление позиции/ордера.
 		\internal
 			>Hist:
 			>Rev:0

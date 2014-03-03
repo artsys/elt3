@@ -55,7 +55,7 @@ void E_Start(void){
 	string fn="aE_Start";
 	
 	ArrayResize(aEC,0);	//Обнулили массив текущих ордеров, которые есть в терминале.
-	
+	ArrayResize(aE,0);	//Обнулили массив событий
 	for(int i=0;i<=OrdersTotal();i++){
 		if(!OrderSelect(i,SELECT_BY_POS,MODE_TRADES)) continue;
 		int idx=OE_setSTD(OrderTicket());
@@ -80,6 +80,13 @@ void E_End(){
 					 @0.0.0.1@2014.03.03@artamir	[+]	E_End
 			>Rev:0
 	*/
+	
+	//int aIC[];AId_Init2(aEC,aIC);
+	//AId_Print2(aEC,aIC,4,"aEC_all");
+	//int aIO[];AId_Init2(aEO,aIO);
+	//AId_Print2(aEO,aIO,4,"aEO_all");
+	
+	
 	string fn="E_End";
 	ArrayResize(aEO,ArrayRange(aEC,0));
 	if(ArrayRange(aEC,0)>0){

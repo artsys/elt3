@@ -2,7 +2,7 @@
 		\version	3.1.0.5
 		\date		2014.03.01
 		\author		Morochin <artamir> Artiom
-		\details	Р Р°СЃС€РёСЂРµРЅРЅР°СЏ РёРЅС„РѕСЂРјР°С†РёСЏ РѕР± РѕСЂРґРµСЂР°С….
+		\details	Расширенная информация об ордерах.
 		\internal
 			>Hist:					
 					 @3.1.0.5@2014.03.01@artamir	[+]	OE_setPBI
@@ -16,7 +16,7 @@
 //--- Main info {
 #define	OE_TI	0	//OrderTicket()
 #define	OE_TY	1	//OrderType()
-#define OE_OOP	2	//С‚Рѕ Р¶Рµ СЃР°РјРѕРµ С‡С‚Рѕ Рё РїСѓРЅРєС‚ РІС‹С€Рµ.
+#define OE_OOP	2	//то же самое что и пункт выше.
 #define	OE_OOT	3	//OrderOpenTime()
 #define	OE_TP	4	//OrderTakeProfit()
 #define	OE_SL	5	//OrderStopLoss()
@@ -33,9 +33,9 @@
 //------ Close data {
 #define OE_CPP		15	//Close profit in pips with sign (-/+)
 #define	OE_CTY		16	//Closed by sl/tp/from market (1,2,3);
-#define OE_CP2SL	17	//Р Р°Р·РЅРѕСЃС‚СЊ РјРµР¶РґСѓ С†РµРЅРѕР№ Р·Р°РєСЂС‹С‚РёСЏ Рё СЃР» РІ РїСѓРЅРєС‚Р°С…
-#define OE_CP2TP	18	//Р Р°Р·РЅРѕСЃС‚СЊ РјРµР¶РґСѓ С†РµРЅРѕР№ Р·Р°РєСЂС‹С‚РёСЏ Рё С‚Рї РІ РїСѓРЅРєС‚Р°С…
-#define OE_CP2OP	19	//Р Р°Р·РЅРѕСЃС‚СЊ РјРµР¶РґСѓ С†РµРЅРѕР№ Р·Р°РєСЂС‹С‚РёСЏ Рё С†РµРЅРѕР№ РѕС‚РєСЂС‹С‚РёСЏ РІ РїСѓРЅРєС‚Р°С… }
+#define OE_CP2SL	17	//Разность между ценой закрытия и сл в пунктах
+#define OE_CP2TP	18	//Разность между ценой закрытия и тп в пунктах
+#define OE_CP2OP	19	//Разность между ценой закрытия и ценой открытия в пунктах }
 #define OE_MAX		20
 
 double	aOE[][OE_MAX];
@@ -45,7 +45,7 @@ void OE_init(void){
 		\version	0.0.0.1
 		\date		2014.03.01
 		\author		Morochin <artamir> Artiom
-		\details	РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РјР°СЃСЃРёРІР° РѕСЂРґРµСЂРѕРІ.
+		\details	Инициализация массива ордеров.
 		\internal
 			>Hist:	
 					 @0.0.0.1@2014.03.01@artamir	[+]	OE_init
@@ -60,7 +60,7 @@ int OE_addRow(int ti){
 		\version	0.0.0.1
 		\date		2014.03.01
 		\author		Morochin <artamir> Artiom
-		\details	Р”РѕР±Р°РІР»СЏРµС‚ РЅРѕРІСѓСЋ СЃС‚СЂРѕРєСѓ Рє РјР°СЃСЃРёРІСѓ РѕСЂРґРµСЂРѕРІ Рё СѓСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ Р·РЅР°С‡РµРЅРёРµ СЃРІРѕР№СЃС‚РІР° С‚РёРєРµС‚.
+		\details	Добавляет новую строку к массиву ордеров и устанавливает значение свойства тикет.
 		\internal
 			>Hist:	
 					 @0.0.0.1@2014.03.01@artamir	[+]	OE_addRow
@@ -77,7 +77,7 @@ int OE_FIBT(int ti){
 		\version	0.0.0.1
 		\date		2014.03.01
 		\author		Morochin <artamir> Artiom
-		\details	РџРѕРёСЃРє РёРЅРґРµРєСЃР° СЌР»РµРјРµРЅС‚Р° СЃ Р·Р°РґР°РЅРЅС‹Рј Р·РЅР°С‡РµРЅРёРµРј 
+		\details	Поиск индекса элемента с заданным значением 
 		\internal
 			>Hist:	
 					 @0.0.0.1@2014.03.01@artamir	[+]	OE_FIBT
@@ -101,7 +101,7 @@ int OE_setPBT(int ti, int prop, double val){
 		\version	0.0.0.1
 		\date		2014.03.01
 		\author		Morochin <artamir> Artiom
-		\details	РЈСЃС‚Р°РЅРѕРІРєР° Р·РЅР°С‡РµРЅРёСЏ Р·Р°РґР°РЅРЅРѕРіРѕ СЃРІРѕР№СЃС‚РІР° РїРѕ С‚РёРєРµС‚Сѓ РѕСЂРґРµСЂР°.
+		\details	Установка значения заданного свойства по тикету ордера.
 		\internal
 			>Hist:	
 					 @0.0.0.1@2014.03.01@artamir	[+]	OE_setPBT
@@ -118,7 +118,7 @@ int OE_setPBI(int idx, int prop, double val){
 		\version	0.0.0.1
 		\date		2014.03.01
 		\author		Morochin <artamir> Artiom
-		\details	РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ Р·РЅР°С‡РµРЅРёРµ Р·Р°РґР°РЅРЅРѕРіРѕ СЃРІРѕР№СЃС‚РІР° РїРѕ РїРµСЂРµРґР°РЅРЅРѕРјСѓ РёРЅРґРµРєСЃСѓ СЃС‚СЂРѕРєРё.
+		\details	Устанавливает значение заданного свойства по переданному индексу строки.
 		\internal
 			>Hist:	
 					 @0.0.0.1@2014.03.01@artamir	[+]	OE_setPBI
@@ -132,13 +132,13 @@ void OE_setSTD(int ti){
 		\version	0.0.0.0
 		\date		2014.03.01
 		\author		Morochin <artamir> Artiom
-		\details	Р Р°СЃСЃС‡РёС‚С‹РІР°РµС‚ Рё СѓСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ СЃС‚Р°РЅРґР°СЂС‚РЅС‹Рµ РґР°РЅРЅС‹Рµ РїРѕ РѕСЂРґРµСЂСѓ.
+		\details	Рассчитывает и устанавливает стандартные данные по ордеру.
 		\internal
 			>Hist:
 			>Rev:0
 	*/
 	string fn="OE_setSTD";
-	if(!OrderSelect(ti, SELECT_BY_TICKET)) return; //РµСЃР»Рё РѕСЂРґРµСЂ РЅРµ РЅР°Р№РґРµРЅ, С‚Рѕ РІС‹С…РѕРґРёРј.
+	if(!OrderSelect(ti, SELECT_BY_TICKET)) return; //если ордер не найден, то выходим.
 	int idx=OE_FIBT(ti);
 	
 	aOE[idx][OE_TI]	=		OrderTicket();

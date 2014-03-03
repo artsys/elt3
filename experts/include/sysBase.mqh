@@ -1,10 +1,12 @@
 	/**
-		\version	0.0.0.0
+		\version	0.0.0.1
 		\date		2014.03.03
 		\author		Morochin <artamir> Artiom
-		\details	Р‘Р°Р·Р° РґР»СЏ СЃРѕРІРµС‚РЅРёРєРѕРІ. РЎР±РѕСЂРЅРёРє СЃРµСЂРІРёСЃРЅС‹С… РїСЂРѕС†РµРґСѓСЂ/С„СѓРЅРєС†РёР№.
+		\details	База для советников. Сборник сервисных процедур/функций.
+		Для правильной работы необходимо, чтоб в советниках были определены константы: EXP - Уникальное имя эксперта, нужное для создания файлов данных эксперта.
 		\internal
-			>Hist:
+			>Hist:	
+					 @0.0.0.1@2014.03.03@artamir	[+]	B_DBOE
 			>Rev:0
 	*/
 	
@@ -22,3 +24,34 @@
 
 #include <sysOE.mqh>
 #include <sysEvents.mqh> //}	
+
+void B_Init(){
+	/**
+		\version	0.0.0.0
+		\date		2014.03.03
+		\author		Morochin <artamir> Artiom
+		\details	Инициализация системных массивов. Загрузка сохраненных данных.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+
+	string file_oe=B_DBOE();
+}
+
+string B_DBOE(){
+	/**
+		\version	0.0.0.1
+		\date		2014.03.03
+		\author		Morochin <artamir> Artiom
+		\details	Имя файла-хранилища масива aOE.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.03.03@artamir	[+]	B_DBOE
+			>Rev:0
+	*/
+	
+	string file=StringConcatenate("OE.",EXP,".",AccountNumber(),".",Symbol(),".tdb");
+	
+	return(file);
+}

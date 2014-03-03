@@ -26,7 +26,7 @@
 					 @3.1.0.6@2014.02.26@artamir	[+]	AId_QuickSearch2
 					 @3.1.0.5@2014.02.25@artamir	[+]	AId_Compare
 					 @3.1.0.4@2014.02.25@artamir	[+]	AId_QuickSort2
-					 @3.1.0.3@2014.02.25@artamir	[+]	AId_get2
+					 @3.1.0.3@2014.02.25@artamir	[+]	AId_Get2
 					 @3.1.0.2@2014.02.25@artamir	[+]	AI_Swap
 					 @3.1.0.1@2014.02.25@artamir	[+]	AI_setInterval
 			>Rev:0
@@ -64,7 +64,7 @@ double AId_Get2(double &a[][], int &aI[], int idx=0, int col=0){
 			>Rev:0
 	*/
 
-	string fn="AId_get2";
+	string fn="AId_Get2";
 	if(ArrayRange(aI,0)<=0)return(AI_NONE);
 	return(a[aI[idx]][col]);
 }
@@ -268,7 +268,7 @@ int AId_QuickSearch2(double &a[][], int &aI[], int col=0, double element=0.0, in
 	
 	if(mode==AI_EQ){
 		while(l<r){
-			int c=AId_Compare(AId_get2(a,aI,m,col), element);
+			int c=AId_Compare(AId_Get2(a,aI,m,col), element);
 			if(c==AI_GREAT){
 				r=m;
 			}else{
@@ -282,14 +282,14 @@ int AId_QuickSearch2(double &a[][], int &aI[], int col=0, double element=0.0, in
 			m=l+(r-l)/2;
 		}
 		
-		int c=AId_Compare(AId_get2(a,aI,r,col), element);
+		int c=AId_Compare(AId_Get2(a,aI,r,col), element);
 		if(c==AI_EQ)return(r);
 		else return(AI_NONE);	
 	}
 	
 	if(mode==AI_GREAT){
 		while(l<r){
-			int c=AId_Compare(AId_get2(a,aI,m,col), element);
+			int c=AId_Compare(AId_Get2(a,aI,m,col), element);
 			if(c==AI_GREAT){
 				r=m;
 				l=m;
@@ -299,14 +299,14 @@ int AId_QuickSearch2(double &a[][], int &aI[], int col=0, double element=0.0, in
 			m=l+(r-l)/2;
 		}
 		
-		int c=AId_Compare(AId_get2(a,aI,r,col), element);
+		int c=AId_Compare(AId_Get2(a,aI,r,col), element);
 		if(c==AI_GREAT)return(r);
 		else return(AI_NONE);	
 	}
 	
 	if(mode==AI_LESS){
 		while(l<r){
-			int c=AId_Compare(AId_get2(a,aI,m,col), element);
+			int c=AId_Compare(AId_Get2(a,aI,m,col), element);
 			if(c==AI_LESS){
 				r=m;
 				l=m;
@@ -316,7 +316,7 @@ int AId_QuickSearch2(double &a[][], int &aI[], int col=0, double element=0.0, in
 			m=l+(r-l)/2;
 		}
 		
-		int c=AId_Compare(AId_get2(a,aI,r,col), element);
+		int c=AId_Compare(AId_Get2(a,aI,r,col), element);
 		if(c==AI_LESS)return(r);
 		else return(AI_NONE);	
 	}
@@ -345,13 +345,13 @@ int AId_SearchFirst2(double &a[][], int &aI[], int col=0, double element=0.0){
 	if(found_index==AI_NONE)return(AI_NONE);
 	
 	int r=found_index;
-	while(r>=0&&AId_Compare(AId_get2(a,aI,r,col), element)==AI_EQ){
+	while(r>=0&&AId_Compare(AId_Get2(a,aI,r,col), element)==AI_EQ){
 		r--;
 	}
 	
 	if(r<=-1)r=0;
 	
-	while(AId_Compare(AId_get2(a,aI,r,col), element)!=AI_EQ){
+	while(AId_Compare(AId_Get2(a,aI,r,col), element)!=AI_EQ){
 		r++;
 	}
 	
@@ -381,13 +381,13 @@ int AId_SearchLast2(double &a[][], int &aI[], int col=0, double element=0.0){
 	int size=ArrayRange(aI,0);
 	
 	int l=found_index;
-	while(l<size&&AId_Compare(AId_get2(a,aI,l,col), element)==AI_EQ){
+	while(l<size&&AId_Compare(AId_Get2(a,aI,l,col), element)==AI_EQ){
 		l++;
 	}
 	
 	if(l>=size)l=size-1;
 	
-	while(l>=0&&AId_Compare(AId_get2(a,aI,l,col), element)!=AI_EQ){
+	while(l>=0&&AId_Compare(AId_Get2(a,aI,l,col), element)!=AI_EQ){
 		l--;
 	}
 	
@@ -415,13 +415,13 @@ int AId_SearchGreat2(double &a[][], int &aI[], int col=0, double element=0.0){
 	if(found_index==AI_NONE)return(AI_NONE);
 	
 	int r=found_index;
-	while(r>=0&&AId_Compare(AId_get2(a,aI,r,col), element)==AI_GREAT){
+	while(r>=0&&AId_Compare(AId_Get2(a,aI,r,col), element)==AI_GREAT){
 		r--;
 	}
 	
 	if(r<=-1)r=0;
 	
-	while(AId_Compare(AId_get2(a,aI,r,col), element)!=AI_GREAT){
+	while(AId_Compare(AId_Get2(a,aI,r,col), element)!=AI_GREAT){
 		r++;
 	}
 	
@@ -451,13 +451,13 @@ int AId_SearchLess2(double &a[][], int &aI[], int col=0, double element=0.0){
 	int size=ArrayRange(aI,0);
 	
 	int l=found_index;
-	while(l<size&&AId_Compare(AId_get2(a,aI,l,col), element)==AI_LESS){
+	while(l<size&&AId_Compare(AId_Get2(a,aI,l,col), element)==AI_LESS){
 		l++;
 	}
 	
 	if(l>=size)l=size-1;
 	
-	while(l>=0&&AId_Compare(AId_get2(a,aI,l,col), element)!=AI_LESS){
+	while(l>=0&&AId_Compare(AId_Get2(a,aI,l,col), element)!=AI_LESS){
 		l--;
 	}
 	

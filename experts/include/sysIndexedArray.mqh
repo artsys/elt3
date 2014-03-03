@@ -1,10 +1,12 @@
 	/**
-		\version	3.1.0.24
+		\version	3.1.0.26
 		\date		2014.03.03
 		\author		Morochin <artamir> Artiom
 		\details	Работа с индексированным массивом.
 		\internal
-			>Hist:																								
+			>Hist:																										
+					 @3.1.0.26@2014.03.03@artamir	[+]	AId_RFF2
+					 @3.1.0.25@2014.03.03@artamir	[+]	AId_STF2
 					 @3.1.0.24@2014.03.03@artamir	[!]	AId_SearchLess2
 					 @3.1.0.23@2014.03.03@artamir	[!]	AId_SearchGreat2
 					 @3.1.0.22@2014.03.03@artamir	[!]	AId_SearchLast2
@@ -634,3 +636,116 @@ void AId_Print2(double &a[][], int &aI[], int d = 4, string fn = "AId_PrintArray
 	if(handle != 0) FileClose(handle);
 	
 }
+
+void AId_STF2(double &a[][], string fn, int d = 4){
+	/*
+		>Ver	:	0.0.0.5
+		>Date	:	2014.03.03
+		>Hist:		
+				 @0.0.0.5@2014.03.03@artamir	[]	AId_STF2
+				 @0.0.0.4@2013.12.30@artamir	[]	A_d_Select
+			@0.0.2@2012.10.03@artamir	[]
+			@0.0.1@2012.09.04@artamir	[]
+		>Desc:
+			Save array to filE_
+			format string for store:
+			@idx1_valIdx1@idx2_valIdx2@val_val
+			
+			exemple: a[43][5] = 20.77
+			@idx1_43@idx2_5@val_20.77
+		>VARS:
+			a[][]	- array
+			fn		- filename
+			d		- количество знаков после запятой.
+	*/	
+	
+	int ROWS = ArrayRange(a, 0);
+	int COLS = ArrayRange(a, 1);
+	
+	int H = FileOpen(fn, FILE_CSV|FILE_WRITE);
+	
+	//------------------------------------------------------
+	for(int idx1 = 0; idx1 < ROWS; idx1++){
+		
+		//--------------------------------------------------
+		for(int idx2 = 0; idx2 < COLS; idx2++){
+			
+			//----------------------------------------------
+			double val = a[idx1][idx2];
+			
+			//----------------------------------------------
+			if(idx2 >= 11){
+				
+				//------------------------------------------
+				if(val == 0.0){
+					continue;
+				}
+			}
+			
+			//----------------------------------------------
+			string str = "@idx1_"+idx1
+						+"@idx2_"+idx2
+						+"@val_"+DoubleToStr(a[idx1][idx2], d)
+						+"@des_"+OE2Str(idx2);
+						
+			//----------------------------------------------
+			FileWrite(H, str);
+		}
+	}
+	
+	//------------------------------------------------------
+	FileFlush(H);
+	
+	//------------------------------------------------------
+	FileClose(H);
+	
+}
+
+void AId_RFF2(double &a[][], string fn){
+	/*
+		>Ver	:	0.0.0.3
+		>Date	:	2014.03.03
+		>Hist:	
+				 @0.0.0.3@2014.03.03@artamir	[]	AId_RFF2
+			@0.0.2@2012.10.03@artamir	[]
+			@0.0.1@2012.09.04@artamir	[]
+		>Desc:
+			Read array from filE_
+			format string for read:
+			@idx1_valIdx1@idx2_valIdx2@val_val
+			
+			exemple: a[43][5] = 20.77
+			@idx1_43@idx2_5@val_20.77
+		>VARS:
+			a[][]	- array
+			fn		- filename
+	*/	
+	
+	//------------------------------------------------------
+	ArrayResize(a, 0);
+	
+	//------------------------------------------------------
+	int H = FileOpen(fn, FILE_CSV|FILE_READ);
+	
+	//------------------------------------------------------
+	while(!FileIsEnding(H)){
+		string	str	= FileReadString(H);
+			int		idx1 	= Struc_KeyValue_int(	str, "@idx1_");
+			int		idx2 	= Struc_KeyValue_int(	str, "@idx2_");
+			double	val		= Struc_KeyValue_double(str, "@val_");
+		
+		//--------------------------------------------------
+		int ROWS = ArrayRange(a, 0);
+		
+		//--------------------------------------------------
+		if(idx1 >= ROWS){
+			ArrayResize(a, idx1+1);
+		}
+		
+		//--------------------------------------------------
+		a[idx1][idx2] = val;
+	}
+}
+
+//}
+

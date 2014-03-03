@@ -18,7 +18,7 @@
 #property strict
 
 #include <sysOther.mqh> //{
-#include <sysNormalyze.mqh>
+#include <sysNormalize.mqh>
 #include <sysStructure.mqh>
 
 #include <sysDT.mqh>
@@ -73,7 +73,7 @@ void B_Start(){
 			>Rev:0
 	*/
 
-	E_Start()$
+	E_Start();
 }
 
 string B_DBOE(){

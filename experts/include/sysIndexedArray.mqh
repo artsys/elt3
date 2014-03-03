@@ -88,7 +88,7 @@ int AId_AddRow2(double &a[][]){
 	return(t);
 }
 
-int AId_CopyRow2(double &s[][], double d[][], int i=0){
+int AId_CopyRow2(double &s[][], double &d[][], int i=0){
 	/**
 		\version	0.0.0.1
 		\date		2014.03.03

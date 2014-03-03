@@ -127,7 +127,7 @@ void OE_setPBI(int idx, int prop, double val){
 	aOE[idx][prop]=val;
 }
 
-void OE_setSTD(int ti){
+int OE_setSTD(int ti){
 	/**
 		\version	0.0.0.0
 		\date		2014.03.01
@@ -138,7 +138,7 @@ void OE_setSTD(int ti){
 			>Rev:0
 	*/
 	string fn="OE_setSTD";
-	if(!OrderSelect(ti, SELECT_BY_TICKET)) return; //если ордер не найден, то выходим.
+	if(!OrderSelect(ti, SELECT_BY_TICKET)) return(-1); //если ордер не найден, то выходим.
 	int idx=OE_FIBT(ti);
 	
 	aOE[idx][OE_TI]	=		OrderTicket();
@@ -187,4 +187,6 @@ void OE_setSTD(int ti){
 	}else{
 		aOE[idx][OE_CP2TP]	=	0;
 	}
+
+	return(idx);
 }

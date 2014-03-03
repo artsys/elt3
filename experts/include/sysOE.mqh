@@ -13,7 +13,7 @@
 			>Rev:0
 	*/
 
-//--- Main info
+//--- Main info {
 #define	OE_TI	0	//OrderTicket()
 #define	OE_TY	1	//OrderType()
 #define OE_OOP	2	//то же самое что и пункт выше.
@@ -28,15 +28,14 @@
 #define	OE_IP	11	//IsPending() if order type >= 2
 #define OE_OCT	12	//CloseTime()
 #define OE_OCP	13	//ClosePrice()
-#define OE_IC	14	//IsClosed()
+#define OE_IC	14	//IsClosed() }
 
-//------ Close data
+//------ Close data {
 #define OE_CPP		15	//Close profit in pips with sign (-/+)
 #define	OE_CTY		16	//Closed by sl/tp/from market (1,2,3);
 #define OE_CP2SL	17	//Разность между ценой закрытия и сл в пунктах
 #define OE_CP2TP	18	//Разность между ценой закрытия и тп в пунктах
-#define OE_CP2OP	19	//Разность между ценой закрытия и ценой открытия в пунктах
-
+#define OE_CP2OP	19	//Разность между ценой закрытия и ценой открытия в пунктах }
 #define OE_MAX		20
 
 double	aOE[][OE_MAX];

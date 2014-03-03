@@ -1,18 +1,10 @@
 	/**
-		\version	0.0.0.43
+		\version	3.1.0.1
 		\date		2014.02.10
 		\author		Morochin <artamir> Artiom
 		\details	Trading functtions.
 		\internal
-				$Revision: 287 $
 				>Hist:														
-						 @0.0.0.43@2014.02.10@artamir	[]	TR_ModifySL
-						 @0.0.0.42@2014.02.10@artamir	[]	TR_ModifyTP
-						 @0.0.0.41@2014.02.10@artamir	[]	TR_ModifySLByTicket
-						 @0.0.0.40@2014.01.15@artamir	[*]	TR_CloseByTicket
-						 @0.0.0.39@2013.12.31@artamir	[]	_OrderModify
-					 @0.0.0.38@2013.12.24@artamir	[*]	TR_SendBUY
-					 @0.0.0.37@2013.12.24@artamir	[*]	TR_SendSELL
 	*/
 
 #define TR_MODE_PRICE 1

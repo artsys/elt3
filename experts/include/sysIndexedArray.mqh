@@ -46,7 +46,7 @@ void AId_Init2(double &a[][], int &aI[]){
 	}
 }
 
-double AId_get2(double &a[][], int &aI[], int idx=0, int col=0){
+double AId_Get2(double &a[][], int &aI[], int idx=0, int col=0){
 	/**
 		\version	0.0.0.1
 		\date		2014.02.25

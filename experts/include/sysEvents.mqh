@@ -17,6 +17,10 @@ double	aEO[][OE_MAX];
 #define E_TI	0
 #define E_EVT	1
 #define	E_MAX	2
+
+#define EVT_NEW		0
+#define EVT_CHTY	1
+#define EVT_CLS		2
 double	aE[][E_MAX];
 
 void E_Init(void){
@@ -57,6 +61,9 @@ void E_Start(void){
 			AId_CopyRow2(aOE,aEC,idx);
 		}
 	}
+	
+	E_Events();
+	E_End();
 }
 
 void E_Events(void){
@@ -104,3 +111,50 @@ void E_Events(void){
 }
 
 //События
+void EVENT_New(int ti){
+	/**
+		\version	0.0.0.0
+		\date		2014.03.03
+		\author		Morochin <artamir> Artiom
+		\details	Событие - открытие новой позиции/ордера.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+	string fn="EVENT_New";
+	int idx=AId_AddRow2(aE);
+	aE[idx][E_TI]=ti;
+	aE[idx][E_EVT]=EVT_NEW;
+}
+
+void EVENT_ChTY(int ti){
+	/**
+		\version	0.0.0.0
+		\date		2014.03.03
+		\author		Morochin <artamir> Artiom
+		\details	Событие - изменение типа позиции/ордера.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+	string fn="EVENT_New";
+	int idx=AId_AddRow2(aE);
+	aE[idx][E_TI]=ti;
+	aE[idx][E_EVT]=EVT_CHTY;
+}
+
+void EVENT_Closed(int ti){
+	/**
+		\version	0.0.0.0
+		\date		2014.03.03
+		\author		Morochin <artamir> Artiom
+		\details	Событие - закрытие/удаление позиции/ордера.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+	string fn="EVENT_New";
+	int idx=AId_AddRow2(aE);
+	aE[idx][E_TI]=ti;
+	aE[idx][E_EVT]=EVT_CLS;
+}

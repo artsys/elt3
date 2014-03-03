@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.2
+		\version	3.1.0.3
 		\date		2014.03.03
 		\author		Morochin <artamir> Artiom
 		\details	События ордеров. Для работы библиотеки требуется библиотека sysOE.mqh
 		\internal
-			>Hist:		
+			>Hist:			
+					 @3.1.0.3@2014.03.03@artamir	[+]	E_Events
 					 @3.1.0.2@2014.03.03@artamir	[+]	E_Start
 					 @3.1.0.1@2014.03.03@artamir	[+]	aE_Init
 			>Rev:0
@@ -60,15 +61,46 @@ void E_Start(void){
 
 void E_Events(void){
 	/**
-		\version	0.0.0.0
+		\version	0.0.0.1
 		\date		2014.03.03
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:
+			>Hist:	
+					 @0.0.0.1@2014.03.03@artamir	[+]	E_Events
 			>Rev:0
 	*/
 	string fn="E_Events";
 	
+	int aIC[]; 			int AIO[];
+	ArrayResize(aIC,0);	ArrayResize(aIO,0);
+	AId_Init2(aEC,aIC); AId_Init2(aEO,aIO);
+	
+	for(int ic=0;i<ArrayRange(aIC,0);i++){
+		int cti=AId_Get2(aEC,aIC,ic,OE_TI);
+		int io=AId_SearchFirst2(aEO, aIO, OE_TI, cti);
+		
+		if(io==AI_NONE){
+			EVENT_New(cti);
+		}
+	
+		//Изменился тип ордера.
+		int cty=AId_Get2(aEC,aIC,ic,OE_TY);
+		int oty=AId_Get2(aEO,aIO,io,OE_TY);
+		if(cty!=oty){
+			EVENT_ChTY(cti);
+		}
+	}
+	
+	for(int io=0; io<ArrayRange(aIO,0);io++){
+		int oti=AId_Get2(aEO,aIO,io,OE_TI);
+		int ic=AId_SearchFirst2(aEC, aIC, OE_TI, oti);
+		
+		if(ic==AI_NONE){
+			EVENT_Closed(oti);
+		}
+	}
 	
 }
+
+//События

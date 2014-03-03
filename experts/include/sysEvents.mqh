@@ -99,11 +99,11 @@ void E_Events(void){
 	*/
 	string fn="E_Events";
 	
-	int aIC[]; 			int AIO[];
+	int aIC[]; 			int aIO[];
 	ArrayResize(aIC,0);	ArrayResize(aIO,0);
 	AId_Init2(aEC,aIC); AId_Init2(aEO,aIO);
 	
-	for(int ic=0;i<ArrayRange(aIC,0);i++){
+	for(int ic=0;ic<ArrayRange(aIC,0);ic++){
 		int cti=AId_Get2(aEC,aIC,ic,OE_TI);
 		int io=AId_SearchFirst2(aEO, aIO, OE_TI, cti);
 		

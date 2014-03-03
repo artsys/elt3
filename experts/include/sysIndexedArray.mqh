@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.20
+		\version	3.1.0.21
 		\date		2014.03.03
 		\author		Morochin <artamir> Artiom
 		\details	Работа с индексированным массивом.
 		\internal
-			>Hist:																				
+			>Hist:																					
+					 @3.1.0.21@2014.03.03@artamir	[!]	AId_SearchFirst2
 					 @3.1.0.20@2014.03.03@artamir	[+]	AId_CopyRow2
 					 @3.1.0.19@2014.03.03@artamir	[+]	AId_AddRow2
 					 @3.1.0.18@2014.02.28@artamir	[+]	AId_Print2
@@ -27,6 +28,8 @@
 					 @3.1.0.1@2014.02.25@artamir	[+]	AI_setInterval
 			>Rev:0
 	*/
+
+#define AI_NONE         2.2250738585072014e-308+1	
 	
 void AId_Init2(double &a[][], int &aI[]){
 	/**
@@ -59,6 +62,7 @@ double AId_Get2(double &a[][], int &aI[], int idx=0, int col=0){
 	*/
 
 	string fn="AId_get2";
+	if(ArrayRange(aI,0)<=0)return(AI_NONE);
 	return(a[aI[idx]][col]);
 }
 
@@ -127,7 +131,7 @@ double AId_Compare(double v1, double v2){
 
 #define AI_WHOLEARRAY	-256
 #define AI_EMPTY		   -1024
-#define AI_NONE         -2048
+
 int AI_setInterval(int &aI[], int start_idx=0, int end_idx=-256){
 	/**
 		\version	0.0.0.1
@@ -319,17 +323,20 @@ int AId_QuickSearch2(double &a[][], int &aI[], int col=0, double element=0.0, in
 
 int AId_SearchFirst2(double &a[][], int &aI[], int col=0, double element=0.0){
 	/**
-		\version	0.0.0.1
-		\date		2014.02.26
+		\version	0.0.0.2
+		\date		2014.03.03
 		\author		Morochin <artamir> Artiom
 		\details	Поиск самого первого совпадения.
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2014.03.03@artamir	[!]	Добавлена проверка 
 					 @0.0.0.1@2014.02.26@artamir	[]	AId_SearchFirst2
 			>Rev:0
 	*/
 	
 	string fn="AId_SearchFirst2";
+	
+	if(ArrayRange(aI,0)<=0)return(AI_NONE);
 	
 	int found_index=AId_QuickSearch2(a,aI,col,element,AI_EQ);
 	if(found_index==AI_NONE)return(AI_NONE);

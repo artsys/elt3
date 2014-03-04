@@ -1,10 +1,12 @@
 	/**
-		\version	1.509.4.5
+		\version	1.509.4.7
 		\date		2014.03.04
 		\author		Morochin <artamir> Artiom
 		\details	Советник работает по индикатору StohCross
 		\internal
-		>Hist:																																																				
+		>Hist:																																																						
+				 @1.509.4.7@2014.03.04@artamir	[]	TN_check
+				 @1.509.4.6@2014.03.04@artamir	[]	TN_checkMP
 				 @1.509.4.5@2014.03.04@artamir	[+]	TN
 				 @1.509.4.4@2014.02.06@artamir	[+]	MOIS_check
 				 @1.509.4.3@2014.02.06@artamir	[+]	MOIS_main
@@ -49,7 +51,7 @@ int MOIS_count=0;
 int MOIS_type=-1;
 
 #define EXP	"eVVSS_StohCross"	
-#define VER	"1.509.4.5_2014.03.04"
+#define VER	"1.509.4.7_2014.03.04"
 
 extern	string	s1="==== MAIN ====="; //{
 extern	int SL=50;
@@ -133,7 +135,7 @@ extern	string	e1="==== EXPERT END =====";//}
 string a[][9];
 int htable = -1;
 
-//{--- Функции установки внешних настроек эксперта.
+//{ --- Функции установки внешних настроек эксперта.
 
 string eVVSSSC_Ver_get(){
 	return(VER);
@@ -708,6 +710,52 @@ void TN(){
 	Select(aOE,aI,f);
 	
 	if(ArrayRange(aI,0)>0)TN_check(aI);
+}
+
+void TN_check(int &aI[]){
+	/**
+		\version	0.0.0.1
+		\date		2014.03.04
+		\author		Morochin <artamir> Artiom
+		\details	Проверка, есть ли ордера с MP=одному из aI
+		если нет, то выставляется сетка таких ордеров.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.03.04@artamir	[]	TN_check
+			>Rev:0
+	*/
+	string fn="TN_check";
+	
+	int rows=ArrayRange(aI,0);
+	for(int i=0;i<rows;i++){
+		int mp_ti=aOE[aI[i]][OE_TI];
+		TN_checkMP(mp_ti, aI[i]);
+	}
+}
+
+void TN_checkMP(int mp, int idx){
+	/**
+		\version	0.0.0.1
+		\date		2014.03.04
+		\author		Morochin <artamir> Artiom
+		\details	проверяет для заданного mp, есть ли дочерние ордера.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.03.04@artamir	[]	TN_checkMP
+			>Rev:0
+	*/
+	string fn="";
+	int aI[]; ArrayResize(aI,0);
+	AId_Init2(aOE,aI);
+	
+	f=StringConcatenate(""
+	, OE_MP+"=="+mp);
+	
+	Select(aOE,aI,f);
+	if(ArrayRange(aI,0)<=0){
+		double start_price=Norm_symb(aOE[idx][OE_OOP]);
+		
+	}
 }
 
 bool Autoclose(){

@@ -1,12 +1,13 @@
 	/**
-		\version	1.509.4.4
-		\date		2014.02.06
+		\version	1.509.4.5
+		\date		2014.03.04
 		\author		Morochin <artamir> Artiom
 		\details	—оветник работает по индикатору StohCross
 		\internal
-		>Hist:																																																			
-				 @1.509.4.4@2014.02.06@artamir	[]	MOIS_check
-				 @1.509.4.3@2014.02.06@artamir	[]	MOIS_main
+		>Hist:																																																				
+				 @1.509.4.5@2014.03.04@artamir	[+]	TN
+				 @1.509.4.4@2014.02.06@artamir	[+]	MOIS_check
+				 @1.509.4.3@2014.02.06@artamir	[+]	MOIS_main
 				 @1.509.4.2@2014.02.06@artamir	[*]	Autoopen
 				 @1.0.3.11@2014.01.31@artamir	[!]	Autoopen
 				 @1.0.3.10@2014.01.31@artamir	[+]	GetLot
@@ -48,7 +49,7 @@ int MOIS_count=0;
 int MOIS_type=-1;
 
 #define EXP	"eVVSS_StohCross"	
-#define VER	"1.509.4.4_2014.02.06"
+#define VER	"1.509.4.5_2014.03.04"
 
 extern	string	s1="==== MAIN ====="; //{
 extern	int SL=50;
@@ -65,6 +66,12 @@ extern int		CMFB_pips=50; //закрывать ордера, ушедшие в минуз больше заданного з
 extern bool MOIS_use=false; //–азрешает советнику использовать максимальное количество ордеров в серии.
 extern int	MOIS_amount=50; //ћаксимальное количество ордеров в серии.
 
+extern string s2="===== TREND NET =====";
+extern bool TN_use=false; //»спользовать сетку ордеров.
+extern int TN_step=20; //¬ пунктах
+extern int TN_levels=5; //количество уровней сетки.
+
+extern string os="===== STOHCROSS OPEN =====";
 extern int       KPeriod1    	 =  8;
 extern int       DPeriod1    	 =  3;
 extern int       Slowing1    	 =  3;
@@ -425,27 +432,20 @@ int startext(){
 	
 	string fn="startext";
 	
-	//Print(fn,"-> Autoclose()");
 	if(Autoclose()){
 		return(0);
 	}
 	
-	//Print(fn,"-> FIXProfit()");
 	if(FIXProfit())return(0);
 	
 	CMFB();
 	
-	//Print(fn,"-> Tral()");
 	Tral();
 	
-	//Print(fn,"-> Tral_Fr()");
 	Tral_Fr();
 	
-	//Print(fn,"-> Tral_ATR()");
 	Tral_ATR();
 	
-	//Print(fn,"-> Autoopen()");
-	//BP_SEL=true;
 	Autoopen();
 	BP_SEL=false;
 	//-------------------------------------------
@@ -680,6 +680,34 @@ bool MOIS_check(int op){
 	if(MOIS_count<MOIS_amount)return(true);
 	
 	return(false);
+}
+
+void TN(){
+	/**
+		\version	0.0.0.1
+		\date		2014.03.04
+		\author		Morochin <artamir> Artiom
+		\details	ћодуль сетки ордеров в направлении тренда.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.03.04@artamir	[+]	TN
+			>Rev:0
+	*/
+	string fn="TN";
+	
+	if(!TN_use)return;
+	
+	//ќтбираем ордера у которых не задан MP.
+	int aI[]; ArrayResize(aI,0);
+	AId_Init2(aOE,aI);
+	f=StringConcatenate(""
+	,OE_IT+"==1"
+	," AND "
+	,OE_MP+"==0");
+	
+	Select(aOE,aI,f);
+	
+	if(ArrayRange(aI,0)>0)TN_check(aI);
 }
 
 bool Autoclose(){

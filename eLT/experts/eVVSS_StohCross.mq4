@@ -769,7 +769,12 @@ void TN_checkMP(int mp, int idx){
 			if(p_ty==OP_SELL){
 				ArrayResize(d,0);
 				TR_SendSELLSTOP_array(d,	start_price, AddPips, GetLot(), TP, SL);
-			}		
+			}
+
+			int rows=ArrayRange(d,0);
+			for(int i=0;i<rows;i++){
+				OE_setMPByTicket(d[i],mp);
+			}	
 		}
 	}
 }

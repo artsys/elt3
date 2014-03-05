@@ -94,3 +94,70 @@ string B_DBOE(){
 	
 	return(file);
 }
+
+void B_Select(double &a[][], int &aI[], string f){
+	/**
+		\version	0.0.0.1
+		\date		2014.01.23
+		\author		Morochin <artamir> Artiom
+		\details	Выборка из массива.
+		\internal
+			>Hist:		
+					 @0.0.0.1@2014.01.23@artamir	[+]	Select
+			>Rev:0
+	*/
+
+	string fn="Select";
+	
+		
+	AIF_init();
+	
+	//1. Раскладываем строку f по разделителю " AND "
+	string del=" AND ";
+	string aAnd[];
+	ArrayResize(aAnd,0);
+	
+	StringToArrayString(aAnd, f, del);
+	int and_rows=ArrayRange(aAnd,0);
+
+	for(int i=0;i<and_rows;i++){
+		string e=aAnd[i];
+		string aE[];
+		
+		//{		EQ "=="
+		ArrayResize(aE,0);
+		StringToArrayString(aE,e,"==");
+		int e_rows=ArrayRange(aE,0);
+		if(e_rows>1){
+			int col=StrToInteger(aE[0]);
+			double val=StrToDouble(aE[1]);
+			
+			AIF_filterAdd_AND(col,AI_EQ,val,val);	
+		}
+		
+		//..	GREAT ">>"
+		ArrayResize(aE,0);
+		StringToArrayString(aE,e,">>");
+		e_rows=ArrayRange(aE,0);
+		if(e_rows>1){
+			col=StrToInteger(aE[0]);
+			val=StrToDouble(aE[1]);
+			
+			AIF_filterAdd_AND(col,AI_GREAT,val,val);	
+		}	
+		//..	LESS "<<"
+		ArrayResize(aE,0);
+		StringToArrayString(aE,e,"<<");
+		e_rows=ArrayRange(aE,0);
+		if(e_rows>1){
+			col=StrToInteger(aE[0]);
+			val=StrToDouble(aE[1]);
+			AIF_filterAdd_AND(col,AI_LESS,val,val);	
+		}	
+		//}
+	
+	}
+	
+	//-------------------------------------------
+	AId_Select2(a,aI);
+}

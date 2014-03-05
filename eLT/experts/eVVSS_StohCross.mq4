@@ -448,6 +448,8 @@ int startext(){
 	
 	Tral_ATR();
 	
+	TN();
+	
 	Autoopen();
 	BP_SEL=false;
 	//-------------------------------------------
@@ -702,7 +704,7 @@ void TN(){
 	//Отбираем ордера у которых не задан MP.
 	int aI[]; ArrayResize(aI,0);
 	AId_Init2(aOE,aI);
-	f=StringConcatenate(""
+	string f=StringConcatenate(""
 	,OE_IT+"==1"
 	," AND "
 	,OE_MP+"==0");
@@ -745,16 +747,30 @@ void TN_checkMP(int mp, int idx){
 			>Rev:0
 	*/
 	string fn="";
+	int p_ty=aOE[idx][OE_TY];
+	
 	int aI[]; ArrayResize(aI,0);
 	AId_Init2(aOE,aI);
 	
-	f=StringConcatenate(""
+	string f=StringConcatenate(""
 	, OE_MP+"=="+mp);
 	
 	Select(aOE,aI,f);
 	if(ArrayRange(aI,0)<=0){
 		double start_price=Norm_symb(aOE[idx][OE_OOP]);
-		
+		for(int lvl=0;lvl<TN_levels;lvl++){
+			double d[];
+			int AddPips=TN_step*(lvl+1);
+			if(p_ty==OP_BUY){
+				ArrayResize(d,0);
+				TR_SendBUYSTOP_array(d,	start_price, TN_step, GetLot(), TP, SL);
+			}
+
+			if(p_ty==OP_SELL){
+				ArrayResize(d,0);
+				TR_SendSELLSTOP_array(d,	start_price, TN_step, GetLot(), TP, SL);
+			}		
+		}
 	}
 }
 

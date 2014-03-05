@@ -1,11 +1,12 @@
 	/**
-		\version	0.0.0.43
-		\date		2014.02.10
+		\version	0.0.0.44
+		\date		2014.03.05
 		\author		Morochin <artamir> Artiom
 		\details	Trading functtions.
 		\internal
 				$Revision$
-				>Hist:														
+				>Hist:															
+						 @0.0.0.44@2014.03.05@artamir	[]	_OrderSend
 						 @0.0.0.43@2014.02.10@artamir	[]	TR_ModifySL
 						 @0.0.0.42@2014.02.10@artamir	[]	TR_ModifyTP
 						 @0.0.0.41@2014.02.10@artamir	[]	TR_ModifySLByTicket
@@ -967,9 +968,10 @@ int	_TR_CountOrdersToSend(double all_vol = 0){
 int TR_MaxOrdersCount=0;
 int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double price = 0.0, int slippage = 0, double stoploss = 0.0, double takeprofit = 0.0, string comment="", int magic=-1, datetime expiration=0, color arrow_color=CLR_NONE){
 	/*
-		>Ver	:	0.0.0.7
-		>Date	:	2013.09.05
-		>History:		
+		>Ver	:	0.0.0.8
+		>Date	:	2014.03.05
+		>History:			
+					@0.0.0.8@2014.03.05@artamir	[]	_OrderSend
 					@0.0.0.7@2013.09.05@artamir	[*]	_OrderSend Добавил установку FOD
 					@0.0.6@2013.04.22@artamir	[]	_OrderSend
 			@0.0.3@2012.10.01@artamir	[]

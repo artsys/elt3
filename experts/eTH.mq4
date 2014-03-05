@@ -106,14 +106,14 @@ void TN(){
 	
 	int aI[]; ArrayResize(aI,0);
 	AId_Init2(aEC,aI);
-	f=StringConcatenate(""
+	string f=StringConcatenate(""
 		,OE_MN,"==",TR_MN
 		," AND "
 		,OE_IT,"==1"
 		," AND "
 		,OE_IM,"==1");
 		
-	B_Select(aOE,aI,f);
+	B_Select(aEC,aI,f);
 
 	int rows=ArrayRange(aI,0);
 	
@@ -147,7 +147,7 @@ void TN_checkCO(int pti){
 	
 	for(int lvl=1;lvl<=Levels;lvl++){
 		int ty=-1;
-		lvloop=poop+iif((pty==OP_BUY||pty==OP_BUYSTOP),1,-1)*Step*lvl*Point;
+		double lvloop=poop+iif((pty==OP_BUY||pty==OP_BUYSTOP),1,-1)*Step*lvl*Point;
 		
 		if(pty==OP_BUY||pty==OP_BUYSTOP){
 			ty=OP_BUYSTOP;

@@ -1,11 +1,12 @@
 	/**
-		\version	0.0.0.4
-		\date		2014.03.03
+		\version	0.0.0.5
+		\date		2014.03.06
 		\author		Morochin <artamir> Artiom
 		\details	База для советников. Сборник сервисных процедур/функций.
 		Для правильной работы необходимо, чтоб в советниках были определены константы: EXP - Уникальное имя эксперта, нужное для создания файлов данных эксперта.
 		\internal
-			>Hist:				
+			>Hist:					
+					 @0.0.0.5@2014.03.06@artamir	[]	B_Select
 					 @0.0.0.4@2014.03.03@artamir	[+]	B_Start
 					 @0.0.0.3@2014.03.03@artamir	[+]	B_Init
 					 @0.0.0.2@2014.03.03@artamir	[+]	B_Deinit
@@ -97,19 +98,20 @@ string B_DBOE(){
 
 void B_Select(double &a[][], int &aI[], string f){
 	/**
-		\version	0.0.0.1
-		\date		2014.01.23
+		\version	0.0.0.2
+		\date		2014.03.06
 		\author		Morochin <artamir> Artiom
 		\details	Выборка из массива.
 		\internal
-			>Hist:		
+			>Hist:			
+					 @0.0.0.2@2014.03.06@artamir	[!]	Добавлен обязательный отбор по магику.
 					 @0.0.0.1@2014.01.23@artamir	[+]	Select
 			>Rev:0
 	*/
 
 	string fn="Select";
 	
-		
+	f=StringConcatenate(OE_TR,"==",TR_MN," AND ");	
 	AIF_init();
 	
 	//1. Раскладываем строку f по разделителю " AND "

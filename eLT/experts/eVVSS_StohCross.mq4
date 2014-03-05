@@ -5,8 +5,8 @@
 		\details	Советник работает по индикатору StohCross
 		\internal
 		>Hist:																																																						
-				 @1.509.4.7@2014.03.04@artamir	[]	TN_check
-				 @1.509.4.6@2014.03.04@artamir	[]	TN_checkMP
+				 @1.509.4.7@2014.03.04@artamir	[+]	TN_check
+				 @1.509.4.6@2014.03.04@artamir	[+]	TN_checkMP
 				 @1.509.4.5@2014.03.04@artamir	[+]	TN
 				 @1.509.4.4@2014.02.06@artamir	[+]	MOIS_check
 				 @1.509.4.3@2014.02.06@artamir	[+]	MOIS_main

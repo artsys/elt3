@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.7
-		\date		2014.03.03
+		\version	3.1.0.8
+		\date		2014.03.05
 		\author		Morochin <artamir> Artiom
 		\details	Расширенная информация об ордерах.
 		\internal
-			>Hist:							
+			>Hist:								
+					 @3.1.0.8@2014.03.05@artamir	[+]	OE_getPBT
 					 @3.1.0.7@2014.03.03@artamir	[+]	OE2Str
 					 @3.1.0.6@2014.03.03@artamir	[!]	OE_init
 					 @3.1.0.5@2014.03.01@artamir	[+]	OE_setPBI
@@ -233,4 +234,23 @@ int OE_setSTD(int ti){
 	}
 
 	return(idx);
+}
+
+double OE_getPBT(int ti, int prop){
+	/**
+		\version	0.0.0.1
+		\date		2014.03.05
+		\author		Morochin <artamir> Artiom
+		\details	Возвращает значение свойства заданного тикета.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.03.05@artamir	[+]	OE_getPBT
+			>Rev:0
+	*/
+	string fn="OE_getPBT";
+	
+	int idx=OE_FIBT(ti);
+	double val=aOE[idx][prop];
+	
+	return(val);
 }

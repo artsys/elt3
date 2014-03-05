@@ -1,10 +1,11 @@
 	/**
-		\version	1.509.4.7
-		\date		2014.03.04
+		\version	1.509.4.8
+		\date		2014.03.05
 		\author		Morochin <artamir> Artiom
 		\details	Советник работает по индикатору StohCross
 		\internal
-		>Hist:																																																						
+		>Hist:																																																							
+				 @1.509.4.8@2014.03.05@artamir	[]	TN_delete
 				 @1.509.4.7@2014.03.04@artamir	[+]	TN_check
 				 @1.509.4.6@2014.03.04@artamir	[+]	TN_checkMP
 				 @1.509.4.5@2014.03.04@artamir	[+]	TN
@@ -51,7 +52,7 @@ int MOIS_count=0;
 int MOIS_type=-1;
 
 #define EXP	"eVVSS_StohCross"	
-#define VER	"1.509.4.7_2014.03.04"
+#define VER	"1.509.4.8_2014.03.05"
 
 extern	string	s1="==== MAIN ====="; //{
 extern	int SL=50;
@@ -72,6 +73,7 @@ extern string s2="===== TREND NET =====";
 extern bool TN_use=false; //Использовать сетку ордеров.
 extern int TN_step=20; //В пунктах
 extern int TN_levels=5; //количество уровней сетки.
+extern bool TN_delunused=true; //Удалять неиспользуемые сетки.
 
 extern string os="===== STOHCROSS OPEN =====";
 extern int       KPeriod1    	 =  8;
@@ -712,6 +714,10 @@ void TN(){
 	Select(aOE,aI,f);
 	
 	if(ArrayRange(aI,0)>0)TN_check(aI);
+
+	if(TN_delunused){
+		TN_delete();
+	}	
 }
 
 void TN_check(int &aI[]){
@@ -775,6 +781,38 @@ void TN_checkMP(int mp, int idx){
 			for(int i=0;i<rows;i++){
 				OE_setMPByTicket(d[i],mp);
 			}	
+		}
+	}
+}
+
+void TN_delete(){
+	/**
+		\version	0.0.0.1
+		\date		2014.03.05
+		\author		Morochin <artamir> Artiom
+		\details	Удаляет неиспользуемые сетки.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.03.05@artamir	[]	TN_delete
+			>Rev:0
+	*/
+
+	string fn="TN_delete";
+	
+	int aI[];ArrayResize(aI,0);
+	AId_Init2(aOE,aI);
+	
+	string f=StringConcatenate(""
+			,OE_MP,">>0"
+			," AND "
+			,OE_IT,"==1");
+	Select(aOE,aI,f);	
+	int rows=ArrayRange(aI,0);
+	
+	for(int i=0;i<rows;i++){
+		int p_idx=OE_FIBT(aOE[aI[i]][OE_MP]);
+		if(aOE[p_idx][OE_IT]==0){
+			TR_CloseByTicket(aOE[aI[i]][OE_TI]);
 		}
 	}
 }

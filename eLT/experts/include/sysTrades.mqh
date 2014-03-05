@@ -1,11 +1,14 @@
 	/**
-		\version	0.0.0.40
-		\date		2014.01.15
+		\version	0.0.0.43
+		\date		2014.02.10
 		\author		Morochin <artamir> Artiom
 		\details	Trading functtions.
 		\internal
 				$Revision$
-				>Hist:											
+				>Hist:														
+						 @0.0.0.43@2014.02.10@artamir	[]	TR_ModifySL
+						 @0.0.0.42@2014.02.10@artamir	[]	TR_ModifyTP
+						 @0.0.0.41@2014.02.10@artamir	[]	TR_ModifySLByTicket
 						 @0.0.0.40@2014.01.15@artamir	[*]	TR_CloseByTicket
 						 @0.0.0.39@2013.12.31@artamir	[]	_OrderModify
 					 @0.0.0.38@2013.12.24@artamir	[*]	TR_SendBUY
@@ -961,6 +964,7 @@ int	_TR_CountOrdersToSend(double all_vol = 0){
 	return(count_floor);
 }
 
+int TR_MaxOrdersCount=0;
 int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double price = 0.0, int slippage = 0, double stoploss = 0.0, double takeprofit = 0.0, string comment="", int magic=-1, datetime expiration=0, color arrow_color=CLR_NONE){
 	/*
 		>Ver	:	0.0.0.7
@@ -983,6 +987,10 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 	//-----------------------------------------------------------
 	
 	string fn="_OrderSend";
+	
+	if(OrdersTotal()>=TR_MaxOrdersCount&&TR_MaxOrdersCount>0){
+		return(-1);
+	}
 	
 	//-----------------------------------------------------------
 	// Блок проверок на правильность переданных параметров.
@@ -1097,6 +1105,10 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 	//------------------------------------------------------
 	if(err == 130){
 		Print("Bad stop", " cmd = ", cmd, " price = ", price, "stoploss = ", stoploss, "takeprofit = ", takeprofit, " Ask = ",Ask, " Bid = ", Bid);
+	}
+	
+	if(err == 148){
+		TR_MaxOrdersCount=OrdersTotal();
 	}
 	
 	return(res);
@@ -1219,9 +1231,10 @@ bool _OrderModify(int ticket, double price, double stoploss, double takeprofit, 
 
 bool TR_ModifyTP(int ticket, double tp, int mode = 1){
 	/*
-		>Ver	:	0.0.2
-		>Date	:	2012.09.20
-		>History:
+		>Ver	:	0.0.0.3
+		>Date	:	2014.02.10
+		>History:	
+					@0.0.0.3@2014.02.10@artamir	[*]	Для режима тп в пунктах, если тп=0, то тп на тикет не ставится.
 			@0.0.2@2012.09.20@artamir	[]
 			@0.0.1@2012.08.20@artamir	[]
 		>Description:
@@ -1243,6 +1256,8 @@ bool TR_ModifyTP(int ticket, double tp, int mode = 1){
 		if(type == OP_SELL || type == OP_SELLSTOP || type == OP_SELLLIMIT){
 			newtp = op - tp*Point;
 		}
+		
+		if(tp==0){newtp=0;}
 	}
 	
 	return(_OrderModify(ticket, -1, -1, newtp, -1, CLR_NONE));
@@ -1283,11 +1298,32 @@ bool TR_ModifyTPByTicket(int src_ti, int dest_ti){
 	return(TR_ModifyTP(dest_ti, src_tp));
 }
 
+bool TR_ModifySLByTicket(int src_ti, int dest_ti){
+	/*
+		>Ver	:	0.0.0.2
+		>Date	:	2014.02.10
+		>Hist	:	
+					@0.0.0.2@2014.02.10@artamir	[+]	TR_ModifySLByTicket
+		>Author	:	Morochin <artamir> Artiom
+		>Desc	:	Модифицирует тп для заданного тикета, как у тикета-источника
+	*/
+	
+	if(!OrderSelect(src_ti, SELECT_BY_TICKET)) return(false);
+	
+	//------------------------------------------------------
+	double src_sl = Norm_symb(OrderStopLoss());
+	
+	//------------------------------------------------------
+	return(TR_ModifySL(dest_ti, src_sl));
+}
+
+
 bool TR_ModifySL(int ticket, double sl, int mode = 1){
 	/*
-		>Ver	:	0.0.3
-		>Date	:	2013.02.15
-		>History:
+		>Ver	:	0.0.0.4
+		>Date	:	2014.02.10
+		>History:	
+					@0.0.0.4@2014.02.10@artamir	[*]	
 		>Desc:
 			Modify SL
 		>Зависимости заголовков:
@@ -1310,6 +1346,8 @@ bool TR_ModifySL(int ticket, double sl, int mode = 1){
 		if(type == OP_SELL || type == OP_SELLSTOP || type == OP_SELLLIMIT){
 			newsl = op + sl*Point;
 		}
+	
+		if(sl==0){newsl=0;}
 	}
 	
 	return(_OrderModify(ticket, -1, newsl, -1, -1, CLR_NONE));

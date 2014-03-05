@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.1
-		\date		2014.02.10
+		\version	3.1.0.2
+		\date		2014.03.05
 		\author		Morochin <artamir> Artiom
 		\details	Trading functtions.
 		\internal
-				>Hist:														
+				>Hist:															
+						 @3.1.0.2@2014.03.05@artamir	[*]	_OrderSend
 	*/
 
 #define TR_MODE_PRICE 1
@@ -959,16 +960,16 @@ int	_TR_CountOrdersToSend(double all_vol = 0){
 	return(count_floor);
 }
 
+
+int TR_MaxOrdersCount=0;
 int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double price = 0.0, int slippage = 0, double stoploss = 0.0, double takeprofit = 0.0, string comment="", int magic=-1, datetime expiration=0, color arrow_color=CLR_NONE){
 	/*
-		>Ver	:	0.0.0.7
-		>Date	:	2013.09.05
-		>History:		
+		>Ver	:	0.0.0.8
+		>Date	:	2014.03.05
+		>History:			
+					@0.0.0.8@2014.03.05@artamir	[]	Добавлена проверка на максимальное количество ордеров.
 					@0.0.0.7@2013.09.05@artamir	[*]	_OrderSend Добавил установку FOD
 					@0.0.6@2013.04.22@artamir	[]	_OrderSend
-			@0.0.3@2012.10.01@artamir	[]
-			@0.0.2@2012.09.20@artamir	[+] checking price for sending order.
-			@0.0.1@2012.09.20@artamir	[]
 		>Description:
 			Функция отправки закроса на открытие ордера на сервер.
 		>Зависимости заголовков:
@@ -981,7 +982,7 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 	//-----------------------------------------------------------
 	
 	string fn="_OrderSend";
-	
+	if(OrdersTotal()>=TR_MaxOrdersCount) return(-1);
 	//-----------------------------------------------------------
 	// Блок проверок на правильность переданных параметров.
 	//-----------------------------------------------------------
@@ -1094,6 +1095,10 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 	//------------------------------------------------------
 	if(err == 130){
 		Print("Bad stop", " cmd = ", cmd, " price = ", price, "stoploss = ", stoploss, "takeprofit = ", takeprofit, " Ask = ",Ask, " Bid = ", Bid);
+	}
+	
+	if(err==148){
+		TR_MaxOrdersCount=OrdersTotal();
 	}
 	
 	return(res);

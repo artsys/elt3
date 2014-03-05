@@ -763,12 +763,12 @@ void TN_checkMP(int mp, int idx){
 			int AddPips=TN_step*(lvl+1);
 			if(p_ty==OP_BUY){
 				ArrayResize(d,0);
-				TR_SendBUYSTOP_array(d,	start_price, TN_step, GetLot(), TP, SL);
+				TR_SendBUYSTOP_array(d,	start_price, AddPips, GetLot(), TP, SL);
 			}
 
 			if(p_ty==OP_SELL){
 				ArrayResize(d,0);
-				TR_SendSELLSTOP_array(d,	start_price, TN_step, GetLot(), TP, SL);
+				TR_SendSELLSTOP_array(d,	start_price, AddPips, GetLot(), TP, SL);
 			}		
 		}
 	}

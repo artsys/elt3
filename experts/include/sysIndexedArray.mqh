@@ -34,7 +34,7 @@
 			>Rev:0
 	*/
 
-#define AI_NONE         2.2250738585072014e-308+1	
+#define AI_NONE         -2 147 483 648
 	
 void AId_Init2(double &a[][], int &aI[]){
 	/**

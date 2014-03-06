@@ -982,7 +982,7 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 	//-----------------------------------------------------------
 	
 	string fn="_OrderSend";
-	if(OrdersTotal()>=TR_MaxOrdersCount) return(-1);
+	if(OrdersTotal()>=TR_MaxOrdersCount&&TR_MaxOrdersCount>0) return(-1);
 	//-----------------------------------------------------------
 	// Блок проверок на правильность переданных параметров.
 	//-----------------------------------------------------------

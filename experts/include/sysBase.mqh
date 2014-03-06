@@ -111,7 +111,7 @@ void B_Select(double &a[][], int &aI[], string f){
 
 	string fn="Select";
 	
-	f=StringConcatenate(OE_TR,"==",TR_MN," AND ");	
+	f=StringConcatenate(OE_MN,"==",TR_MN," AND ");	
 	AIF_init();
 	
 	//1. Раскладываем строку f по разделителю " AND "
@@ -130,6 +130,8 @@ void B_Select(double &a[][], int &aI[], string f){
 		ArrayResize(aE,0);
 		StringToArrayString(aE,e,"==");
 		int e_rows=ArrayRange(aE,0);
+		int col=-1,val=0.0;
+		
 		if(e_rows>1){
 			int col=StrToInteger(aE[0]);
 			double val=StrToDouble(aE[1]);

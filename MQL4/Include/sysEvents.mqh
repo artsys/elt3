@@ -118,6 +118,7 @@ void E_Events(void){
 		
 		if(io==AI_NONE){
 			EVENT_New(cti);
+			continue;
 		}
 	
 		//Изменился тип ордера.

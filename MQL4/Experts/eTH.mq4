@@ -121,7 +121,7 @@ void TN(){
 		," AND "
 		,OE_IM,"==1");
 		
-	B_Select(aEC,aI,f);
+ 	B_Select(aEC,aI,f);
 
 	int rows=ArrayRange(aI,0);
 	

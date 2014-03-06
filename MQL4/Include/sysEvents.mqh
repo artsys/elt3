@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.5
-		\date		2014.03.03
+		\version	3.1.0.6
+		\date		2014.03.06
 		\author		Morochin <artamir> Artiom
 		\details	События ордеров. Для работы библиотеки требуется библиотека sysOE.mqh
 		\internal
-			>Hist:					
+			>Hist:						
+					 @3.1.0.6@2014.03.06@artamir	[!]	EVENT_Closed
 					 @3.1.0.5@2014.03.03@artamir	[]	E_End
 					 @3.1.0.4@2014.03.03@artamir	[+]	E_End
 					 @3.1.0.3@2014.03.03@artamir	[+]	E_Events
@@ -175,16 +176,18 @@ void EVENT_ChTY(int ti){
 
 void EVENT_Closed(int ti){
 	/**
-		\version	0.0.0.0
-		\date		2014.03.03
+		\version	0.0.0.1
+		\date		2014.03.06
 		\author		Morochin <artamir> Artiom
 		\details	Событие - закрытие/удаление позиции/ордера.
 		\internal
-			>Hist:
+			>Hist:	
+					 @0.0.0.1@2014.03.06@artamir	[!]	EVENT_Closed
 			>Rev:0
 	*/
 	string fn="EVENT_New";
 	int idx=AId_AddRow2(aE);
 	aE[idx][E_TI]=ti;
 	aE[idx][E_EVT]=EVT_CLS;
+	OE_setCLS(ti);
 }

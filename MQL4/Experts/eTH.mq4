@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.6
+		\version	3.1.0.7
 		\date		2014.03.06
 		\author		Morochin <artamir> Artiom
 		\details	Собиратель тренда (Trend Harvester)
 		\internal
-			>Hist:						
+			>Hist:							
+					 @3.1.0.7@2014.03.06@artamir	[+]	TI_count
 					 @3.1.0.6@2014.03.06@artamir	[+]	TN_checkRev
 					 @3.1.0.4@2014.03.06@artamir	[+]	TN_checkCO
 					 @3.1.0.3@2014.03.06@artamir	[+]	Autoopen
@@ -24,9 +25,11 @@ input int TP=50; //Тейкпрофит (на каждый ордер отдельно)
 input int Levels=5; //Кол. уровней от позиции.
 input double Lot=0.1;
 input string e1="================";
+extern bool		CMFB_use=false; //закрывать минусовые ордера из средств баланса.
+extern int		CMFB_pips=50; //закрывать ордера, ушедшие в минуз больше заданного значения (в пунктах)
 
 #define EXP "eTH"\
-#define VER "3.1.0.6_2014.03.06"
+#define VER "3.1.0.7_2014.03.06"
 #include <sysBase.mqh>
 
 int OnInit(){
@@ -90,13 +93,13 @@ int startext(void){
 	
 	Autoopen();
 	
-	int aI[]; ArrayResize(aI,0);
-	AId_Init2(aEC,aI);
-	AId_Print2(aEC,aI,4,"aEC_all");
+	// int aI[]; ArrayResize(aI,0);
+	// AId_Init2(aEC,aI);
+	// AId_Print2(aEC,aI,4,"aEC_all");
 
-   ArrayResize(aI,0);
-	AId_Init2(aOE,aI);
-	AId_Print2(aOE,aI,4,"aOE_all");	
+   // ArrayResize(aI,0);
+	// AId_Init2(aOE,aI);
+	// AId_Print2(aOE,aI,4,"aOE_all");	
 	return(0);
 }
 
@@ -112,7 +115,9 @@ void TN(){
 			>Rev:0
 	*/
 	string fn="TN";
-	
+	if(GetLastError()==130){
+		Print(fn);
+	}	
 	int aI[]; ArrayResize(aI,0);
 	AId_Init2(aEC,aI);
 	string f=StringConcatenate(""
@@ -121,7 +126,7 @@ void TN(){
 		,OE_IT,"==1"
 		," AND "
 		,OE_IM,"==1");
-		
+	
  	B_Select(aEC,aI,f);
 
 	int rows=ArrayRange(aI,0);
@@ -132,8 +137,8 @@ void TN(){
 		int 	pti =AId_Get2(aEC,aI,i,OE_TI);
 		int 	pty =AId_Get2(aEC,aI,i,OE_TY);
 		double 	poop=AId_Get2(aEC,aI,i,OE_OOP);
-		
-		TN_checkCO(pti);
+	
+		TN_checkCO(pti);	
 		TN_checkRev(pti);
 	}
 }
@@ -184,6 +189,7 @@ void TN_checkCO(int pti){
 			ArrayResize(d,0);
 			int AddPips=Step*lvl;
 			TR_SendPending_array(d, ty,	poop, AddPips, GetLot(), TP);
+			
 		}
 	}		
 }
@@ -205,37 +211,64 @@ void TN_checkRev(int pti){
 	int pty=OrderType();
 	double poop=OrderOpenPrice();
 	
-	for(int lvl=1;lvl<=Levels;lvl++){
-		int ty=-1;
-		double lvloop=poop+iif((pty==OP_BUY||pty==OP_BUYSTOP),1,-1)*Step*lvl*Point;
+	int typ=-1,tyo=-1;
+	double roop=-1;
+	if(pty==OP_BUY){
+		typ=OP_SELL;
+		tyo=OP_SELLSTOP;
+		roop=poop-Step*Point;
 		
-		if(pty==OP_BUY||pty==OP_BUYSTOP){
-			ty=OP_BUYSTOP;
-			if(lvloop<Ask)continue;
-		}
-		
-		if(pty==OP_SELL||pty==OP_SELLSTOP){
-			ty=OP_SELLSTOP;
-			if(lvloop>Bid)continue;
-		}
-		
-		int aI[];ArrayResize(aI,0);
-		AId_Init2(aEC,aI);
-		string f=StringConcatenate(""
-			,OE_IT,"==1"
-			," AND "
-			,OE_OOP,"==",lvloop);
-		
-		B_Select(aEC,aI,f);
-		
-		int rows=ArrayRange(aI,0);
+		if(Ask<=poop) return;
+	}
+
+	if(pty==OP_SELL){
+		typ=OP_BUY;
+		tyo=OP_BUYSTOP;
+		roop=poop+Step*Point;
+		if(Bid>=poop)return;
+	}
+	
+	if(TI_count(typ,roop)<=0&&TI_count(tyo,roop)<=0){		
 		double d[];
-		if(rows<=0){
-			ArrayResize(d,0);
-			int AddPips=Step*lvl;
-			TR_SendPending_array(d, ty,	poop, AddPips, GetLot(), TP);
+		ArrayResize(d,0);
+		int AddPips=Step;
+		TR_SendPending_array(d, tyo, poop, AddPips, GetLot(), TP);
+		
+		int rows=ArrayRange(d,0);
+		for(int i=0;i<rows;i++){
+			TN_checkCO(d[i]);
 		}
-	}		
+	}	
+}
+
+int TI_count(int ty, double oop){
+	/**
+		\version	0.0.0.1
+		\date		2014.03.06
+		\author		Morochin <artamir> Artiom
+		\details	Возвращает количество ордеров по заданной цене и типу
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.03.06@artamir	[+]	TI_count
+			>Rev:0
+	*/
+
+	string fn="TI_count";
+	
+	int aI[];ArrayResize(aI,0);
+	AId_Init2(aEC,aI);
+	string f=StringConcatenate(""
+		,OE_IT,"==1"
+		," AND "
+		,OE_OOP,"==",oop
+		," AND "
+		,OE_TY,"==",ty);
+		
+	B_Select(aEC,aI,f);
+		
+	int rows=ArrayRange(aI,0);
+	
+	return(rows);
 }
 
 

@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.8
-		\date		2014.03.05
+		\version	3.1.0.9
+		\date		2014.03.06
 		\author		Morochin <artamir> Artiom
 		\details	Расширенная информация об ордерах.
 		\internal
-			>Hist:								
+			>Hist:									
+					 @3.1.0.9@2014.03.06@artamir	[]	OE_setCLS
 					 @3.1.0.8@2014.03.05@artamir	[+]	OE_getPBT
 					 @3.1.0.7@2014.03.03@artamir	[+]	OE2Str
 					 @3.1.0.6@2014.03.03@artamir	[!]	OE_init
@@ -233,6 +234,25 @@ int OE_setSTD(int ti){
 		aOE[idx][OE_CP2TP]	=	0;
 	}
 
+	return(idx);
+}
+
+int OE_setCLS(int ti){
+	/**
+		\version	0.0.0.1
+		\date		2014.03.06
+		\author		Morochin <artamir> Artiom
+		\details	Устанавливает значения закрытого ордера.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.03.06@artamir	[+]	OE_setCLS
+			>Rev:0
+	*/
+	string fn="OE_setCLS";
+	if(OrderSelect(ti,SELECT_BY_TICKET)) return(-1);
+	
+	int idx=OE_setSTD(ti);
+	
 	return(idx);
 }
 

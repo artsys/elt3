@@ -106,6 +106,82 @@ int startext(void){
 	return(0);
 }
 
+void CMFB(){
+	/**
+		\version	0.0.0.2
+		\date		2014.01.15
+		\author		Morochin <artamir> Artiom
+		\details	«акрытие минусовых ордеров из средств баланса.
+		\internal
+			>Hist:		
+					 @0.0.0.2@2014.01.15@artamir	[+]	ƒобавлено удаление закрытых ордеров, после закрыти€ хоть одного минусового ордера, если профит по закрытым ордерам не превышает 1.
+					 @0.0.0.1@2014.01.15@artamir	[+]	CMFB
+			>Rev:0
+	*/
+
+	string fn="CMFB";
+	
+	if(!CMFB_use)return;
+	
+	//ѕолучаем сумму всех закрытых ордеров сессии.
+	string f="";
+	f=StringConcatenate(f
+		,OE_MN,"==",TR_MN
+		," AND "
+		,OE_IC,"==1");
+		
+	int aI[];
+	ArrayResize(aI,0);
+	AId_Init2(aOE,aI);
+	
+	B_Select(aOE,aI,f);
+	
+	int rows=ArrayRange(aI,0);
+	
+	if(rows<=0)return; //«начит у нас нет профита дл€ закрыти€ минусов.
+	
+	double profit=AId_Sum2(aOE, aI, OE_OPR);
+	//Comment("Closed profit=",profit);
+	
+	//¬ыбираем ордера которые ушли в минус больше заданного значени€.
+	f="";
+	f=StringConcatenate(f
+		,OE_MN,"==",TR_MN
+		," AND "
+		,OE_IT,"==1"
+		," AND "
+		,OE_IM,"==1"
+		," AND "
+		//,OE_OPR,"<<0"
+		//," AND "
+		,OE_CP2OOP,"<<",-CMFB_pips);
+	ArrayResize(aI,0);
+	AId_Init2(aOE,aI);
+	
+	//BP_SEL=true;
+	B_Select(aOE,aI,f);
+
+	rows=ArrayRange(aI,0);
+	Comment("Count orders in minus=",rows,"\n"
+			,"profit=",profit);
+			
+	if(profit<=0)return;		
+	if(rows<=0)return; //нет таких ордеров.
+	int i=0;
+	while(profit>0&&i<rows){
+		int ti=aOE[aI[i]][OE_TI];
+		double opr=aOE[aI[i]][OE_OPR];
+		if(MathAbs(opr)<=profit){
+			if(TR_CloseByTicket(ti)){
+				profit=profit-MathAbs(opr);
+			}	
+		}else{
+			break;
+		}
+	}
+	
+}
+
 void TN(){
 	/**
 		\version	0.0.0.1
@@ -274,7 +350,6 @@ int TI_count(int ty, double oop){
 	return(rows);
 }
 
-
 void Autoopen(){
 	/**
 		\version	0.0.0.1
@@ -307,78 +382,4 @@ double GetLot(){
 	*/
 
 	return(Lot);
-}
-
-void CMFB(){
-	/**
-		\version	0.0.0.2
-		\date		2014.01.15
-		\author		Morochin <artamir> Artiom
-		\details	«акрытие минусовых ордеров из средств баланса.
-		\internal
-			>Hist:		
-					 @0.0.0.2@2014.01.15@artamir	[+]	ƒобавлено удаление закрытых ордеров, после закрыти€ хоть одного минусового ордера, если профит по закрытым ордерам не превышает 1.
-					 @0.0.0.1@2014.01.15@artamir	[+]	CMFB
-			>Rev:0
-	*/
-
-	string fn="CMFB";
-	
-	if(!CMFB_use)return;
-	
-	//ѕолучаем сумму всех закрытых ордеров сессии.
-	string f="";
-	f=StringConcatenate(f
-		,OE_MN,"==",TR_MN
-		," AND "
-		,OE_IC,"==1");
-		
-	int aI[];
-	ArrayResize(aI,0);
-	AId_Init2(aOE,aI);
-	
-	B_Select(aOE,aI,f);
-	
-	int rows=ArrayRange(aI,0);
-	
-	if(rows<=0)return; //«начит у нас нет профита дл€ закрыти€ минусов.
-	
-	double profit=AId_Sum2(aOE, aI, OE_OPR);
-	//Comment("Closed profit=",profit);
-	
-	//¬ыбираем ордера которые ушли в минус больше заданного значени€.
-	f="";
-	f=StringConcatenate(f
-		,OE_MN,"==",TR_MN
-		," AND "
-		,OE_IT,"==1"
-		," AND "
-		,OE_IM,"==1"
-		," AND "
-		//,OE_OPR,"<<0"
-		//," AND "
-		,OE_CP2OOP,"<<",-CMFB_pips);
-	ArrayResize(aI,0);
-	AId_Init2(aOE,aI);
-	
-	//BP_SEL=true;
-	B_Select(aOE,aI,f);
-	rows=ArrayRange(aI,0);
-	Comment("Count orders in minus=",rows,"\n"
-			,"profit=",profit);
-			
-	if(profit<=0)return;		
-	if(rows<=0)return; //нет таких ордеров.
-	int i=0;
-	while(profit>0&&i<rows){
-		int ti=aOE[aI[i]][OE_TI];
-		double opr=aOE[aI[i]][OE_OPR];
-		if(MathAbs(opr)<=profit){
-			if(TR_CloseByTicket(ti)){
-				profit=profit-MathAbs(opr);
-			}	
-		}else{
-			break;
-		}
-	}
 }

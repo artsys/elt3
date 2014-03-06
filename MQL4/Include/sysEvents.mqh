@@ -135,6 +135,7 @@ void E_Events(void){
 		int ic=AId_SearchFirst2(aEC, aIC, OE_TI, oti);
 		
 		if(ic==AI_NONE){
+			//Print(fn,"->EVENT_Closed()");
 			EVENT_Closed(oti);
 		}
 	}
@@ -185,9 +186,10 @@ void EVENT_Closed(int ti){
 					 @0.0.0.1@2014.03.06@artamir	[!]	EVENT_Closed
 			>Rev:0
 	*/
-	string fn="EVENT_New";
+	string fn="EVENT_Closed";
 	int idx=AId_AddRow2(aE);
 	aE[idx][E_TI]=ti;
 	aE[idx][E_EVT]=EVT_CLS;
+	//Print(fn,"->OE_setCLS()");
 	OE_setCLS(ti);
 }

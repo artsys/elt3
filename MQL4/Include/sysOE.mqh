@@ -195,9 +195,9 @@ int OE_setSTD(int ti){
 	aOE[idx][OE_LOT]=		OrderLots();
 	aOE[idx][OE_OPR]=		OrderProfit();
 	aOE[idx][OE_OCP]=		OrderClosePrice();
-	aOE[idx][OE_OCT]=		OrderCloseTime();
+	aOE[idx][OE_OCT]=(int)	OrderCloseTime();
 	
-	if(OrderCloseTime() == 0){
+	if((int)OrderCloseTime() == 0){
 		aOE[idx][OE_IT]=	1;
 		aOE[idx][OE_IC]=	0;
 	}else{
@@ -249,8 +249,7 @@ int OE_setCLS(int ti){
 			>Rev:0
 	*/
 	string fn="OE_setCLS";
-	if(OrderSelect(ti,SELECT_BY_TICKET)) return(-1);
-	
+	if(!OrderSelect(ti,SELECT_BY_TICKET)) return(-1);
 	int idx=OE_setSTD(ti);
 	
 	return(idx);

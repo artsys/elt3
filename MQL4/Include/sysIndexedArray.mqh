@@ -674,7 +674,8 @@ void AId_Select2(double &a[][], int &aI[]){
 		if(AI_BSEL){
 			Print(fn,"->AId_QuickSort2(col=",f_col,")");
 		}
-		AId_QuickSort2(a, aI, -1,-1,f_col);
+		//AId_QuickSort2(a, aI, -1,-1,f_col);
+		AId_QuickSort21(a, aI, -1,-1,f_col);
 		if(AI_BSEL){
 			Print(fn,"->AId_QuickSort2()//End");
 		}

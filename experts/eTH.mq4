@@ -84,10 +84,18 @@ int startext(void){
 
 	string fn="startext";
 	
+	B_Start();
 	TN();
 	
 	Autoopen();
 	
+	int aI[]; ArrayResize(aI,0);
+	AId_Init2(aEC,aI);
+	AId_Print2(aEC,aI,4,"aEC_all");
+
+   ArrayResize(aI,0);
+	AId_Init2(aOE,aI);
+	AId_Print2(aOE,aI,4,"aOE_all");	
 	return(0);
 }
 

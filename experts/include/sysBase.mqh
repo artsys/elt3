@@ -111,7 +111,7 @@ void B_Select(double &a[][], int &aI[], string f){
 
 	string fn="Select";
 	
-	f=StringConcatenate(OE_MN,"==",TR_MN," AND ");	
+	f=StringConcatenate(OE_MN,"==",TR_MN," AND ",f);	
 	AIF_init();
 	
 	//1. Раскладываем строку f по разделителю " AND "
@@ -124,38 +124,38 @@ void B_Select(double &a[][], int &aI[], string f){
 
 	for(int i=0;i<and_rows;i++){
 		string e=aAnd[i];
-		string aE[];
+		string aTemp[];
 		
 		//{		EQ "=="
-		ArrayResize(aE,0);
-		StringToArrayString(aE,e,"==");
-		int e_rows=ArrayRange(aE,0);
+		ArrayResize(aTemp,0);
+		StringToArrayString(aTemp,e,"==");
+		int e_rows=ArrayRange(aTemp,0);
 		int col=-1,val=0.0;
 		
 		if(e_rows>1){
-			int col=StrToInteger(aE[0]);
-			double val=StrToDouble(aE[1]);
+			int col=StrToInteger(aTemp[0]);
+			double val=StrToDouble(aTemp[1]);
 			
 			AIF_filterAdd_AND(col,AI_EQ,val,val);	
 		}
 		
 		//..	GREAT ">>"
-		ArrayResize(aE,0);
-		StringToArrayString(aE,e,">>");
-		e_rows=ArrayRange(aE,0);
+		ArrayResize(aTemp,0);
+		StringToArrayString(aTemp,e,">>");
+		e_rows=ArrayRange(aTemp,0);
 		if(e_rows>1){
-			col=StrToInteger(aE[0]);
-			val=StrToDouble(aE[1]);
+			col=StrToInteger(aTemp[0]);
+			val=StrToDouble(aTemp[1]);
 			
 			AIF_filterAdd_AND(col,AI_GREAT,val,val);	
 		}	
 		//..	LESS "<<"
-		ArrayResize(aE,0);
-		StringToArrayString(aE,e,"<<");
-		e_rows=ArrayRange(aE,0);
+		ArrayResize(aTemp,0);
+		StringToArrayString(aTemp,e,"<<");
+		e_rows=ArrayRange(aTemp,0);
 		if(e_rows>1){
-			col=StrToInteger(aE[0]);
-			val=StrToDouble(aE[1]);
+			col=StrToInteger(aTemp[0]);
+			val=StrToDouble(aTemp[1]);
 			AIF_filterAdd_AND(col,AI_LESS,val,val);	
 		}	
 		//}

@@ -67,8 +67,14 @@ double AId_Get2(double &a[][], int &aI[], int idx=0, int col=0){
 	*/
 
 	string fn="AId_Get2";
-	if(ArrayRange(aI,0)<=0)return(AI_NONE);
-	return(a[aI[idx]][col]);
+	
+	int rows=ArrayRange(aI,0); 
+	if(rows<=0)return(AI_NONE);
+	
+	//if(idx>=rows)return(AI_NONE);
+	
+	double val=a[aI[idx]][col];
+	return(val);
 }
 
 int AId_AddRow2(double &a[][]){
@@ -577,7 +583,7 @@ void AId_Select2(double &a[][], int &aI[]){
 		//Далее отсортируем по возрастанию значение 
 		//колонки f_col
 		
-		AId_QuickSort2(a, aI, f_col);
+		AId_QuickSort2(a, aI, -1,-1,f_col);
 		
 		int first=AI_NONE, last=AI_NONE;
 		

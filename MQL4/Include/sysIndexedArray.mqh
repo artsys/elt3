@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.28
+		\version	3.1.0.29
 		\date		2014.03.06
 		\author		Morochin <artamir> Artiom
 		\details	–абота с индексированным массивом.
 		\internal
-			>Hist:																												
+			>Hist:																													
+					 @3.1.0.29@2014.03.06@artamir	[]	AId_QuickSort2
 					 @3.1.0.28@2014.03.06@artamir	[]	AId_Get2
 					 @3.1.0.27@2014.03.06@artamir	[+]	AId_Sum2
 					 @3.1.0.26@2014.03.03@artamir	[+]	AId_RFF2
@@ -35,6 +36,8 @@
 					 @3.1.0.1@2014.02.25@artamir	[+]	AI_setInterval
 			>Rev:0
 	*/
+
+bool AI_BSEL=false;
 	
 #define AI_NONE         -2147483648
 	
@@ -235,13 +238,14 @@ void AI_Swap(int &aI[], int i=0, int j=0){
 bool isNewQS=true; int maxQScount=0;
 void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, int col=0, int mode=0){
 	/**
-		\version	0.0.0.1
-		\date		2013.08.29
+		\version	0.0.0.2
+		\date		2014.03.06
 		\author		Morochin <artamir> Artiom
 		\details	јлгоритм сортировки "быстра€ сортировка". ѕо умолчанию сортируетс€ 0-€ колонка
 		по возрастанию.
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2014.03.06@artamir	[!]	ƒобавлена проверка на максимальный индекс массива.
 					 @0.0.0.1@2013.08.29@artamir	[+]	
 			>Rev:0
 	*/
@@ -249,18 +253,27 @@ void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, in
 	if(isNewQS)count=0;
 	count++;
 	maxQScount=MathMax(maxQScount,count);
-	string fn="Ad_QuickSort2";
+	string fn="AId_QuickSort2";
 	
-	if(ArrayRange(aI,0)<2){
+	int size=ArrayRange(aI,0);
+	
+	if(size<2){
 		return;
 	}
 	
 	if(idx_min<0){idx_min=0;}
-	if(idx_max<0){idx_max=ArrayRange(aI,0)-1;}
+	if(idx_max<0){idx_max=size-1;}
+	
+	if(idx_max>=size)idx_max=size-1;
 	
 	int i=idx_min, j=idx_max;
 	int idx_pivot = MathRound((i+j)/2);
-	double pivot_value = (a[aI[i]][col]+a[aI[j]][col]+a[aI[idx_pivot]][col])/3; //усредненное значение первого, последнего и среднего элемента массива. 
+	double pivot_value = (a[aI[i]][col]+a[aI[j]][col]+a[aI[idx_pivot]][col])/3;	//усредненное значение первого, последнего и среднего элемента массива. 
+	
+	if(B_BSEL&&col==19){
+		Print(fn,".pivot_value=",pivot_value, " .i=",i," .j=",j);
+	}
+	
 	while(i<j){
 		if(mode == AI_ASC){
 			while(a[aI[i]][col]<pivot_value){i++;}
@@ -273,6 +286,10 @@ void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, in
 		if(i<j){
 			AI_Swap(aI, i,j);i++;j--;
 		}
+	}
+	
+	if(B_BSEL&&col==19){
+		Print(fn," .i=",i," .j=",j," .idx_min=",idx_min," .idx_max",idx_max);
 	}
 	isNewQS=false;
 	if(i<idx_max){AId_QuickSort2(a,aI,i,idx_max,col, mode);}
@@ -611,21 +628,37 @@ void AId_Select2(double &a[][], int &aI[]){
 		//ƒалее отсортируем по возрастанию значение 
 		//колонки f_col
 		
+		if(AI_BSEL){
+			Print(fn,"->AId_QuickSort2(col=",f_col,")");
+		}
 		AId_QuickSort2(a, aI, -1,-1,f_col);
+		if(AI_BSEL){
+			Print(fn,"->AId_QuickSort2()//End");
+		}
 		
 		int first=AI_NONE, last=AI_NONE;
 		
+		
 		if(f_aop==AI_EQ){
+			if(B_BSEL){
+				Print(fn,".AI_EQ");
+			}
 			first=AId_SearchFirst2(a, aI, f_col, f_min);
 			last=AId_SearchLast2(a, aI, f_col, f_min);
 		}
 		
 		if(f_aop==AI_GREAT){
+			if(B_BSEL){
+				Print(fn,".AI_GREAT");
+			}
 			first=AId_SearchGreat2(a,aI,f_col,f_min);
 			last=AI_WHOLEARRAY;
 		}
 		
 		if(f_aop==AI_LESS){
+			if(B_BSEL){
+				Print(fn,".AI_LESS");
+			}
 			first=0;
 			last=AId_SearchLess2(a,aI,f_col,f_min);
 		}

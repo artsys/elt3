@@ -1,13 +1,14 @@
 	/**
-		\version	3.1.0.4
+		\version	3.1.0.6
 		\date		2014.03.06
 		\author		Morochin <artamir> Artiom
 		\details	Собиратель тренда (Trend Harvester)
 		\internal
-			>Hist:				
-					 @3.1.0.4@2014.03.06@artamir	[]	TN_checkCO
-					 @3.1.0.3@2014.03.06@artamir	[]	Autoopen
-					 @3.1.0.2@2014.03.06@artamir	[]	GetLot
+			>Hist:						
+					 @3.1.0.6@2014.03.06@artamir	[+]	TN_checkRev
+					 @3.1.0.4@2014.03.06@artamir	[+]	TN_checkCO
+					 @3.1.0.3@2014.03.06@artamir	[+]	Autoopen
+					 @3.1.0.2@2014.03.06@artamir	[+]	GetLot
 					 @3.1.0.1@2014.03.06@artamir	[+]	TN
 			>Rev:0
 	*/
@@ -25,7 +26,7 @@ input double Lot=0.1;
 input string e1="================";
 
 #define EXP "eTH"\
-#define VER "3.1.0.4_2014.03.06"
+#define VER "3.1.0.6_2014.03.06"
 #include <sysBase.mqh>
 
 int OnInit(){
@@ -133,6 +134,7 @@ void TN(){
 		double 	poop=AId_Get2(aEC,aI,i,OE_OOP);
 		
 		TN_checkCO(pti);
+		TN_checkRev(pti);
 	}
 }
 
@@ -143,7 +145,7 @@ void TN_checkCO(int pti){
 		\author		Morochin <artamir> Artiom
 		\details	Detailed description
 		\internal
-			>Hist:	
+			>Hist:		
 					 @0.0.0.1@2014.03.06@artamir	[+]	TN_checkCO
 			>Rev:0
 	*/
@@ -185,6 +187,57 @@ void TN_checkCO(int pti){
 		}
 	}		
 }
+
+void TN_checkRev(int pti){
+	/**
+		\version	0.0.0.1
+		\date		2014.03.06
+		\author		Morochin <artamir> Artiom
+		\details	Проверка противоположных ордеров.
+		\internal
+			>Hist:		
+					 @0.0.0.1@2014.03.06@artamir	[+]	TN_checkRev
+			>Rev:0
+	*/
+	string fn="TN_checkRev";
+	
+	OrderSelect(pti,SELECT_BY_TICKET);
+	int pty=OrderType();
+	double poop=OrderOpenPrice();
+	
+	for(int lvl=1;lvl<=Levels;lvl++){
+		int ty=-1;
+		double lvloop=poop+iif((pty==OP_BUY||pty==OP_BUYSTOP),1,-1)*Step*lvl*Point;
+		
+		if(pty==OP_BUY||pty==OP_BUYSTOP){
+			ty=OP_BUYSTOP;
+			if(lvloop<Ask)continue;
+		}
+		
+		if(pty==OP_SELL||pty==OP_SELLSTOP){
+			ty=OP_SELLSTOP;
+			if(lvloop>Bid)continue;
+		}
+		
+		int aI[];ArrayResize(aI,0);
+		AId_Init2(aEC,aI);
+		string f=StringConcatenate(""
+			,OE_IT,"==1"
+			," AND "
+			,OE_OOP,"==",lvloop);
+		
+		B_Select(aEC,aI,f);
+		
+		int rows=ArrayRange(aI,0);
+		double d[];
+		if(rows<=0){
+			ArrayResize(d,0);
+			int AddPips=Step*lvl;
+			TR_SendPending_array(d, ty,	poop, AddPips, GetLot(), TP);
+		}
+	}		
+}
+
 
 void Autoopen(){
 	/**

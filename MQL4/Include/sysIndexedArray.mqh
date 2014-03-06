@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.26
-		\date		2014.03.03
+		\version	3.1.0.27
+		\date		2014.03.06
 		\author		Morochin <artamir> Artiom
 		\details	Работа с индексированным массивом.
 		\internal
-			>Hist:																										
+			>Hist:																											
+					 @3.1.0.27@2014.03.06@artamir	[+]	AId_Sum2
 					 @3.1.0.26@2014.03.03@artamir	[+]	AId_RFF2
 					 @3.1.0.25@2014.03.03@artamir	[+]	AId_STF2
 					 @3.1.0.24@2014.03.03@artamir	[!]	AId_SearchLess2
@@ -33,7 +34,7 @@
 					 @3.1.0.1@2014.02.25@artamir	[+]	AI_setInterval
 			>Rev:0
 	*/
-
+	
 #define AI_NONE         -2147483648
 	
 void AId_Init2(double &a[][], int &aI[]){
@@ -114,6 +115,28 @@ int AId_CopyRow2(double &s[][], double &d[][], int i=0){
 	}
 	
 	return(idx);
+}
+
+double AId_Sum2(double &a[][], int &aI[], int col){
+	/**
+		\version	0.0.0.1
+		\date		2014.03.06
+		\author		Morochin <artamir> Artiom
+		\details	Суммирует значения заданной колонки.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.03.06@artamir	[+]	AId_Sum2
+			>Rev:0
+	*/
+	string fn="AId_Sum2";
+	double sum=0.0;
+	
+	int rows=ArrayRange(aI,0);
+	for(int i=0;i<rows;i++){
+		sum+=AId_Get2(a,aI,i,col);
+	}
+	
+	return(sum);
 }
 
 #define AI_EQ		0

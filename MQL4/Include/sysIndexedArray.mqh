@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.27
+		\version	3.1.0.28
 		\date		2014.03.06
 		\author		Morochin <artamir> Artiom
 		\details	Работа с индексированным массивом.
 		\internal
-			>Hist:																											
+			>Hist:																												
+					 @3.1.0.28@2014.03.06@artamir	[]	AId_Get2
 					 @3.1.0.27@2014.03.06@artamir	[+]	AId_Sum2
 					 @3.1.0.26@2014.03.03@artamir	[+]	AId_RFF2
 					 @3.1.0.25@2014.03.03@artamir	[+]	AId_STF2
@@ -57,12 +58,13 @@ void AId_Init2(double &a[][], int &aI[]){
 
 double AId_Get2(double &a[][], int &aI[], int idx=0, int col=0){
 	/**
-		\version	0.0.0.1
-		\date		2014.02.25
+		\version	0.0.0.2
+		\date		2014.03.06
 		\author		Morochin <artamir> Artiom
 		\details	Возвращает значение элемента исходного массива через индекс
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2014.03.06@artamir	[]	AId_Get2
 					 @0.0.0.1@2014.02.25@artamir	[+]	
 			>Rev:0
 	*/
@@ -72,7 +74,10 @@ double AId_Get2(double &a[][], int &aI[], int idx=0, int col=0){
 	int rows=ArrayRange(aI,0); 
 	if(rows<=0)return(AI_NONE);
 	
-	//if(idx>=rows)return(AI_NONE);
+	if(idx>=rows){
+		Print(fn,"idx>rows");
+		return(AI_NONE);
+	}	
 	
 	double val=a[aI[idx]][col];
 	return(val);

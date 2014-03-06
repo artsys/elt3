@@ -276,12 +276,12 @@ void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, in
 	
 	while(i<j){
 		if(mode == AI_ASC){
-			while(a[aI[i]][col]<pivot_value){i++;}
-			while(a[aI[j]][col]>pivot_value){j--;}
+			while(i<size&&a[aI[i]][col]<pivot_value){i++;}
+			while(j>=0&&a[aI[j]][col]>pivot_value){j--;}
 		}
 		if(mode == AI_DESC){
-			while(a[aI[i]][col]>pivot_value){i++;}
-			while(a[aI[j]][col]<pivot_value){j--;}
+			while(i<size&&a[aI[i]][col]>pivot_value){i++;}
+			while(j>=0&&a[aI[j]][col]<pivot_value){j--;}
 		}
 		if(i<j){
 			AI_Swap(aI, i,j);i++;j--;

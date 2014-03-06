@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.29
+		\version	3.1.0.30
 		\date		2014.03.06
 		\author		Morochin <artamir> Artiom
 		\details	–абота с индексированным массивом.
 		\internal
-			>Hist:																													
+			>Hist:																														
+					 @3.1.0.30@2014.03.06@artamir	[]	AId_QuickSort2
 					 @3.1.0.29@2014.03.06@artamir	[]	AId_QuickSort2
 					 @3.1.0.28@2014.03.06@artamir	[]	AId_Get2
 					 @3.1.0.27@2014.03.06@artamir	[+]	AId_Sum2
@@ -238,13 +239,14 @@ void AI_Swap(int &aI[], int i=0, int j=0){
 bool isNewQS=true; int maxQScount=0;
 void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, int col=0, int mode=0){
 	/**
-		\version	0.0.0.2
+		\version	0.0.0.3
 		\date		2014.03.06
 		\author		Morochin <artamir> Artiom
 		\details	јлгоритм сортировки "быстра€ сортировка". ѕо умолчанию сортируетс€ 0-€ колонка
 		по возрастанию.
 		\internal
-			>Hist:		
+			>Hist:			
+					 @0.0.0.3@2014.03.06@artamir	[!]	ƒобавлена проверка влоб при i-j=2
 					 @0.0.0.2@2014.03.06@artamir	[!]	ƒобавлена проверка на максимальный индекс массива.
 					 @0.0.0.1@2013.08.29@artamir	[+]	
 			>Rev:0
@@ -267,6 +269,21 @@ void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, in
 	if(idx_max>=size)idx_max=size-1;
 	
 	int i=idx_min, j=idx_max;
+	
+	if(MathAbs(i-j+1)==2){
+		if(mode == AI_ASC){
+			if(a[aI[i]][col]>a[aI[j]][col]){
+				AI_Swap(aI,i,j);
+				return;
+			}
+		}else{
+			if(a[aI[i]][col]<a[aI[j]][col]){
+				AI_Swap(aI,i,j);
+				return;
+			}
+		}	
+	}
+	
 	int idx_pivot = MathRound((i+j)/2);
 	double pivot_value = (a[aI[i]][col]+a[aI[j]][col]+a[aI[idx_pivot]][col])/3;	//усредненное значение первого, последнего и среднего элемента массива. 
 	
@@ -275,8 +292,15 @@ void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, in
 	}
 	
 	while(i<j){
+		if(B_BSEL&&col==19){
+			Print(fn,".i=",i," .j=",j);
+		}
 		if(mode == AI_ASC){
-			while(i<size&&a[aI[i]][col]<pivot_value){i++;}
+			while(i<size&&a[aI[i]][col]<pivot_value){
+				if(B_BSEL&&col==19){
+					Print(fn,".i=",i," .a=",a[aI[i]][col]);
+				}
+				i++;}
 			while(j>=0&&a[aI[j]][col]>pivot_value){j--;}
 		}
 		if(mode == AI_DESC){

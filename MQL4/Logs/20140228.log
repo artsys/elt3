@@ -1,0 +1,723 @@
+16:51:47 Compiling 'Stop&Limit (e)'
+17:05:24 Script sTest_sysIndexedArray EURUSD,H1: loaded successfully
+17:05:24 sTest_sysIndexedArray EURUSD,H1: initialized
+17:05:24 sTest_sysIndexedArray EURUSD,H1: array{0,1,2,2,4}
+17:05:24 sTest_sysIndexedArray EURUSD,H1: AId_SearchFirst2
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=2->idx=2
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:05:24 sTest_sysIndexedArray EURUSD,H1: AId_SearchLast2
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=2->idx=3
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:05:24 sTest_sysIndexedArray EURUSD,H1: AId_SearchGreat2
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=0
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=0->idx=1
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=1->idx=2
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=2->idx=4
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=3->idx=4
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=4->idx=-2048
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:05:24 sTest_sysIndexedArray EURUSD,H1: AId_SearchLess2
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=0->idx=-2048
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=1->idx=0
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=2->idx=1
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=3->idx=3
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=4->idx=3
+17:05:24 sTest_sysIndexedArray EURUSD,H1: val=5->idx=4
+17:05:24 sTest_sysIndexedArray EURUSD,H1: AId_Select2
+17:06:40 debugging terminated
+17:06:40 sTest_sysIndexedArray EURUSD,H1: uninit reason 0
+17:06:40 Script sTest_sysIndexedArray EURUSD,H1: removed
+17:06:43 Script sTest_sysIndexedArray EURUSD,H1: loaded successfully
+17:06:44 sTest_sysIndexedArray EURUSD,H1: initialized
+17:06:44 sTest_sysIndexedArray EURUSD,H1: array{0,1,2,2,4}
+17:06:44 sTest_sysIndexedArray EURUSD,H1: AId_SearchFirst2
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=2->idx=2
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:06:44 sTest_sysIndexedArray EURUSD,H1: AId_SearchLast2
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=2->idx=3
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:06:44 sTest_sysIndexedArray EURUSD,H1: AId_SearchGreat2
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=0
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=0->idx=1
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=1->idx=2
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=2->idx=4
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=3->idx=4
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=4->idx=-2048
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:06:44 sTest_sysIndexedArray EURUSD,H1: AId_SearchLess2
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=0->idx=-2048
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=1->idx=0
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=2->idx=1
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=3->idx=3
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=4->idx=3
+17:06:44 sTest_sysIndexedArray EURUSD,H1: val=5->idx=4
+17:06:44 sTest_sysIndexedArray EURUSD,H1: AId_Select2
+17:08:28 sTest_sysIndexedArray EURUSD,H1: shutdown by timeout
+17:08:28 array out of range in 'sysIndexedArray.mqh' (466,12)
+17:08:28 sTest_sysIndexedArray EURUSD,H1: uninit reason 4
+17:08:28 Script sTest_sysIndexedArray EURUSD,H1: removed
+17:08:33 Script sTest_sysIndexedArray EURUSD,H1: loaded successfully
+17:08:33 sTest_sysIndexedArray EURUSD,H1: initialized
+17:08:33 sTest_sysIndexedArray EURUSD,H1: array{0,1,2,2,4}
+17:08:33 sTest_sysIndexedArray EURUSD,H1: AId_SearchFirst2
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=2->idx=2
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:08:33 sTest_sysIndexedArray EURUSD,H1: AId_SearchLast2
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=2->idx=3
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:08:33 sTest_sysIndexedArray EURUSD,H1: AId_SearchGreat2
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=0
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=0->idx=1
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=1->idx=2
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=2->idx=4
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=3->idx=4
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=4->idx=-2048
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:08:33 sTest_sysIndexedArray EURUSD,H1: AId_SearchLess2
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=0->idx=-2048
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=1->idx=0
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=2->idx=1
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=3->idx=3
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=4->idx=3
+17:08:33 sTest_sysIndexedArray EURUSD,H1: val=5->idx=4
+17:08:33 sTest_sysIndexedArray EURUSD,H1: AId_Select2
+17:10:11 sTest_sysIndexedArray EURUSD,H1: shutdown by timeout
+17:10:11 debugging terminated
+17:10:11 sTest_sysIndexedArray EURUSD,H1: uninit reason 4
+17:10:11 Script sTest_sysIndexedArray EURUSD,H1: removed
+17:10:40 Script sTest_sysIndexedArray EURUSD,H1: loaded successfully
+17:10:40 sTest_sysIndexedArray EURUSD,H1: initialized
+17:10:40 sTest_sysIndexedArray EURUSD,H1: array{0,1,2,2,4}
+17:10:40 sTest_sysIndexedArray EURUSD,H1: AId_SearchFirst2
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=2->idx=2
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:10:40 sTest_sysIndexedArray EURUSD,H1: AId_SearchLast2
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=2->idx=3
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:10:40 sTest_sysIndexedArray EURUSD,H1: AId_SearchGreat2
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=0
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=0->idx=1
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=1->idx=2
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=2->idx=4
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=3->idx=4
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=4->idx=-2048
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:10:40 sTest_sysIndexedArray EURUSD,H1: AId_SearchLess2
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=0->idx=-2048
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=1->idx=0
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=2->idx=1
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=3->idx=3
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=4->idx=3
+17:10:40 sTest_sysIndexedArray EURUSD,H1: val=5->idx=4
+17:10:40 sTest_sysIndexedArray EURUSD,H1: AId_Select2
+17:11:01 sTest_sysIndexedArray EURUSD,H1: shutdown by timeout
+17:11:01 debugging terminated
+17:11:01 sTest_sysIndexedArray EURUSD,H1: uninit reason 4
+17:11:01 Script sTest_sysIndexedArray EURUSD,H1: removed
+17:11:15 Script sTest_sysIndexedArray EURUSD,H1: loaded successfully
+17:11:15 sTest_sysIndexedArray EURUSD,H1: initialized
+17:11:15 sTest_sysIndexedArray EURUSD,H1: array{0,1,2,2,4}
+17:11:15 sTest_sysIndexedArray EURUSD,H1: AId_SearchFirst2
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=2->idx=2
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:11:15 sTest_sysIndexedArray EURUSD,H1: AId_SearchLast2
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=2->idx=3
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:11:15 sTest_sysIndexedArray EURUSD,H1: AId_SearchGreat2
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=0
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=0->idx=1
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=1->idx=2
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=2->idx=4
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=3->idx=4
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=4->idx=-2048
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:11:15 sTest_sysIndexedArray EURUSD,H1: AId_SearchLess2
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=0->idx=-2048
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=1->idx=0
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=2->idx=1
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=3->idx=3
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=4->idx=3
+17:11:15 sTest_sysIndexedArray EURUSD,H1: val=5->idx=4
+17:11:15 sTest_sysIndexedArray EURUSD,H1: AId_Select2
+17:13:11 sTest_sysIndexedArray EURUSD,H1: shutdown by timeout
+17:13:12 debugging terminated
+17:13:12 sTest_sysIndexedArray EURUSD,H1: uninit reason 4
+17:13:12 Script sTest_sysIndexedArray EURUSD,H1: removed
+17:13:44 Script sTest_sysIndexedArray EURUSD,H1: loaded successfully
+17:13:44 sTest_sysIndexedArray EURUSD,H1: initialized
+17:13:44 sTest_sysIndexedArray EURUSD,H1: array{0,1,2,2,4}
+17:13:44 sTest_sysIndexedArray EURUSD,H1: AId_SearchFirst2
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=2->idx=2
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:13:44 sTest_sysIndexedArray EURUSD,H1: AId_SearchLast2
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=2->idx=3
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:13:44 sTest_sysIndexedArray EURUSD,H1: AId_SearchGreat2
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=0
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=0->idx=1
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=1->idx=2
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=2->idx=4
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=3->idx=4
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=4->idx=-2048
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:13:44 sTest_sysIndexedArray EURUSD,H1: AId_SearchLess2
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=0->idx=-2048
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=1->idx=0
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=2->idx=1
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=3->idx=3
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=4->idx=3
+17:13:44 sTest_sysIndexedArray EURUSD,H1: val=5->idx=4
+17:13:44 sTest_sysIndexedArray EURUSD,H1: AId_Select2
+17:15:15 sTest_sysIndexedArray EURUSD,H1: shutdown by timeout
+17:15:15 debugging terminated
+17:15:15 sTest_sysIndexedArray EURUSD,H1: uninit reason 4
+17:15:15 Script sTest_sysIndexedArray EURUSD,H1: removed
+17:15:19 Script sTest_sysIndexedArray EURUSD,H1: loaded successfully
+17:15:19 sTest_sysIndexedArray EURUSD,H1: initialized
+17:15:19 sTest_sysIndexedArray EURUSD,H1: array{0,1,2,2,4}
+17:15:19 sTest_sysIndexedArray EURUSD,H1: AId_SearchFirst2
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=2->idx=2
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:15:19 sTest_sysIndexedArray EURUSD,H1: AId_SearchLast2
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=2->idx=3
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:15:19 sTest_sysIndexedArray EURUSD,H1: AId_SearchGreat2
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=0
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=0->idx=1
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=1->idx=2
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=2->idx=4
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=3->idx=4
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=4->idx=-2048
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:15:19 sTest_sysIndexedArray EURUSD,H1: AId_SearchLess2
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=0->idx=-2048
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=1->idx=0
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=2->idx=1
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=3->idx=3
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=4->idx=3
+17:15:19 sTest_sysIndexedArray EURUSD,H1: val=5->idx=4
+17:15:19 sTest_sysIndexedArray EURUSD,H1: AId_Select2
+17:18:16 sTest_sysIndexedArray EURUSD,H1: shutdown by timeout
+17:18:16 debugging terminated
+17:18:16 sTest_sysIndexedArray EURUSD,H1: uninit reason 4
+17:18:16 Script sTest_sysIndexedArray EURUSD,H1: removed
+17:18:19 Script sTest_sysIndexedArray EURUSD,H1: loaded successfully
+17:18:19 sTest_sysIndexedArray EURUSD,H1: initialized
+17:18:19 sTest_sysIndexedArray EURUSD,H1: array{0,1,2,2,4}
+17:18:19 sTest_sysIndexedArray EURUSD,H1: AId_SearchFirst2
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=2->idx=2
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:18:19 sTest_sysIndexedArray EURUSD,H1: AId_SearchLast2
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=2->idx=3
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:18:19 sTest_sysIndexedArray EURUSD,H1: AId_SearchGreat2
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=0
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=0->idx=1
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=1->idx=2
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=2->idx=4
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=3->idx=4
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=4->idx=-2048
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:18:19 sTest_sysIndexedArray EURUSD,H1: AId_SearchLess2
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=0->idx=-2048
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=1->idx=0
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=2->idx=1
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=3->idx=3
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=4->idx=3
+17:18:19 sTest_sysIndexedArray EURUSD,H1: val=5->idx=4
+17:18:19 sTest_sysIndexedArray EURUSD,H1: AId_Select2
+17:18:57 sTest_sysIndexedArray EURUSD,H1: shutdown by timeout
+17:18:57 Abnormal termination
+17:18:57 sTest_sysIndexedArray EURUSD,H1: uninit reason 4
+17:18:57 Script sTest_sysIndexedArray EURUSD,H1: removed
+17:19:05 Script sTest_sysIndexedArray EURUSD,H1: loaded successfully
+17:19:05 sTest_sysIndexedArray EURUSD,H1: initialized
+17:19:05 sTest_sysIndexedArray EURUSD,H1: array{0,1,2,2,4}
+17:19:05 sTest_sysIndexedArray EURUSD,H1: AId_SearchFirst2
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=2->idx=2
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:19:05 sTest_sysIndexedArray EURUSD,H1: AId_SearchLast2
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=2->idx=3
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:19:05 sTest_sysIndexedArray EURUSD,H1: AId_SearchGreat2
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=0
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=0->idx=1
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=1->idx=2
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=2->idx=4
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=3->idx=4
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=4->idx=-2048
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:19:05 sTest_sysIndexedArray EURUSD,H1: AId_SearchLess2
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=0->idx=-2048
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=1->idx=0
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=2->idx=1
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=3->idx=3
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=4->idx=3
+17:19:05 sTest_sysIndexedArray EURUSD,H1: val=5->idx=4
+17:19:05 sTest_sysIndexedArray EURUSD,H1: AId_Select2
+17:20:25 sTest_sysIndexedArray EURUSD,H1: shutdown by timeout
+17:20:25 Abnormal termination
+17:20:25 sTest_sysIndexedArray EURUSD,H1: uninit reason 4
+17:20:25 Script sTest_sysIndexedArray EURUSD,H1: removed
+17:20:31 Script sTest_sysIndexedArray EURUSD,H1: loaded successfully
+17:20:31 sTest_sysIndexedArray EURUSD,H1: initialized
+17:20:31 sTest_sysIndexedArray EURUSD,H1: array{0,1,2,2,4}
+17:20:31 sTest_sysIndexedArray EURUSD,H1: AId_SearchFirst2
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=2->idx=2
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:20:31 sTest_sysIndexedArray EURUSD,H1: AId_SearchLast2
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=2->idx=3
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:20:31 sTest_sysIndexedArray EURUSD,H1: AId_SearchGreat2
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=0
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=0->idx=1
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=1->idx=2
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=2->idx=4
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=3->idx=4
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=4->idx=-2048
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:20:31 sTest_sysIndexedArray EURUSD,H1: AId_SearchLess2
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=0->idx=-2048
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=1->idx=0
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=2->idx=1
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=3->idx=3
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=4->idx=3
+17:20:31 sTest_sysIndexedArray EURUSD,H1: val=5->idx=4
+17:20:31 sTest_sysIndexedArray EURUSD,H1: AId_Select2
+17:21:11 sTest_sysIndexedArray EURUSD,H1: shutdown by timeout
+17:21:11 Abnormal termination
+17:21:11 sTest_sysIndexedArray EURUSD,H1: uninit reason 4
+17:21:11 Script sTest_sysIndexedArray EURUSD,H1: removed
+17:22:40 Script sTest_sysIndexedArray EURUSD,H1: loaded successfully
+17:22:40 sTest_sysIndexedArray EURUSD,H1: initialized
+17:22:40 sTest_sysIndexedArray EURUSD,H1: array{0,1,2,2,4}
+17:22:41 sTest_sysIndexedArray EURUSD,H1: AId_SearchFirst2
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=2->idx=2
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:22:41 sTest_sysIndexedArray EURUSD,H1: AId_SearchLast2
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=2->idx=3
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:22:41 sTest_sysIndexedArray EURUSD,H1: AId_SearchGreat2
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=0
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=0->idx=1
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=1->idx=2
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=2->idx=4
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=3->idx=4
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=4->idx=-2048
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:22:41 sTest_sysIndexedArray EURUSD,H1: AId_SearchLess2
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=0->idx=-2048
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=1->idx=0
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=2->idx=1
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=3->idx=3
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=4->idx=3
+17:22:41 sTest_sysIndexedArray EURUSD,H1: val=5->idx=4
+17:22:41 sTest_sysIndexedArray EURUSD,H1: AId_Select2
+17:24:05 sTest_sysIndexedArray EURUSD,H1: shutdown by timeout
+17:27:01 array out of range in 'sysIndexedArray.mqh' (60,19)
+17:27:01 sTest_sysIndexedArray EURUSD,H1: uninit reason 4
+17:27:01 Script sTest_sysIndexedArray EURUSD,H1: removed
+17:39:09 Script sTest_sysIndexedArray EURUSD,H1: loaded successfully
+17:39:09 sTest_sysIndexedArray EURUSD,H1: initialized
+17:39:09 sTest_sysIndexedArray EURUSD,H1: array{0,1,2,2,4}
+17:39:09 sTest_sysIndexedArray EURUSD,H1: AId_SearchFirst2
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=2->idx=2
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:39:09 sTest_sysIndexedArray EURUSD,H1: AId_SearchLast2
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=2->idx=3
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:39:09 sTest_sysIndexedArray EURUSD,H1: AId_SearchGreat2
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=0
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=0->idx=1
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=1->idx=2
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=2->idx=4
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=3->idx=4
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=4->idx=-2048
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:39:09 sTest_sysIndexedArray EURUSD,H1: AId_SearchLess2
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=0->idx=-2048
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=1->idx=0
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=2->idx=1
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=3->idx=3
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=4->idx=3
+17:39:09 sTest_sysIndexedArray EURUSD,H1: val=5->idx=4
+17:39:09 sTest_sysIndexedArray EURUSD,H1: AId_Select2
+17:39:09 sTest_sysIndexedArray EURUSD,H1: AId_Print2
+17:39:09 sTest_sysIndexedArray EURUSD,H1: uninit reason 0
+17:39:09 Script sTest_sysIndexedArray EURUSD,H1: removed
+17:41:02 Script sTest_sysIndexedArray EURUSD,H1: loaded successfully
+17:41:02 sTest_sysIndexedArray EURUSD,H1: initialized
+17:41:02 sTest_sysIndexedArray EURUSD,H1: array{0,1,2,2,4}
+17:41:02 sTest_sysIndexedArray EURUSD,H1: AId_SearchFirst2
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=2->idx=2
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:41:02 sTest_sysIndexedArray EURUSD,H1: AId_SearchLast2
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=2->idx=3
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:41:02 sTest_sysIndexedArray EURUSD,H1: AId_SearchGreat2
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=0
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=0->idx=1
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=1->idx=2
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=2->idx=4
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=3->idx=4
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=4->idx=-2048
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:41:02 sTest_sysIndexedArray EURUSD,H1: AId_SearchLess2
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=0->idx=-2048
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=1->idx=0
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=2->idx=1
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=3->idx=3
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=4->idx=3
+17:41:02 sTest_sysIndexedArray EURUSD,H1: val=5->idx=4
+17:41:02 sTest_sysIndexedArray EURUSD,H1: AId_Select2
+17:41:02 sTest_sysIndexedArray EURUSD,H1: AId_Print2
+17:41:02 sTest_sysIndexedArray EURUSD,H1: uninit reason 0
+17:41:02 sTest_sysIndexedArray EURUSD,H1: shutdown by timeout
+17:41:02 Script sTest_sysIndexedArray EURUSD,H1: removed
+17:46:47 Script sTest_sysIndexedArray EURUSD,H1: loaded successfully
+17:46:47 sTest_sysIndexedArray EURUSD,H1: initialized
+17:46:47 sTest_sysIndexedArray EURUSD,H1: array{0,1,2,2,4}
+17:46:47 sTest_sysIndexedArray EURUSD,H1: AId_SearchFirst2
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=2->idx=2
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:46:47 sTest_sysIndexedArray EURUSD,H1: AId_SearchLast2
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=2->idx=3
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:46:47 sTest_sysIndexedArray EURUSD,H1: AId_SearchGreat2
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=0
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=0->idx=1
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=1->idx=2
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=2->idx=4
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=3->idx=4
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=4->idx=-2048
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:46:47 sTest_sysIndexedArray EURUSD,H1: AId_SearchLess2
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=0->idx=-2048
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=1->idx=0
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=2->idx=1
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=3->idx=3
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=4->idx=3
+17:46:47 sTest_sysIndexedArray EURUSD,H1: val=5->idx=4
+17:46:47 sTest_sysIndexedArray EURUSD,H1: AId_Select2
+17:49:29 sTest_sysIndexedArray EURUSD,H1: shutdown by timeout
+17:49:29 Abnormal termination
+17:49:29 sTest_sysIndexedArray EURUSD,H1: uninit reason 4
+17:49:29 Script sTest_sysIndexedArray EURUSD,H1: removed
+17:49:31 Script sTest_sysIndexedArray EURUSD,H1: loaded successfully
+17:49:32 sTest_sysIndexedArray EURUSD,H1: initialized
+17:49:32 sTest_sysIndexedArray EURUSD,H1: array{0,1,2,2,4}
+17:49:32 sTest_sysIndexedArray EURUSD,H1: AId_SearchFirst2
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=2->idx=2
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:49:32 sTest_sysIndexedArray EURUSD,H1: AId_SearchLast2
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=2->idx=3
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:49:32 sTest_sysIndexedArray EURUSD,H1: AId_SearchGreat2
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=0
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=0->idx=1
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=1->idx=2
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=2->idx=4
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=3->idx=4
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=4->idx=-2048
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:49:32 sTest_sysIndexedArray EURUSD,H1: AId_SearchLess2
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=0->idx=-2048
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=1->idx=0
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=2->idx=1
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=3->idx=3
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=4->idx=3
+17:49:32 sTest_sysIndexedArray EURUSD,H1: val=5->idx=4
+17:49:32 sTest_sysIndexedArray EURUSD,H1: AId_Select2
+17:49:36 sTest_sysIndexedArray EURUSD,H1: AId_Print2
+17:49:37 sTest_sysIndexedArray EURUSD,H1: uninit reason 0
+17:49:37 sTest_sysIndexedArray EURUSD,H1: shutdown by timeout
+17:49:37 Script sTest_sysIndexedArray EURUSD,H1: removed
+17:50:20 Script sTest_sysIndexedArray EURUSD,H1: loaded successfully
+17:50:20 sTest_sysIndexedArray EURUSD,H1: initialized
+17:50:20 sTest_sysIndexedArray EURUSD,H1: array{0,1,2,2,4}
+17:50:20 sTest_sysIndexedArray EURUSD,H1: AId_SearchFirst2
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=2->idx=2
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:50:20 sTest_sysIndexedArray EURUSD,H1: AId_SearchLast2
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=2->idx=3
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:50:20 sTest_sysIndexedArray EURUSD,H1: AId_SearchGreat2
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=0
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=0->idx=1
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=1->idx=2
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=2->idx=4
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=3->idx=4
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=4->idx=-2048
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:50:20 sTest_sysIndexedArray EURUSD,H1: AId_SearchLess2
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=0->idx=-2048
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=1->idx=0
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=2->idx=1
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=3->idx=3
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=4->idx=3
+17:50:20 sTest_sysIndexedArray EURUSD,H1: val=5->idx=4
+17:50:20 sTest_sysIndexedArray EURUSD,H1: AId_Select2
+17:52:31 sTest_sysIndexedArray EURUSD,H1: shutdown by timeout
+17:52:31 sTest_sysIndexedArray EURUSD,H1: AId_Print2
+17:52:31 sTest_sysIndexedArray EURUSD,H1: uninit reason 4
+17:52:31 Script sTest_sysIndexedArray EURUSD,H1: removed
+17:52:33 Script sTest_sysIndexedArray EURUSD,H1: loaded successfully
+17:52:33 sTest_sysIndexedArray EURUSD,H1: initialized
+17:52:33 sTest_sysIndexedArray EURUSD,H1: array{0,1,2,2,4}
+17:52:33 sTest_sysIndexedArray EURUSD,H1: AId_SearchFirst2
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=2->idx=2
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:52:33 sTest_sysIndexedArray EURUSD,H1: AId_SearchLast2
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=2->idx=3
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:52:33 sTest_sysIndexedArray EURUSD,H1: AId_SearchGreat2
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=0
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=0->idx=1
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=1->idx=2
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=2->idx=4
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=3->idx=4
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=4->idx=-2048
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:52:33 sTest_sysIndexedArray EURUSD,H1: AId_SearchLess2
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=0->idx=-2048
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=1->idx=0
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=2->idx=1
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=3->idx=3
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=4->idx=3
+17:52:33 sTest_sysIndexedArray EURUSD,H1: val=5->idx=4
+17:52:33 sTest_sysIndexedArray EURUSD,H1: AId_Select2
+17:52:37 sTest_sysIndexedArray EURUSD,H1: AId_Print2
+17:52:37 sTest_sysIndexedArray EURUSD,H1: uninit reason 0
+17:52:37 sTest_sysIndexedArray EURUSD,H1: shutdown by timeout
+17:52:37 Script sTest_sysIndexedArray EURUSD,H1: removed
+17:54:49 Script sTest_sysIndexedArray EURUSD,H1: loaded successfully
+17:54:49 sTest_sysIndexedArray EURUSD,H1: initialized
+17:54:49 sTest_sysIndexedArray EURUSD,H1: array{0,1,2,2,4}
+17:54:49 sTest_sysIndexedArray EURUSD,H1: AId_SearchFirst2
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=2->idx=2
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:54:49 sTest_sysIndexedArray EURUSD,H1: AId_SearchLast2
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=0->idx=0
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=1->idx=1
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=2->idx=3
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=3->idx=-2048
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=4->idx=4
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:54:49 sTest_sysIndexedArray EURUSD,H1: AId_SearchGreat2
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=0
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=0->idx=1
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=1->idx=2
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=2->idx=4
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=3->idx=4
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=4->idx=-2048
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=5->idx=-2048
+17:54:49 sTest_sysIndexedArray EURUSD,H1: AId_SearchLess2
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=-1->idx=-2048
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=0->idx=-2048
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=1->idx=0
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=2->idx=1
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=3->idx=3
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=4->idx=3
+17:54:49 sTest_sysIndexedArray EURUSD,H1: val=5->idx=4
+17:54:49 sTest_sysIndexedArray EURUSD,H1: AId_Select2_EQ
+17:54:49 sTest_sysIndexedArray EURUSD,H1: AId_Print2
+17:54:49 sTest_sysIndexedArray EURUSD,H1: AId_Select2_GREAT
+17:54:49 sTest_sysIndexedArray EURUSD,H1: AId_Print2
+17:54:49 sTest_sysIndexedArray EURUSD,H1: AId_Select2_LESS
+17:54:49 sTest_sysIndexedArray EURUSD,H1: AId_Print2
+17:54:50 sTest_sysIndexedArray EURUSD,H1: uninit reason 0
+17:54:50 sTest_sysIndexedArray EURUSD,H1: shutdown by timeout
+17:54:50 Script sTest_sysIndexedArray EURUSD,H1: removed

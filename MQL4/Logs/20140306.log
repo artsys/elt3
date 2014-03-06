@@ -1,0 +1,180 @@
+00:46:30 Expert eTH EURAUD,Daily: loaded successfully
+00:46:35 eTH EURAUD,Daily inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+00:46:35 eTH EURAUD,Daily: initialized
+00:47:44 Expert eTH EURUSD,H1: loaded successfully
+00:47:46 eTH EURUSD,H1 inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+00:47:46 eTH EURUSD,H1: initialized
+00:47:53 Expert eTH GBPUSD,H1: loaded successfully
+00:47:54 eTH GBPUSD,H1 inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+00:47:54 eTH GBPUSD,H1: initialized
+00:50:54 eTH EURUSD,H1: uninit reason 1
+00:50:54 Expert eTH EURUSD,H1: removed
+00:50:58 eTH EURAUD,Daily: uninit reason 1
+00:50:58 Expert eTH EURAUD,Daily: removed
+00:51:02 eTH GBPUSD,H1: uninit reason 1
+00:51:02 Expert eTH GBPUSD,H1: removed
+00:51:11 Expert eTH GBPUSD,H1: loaded successfully
+00:51:13 eTH GBPUSD,H1 inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+00:51:13 eTH GBPUSD,H1: initialized
+00:51:43 eTH GBPUSD,H1: uninit reason 4
+00:51:43 Expert eTH GBPUSD,H1: removed
+11:50:58 Expert eTH GBPUSD,H1: loaded successfully
+11:50:58 eTH GBPUSD,H1 inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+11:50:59 Expert eTH EURUSD,H1: loaded successfully
+11:51:02 eTH GBPUSD,H1: initialized
+11:51:06 eTH EURUSD,H1 inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+11:51:25 eTH EURUSD,H1: initialized
+11:52:02 eTH EURUSD,H1: shutdown by timeout
+11:52:02 eTH EURUSD,H1: uninit reason 4
+11:52:04 eTH GBPUSD,H1: uninit reason 2
+11:52:04 Expert eTH GBPUSD,H1: removed
+11:52:04 Expert eTH GBPUSD,H1: loaded successfully
+11:52:04 Expert eTH GBPUSD,H1: loaded successfully
+11:52:04 eTH GBPUSD,H1: initialized
+11:52:07 eTH GBPUSD,H1 inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+11:52:07 eTH GBPUSD,H1: initialized
+11:56:09 eTH GBPUSD,H1: shutdown by timeout
+11:56:09 eTH GBPUSD,H1: uninit reason 4
+11:56:16 eTH GBPUSD,H1: uninit reason 2
+11:56:16 Expert eTH GBPUSD,H1: removed
+11:56:16 Expert eTH GBPUSD,H1: loaded successfully
+11:56:16 Expert eTH GBPUSD,H1: loaded successfully
+11:56:17 eTH GBPUSD,H1: initialized
+11:56:18 eTH GBPUSD,H1: open #53250738 buy 0.10 GBPUSD at 1.6722 ok
+11:56:18 eTH GBPUSD,H1: modify #53250738 buy 0.10 GBPUSD at 1.6722 sl: 0.0000 tp: 1.6772 ok
+11:56:18 eTH GBPUSD,H1 inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+11:56:18 eTH GBPUSD,H1: initialized
+11:56:47 eTH GBPUSD,H1: shutdown by timeout
+11:56:47 eTH GBPUSD,H1: uninit reason 4
+11:56:58 eTH GBPUSD,H1: open #53250754 buy 0.10 GBPUSD at 1.6720 ok
+11:56:59 eTH GBPUSD,H1: modify #53250754 buy 0.10 GBPUSD at 1.6720 sl: 0.0000 tp: 1.6770 ok
+11:57:16 eTH GBPUSD,H1: uninit reason 4
+11:57:16 Expert eTH GBPUSD,H1: removed
+11:59:42 Expert eTH GBPUSD,H1: loaded successfully
+11:59:42 eTH GBPUSD,H1 inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+11:59:48 eTH GBPUSD,H1: initialized
+11:59:55 eTH GBPUSD,H1: uninit reason 1
+11:59:55 Expert eTH GBPUSD,H1: removed
+12:02:18 Expert eTH GBPUSD,H1: loaded successfully
+12:02:45 eTH GBPUSD,H1 inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+12:02:45 eTH GBPUSD,H1: initialized
+12:03:01 eTH GBPUSD,H1: open #53250927 buy 0.10 GBPUSD at 1.6718 ok
+12:03:02 eTH GBPUSD,H1: modify #53250927 buy 0.10 GBPUSD at 1.6718 sl: 0.0000 tp: 1.6768 ok
+12:04:02 eTH GBPUSD,H1: uninit reason 2
+12:04:02 Expert eTH GBPUSD,H1: removed
+12:04:02 Expert eTH GBPUSD,H1: loaded successfully
+12:04:02 eTH GBPUSD,H1: initialized
+12:04:27 eTH GBPUSD,H1: open #53250951 buy 0.10 GBPUSD at 1.6718 ok
+12:04:28 eTH GBPUSD,H1: modify #53250951 buy 0.10 GBPUSD at 1.6718 sl: 0.0000 tp: 1.6768 ok
+12:05:45 eTH GBPUSD,H1: open #53250990 buy 0.10 GBPUSD at 1.6717 ok
+12:05:45 eTH GBPUSD,H1: modify #53250990 buy 0.10 GBPUSD at 1.6717 sl: 0.0000 tp: 1.6767 ok
+12:06:01 eTH GBPUSD,H1: uninit reason 1
+12:06:01 Expert eTH GBPUSD,H1: removed
+12:06:07 Expert eTH GBPUSD,H1: loaded successfully
+12:06:09 eTH GBPUSD,H1 inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+12:06:09 eTH GBPUSD,H1: initialized
+12:07:08 eTH GBPUSD,H1: uninit reason 2
+12:07:08 Expert eTH GBPUSD,H1: removed
+12:07:08 Expert eTH GBPUSD,H1: loaded successfully
+12:07:08 eTH GBPUSD,H1: initialized
+12:07:42 eTH GBPUSD,H1: uninit reason 1
+12:07:42 Expert eTH GBPUSD,H1: removed
+12:09:30 Expert eTH GBPUSD,H1: loaded successfully
+12:09:32 eTH GBPUSD,H1 inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+12:09:32 eTH GBPUSD,H1: initialized
+12:09:39 eTH GBPUSD,H1: open #53251108 buy 0.10 GBPUSD at 1.6717 ok
+12:10:18 eTH GBPUSD,H1: modify #53251108 buy 0.10 GBPUSD at 1.6717 sl: 0.0000 tp: 1.6767 ok
+12:10:38 eTH GBPUSD,H1: shutdown by timeout
+12:10:38 Abnormal termination
+12:10:38 eTH GBPUSD,H1: uninit reason 4
+12:10:50 Expert eTH GBPUSD,H1: loaded successfully
+12:10:52 eTH GBPUSD,H1 inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+12:10:52 eTH GBPUSD,H1: initialized
+12:11:09 eTH GBPUSD,H1: shutdown by timeout
+12:11:09 eTH GBPUSD,H1: uninit reason 4
+12:11:09 Abnormal termination
+12:11:14 Expert eTH GBPUSD,H1: loaded successfully
+12:11:15 eTH GBPUSD,H1 inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+12:11:15 eTH GBPUSD,H1: initialized
+12:13:23 eTH GBPUSD,H1: shutdown by timeout
+12:13:23 Abnormal termination
+12:13:23 eTH GBPUSD,H1: uninit reason 4
+12:14:01 Expert eTH GBPUSD,H1: loaded successfully
+12:14:03 eTH GBPUSD,H1 inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+12:14:03 eTH GBPUSD,H1: initialized
+12:16:01 eTH GBPUSD,H1: shutdown by timeout
+12:16:01 eTH GBPUSD,H1: uninit reason 4
+12:16:26 Expert eTH GBPUSD,H1: loaded successfully
+12:16:27 eTH GBPUSD,H1 inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+12:16:27 eTH GBPUSD,H1: initialized
+13:05:48 debugging terminated
+13:05:49 eTH GBPUSD,H1: shutdown by timeout
+13:05:49 eTH GBPUSD,H1: uninit reason 4
+13:06:11 Expert eTH GBPUSD,H1: loaded successfully
+13:06:13 eTH GBPUSD,H1 inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+13:06:13 eTH GBPUSD,H1: initialized
+13:08:02 eTH GBPUSD,H1: shutdown by timeout
+13:08:02 Abnormal termination
+13:08:02 eTH GBPUSD,H1: uninit reason 4
+13:08:07 Expert eTH GBPUSD,H1: loaded successfully
+13:08:08 eTH GBPUSD,H1 inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+13:08:08 eTH GBPUSD,H1: initialized
+13:09:38 eTH GBPUSD,H1: open #53252265 buy stop 0.10 GBPUSD at 1.6737 tp: 1.6787 ok
+13:09:41 eTH GBPUSD,H1: open #53252267 buy stop 0.10 GBPUSD at 1.6757 tp: 1.6807 ok
+13:09:41 eTH GBPUSD,H1: open #53252268 buy stop 0.10 GBPUSD at 1.6777 tp: 1.6827 ok
+13:09:42 eTH GBPUSD,H1: open #53252269 buy stop 0.10 GBPUSD at 1.6797 tp: 1.6847 ok
+13:09:42 eTH GBPUSD,H1: open #53252270 buy stop 0.10 GBPUSD at 1.6817 tp: 1.6867 ok
+14:05:41 debugging terminated
+14:05:42 eTH GBPUSD,H1: shutdown by timeout
+14:05:42 eTH GBPUSD,H1: uninit reason 4
+14:11:14 Expert eTH GBPUSD,H1: loaded successfully
+14:11:17 eTH GBPUSD,H1 inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+14:11:17 eTH GBPUSD,H1: initialized
+14:11:31 debugging terminated
+14:11:31 eTH GBPUSD,H1: shutdown by timeout
+14:11:31 eTH GBPUSD,H1: uninit reason 4
+14:12:20 Expert eTH GBPUSD,H1: loaded successfully
+14:12:22 eTH GBPUSD,H1 inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+14:12:24 eTH GBPUSD,H1: initialized
+14:14:02 eTH GBPUSD,H1: shutdown by timeout
+14:14:03 array out of range in 'sysIndexedArray.mqh' (235,28)
+14:14:03 eTH GBPUSD,H1: uninit reason 4
+14:14:09 Expert eTH GBPUSD,H1: loaded successfully
+14:14:10 eTH GBPUSD,H1 inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+14:14:11 eTH GBPUSD,H1: initialized
+14:17:44 eTH GBPUSD,H1: shutdown by timeout
+14:17:45 array out of range in 'sysIndexedArray.mqh' (235,28)
+14:17:45 eTH GBPUSD,H1: uninit reason 4
+14:17:51 Expert eTH GBPUSD,H1: loaded successfully
+14:17:53 eTH GBPUSD,H1 inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+14:17:53 eTH GBPUSD,H1: initialized
+14:21:44 eTH GBPUSD,H1: shutdown by timeout
+14:21:45 Abnormal termination
+14:21:45 eTH GBPUSD,H1: uninit reason 4
+14:21:49 Expert eTH GBPUSD,H1: loaded successfully
+14:21:51 eTH GBPUSD,H1 inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+14:21:51 eTH GBPUSD,H1: initialized
+14:22:43 eTH GBPUSD,H1: open #53254560 buy stop 0.10 GBPUSD at 1.6837 tp: 1.6887 ok
+14:23:05 eTH GBPUSD,H1: shutdown by timeout
+14:23:05 array out of range in 'sysIndexedArray.mqh' (76,17)
+14:23:05 eTH GBPUSD,H1: uninit reason 4
+14:23:11 Expert eTH GBPUSD,H1: loaded successfully
+14:23:13 eTH GBPUSD,H1 inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+14:23:14 eTH GBPUSD,H1: initialized
+14:32:00 debugging terminated
+14:32:00 eTH GBPUSD,H1: shutdown by timeout
+14:32:00 eTH GBPUSD,H1: uninit reason 4
+14:32:24 Expert eTH EURUSD,H1: loaded successfully
+14:32:26 eTH EURUSD,H1 inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+14:32:26 eTH EURUSD,H1: initialized
+14:32:55 eTH EURUSD,H1: shutdown by timeout
+14:32:55 eTH EURUSD,H1: uninit reason 4
+14:32:55 eTH EURUSD,H1: profiler data is not ready or corrupted
+14:32:55 Expert eTH EURUSD,H1: removed
+14:33:04 Expert eTH EURUSD,H1: loaded successfully
+14:33:06 eTH EURUSD,H1 inputs: s1====== MAIN =====; Step=20; TP=50; Levels=5; Lot=0.1; e1=================; TR_S===== TRADING ======================; TR_TwiseLots=20.0; TR_MN=0; TR_E====================================; 
+14:33:06 eTH EURUSD,H1: initialized
+14:33:43 eTH EURUSD,H1: shutdown by timeout
+14:33:44 eTH EURUSD,H1: uninit reason 4
+14:33:44 eTH EURUSD,H1: profiler data is not ready or corrupted
+14:33:44 Expert eTH EURUSD,H1: removed

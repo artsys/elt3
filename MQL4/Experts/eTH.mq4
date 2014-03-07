@@ -211,7 +211,7 @@ void CMFB(){
 	}
 	
 	if(bNeedDelClosed){
-		OE_DelClosed();
+		OE_delClosed();
 		bNeedDelClosed=false;
 	}
 	

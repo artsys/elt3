@@ -22,7 +22,7 @@
 #property stacksize 1024
 
 bool bDebug=false;
-bool bNeedDelClosed();
+bool bNeedDelClosed=false;
 
 input string s1="===== MAIN =====";
 input int Step=20;	//Шаг между ордерами

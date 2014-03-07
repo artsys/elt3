@@ -1,11 +1,12 @@
 	/**
-		\version	3.1.0.9
-		\date		2014.03.06
+		\version	3.1.0.10
+		\date		2014.03.07
 		\author		Morochin <artamir> Artiom
 		\details	Расширенная информация об ордерах.
 		\internal
-			>Hist:									
-					 @3.1.0.9@2014.03.06@artamir	[]	OE_setCLS
+			>Hist:										
+					 @3.1.0.10@2014.03.07@artamir	[+]	OE_delClosed
+					 @3.1.0.9@2014.03.06@artamir	[*]	OE_setCLS
 					 @3.1.0.8@2014.03.05@artamir	[+]	OE_getPBT
 					 @3.1.0.7@2014.03.03@artamir	[+]	OE2Str
 					 @3.1.0.6@2014.03.03@artamir	[!]	OE_init
@@ -272,4 +273,42 @@ double OE_getPBT(int ti, int prop){
 	double val=aOE[idx][prop];
 	
 	return(val);
+}
+
+// Сервисные функции
+void OE_delClosed(){
+	/**
+		\version	0.0.0.1
+		\date		2014.03.07
+		\author		Morochin <artamir> Artiom
+		\details	Удаление закрытых ордеров из массива.
+		\internal
+			>Hist:		
+					 @0.0.0.1@2014.03.07@artamir	[]	OE_delClosed
+			>Rev:0
+	*/
+
+	string fn="OE_delClosed";
+	double t[][OE_MAX];
+	ArrayResize(t,0);
+	
+	string f="";
+	f=StringConcatenate(	OE_IT,"==1");
+		
+		int aI[];
+		ArrayResize(aI,0);
+		AId_Init2(aOE, aI);
+		
+		//-------------------------------------------
+		B_Select(aOE, aI, f);
+		int rows=ArrayRange(aI,0);
+		
+		if(rows<=0)return;
+		
+		for(int idx = 0; idx < rows; idx++){
+			AId_CopyRow2(aOE, t, aI[idx]);
+		}	
+		
+		ArrayResize(aOE,ArrayRange(t,0));
+		ArrayCopy(aOE,t,0,0,WHOLE_ARRAY);
 }

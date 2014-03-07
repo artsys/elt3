@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.7
+		\version	3.1.0.8
 		\date		2014.03.06
 		\author		Morochin <artamir> Artiom
 		\details	Собиратель тренда (Trend Harvester)
 		\internal
-			>Hist:							
+			>Hist:								
+					 @3.1.0.8@2014.03.06@artamir	[]	CMFB
 					 @3.1.0.7@2014.03.06@artamir	[+]	TI_count
 					 @3.1.0.6@2014.03.06@artamir	[+]	TN_checkRev
 					 @3.1.0.4@2014.03.06@artamir	[+]	TN_checkCO
@@ -18,6 +19,9 @@
 #property link      "http:\\forexmd.ucoz.org"
 #property version   "310.0"
 #property strict
+#property stacksize 1024
+
+bool bDebug=false;
 
 input string s1="===== MAIN =====";
 input int Step=20;	//Шаг между ордерами
@@ -29,7 +33,7 @@ extern bool		CMFB_use=false; //закрывать минусовые ордера из средств баланса.
 extern int		CMFB_pips=50; //закрывать ордера, ушедшие в минуз больше заданного значения (в пунктах)
 
 #define EXP "eTH"\
-#define VER "3.1.0.7_2014.03.06"
+#define VER "3.1.0.8_2014.03.06"
 #include <sysBase.mqh>
 
 int OnInit(){
@@ -88,12 +92,26 @@ int startext(void){
 
 	string fn="startext";
 	
+	if(bDebug){
+		Print("============================");
+		Print(fn,"->B_Start()");
+	}
+	
 	B_Start();
 	
+	if(bDebug){
+		Print(fn,"->CMFB()");
+	}
 	CMFB();
 	
+	if(bDebug){
+		Print(fn,"->TN()");
+	}
 	TN();
 	
+	if(bDebug){
+		Print(fn,"->Autoopen()");
+	}
 	Autoopen();
 	
 	// int aI[]; ArrayResize(aI,0);
@@ -108,12 +126,13 @@ int startext(void){
 
 void CMFB(){
 	/**
-		\version	0.0.0.2
-		\date		2014.01.15
+		\version	0.0.0.3
+		\date		2014.03.06
 		\author		Morochin <artamir> Artiom
 		\details	Закрытие минусовых ордеров из средств баланса.
 		\internal
-			>Hist:		
+			>Hist:			
+					 @0.0.0.3@2014.03.06@artamir	[]	CMFB
 					 @0.0.0.2@2014.01.15@artamir	[+]	Добавлено удаление закрытых ордеров, после закрытия хоть одного минусового ордера, если профит по закрытым ордерам не превышает 1.
 					 @0.0.0.1@2014.01.15@artamir	[+]	CMFB
 			>Rev:0
@@ -133,7 +152,9 @@ void CMFB(){
 	int aI[];
 	ArrayResize(aI,0);
 	AId_Init2(aOE,aI);
-	
+	if(bDebug){
+		Print(fn,"->B_Select() //profit");
+	}
 	B_Select(aOE,aI,f);
 	
 	int rows=ArrayRange(aI,0);
@@ -152,15 +173,20 @@ void CMFB(){
 		," AND "
 		,OE_IM,"==1"
 		," AND "
-		//,OE_OPR,"<<0"
-		//," AND "
 		,OE_CP2OOP,"<<",-CMFB_pips);
 	ArrayResize(aI,0);
 	AId_Init2(aOE,aI);
 	
-	//BP_SEL=true;
+	if(bDebug){
+		Print(fn,"->B_Select() //in minus");
+		//AId_Print2(aOE,aI,4,"aOE_B_Select_in minus");
+		B_BSEL=true;
+	}
 	B_Select(aOE,aI,f);
-
+	if(bDebug){
+		Print(fn,"->B_Select() //in minus end");
+		B_BSEL=false;
+	}
 	rows=ArrayRange(aI,0);
 	Comment("Count orders in minus=",rows,"\n"
 			,"profit=",profit);
@@ -178,6 +204,7 @@ void CMFB(){
 		}else{
 			break;
 		}
+		i++;
 	}
 	
 }
@@ -194,9 +221,7 @@ void TN(){
 			>Rev:0
 	*/
 	string fn="TN";
-	if(GetLastError()==130){
-		Print(fn);
-	}	
+		
 	int aI[]; ArrayResize(aI,0);
 	AId_Init2(aEC,aI);
 	string f=StringConcatenate(""

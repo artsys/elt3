@@ -142,7 +142,6 @@ int OE_FIBT(int ti){
 		idx=aI[idx];
 	}
 	
-	Print(fn,".ti=",ti," .idx=",idx);
 	return(idx);
 }
 
@@ -313,12 +312,6 @@ void OE_delClosed(){
 		for(int idx = 0; idx < rows; idx++){
 			AId_CopyRow2(aOE, t, aI[idx]);
 		}	
-		
-		ArrayResize(aI,0);AId_Init2(aOE,aI);
-		AId_Print2(aOE,aI,4,"aOE_before_delClose");
-		
-		ArrayResize(aI,0);AId_Init2(t,aI);
-		AId_Print2(t,aI,4,"t_arter_copyrows");
 		
 		ArrayResize(aOE,ArrayRange(t,0));
 		ArrayCopy(aOE,t,0,0,WHOLE_ARRAY);

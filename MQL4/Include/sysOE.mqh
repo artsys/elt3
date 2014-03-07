@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.10
+		\version	3.1.0.12
 		\date		2014.03.07
 		\author		Morochin <artamir> Artiom
 		\details	Расширенная информация об ордерах.
 		\internal
-			>Hist:										
+			>Hist:												
+					 @3.1.0.12@2014.03.07@artamir	[!]	OE_FIBT
 					 @3.1.0.10@2014.03.07@artamir	[+]	OE_delClosed
 					 @3.1.0.9@2014.03.06@artamir	[*]	OE_setCLS
 					 @3.1.0.8@2014.03.05@artamir	[+]	OE_getPBT
@@ -119,12 +120,13 @@ int OE_addRow(int ti){
 
 int OE_FIBT(int ti){
 	/**
-		\version	0.0.0.1
-		\date		2014.03.01
+		\version	0.0.0.3
+		\date		2014.03.07
 		\author		Morochin <artamir> Artiom
 		\details	Поиск индекса элемента с заданным значением 
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.3@2014.03.07@artamir	[!]	Исправлен баг с поиском элемента.
 					 @0.0.0.1@2014.03.01@artamir	[+]	OE_FIBT
 			>Rev:0
 	*/
@@ -132,12 +134,15 @@ int OE_FIBT(int ti){
 	int aI[];
 	ArrayResize(aI,0);
 	AId_Init2(aOE,aI);
+	AId_QuickSort2(aOE,aI,-1,-1,OE_TI);
 	int idx=AId_SearchFirst2(aOE,aI,OE_TI,ti);
 	if(idx==AI_NONE){
 		idx=OE_addRow(ti);
 	}else{
 		idx=aI[idx];
 	}
+	
+	Print(fn,".ti=",ti," .idx=",idx);
 	return(idx);
 }
 
@@ -293,7 +298,7 @@ void OE_delClosed(){
 	ArrayResize(t,0);
 	
 	string f="";
-	f=StringConcatenate(	OE_IT,"==1");
+	f=StringConcatenate(OE_IT,"==1");
 		
 		int aI[];
 		ArrayResize(aI,0);
@@ -308,6 +313,12 @@ void OE_delClosed(){
 		for(int idx = 0; idx < rows; idx++){
 			AId_CopyRow2(aOE, t, aI[idx]);
 		}	
+		
+		ArrayResize(aI,0);AId_Init2(aOE,aI);
+		AId_Print2(aOE,aI,4,"aOE_before_delClose");
+		
+		ArrayResize(aI,0);AId_Init2(t,aI);
+		AId_Print2(t,aI,4,"t_arter_copyrows");
 		
 		ArrayResize(aOE,ArrayRange(t,0));
 		ArrayCopy(aOE,t,0,0,WHOLE_ARRAY);

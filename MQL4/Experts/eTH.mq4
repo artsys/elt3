@@ -213,6 +213,9 @@ void CMFB(){
 	if(bNeedDelClosed){
 		OE_delClosed();
 		bNeedDelClosed=false;
+		int aI[];ArrayResize(aI,0);
+		AId_Init2(aOE,aI);
+		AId_Print2(aOE,aI,4,"aOE_after_delClosed");
 	}
 	
 }

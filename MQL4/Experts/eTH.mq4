@@ -1,11 +1,11 @@
 	/**
-		\version	3.1.0.8
-		\date		2014.03.06
+		\version	3.1.0.9
+		\date		2014.03.07
 		\author		Morochin <artamir> Artiom
 		\details	Собиратель тренда (Trend Harvester)
 		\internal
-			>Hist:								
-					 @3.1.0.8@2014.03.06@artamir	[]	CMFB
+			>Hist:									
+					 @3.1.0.9@2014.03.07@artamir	[*]	CMFB
 					 @3.1.0.7@2014.03.06@artamir	[+]	TI_count
 					 @3.1.0.6@2014.03.06@artamir	[+]	TN_checkRev
 					 @3.1.0.4@2014.03.06@artamir	[+]	TN_checkCO
@@ -22,6 +22,7 @@
 #property stacksize 1024
 
 bool bDebug=false;
+bool bNeedDelClosed();
 
 input string s1="===== MAIN =====";
 input int Step=20;	//Шаг между ордерами
@@ -33,7 +34,7 @@ extern bool		CMFB_use=false; //закрывать минусовые ордера из средств баланса.
 extern int		CMFB_pips=50; //закрывать ордера, ушедшие в минуз больше заданного значения (в пунктах)
 
 #define EXP "eTH"\
-#define VER "3.1.0.8_2014.03.06"
+#define VER "3.1.0.9_2014.03.07"
 #include <sysBase.mqh>
 
 int OnInit(){
@@ -126,12 +127,13 @@ int startext(void){
 
 void CMFB(){
 	/**
-		\version	0.0.0.3
-		\date		2014.03.06
+		\version	0.0.0.4
+		\date		2014.03.07
 		\author		Morochin <artamir> Artiom
 		\details	Закрытие минусовых ордеров из средств баланса.
 		\internal
-			>Hist:			
+			>Hist:				
+					 @0.0.0.4@2014.03.07@artamir	[*]	Добавлен удаление закрытых ордеров из массива aOE после срабатывания закрытия по профиту.
 					 @0.0.0.3@2014.03.06@artamir	[]	CMFB
 					 @0.0.0.2@2014.01.15@artamir	[+]	Добавлено удаление закрытых ордеров, после закрытия хоть одного минусового ордера, если профит по закрытым ордерам не превышает 1.
 					 @0.0.0.1@2014.01.15@artamir	[+]	CMFB
@@ -200,11 +202,17 @@ void CMFB(){
 		if(MathAbs(opr)<=profit){
 			if(TR_CloseByTicket(ti)){
 				profit=profit-MathAbs(opr);
+				bNeedDelClosed=true;
 			}	
 		}else{
 			break;
 		}
 		i++;
+	}
+	
+	if(bNeedDelClosed){
+		OE_DelClosed();
+		bNeedDelClosed=false;
 	}
 	
 }

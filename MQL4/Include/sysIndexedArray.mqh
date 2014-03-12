@@ -1,11 +1,11 @@
 	/**
-		\version	3.1.0.31
-		\date		2014.03.06
+		\version	3.1.0.32
+		\date		2014.03.12
 		\author		Morochin <artamir> Artiom
 		\details	Работа с индексированным массивом.
 		\internal
-			>Hist:																															
-					 @3.1.0.31@2014.03.06@artamir	[+]	AId_QuickSort21
+			>Hist:																																
+					 @3.1.0.32@2014.03.12@artamir	[]	AId_Init2
 					 @3.1.0.30@2014.03.06@artamir	[]	AId_QuickSort2
 					 @3.1.0.29@2014.03.06@artamir	[]	AId_QuickSort2
 					 @3.1.0.28@2014.03.06@artamir	[]	AId_Get2
@@ -43,14 +43,15 @@ bool AI_BSEL=false;
 	
 #define AI_NONE         -2147483648
 	
-void AId_Init2(double &a[][], int &aI[]){
+void AId_Init2(double &a[][], int &aI[], int c=-1){
 	/**
-		\version	0.0.0.1
-		\date		2013.11.06
+		\version	0.0.0.2
+		\date		2014.03.12
 		\author		Morochin <artamir> Artiom
 		\details	Инициализация массива индексов.
 		\internal
-			>Hist:	
+			>Hist:		
+					 @0.0.0.2@2014.03.12@artamir	[*]	Добавлена сортировка по умолчанию.
 					 @0.0.0.1@2013.11.06@artamir	[+]	
 			>Rev:0
 	*/
@@ -58,6 +59,10 @@ void AId_Init2(double &a[][], int &aI[]){
 	ArrayResize(aI,ArrayRange(a,0));
 	for(int i=0; i<ArrayRange(a,0);i++){
 		aI[i]=i;
+	}
+	
+	if(c>-1){
+		AId_QuickSort2(a,aI,-1,-1,c);
 	}
 }
 
@@ -237,7 +242,7 @@ void AI_Swap(int &aI[], int i=0, int j=0){
 
 #define AI_ASC	0
 #define AI_DESC	1
-bool isNewQS=true; int maxQScount=0;
+bool isNewQS=true; int maxQScount=0; int CallCounter=0; int aCol[20];
 void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, int col=0, int mode=0){
 	/**
 		\version	0.0.0.1
@@ -251,10 +256,16 @@ void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, in
 			>Rev:0
 	*/
 	static int count;
-	if(isNewQS)count=0;
+	if(isNewQS){
+		count=0;
+		aCol[col]++;
+	}	
 	count++;
 	maxQScount=MathMax(maxQScount,count);
-	string fn="Ad_QuickSort2";
+	if(isTick){CallCounter=1; isTick=false;}
+	else CallCounter++;
+	
+	string fn="AId_QuickSort2";
 	
 	if(ArrayRange(aI,0)<2){
 		return;
@@ -265,11 +276,11 @@ void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, in
 	
 	int i=idx_min, j=idx_max;
 	int idx_pivot = MathRound((i+j)/2);
-	double pivot_value = (a[aI[i]][col]+a[aI[j]][col]+a[aI[idx_pivot]][col])/3; //усредненное значение первого, последнего и среднего элемента массива. 
+	double pivot_value = NormalizeDouble((a[aI[i]][col]+a[aI[j]][col]+a[aI[idx_pivot]][col])/3,8); //усредненное значение первого, последнего и среднего элемента массива. 
 	while(i<j){
 		if(mode == AI_ASC){
-			while(a[aI[i]][col]<pivot_value){i++;}
-			while(a[aI[j]][col]>pivot_value){j--;}
+			while(NormalizeDouble(a[aI[i]][col],8)<NormalizeDouble(pivot_value,8)){i++;}
+			while(NormalizeDouble(a[aI[j]][col],8)>NormalizeDouble(pivot_value,8)){j--;}
 		}
 		if(mode == AI_DESC){
 			while(a[aI[i]][col]>pivot_value){i++;}

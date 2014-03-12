@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.12
-		\date		2014.03.07
+		\version	3.1.0.13
+		\date		2014.03.08
 		\author		Morochin <artamir> Artiom
 		\details	Расширенная информация об ордерах.
 		\internal
-			>Hist:												
+			>Hist:													
+					 @3.1.0.13@2014.03.08@artamir	[+]	OE_delClosed
 					 @3.1.0.12@2014.03.07@artamir	[!]	OE_FIBT
 					 @3.1.0.10@2014.03.07@artamir	[+]	OE_delClosed
 					 @3.1.0.9@2014.03.06@artamir	[*]	OE_setCLS
@@ -280,7 +281,7 @@ double OE_getPBT(int ti, int prop){
 }
 
 // Сервисные функции
-void OE_delClosed(){
+void OE_delClosed_v0(){
 	/**
 		\version	0.0.0.1
 		\date		2014.03.07
@@ -315,4 +316,21 @@ void OE_delClosed(){
 		
 		ArrayResize(aOE,ArrayRange(t,0));
 		ArrayCopy(aOE,t,0,0,WHOLE_ARRAY);
+}
+
+void OE_delClosed(){
+	/**
+		\version	0.0.0.1
+		\date		2014.03.08
+		\author		Morochin <artamir> Artiom
+		\details	Удаляет закрытые ордера.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.03.08@artamir	[+]	OE_delClosed
+			>Rev:0
+	*/
+
+	string fn="OE_delClosed";
+	ArrayResize(aOE,ArrayRange(aEC,0));
+	ArrayCopy(aOE,aEC,0,0,WHOLE_ARRAY);
 }

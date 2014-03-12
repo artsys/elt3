@@ -19,7 +19,7 @@
 #property link      "http:\\forexmd.ucoz.org"
 #property version   "310.0"
 #property strict
-#property stacksize 1024
+#property stacksize 128
 
 bool bDebug=false;
 bool bNeedDelClosed=false;
@@ -98,7 +98,10 @@ int startext(void){
 		Print(fn,"->B_Start()");
 	}
 	
+	
+	
 	B_Start();
+	if(!CMFB_use)OE_delClosed();
 	
 	if(bDebug){
 		Print(fn,"->CMFB()");
@@ -115,13 +118,16 @@ int startext(void){
 	}
 	Autoopen();
 	
-	// int aI[]; ArrayResize(aI,0);
-	// AId_Init2(aEC,aI);
-	// AId_Print2(aEC,aI,4,"aEC_all");
-
-   // ArrayResize(aI,0);
-	// AId_Init2(aOE,aI);
-	// AId_Print2(aOE,aI,4,"aOE_all");	
+	
+	Comment("aOE=",ArrayRange(aOE,0)
+	      ,"\nQSMaxCount=",maxQScount
+		  ,"\nCallCounter=",CallCounter);
+		  
+	for(int i=0;i<20;i++){
+		if(aCol[i]<=0)continue;
+		//Alert("col=",i," count=",aCol[i]);
+	}	  
+	
 	return(0);
 }
 
@@ -147,8 +153,6 @@ void CMFB(){
 	//ѕолучаем сумму всех закрытых ордеров сессии.
 	string f="";
 	f=StringConcatenate(f
-		,OE_MN,"==",TR_MN
-		," AND "
 		,OE_IC,"==1");
 		
 	int aI[];
@@ -169,22 +173,18 @@ void CMFB(){
 	//¬ыбираем ордера которые ушли в минус больше заданного значени€.
 	f="";
 	f=StringConcatenate(f
-		,OE_MN,"==",TR_MN
-		," AND "
-		,OE_IT,"==1"
-		," AND "
 		,OE_IM,"==1"
 		," AND "
 		,OE_CP2OOP,"<<",-CMFB_pips);
 	ArrayResize(aI,0);
-	AId_Init2(aOE,aI);
+	AId_Init2(aEC,aI);
 	
 	if(bDebug){
 		Print(fn,"->B_Select() //in minus");
 		//AId_Print2(aOE,aI,4,"aOE_B_Select_in minus");
 		B_BSEL=true;
 	}
-	B_Select(aOE,aI,f);
+	B_Select(aEC,aI,f);
 	if(bDebug){
 		Print(fn,"->B_Select() //in minus end");
 		B_BSEL=false;
@@ -197,8 +197,8 @@ void CMFB(){
 	if(rows<=0)return; //нет таких ордеров.
 	int i=0;
 	while(profit>0&&i<rows){
-		int ti=aOE[aI[i]][OE_TI];
-		double opr=aOE[aI[i]][OE_OPR];
+		int ti=aEC[aI[i]][OE_TI];
+		double opr=aEC[aI[i]][OE_OPR];
 		if(MathAbs(opr)<=profit){
 			if(TR_CloseByTicket(ti)){
 				profit=profit-MathAbs(opr);
@@ -233,10 +233,6 @@ void TN(){
 	int aI[]; ArrayResize(aI,0);
 	AId_Init2(aEC,aI);
 	string f=StringConcatenate(""
-		,OE_MN,"==",TR_MN
-		," AND "
-		,OE_IT,"==1"
-		," AND "
 		,OE_IM,"==1");
 	
  	B_Select(aEC,aI,f);
@@ -289,8 +285,6 @@ void TN_checkCO(int pti){
 		int aI[];ArrayResize(aI,0);
 		AId_Init2(aEC,aI);
 		string f=StringConcatenate(""
-			,OE_IT,"==1"
-			," AND "
 			,OE_OOP,"==",lvloop);
 		
 		B_Select(aEC,aI,f);
@@ -370,8 +364,6 @@ int TI_count(int ty, double oop){
 	int aI[];ArrayResize(aI,0);
 	AId_Init2(aEC,aI);
 	string f=StringConcatenate(""
-		,OE_IT,"==1"
-		," AND "
 		,OE_OOP,"==",oop
 		," AND "
 		,OE_TY,"==",ty);

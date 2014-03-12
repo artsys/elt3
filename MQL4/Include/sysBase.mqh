@@ -18,6 +18,9 @@
 #property link      "http:\\forexmd.ucoz.org"
 #property strict
 
+bool B_BSEL=false;
+bool isTick=false;
+
 #include <sysOther.mqh> //{
 #include <sysNormalize.mqh>
 #include <sysStructure.mqh>
@@ -75,7 +78,11 @@ void B_Start(){
 					 @0.0.0.1@2014.03.03@artamir	[+]	B_Start
 			>Rev:0
 	*/
-
+	
+	isTick=true;
+	for(int i=0;i<OE_MAX;i++){
+		aCol[i]=0;
+	}
 	E_Start();
 }
 
@@ -109,7 +116,7 @@ void B_Select(double &a[][], int &aI[], string f){
 			>Rev:0
 	*/
 
-	string fn="Select";
+	string fn="B_Select";
 	
 	f=StringConcatenate(OE_MN,"==",TR_MN," AND ",f);	
 	AIF_init();
@@ -163,5 +170,13 @@ void B_Select(double &a[][], int &aI[], string f){
 	}
 	
 	//-------------------------------------------
+	if(B_BSEL){
+		Print(fn,"->AId_Select2()");
+		AI_BSEL=true;
+	}
 	AId_Select2(a,aI);
+	if(B_BSEL){
+		AI_BSEL=false;
+		Print(fn,"->AId_Select2() //End");
+	}
 }

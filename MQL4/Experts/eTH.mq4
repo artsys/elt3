@@ -19,7 +19,7 @@
 #property link      "http:\\forexmd.ucoz.org"
 #property version   "310.0"
 #property strict
-#property stacksize 128
+#property stacksize 1024
 
 bool bDebug=false;
 bool bNeedDelClosed=false;
@@ -157,7 +157,7 @@ void CMFB(){
 		
 	int aI[];
 	ArrayResize(aI,0);
-	AId_Init2(aOE,aI);
+	AId_Init2(aOE,aI,OE_IC);
 	if(bDebug){
 		Print(fn,"->B_Select() //profit");
 	}
@@ -177,7 +177,7 @@ void CMFB(){
 		," AND "
 		,OE_CP2OOP,"<<",-CMFB_pips);
 	ArrayResize(aI,0);
-	AId_Init2(aEC,aI);
+	AId_Init2(aEC,aI,OE_IM);
 	
 	if(bDebug){
 		Print(fn,"->B_Select() //in minus");
@@ -231,7 +231,7 @@ void TN(){
 	string fn="TN";
 		
 	int aI[]; ArrayResize(aI,0);
-	AId_Init2(aEC,aI);
+	AId_Init2(aEC,aI,OE_IM);
 	string f=StringConcatenate(""
 		,OE_IM,"==1");
 	
@@ -283,7 +283,7 @@ void TN_checkCO(int pti){
 		}
 		
 		int aI[];ArrayResize(aI,0);
-		AId_Init2(aEC,aI);
+		AId_Init2(aEC,aI,OE_OOP);
 		string f=StringConcatenate(""
 			,OE_OOP,"==",lvloop);
 		
@@ -295,7 +295,6 @@ void TN_checkCO(int pti){
 			ArrayResize(d,0);
 			int AddPips=Step*lvl;
 			TR_SendPending_array(d, ty,	poop, AddPips, GetLot(), TP);
-			
 		}
 	}		
 }

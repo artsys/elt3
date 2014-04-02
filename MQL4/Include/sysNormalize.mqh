@@ -33,6 +33,15 @@ double Norm_symb(double d, string sy = "", int add = 0){//..
 	return(NormalizeDouble(d, di+add));
 }//.
 
+double Norm_symb2(double d){
+   double tick_size=MarketInfo(Symbol(),MODE_TICKSIZE);
+   double norm_d=Norm_symb(d);
+   double mod=Norm_symb(MathMod(norm_d,tick_size));
+   double res=norm_d-mod+tick_size;
+   res=Norm_symb(res);
+   return(res);
+}
+
 double Norm_vol(double v, string sy = ""){//..
 	/*
 		>Ver	:	0.0.2

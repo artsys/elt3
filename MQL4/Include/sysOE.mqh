@@ -135,7 +135,7 @@ int OE_FIBT(int ti){
 	int aI[];
 	ArrayResize(aI,0);
 	AId_Init2(aOE,aI);
-	AId_QuickSort2(aOE,aI,-1,-1,OE_TI);
+	//AId_QuickSort2(aOE,aI,-1,-1,OE_TI);
 	int idx=AId_SearchFirst2(aOE,aI,OE_TI,ti);
 	if(idx==AI_NONE){
 		idx=OE_addRow(ti);
@@ -333,4 +333,11 @@ void OE_delClosed(){
 	string fn="OE_delClosed";
 	ArrayResize(aOE,ArrayRange(aEC,0));
 	ArrayCopy(aOE,aEC,0,0,WHOLE_ARRAY);
+}
+
+void OE_Print(string name="aOE"){
+   int aI[];
+   AId_Init2(aOE,aI);
+   
+   AId_Print2(aOE,aI,4,name);
 }

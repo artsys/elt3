@@ -80,9 +80,6 @@ void B_Start(){
 	*/
 	
 	isTick=true;
-	for(int i=0;i<OE_MAX;i++){
-		aCol[i]=0;
-	}
 	E_Start();
 }
 
@@ -117,6 +114,7 @@ void B_Select(double &a[][], int &aI[], string f){
 	*/
 
 	string fn="B_Select";
+	double val;
 	
 	f=StringConcatenate(OE_MN,"==",TR_MN," AND ",f);	
 	AIF_init();
@@ -152,7 +150,7 @@ void B_Select(double &a[][], int &aI[], string f){
 		e_rows=ArrayRange(aTemp,0);
 		if(e_rows>1){
 			col=StrToInteger(aTemp[0]);
-			val=StrToDouble(aTemp[1]);
+			double val=(double)StrToDouble(aTemp[1]);
 			
 			AIF_filterAdd_AND(col,AI_GREAT,val,val);	
 		}	
@@ -162,7 +160,7 @@ void B_Select(double &a[][], int &aI[], string f){
 		e_rows=ArrayRange(aTemp,0);
 		if(e_rows>1){
 			col=StrToInteger(aTemp[0]);
-			val=StrToDouble(aTemp[1]);
+			double val=(double)StrToDouble(aTemp[1]);
 			AIF_filterAdd_AND(col,AI_LESS,val,val);	
 		}	
 		//}

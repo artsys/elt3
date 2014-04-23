@@ -42,6 +42,32 @@
 bool AI_BSEL=false;
 	
 #define AI_NONE         -2147483648
+
+void AI_Union(int &a1[],int &a2[]){
+	/**
+		\version	0.0.0.2
+		\date		2014.03.12
+		\author		Morochin <artamir> Artiom
+		\details	Объединение двух индексов. Объединеный индексный массив возвращается в a1[]
+		\internal
+			>Hist:		
+					 @0.0.0.2@2014.03.12@artamir	[*]	Добавлена сортировка по умолчанию.
+					 @0.0.0.1@2013.11.06@artamir	[+]	
+			>Rev:0
+	*/
+	
+	string fn="AI_Union";
+	int r2=ArrayRange(a2,0);
+	
+	int r1=r2+ArrayRange(a1,0);
+	
+	ArrayResize(a1,r1);
+	
+	for(int i=0;i<r2;i++){
+	   a1[(r1-r2)+i]=a2[i];
+	}
+
+}
 	
 void AId_Init2(double &a[][], int &aI[], int c=-1){
 	/**
@@ -242,7 +268,7 @@ void AI_Swap(int &aI[], int i=0, int j=0){
 
 #define AI_ASC	0
 #define AI_DESC	1
-bool isNewQS=true; int maxQScount=0; int CallCounter=0; int aCol[20];
+bool isNewQS=true; int maxQScount=0; int CallCounter=0;
 void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, int col=0, int mode=0){
 	/**
 		\version	0.0.0.1
@@ -258,7 +284,7 @@ void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, in
 	static int count;
 	if(isNewQS){
 		count=0;
-		aCol[col]++;
+		//aCol[col]++;
 	}	
 	count++;
 	maxQScount=MathMax(maxQScount,count);
@@ -292,7 +318,6 @@ void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, in
 	}
 	isNewQS=false;
 	if(i<idx_max){AId_QuickSort2(a,aI,i,idx_max,col, mode);}
-	isNewQS=true;
 	isNewQS=false;
 	if(idx_min<j){AId_QuickSort2(a,aI,idx_min,j,col, mode);}
 	isNewQS=true;

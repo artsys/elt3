@@ -12,8 +12,8 @@
 #define TR_MODE_PIP	2 
 	
 extern string	TR_S = "==== TRADING ======================";
-extern double	TR_TwiseLots	= 20.0;						// Объем выставляемой позиции, после которого объем ордеров делится на два
-extern int		TR_MN = 0;									// Магический номер позиции.
+extern double	TR_TwiseLots	= 20.0;						
+extern int		TR_MN = 0;									
 extern string	TR_E = "===================================";
 
 //{	//=== SENDING	====================================
@@ -693,12 +693,12 @@ int TR_SendPending_array(		double &d[]	//{
 					 @0.0.0.1@2013.06.28@artamir	[]	TR_SendPending_array
 			>Rev:0
 	*/
-	zx
+	
 	if(type == OP_BUYSTOP	){return(TR_SendBUYSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
 	if(type == OP_BUYLIMIT	){return(TR_SendBUYLIMIT_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
 	if(type == OP_SELLSTOP	){return(TR_SendSELLSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
 	if(type == OP_SELLLIMIT	){return(TR_SendSELLLIMIT_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
-	xz return(0);
+	return(0);
 }	//}
 
 int TR_SendPendingLikeOrder(double &d[], int src_ti=0, int AddPips=0){

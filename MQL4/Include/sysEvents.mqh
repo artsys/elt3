@@ -37,9 +37,9 @@ void E_Init(void){
 					 @0.0.0.1@2014.03.03@artamir	[+]	
 			>Rev:0
 	*/
-	ArrayResize(aEC,0);
-	ArrayResize(aEO,0);
-	ArrayResize(aE,0);
+	ArrayResize(aEC,0,1000);
+	ArrayResize(aEO,0,1000);
+	ArrayResize(aE,0,1000);
 }
 
 void E_Start(void){
@@ -55,8 +55,8 @@ void E_Start(void){
 	*/
 	string fn="aE_Start";
 	
-	ArrayResize(aEC,0);	//Обнулили массив текущих ордеров, которые есть в терминале.
-	ArrayResize(aE,0);	//Обнулили массив событий
+	ArrayResize(aEC,0,1000);	//Обнулили массив текущих ордеров, которые есть в терминале.
+	ArrayResize(aE,0,1000);	//Обнулили массив событий
 	for(int i=0;i<=OrdersTotal();i++){
 		if(!OrderSelect(i,SELECT_BY_POS,MODE_TRADES)) continue;
 		int idx=OE_setSTD(OrderTicket());

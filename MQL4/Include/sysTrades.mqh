@@ -693,12 +693,12 @@ int TR_SendPending_array(		double &d[]	//{
 					 @0.0.0.1@2013.06.28@artamir	[]	TR_SendPending_array
 			>Rev:0
 	*/
-	
+	zx
 	if(type == OP_BUYSTOP	){return(TR_SendBUYSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
 	if(type == OP_BUYLIMIT	){return(TR_SendBUYLIMIT_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
 	if(type == OP_SELLSTOP	){return(TR_SendSELLSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
 	if(type == OP_SELLLIMIT	){return(TR_SendSELLLIMIT_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
-	return(0);
+	xz return(0);
 }	//}
 
 int TR_SendPendingLikeOrder(double &d[], int src_ti=0, int AddPips=0){

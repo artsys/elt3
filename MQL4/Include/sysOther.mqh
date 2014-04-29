@@ -26,7 +26,7 @@ int StringToArrayString(string &a[], string s, string del = ";"){
 	int lastROW = ROWS-1;
 	if(pR > -1){
 		ROWS = ROWS + 1;
-		ArrayResize(a, ROWS);
+		ArrayResize(a, ROWS,1000);
 		
 		lastROW++;
 		a[lastROW] = StringSubstr(s, 0, pR);
@@ -34,7 +34,7 @@ int StringToArrayString(string &a[], string s, string del = ";"){
 		ROWS=StringToArrayString(a, s, del);
 	}else{
 		ROWS = ROWS + 1;
-		ArrayResize(a, ROWS);
+		ArrayResize(a, ROWS,1000);
 		
 		lastROW++;
 		a[lastROW] = s;

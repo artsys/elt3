@@ -13,6 +13,12 @@
 					 @0.0.0.1@2014.03.03@artamir	[+]	B_DBOE
 			>Rev:0
 	*/
+
+string com="";
+#define tmr int tmrstrt=GetTickCount();
+#define ctmr " tmr:"+(string)(GetTickCount()-tmrstrt)
+#define zx tmr if(bDebug){ com+="if("+__FUNCSIG__+"){\n";}
+#define xz if(bDebug){com+=__FUNCTION__+ctmr+"};\n";} 
 	
 #property copyright "Copyright 2014, artamir"
 #property link      "http:\\forexmd.ucoz.org"
@@ -112,9 +118,8 @@ void B_Select(double &a[][], int &aI[], string f){
 					 @0.0.0.1@2014.01.23@artamir	[+]	Select
 			>Rev:0
 	*/
-
+   zx
 	string fn="B_Select";
-	double val;
 	
 	f=StringConcatenate(OE_MN,"==",TR_MN," AND ",f);	
 	AIF_init();
@@ -135,7 +140,7 @@ void B_Select(double &a[][], int &aI[], string f){
 		ArrayResize(aTemp,0);
 		StringToArrayString(aTemp,e,"==");
 		int e_rows=ArrayRange(aTemp,0);
-		int col=-1,val=0.0;
+		int col=-1; double val=0.0;
 		
 		if(e_rows>1){
 			int col=StrToInteger(aTemp[0]);
@@ -168,13 +173,20 @@ void B_Select(double &a[][], int &aI[], string f){
 	}
 	
 	//-------------------------------------------
-	if(B_BSEL){
-		Print(fn,"->AId_Select2()");
-		AI_BSEL=true;
-	}
 	AId_Select2(a,aI);
-	if(B_BSEL){
-		AI_BSEL=false;
-		Print(fn,"->AId_Select2() //End");
-	}
+
+   xz
 }
+
+
+void WriteFile(string folder="Трассировка")
+  {
+   if(!bDebug)return;
+   int han=FileOpen(folder+".mqh",FILE_WRITE|FILE_TXT|FILE_ANSI," ");
+   if(han!=INVALID_HANDLE)
+     {
+      FileWrite(han,com);
+      FileClose(han);
+     }
+   else Print("File open failed "+folder+".mqh, error",GetLastError());
+  }

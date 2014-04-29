@@ -15,15 +15,22 @@
 			>Rev:0
 	*/
 
+
+
 #property copyright "Copyright 2014, artamir"
 #property link      "http:\\forexmd.ucoz.org"
 #property version   "310.0"
 #property strict
-#property stacksize 8
+#property stacksize 256
 
-bool bDebug=false;
+bool bDebug=true;
 bool bNeedDelClosed=false;
+
+double dNearestBuyPrice=100000;
 double dMaxBuyPrice=100000;
+
+double dNearestSellPrice=0;
+double dMinSellPrice=0;
 
 input string s1="===== MAIN =====";
 input int Step=20;	//Шаг между ордерами
@@ -39,6 +46,7 @@ extern int		CMFB_pips=50; //закрывать ордера, ушедшие в минуз больше заданного з
 #include <sysBase.mqh>
 
 int OnInit(){
+	zx
 	/**
 		\version	0.0.0.0
 		\date		2014.03.05
@@ -51,7 +59,7 @@ int OnInit(){
 	B_Init();
 	
 	//--------------------------------------
-	return(INIT_SUCCEEDED);
+	xz return(INIT_SUCCEEDED);
 }
 
 void OnDeinit(const int reason){
@@ -64,7 +72,8 @@ void OnDeinit(const int reason){
 			>Hist:
 			>Rev:0
 	*/
-	B_Deinit();
+	if(!IsTesting())B_Deinit();
+	WriteFile();
 }
 
 void OnTick(){
@@ -77,8 +86,11 @@ void OnTick(){
 			>Hist:
 			>Rev:0
 	*/
+	zx
 	
 	startext();
+	
+	xz
 }
 
 int startext(void){
@@ -91,50 +103,34 @@ int startext(void){
 			>Hist:
 			>Rev:0
 	*/
-
+   zx
 	string fn="startext";
    
-   
-   
+     
 	dMaxBuyPrice=getMaxBuyPrice();
+	dMinSellPrice=getMinSellPrice();
 	if(dMaxBuyPrice<0)dMaxBuyPrice=1000000;
-	
-	if(bDebug){
-		Print("============================");
-		Print(fn,"->B_Start()");
-	}
-	
-	
-	
+	if(dMinSellPrice<0)dMinSellPrice=0;
+	   
 	B_Start();
+	
 	if(!CMFB_use)OE_delClosed();
-	
-	if(bDebug){
-		Print(fn,"->CMFB()");
-	}
+	    
 	CMFB();
-	
-	if(bDebug){
-		Print(fn,"->TN()");
-	}
+ 
 	TN();
-	
-	if(bDebug){
-		Print(fn,"->Autoopen()");
-	}
+
 	Autoopen();
-	
-	if(bDebug){
-	   Print(fn,"->DelUnused");
-	}
+
 	DelUnused();
 	
 	Comment("aOE=",ArrayRange(aOE,0)
 	      ,"\naEC=",ArrayRange(aEC,0)
 	      ,"\nQSMaxCount=",maxQScount
 		  ,"\nCallCounter=",CallCounter
-		  ,"\nmax_buy=",dMaxBuyPrice);	  
-	
+		  ,"\nmax_buy=",dMaxBuyPrice
+		  ,"\n"+ctmr);	  
+	xz
 	return(0);
 }
 
@@ -160,12 +156,41 @@ void DelUnused(){
       int ti=AId_Get2(aEC,aI,i,OE_TI);
       TR_CloseByTicket(ti);
    }
+   
+   //===================================
+   ArrayResize(aI,0);
+   AId_Init2(aEC,aI,OE_IP);
+   
+   pr=dMinSellPrice;
+   
+   f="";
+   f=StringConcatenate(f,""
+      ,OE_IP,"==",1
+      ," AND "
+      ,OE_OOP,"<<",pr);
+      
+   B_Select(aEC,aI,f); 
+   
+   r=ArrayRange(aI,0);
+   for(int i=0;i<r;i++){
+      int ti=AId_Get2(aEC,aI,i,OE_TI);
+      TR_CloseByTicket(ti);
+   }
    //AId_Print2(aEC,aI,4,"aEC_BUY_Above_LastLevel");     
 }
 
 double getMaxBuyPrice(){
-   double pr=getNearestBuyPrice();
-   pr=pr+Step*Levels*Point;
+   double pr=0.0;
+   dNearestBuyPrice=getNearestBuyPrice();
+   pr=dNearestBuyPrice+Step*Levels*Point;
+   
+   return(pr);
+}
+
+double getMinSellPrice(){
+   double pr=0.0;
+   dNearestSellPrice=getNearestSellPrice();
+   pr=dNearestSellPrice-Step*Levels*Point;
    
    return(pr);
 }
@@ -202,6 +227,39 @@ double getNearestBuyPrice(){
    return(oop);          
 }
 
+double getNearestSellPrice(){
+   double pr=Bid;
+   int aB[];
+   ArrayResize(aB,0);
+   AId_Init2(aEC,aB,OE_OOP);
+   
+   string f=StringConcatenate(""
+            ,OE_OOP,"<<",pr
+            ," AND "
+            ,OE_TY,"==",OP_SELL);
+   B_Select(aEC,aB,f);
+   //AId_Print2(aEC,aB,4,"aEC_Select_Buy_Above_Ask");  
+   
+   int aBS[];
+   ArrayResize(aBS,0);
+   AId_Init2(aEC,aBS,OE_OOP);
+   
+   f=StringConcatenate(""
+            ,OE_OOP,"<<",pr
+            ," AND "
+            ,OE_TY,"==",OP_SELLSTOP);
+   B_Select(aEC,aBS,f);
+   //AId_Print2(aEC,aBS,4,"aEC_Select_BuyStop_Above_Ask");  
+   
+   AI_Union(aB,aBS);
+   AId_QuickSort2(aEC,aB,-1,-1,OE_OOP);
+  // AId_Print2(aEC,aB,4,"aEC_Union_Buy_BuyStop_Above_Ask");
+   
+   double oop=AId_Get2(aEC,aB,(ArrayRange(aB,0)-1),OE_OOP);
+   return(oop);          
+}
+
+
 void CMFB(){
 	/**
 		\version	0.0.0.4
@@ -216,7 +274,7 @@ void CMFB(){
 					 @0.0.0.1@2014.01.15@artamir	[+]	CMFB
 			>Rev:0
 	*/
-
+   zx
 	string fn="CMFB";
 	
 	if(!CMFB_use)return;
@@ -229,9 +287,7 @@ void CMFB(){
 	int aI[];
 	ArrayResize(aI,0);
 	AId_Init2(aOE,aI,OE_IC);
-	if(bDebug){
-		Print(fn,"->B_Select() //profit");
-	}
+	
 	B_Select(aOE,aI,f);
 	
 	int rows=ArrayRange(aI,0);
@@ -250,22 +306,14 @@ void CMFB(){
 	ArrayResize(aI,0);
 	AId_Init2(aEC,aI,OE_IM);
 	
-	if(bDebug){
-		Print(fn,"->B_Select() //in minus");
-		//AId_Print2(aOE,aI,4,"aOE_B_Select_in minus");
-		B_BSEL=true;
-	}
 	B_Select(aEC,aI,f);
-	if(bDebug){
-		Print(fn,"->B_Select() //in minus end");
-		B_BSEL=false;
-	}
+	
 	rows=ArrayRange(aI,0);
 	Comment("Count orders in minus=",rows,"\n"
 			,"profit=",profit);
 			
-	if(profit<=0)return;		
-	if(rows<=0)return; //нет таких ордеров.
+	if(profit<=0){xz return;}		
+	if(rows<=0){xz return;} //нет таких ордеров.
 	int i=0;
 	while(profit>0&&i<rows){
 		int ti=aEC[aI[i]][OE_TI];
@@ -285,7 +333,7 @@ void CMFB(){
 		OE_delClosed();
 		bNeedDelClosed=false;
 	}
-	
+	xz
 }
 
 void TN(){
@@ -299,28 +347,40 @@ void TN(){
 					 @0.0.0.1@2014.03.06@artamir	[+]	TN
 			>Rev:0
 	*/
+	zx
 	string fn="TN";
-		
-	int aI[]; ArrayResize(aI,0);
+	
+	//Print(fn);	
+	int aI[]; ArrayResize(aI,0,1000);
 	AId_Init2(aEC,aI,OE_IM);
+	//AId_Print2(aEC,aI,4,"TN_IM1");
+	
 	string f=StringConcatenate(""
 		,OE_IM,"==1");
-	
+	//B_BSEL=true;
  	B_Select(aEC,aI,f);
-
+   //B_BSEL=false;
+   //AId_Print2(aEC,aI,4,"TN_IM1_select");
 	int rows=ArrayRange(aI,0);
 	
-	if(rows<=0) return;
+	if(rows<=0){xz return;}
 	
 	for(int i=0;i<rows;i++){
 		int 	pti =AId_Get2(aEC,aI,i,OE_TI);
 		int 	pty =AId_Get2(aEC,aI,i,OE_TY);
 		double 	poop=AId_Get2(aEC,aI,i,OE_OOP);
-	
+	   
+	   if(pty==OP_BUY && poop > dNearestBuyPrice)continue;
+	   if(pty==OP_SELL && poop < dNearestSellPrice)continue;
+	   
 		TN_checkCO(pti);	
 		TN_checkRev(pti);
 	}
+	xz
 }
+
+ 
+
 
 void TN_checkCO(int pti){
 	/**
@@ -333,12 +393,14 @@ void TN_checkCO(int pti){
 					 @0.0.0.1@2014.03.06@artamir	[+]	TN_checkCO
 			>Rev:0
 	*/
+	zx
 	string fn="TN_checkCO";
 	
 	OrderSelect(pti,SELECT_BY_TICKET);
 	int pty=OrderType();
 	double poop=OrderOpenPrice();
 	double max_buy=dMaxBuyPrice;
+	double min_sell=dMinSellPrice;
 	
 	for(int lvl=1;lvl<=Levels;lvl++){
 		int ty=-1;
@@ -353,6 +415,7 @@ void TN_checkCO(int pti){
 		if(pty==OP_SELL||pty==OP_SELLSTOP){
 			ty=OP_SELLSTOP;
 			if(lvloop>Bid)continue;
+			if(lvloop<min_sell)continue;
 		}
 		
 		int aI[];ArrayResize(aI,0);
@@ -369,7 +432,8 @@ void TN_checkCO(int pti){
 			int AddPips=Step*lvl;
 			TR_SendPending_array(d, ty,	poop, AddPips, GetLot(), TP);
 		}
-	}		
+	}	
+	xz	
 }
 
 void TN_checkRev(int pti){
@@ -384,7 +448,6 @@ void TN_checkRev(int pti){
 			>Rev:0
 	*/
 	string fn="TN_checkRev";
-	
 	OrderSelect(pti,SELECT_BY_TICKET);
 	int pty=OrderType();
 	double poop=OrderOpenPrice();

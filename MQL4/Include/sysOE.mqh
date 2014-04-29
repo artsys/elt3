@@ -99,7 +99,7 @@ void OE_init(void){
 			>Rev:0
 	*/
 	string fn="OE_init";
-	ArrayResize(aOE,0);
+	ArrayResize(aOE,0,1000);
 }
 
 int OE_addRow(int ti){
@@ -115,7 +115,7 @@ int OE_addRow(int ti){
 	*/
 	string fn="OE_addRow";
 	int t=ArrayRange(aOE,0);t++;
-	ArrayResize(aOE,t);t--;
+	ArrayResize(aOE,t,1000);t--;
 	return(t);
 }
 
@@ -133,7 +133,7 @@ int OE_FIBT(int ti){
 	*/
 	string fn="OE_FIBT";
 	int aI[];
-	ArrayResize(aI,0);
+	ArrayResize(aI,0,1000);
 	AId_Init2(aOE,aI);
 	//AId_QuickSort2(aOE,aI,-1,-1,OE_TI);
 	int idx=AId_SearchFirst2(aOE,aI,OE_TI,ti);
@@ -295,7 +295,7 @@ void OE_delClosed_v0(){
 
 	string fn="OE_delClosed";
 	double t[][OE_MAX];
-	ArrayResize(t,0);
+	ArrayResize(t,0,1000);
 	
 	string f="";
 	f=StringConcatenate(OE_IT,"==1");

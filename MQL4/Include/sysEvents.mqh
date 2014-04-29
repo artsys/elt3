@@ -61,9 +61,14 @@ void E_Start(void){
 		if(!OrderSelect(i,SELECT_BY_POS,MODE_TRADES)) continue;
 		int idx=OE_setSTD(OrderTicket());
 		if(idx>-1){
-			AId_CopyRow2(aOE,aEC,idx);
+			AI_CopyRow2(aOE,aEC,idx);
 		}
 	}
+	short aI[];
+	ArrayResize(aI,0);
+	AI_Init2(aEC,aI);
+	AI_Print2(aEC,aI,4,"aEC");
+	AI_Print2(aOE,aOEI,4,"aOE");
 	
 	E_Events();
 	E_End();
@@ -82,10 +87,10 @@ void E_End(){
 			>Rev:0
 	*/
 	
-	//int aIC[];AId_Init2(aEC,aIC);
-	//AId_Print2(aEC,aIC,4,"aEC_all");
-	//int aIO[];AId_Init2(aEO,aIO);
-	//AId_Print2(aEO,aIO,4,"aEO_all");
+	//int aIC[];AI_Init2(aEC,aIC);
+	//AI_Print2(aEC,aIC,4,"aEC_all");
+	//int aIO[];AI_Init2(aEO,aIO);
+	//AI_Print2(aEO,aIO,4,"aEO_all");
 	
 	
 	string fn="E_End";
@@ -109,13 +114,13 @@ void E_Events(void){
 	*/
 	string fn="E_Events";
 	
-	int aIC[]; 			int aIO[];
+	short aIC[]; 			short aIO[];
 	ArrayResize(aIC,0);	ArrayResize(aIO,0);
-	AId_Init2(aEC,aIC); AId_Init2(aEO,aIO);
+	AI_Init2(aEC,aIC); AI_Init2(aEO,aIO);
 	
 	for(int ic=0;ic<ArrayRange(aIC,0);ic++){
-		int cti=AId_Get2(aEC,aIC,ic,OE_TI);
-		int io=AId_SearchFirst2(aEO, aIO, OE_TI, cti);
+		int cti=AI_Get2(aEC,aIC,ic,OE_TI);
+		int io=AI_SearchFirst2(aEO, aIO, OE_TI, cti);
 		
 		if(io==AI_NONE){
 			EVENT_New(cti);
@@ -123,16 +128,16 @@ void E_Events(void){
 		}
 	
 		//Изменился тип ордера.
-		int cty=AId_Get2(aEC,aIC,ic,OE_TY);
-		int oty=AId_Get2(aEO,aIO,io,OE_TY);
+		int cty=AI_Get2(aEC,aIC,ic,OE_TY);
+		int oty=AI_Get2(aEO,aIO,io,OE_TY);
 		if(cty!=oty){
 			EVENT_ChTY(cti);
 		}
 	}
 	
 	for(int io=0; io<ArrayRange(aIO,0);io++){
-		int oti=AId_Get2(aEO,aIO,io,OE_TI);
-		int ic=AId_SearchFirst2(aEC, aIC, OE_TI, oti);
+		int oti=AI_Get2(aEO,aIO,io,OE_TI);
+		int ic=AI_SearchFirst2(aEC, aIC, OE_TI, oti);
 		
 		if(ic==AI_NONE){
 			//Print(fn,"->EVENT_Closed()");
@@ -154,9 +159,11 @@ void EVENT_New(int ti){
 			>Rev:0
 	*/
 	string fn="EVENT_New";
-	int idx=AId_AddRow2(aE);
+	int idx=AI_AddRow2(aE);
 	aE[idx][E_TI]=ti;
 	aE[idx][E_EVT]=EVT_NEW;
+	
+	OE_setSTD(ti);
 }
 
 void EVENT_ChTY(int ti){
@@ -170,7 +177,7 @@ void EVENT_ChTY(int ti){
 			>Rev:0
 	*/
 	string fn="EVENT_New";
-	int idx=AId_AddRow2(aE);
+	int idx=AI_AddRow2(aE);
 	aE[idx][E_TI]=ti;
 	aE[idx][E_EVT]=EVT_CHTY;
 }
@@ -187,7 +194,7 @@ void EVENT_Closed(int ti){
 			>Rev:0
 	*/
 	string fn="EVENT_Closed";
-	int idx=AId_AddRow2(aE);
+	int idx=AI_AddRow2(aE);
 	aE[idx][E_TI]=ti;
 	aE[idx][E_EVT]=EVT_CLS;
 	//Print(fn,"->OE_setCLS()");

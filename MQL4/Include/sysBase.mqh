@@ -24,6 +24,15 @@ string com="";
 #property link      "http:\\forexmd.ucoz.org"
 #property strict
 
+bool bDebug=true;
+bool bNeedDelClosed=false;
+
+double dNearestBuyPrice=100000;
+double dMaxBuyPrice=100000;
+
+double dNearestSellPrice=0;
+double dMinSellPrice=0;
+
 bool B_BSEL=false;
 bool isTick=false;
 

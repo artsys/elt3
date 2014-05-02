@@ -147,7 +147,7 @@ int AId_CopyRow2(double &s[][], double &d[][], int i=0){
 		\internal
 			>Hist:	
 					 @0.0.0.1@2014.03.03@artamir	[+]	AId_CopyRow2
-			>Rev:0
+			>Re v:0
 	*/
 	string fn="AId_CopyRow2";
 	int idx=AId_AddRow2(d);

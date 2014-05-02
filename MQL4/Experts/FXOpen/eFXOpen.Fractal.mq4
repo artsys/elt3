@@ -16,7 +16,10 @@ int hf=0;
 input string s1="===== MAIN =====";
 input int SL=20;     //Stoploss
 input int TP=50;     //Takeprofit
+input string h1="Будет использоваться при Lot_percent=0";
 input double Lot=0.1;
+input string h2="Использовать процент от свободных средств для открытия позиции";
+input double Lot_percent=0;
 input string e1="================";
 
 #include <sysBase.mqh>
@@ -68,7 +71,7 @@ void Autoopen(){
    Comment(op);
    
    if(OrdersTotal()==0 && op>=0){
-      int ti=TR_SendMarket(op);
+      int ti=TR_SendMarket(op,TR_Lot(Lot,Lot_percent));
       TR_ModifyTP(ti,TP,TR_MODE_PIP);
       TR_ModifySL(ti,SL,TR_MODE_PIP);
    }

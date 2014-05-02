@@ -42,6 +42,32 @@
 bool AI_BSEL=false;
 	
 #define AI_NONE         -2147483648
+
+void AI_Union(int &a1[],int &a2[]){
+	/**
+		\version	0.0.0.2
+		\date		2014.03.12
+		\author		Morochin <artamir> Artiom
+		\details	Объединение двух индексов. Объединеный индексный массив возвращается в a1[]
+		\internal
+			>Hist:		
+					 @0.0.0.2@2014.03.12@artamir	[*]	Добавлена сортировка по умолчанию.
+					 @0.0.0.1@2013.11.06@artamir	[+]	
+			>Rev:0
+	*/
+	
+	string fn="AI_Union";
+	int r2=ArrayRange(a2,0);
+	
+	int r1=r2+ArrayRange(a1,0);
+	
+	ArrayResize(a1,r1,1000);
+	
+	for(int i=0;i<r2;i++){
+	   a1[(r1-r2)+i]=a2[i];
+	}
+
+}
 	
 void AId_Init2(double &a[][], int &aI[], int c=-1){
 	/**
@@ -56,14 +82,15 @@ void AId_Init2(double &a[][], int &aI[], int c=-1){
 			>Rev:0
 	*/
 
-	ArrayResize(aI,ArrayRange(a,0));
+	ArrayResize(aI,ArrayRange(a,0),1000);
 	for(int i=0; i<ArrayRange(a,0);i++){
 		aI[i]=i;
 	}
 	
 	if(c>-1){
-		AId_QuickSort2(a,aI,-1,-1,c);
-	}
+		//AId_QuickSort2(a,aI,-1,-1,c);
+		//AId_InsertSort2(a,aI,c);
+	}  
 }
 
 double AId_Get2(double &a[][], int &aI[], int idx=0, int col=0){
@@ -82,7 +109,7 @@ double AId_Get2(double &a[][], int &aI[], int idx=0, int col=0){
 	string fn="AId_Get2";
 	
 	int rows=ArrayRange(aI,0); 
-	if(rows<=0)return(AI_NONE);
+	if(rows<=0)return((double)AI_NONE);
 	
 	if(idx>=rows){
 		Print(fn,"idx>rows");
@@ -212,13 +239,13 @@ int AI_setInterval(int &aI[], int start_idx=0, int end_idx=-256){
 	}
 	
 	int range=e-s+1;//количество элементов всего
-	ArrayResize(aT,range);
+	ArrayResize(aT,range,1000);
 	
 	for(int i=0; i<range; i++){
 		aT[i]=aI[s+i];
 	}
 	
-	ArrayResize(aI,range);
+	ArrayResize(aI,range,1000);
 	ArrayCopy(aI,aT,0,0,WHOLE_ARRAY);
 	return(range);
 }
@@ -242,7 +269,7 @@ void AI_Swap(int &aI[], int i=0, int j=0){
 
 #define AI_ASC	0
 #define AI_DESC	1
-bool isNewQS=true; int maxQScount=0; int CallCounter=0; int aCol[20];
+bool isNewQS=true; int maxQScount=0; int CallCounter=0;
 void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, int col=0, int mode=0){
 	/**
 		\version	0.0.0.1
@@ -258,7 +285,7 @@ void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, in
 	static int count;
 	if(isNewQS){
 		count=0;
-		aCol[col]++;
+		//aCol[col]++;
 	}	
 	count++;
 	maxQScount=MathMax(maxQScount,count);
@@ -292,13 +319,30 @@ void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, in
 	}
 	isNewQS=false;
 	if(i<idx_max){AId_QuickSort2(a,aI,i,idx_max,col, mode);}
-	isNewQS=true;
 	isNewQS=false;
 	if(idx_min<j){AId_QuickSort2(a,aI,idx_min,j,col, mode);}
 	isNewQS=true;
 }
 
-int AId_QuickSearch2(double &a[][], int &aI[], int col=0, double element=0.0, int mode=AI_EQ){
+void AId_InsertSort2(double &a[][], int &aI[], int col=0){
+   int l=0, r=ArrayRange(aI,0);
+   //AId_Print2(a,aI,4,"Insert_before_"+(string)col);
+   for(int i=1; i<r; i++){
+      //Будем считать, что до i-1 элемента у нас отсортированная последовательность.
+      //нужно в ней найти место для и-го элемента.
+      double e=AId_Get2(a,aI,i,col);
+      int ig=AId_SearchGreat2(a,aI,col,e,i-1);
+      if(ig==AI_NONE)continue;
+      
+      for(int j=ig; j<i; j++){
+         AI_Swap(aI,i,j);
+      }
+   }   
+   
+   //AId_Print2(a,aI,4,"Insert_after_"+(string)col); 
+}
+
+int AId_QuickSearch2(double &a[][], int &aI[], int col=0, double element=0.0, int mode=AI_EQ, int last_index=-1){
 	/**
 		\version	0.0.0.3
 		\date		2014.02.26
@@ -312,7 +356,11 @@ int AId_QuickSearch2(double &a[][], int &aI[], int col=0, double element=0.0, in
 			>Rev:0
 	*/
 	string fn="AId_QuickSearch2";
-	int size=ArrayRange(aI,0);
+	int size=last_index+1;
+	
+	if(size<=0){   
+	   size=ArrayRange(aI,0);
+	}   
 	
 	if(size<=0)return(AI_NONE);
 	
@@ -446,7 +494,7 @@ int AId_SearchLast2(double &a[][], int &aI[], int col=0, double element=0.0){
 	return(l);
 }
 
-int AId_SearchGreat2(double &a[][], int &aI[], int col=0, double element=0.0){
+int AId_SearchGreat2(double &a[][], int &aI[], int col=0, double element=0.0, int last_index=-1){
 	/**
 		\version	0.0.0.2
 		\date		2014.03.03
@@ -463,7 +511,10 @@ int AId_SearchGreat2(double &a[][], int &aI[], int col=0, double element=0.0){
 	
 	if(ArrayRange(aI,0)<=0)return(AI_NONE);
 	
-	int found_index=AId_QuickSearch2(a,aI,col,element,AI_GREAT);
+	if(last_index<0)last_index=ArrayRange(aI,0)-1;
+	if(AId_Compare(AId_Get2(a,aI,last_index,col),element)!=AI_GREAT)return(AI_NONE);
+	
+	int found_index=AId_QuickSearch2(a,aI,col,element,AI_GREAT,last_index);
 	if(found_index==AI_NONE)return(AI_NONE);
 	
 	int r=found_index;
@@ -627,7 +678,8 @@ void AId_Select2(double &a[][], int &aI[]){
 		//Далее отсортируем по возрастанию значение 
 		//колонки f_col
 		
-		AId_QuickSort2(a, aI, -1,-1,f_col);
+		//AId_QuickSort2(a, aI, -1,-1,f_col);
+		AId_InsertSort2(a,aI,f_col);
 		
 		int first=AI_NONE, last=AI_NONE;
 		
@@ -635,6 +687,9 @@ void AId_Select2(double &a[][], int &aI[]){
 		if(f_aop==AI_EQ){
 			if(B_BSEL){
 				Print(fn,".AI_EQ");
+				if(f_col==10){
+				   AId_Print2(a,aI,4,"AI_Select_col_10");
+				}
 			}
 			first=AId_SearchFirst2(a, aI, f_col, f_min);
 			last=AId_SearchLast2(a, aI, f_col, f_min);
@@ -732,15 +787,6 @@ void AId_STF2(double &a[][], string fn, int d = 4){
 			
 			//----------------------------------------------
 			double val = a[idx1][idx2];
-			
-			//----------------------------------------------
-			// if(idx2 >= 11){
-				
-				//------------------------------------------
-				// if(val == 0.0){
-					// continue;
-				// }
-			// }
 			
 			//----------------------------------------------
 			string str = "@idx1_"+idx1

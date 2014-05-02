@@ -1,4 +1,4 @@
-	/**
+   /**
 		\version	0.0.0.5
 		\date		2014.03.06
 		\author		Morochin <artamir> Artiom

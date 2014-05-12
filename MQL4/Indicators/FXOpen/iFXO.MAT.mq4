@@ -34,7 +34,6 @@ int OnInit()
    SetIndexEmptyValue(0,0.0);
 //--- setting a code from the Wingdings charset as the property of PLOT_ARROW
    PlotIndexSetInteger(0,PLOT_ARROW,159);
-   
 //---
    return(INIT_SUCCEEDED);
   }

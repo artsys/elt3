@@ -1751,3 +1751,34 @@ double TR_Lot(double Lots=0.0, int Percent=0)              // Позовательская фун
 //---------------------------------------------------------------------------------- 6 --
    return(Lots_New);                                     // Выход из функции
    }
+
+enum TR_PRC_MODES{
+   TR_PM_Balance=1,
+   TR_PM_Equity=2,
+   TR_PM_FreeMargin=3
+};
+   
+int TR_PercentInPips(double prc=1, double lot_used=1, TR_PRC_MODES funds_mode=TR_PM_Balance){
+   int res=0;
+   
+   double funds=0;
+   if(funds_mode==TR_PM_Balance){
+      funds=AccountBalance();
+   }else{
+      if(funds_mode==TR_PM_Equity){
+         funds=AccountEquity();
+      }else{
+         if(funds_mode==TR_PM_FreeMargin){
+            funds=AccountFreeMargin();
+         }
+      }
+   }
+   
+   double funds_prc=funds*prc/100;
+   
+   double min_depozit_change=MarketInfo(Symbol(),MODE_TICKVALUE)*lot_used;
+   
+   res=MathFloor(funds_prc/min_depozit_change);
+   
+   return(res);
+}   

@@ -45,7 +45,9 @@
 #define OE_CP2OOP	19	//Разность между ценой закрытия и ценой открытия в пунктах }
 
 #define OE_BOT    20 //
-#define OE_MAX		21
+
+#define OE_USR1   21
+#define OE_MAX		22
 
 double	aOE[][OE_MAX];
 

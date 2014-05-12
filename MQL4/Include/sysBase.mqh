@@ -24,7 +24,7 @@ string com="";
 #property link      "http:\\forexmd.ucoz.org"
 #property strict
 
-bool bDebug=true;
+bool bDebug=false;
 bool bNeedDelClosed=false;
 
 double dNearestBuyPrice=100000;

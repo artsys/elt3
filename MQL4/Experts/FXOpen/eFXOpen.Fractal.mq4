@@ -5,11 +5,11 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2014, MetaQuotes Software Corp."
 #property link      "http://www.mql5.com"
-#property version   "1.00"
+#property version   "1.10"
 #property strict
 
 #define EXP "eFXO.Fractal"
-#define VER "1.00_2014.05.02"
+#define VER "1.1_2014.05.02"
 
 int hf=0;
 

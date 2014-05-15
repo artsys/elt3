@@ -22,6 +22,8 @@ string comadd="";
 #define zxadd(text) comadd+=text+";\n";
 #define xz if(bDebug){com=StringConcatenate(com,StringLen(comadd)>0?comadd+"\n":"",__FUNCTION__+ctmr+"};\n");comadd="";} 
 	
+#define SELECT(a,text) int aI[]; ArrayResize(aI,0,1000); AId_Init2(a,aI); if(bDebug){AId_Print2(a,aI,4,"line_before"+__LINE__);} B_Select(a, aI, text); if(bDebug){AId_Print2(a,aI,4,"line_after"+__LINE__);}	
+	
 #property copyright "Copyright 2014, artamir"
 #property link      "http:\\forexmd.ucoz.org"
 #property strict

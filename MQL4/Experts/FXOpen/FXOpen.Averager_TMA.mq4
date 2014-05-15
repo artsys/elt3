@@ -8,7 +8,7 @@
 
 #property copyright "ForexHacked 2.5"
 #property link      "http://www.ForexHacked.com"
-#property version   "2.10"
+#property version   "2.11"
 
 string EA_Name = "FXOpen.Averager_TMA";
 #define EXP "FXO.AVG_TMA"
@@ -472,6 +472,7 @@ void ManageSell()
 
 int start() 
 {
+   bNeedDelClosed=true;
    B_Start();
    
    double order_takeprofit_20;

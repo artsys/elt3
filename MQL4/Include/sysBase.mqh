@@ -15,10 +15,12 @@
 	*/
 
 string com="";
+string comadd="";
 #define tmr int tmrstrt=GetTickCount();
 #define ctmr " tmr:"+(string)(GetTickCount()-tmrstrt)
-#define zx tmr if(bDebug){ com+="if("+__FUNCSIG__+"){\n";}
-#define xz if(bDebug){com+=__FUNCTION__+ctmr+"};\n";} 
+#define zx tmr if(bDebug){ com+="if("+__FUNCSIG__+"){\n";comadd="";}
+#define zxadd(text) comadd+=text+";\n";
+#define xz if(bDebug){com=StringConcatenate(com,StringLen(comadd)>0?comadd+"\n":"",__FUNCTION__+ctmr+"};\n");comadd="";} 
 	
 #property copyright "Copyright 2014, artamir"
 #property link      "http:\\forexmd.ucoz.org"
@@ -80,6 +82,7 @@ void B_Deinit(){
 	*/
 	string file_oe=B_DBOE();
 	AId_STF2(aOE,file_oe);
+	WriteFile();
 }
 
 void B_Start(){
@@ -93,9 +96,12 @@ void B_Start(){
 					 @0.0.0.1@2014.03.03@artamir	[+]	B_Start
 			>Rev:0
 	*/
+	zx
 	
 	isTick=true;
 	E_Start();
+	if(bNeedDelClosed)OE_delClosed();
+	xz
 }
 
 string B_DBOE(){
@@ -128,9 +134,11 @@ void B_Select(double &a[][], int &aI[], string f){
 			>Rev:0
 	*/
    zx
+   zxadd(f)
 	string fn="B_Select";
 	
-	f=StringConcatenate(OE_MN,"==",TR_MN," AND ",f);	
+	if(StringFind(f,((string)OE_MN+"=="))<0)	f=StringConcatenate(OE_MN,"==",TR_MN," AND ",f);	
+	
 	AIF_init();
 	
 	//1. Раскладываем строку f по разделителю " AND "

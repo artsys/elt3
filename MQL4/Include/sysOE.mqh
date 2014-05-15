@@ -85,6 +85,7 @@ string OE2Str(int i){
 		case 17: return("OE_CP2SL");
 		case 18: return("OE_CP2TP");
 		case 19: return("OE_CP2OP");
+		case 21: return("OE_USR1");
 		default: return("UDF");
 	}
 }
@@ -161,9 +162,13 @@ int OE_setPBT(int ti, int prop, double val){
 					 @0.0.0.1@2014.03.01@artamir	[+]	OE_setPBT
 			>Rev:0
 	*/
+	zx
 	string fn="OE_setPBT";
 	int idx=OE_FIBT(ti);
 	aOE[idx][prop]=val;
+	
+	zxadd("aOE["+(string)idx+"]["+(string)prop+"]="+(string)aOE[idx][prop])
+	xz
 	return(idx);
 }	
 

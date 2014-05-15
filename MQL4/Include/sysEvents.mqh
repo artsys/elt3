@@ -53,6 +53,7 @@ void E_Start(void){
 					 @0.0.0.1@2014.03.03@artamir	[+]	E_Start
 			>Rev:0
 	*/
+	zx
 	string fn="aE_Start";
 	
 	ArrayResize(aEC,0);	//Обнулили массив текущих ордеров, которые есть в терминале.
@@ -67,6 +68,7 @@ void E_Start(void){
 	
 	E_Events();
 	E_End();
+	xz
 }
 
 void E_End(){

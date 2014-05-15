@@ -890,6 +890,19 @@ int TR_SendREVERSOrder(double &d[], int src_ti, double vol = 0.01, double lot_mu
 //}
 
 //{	//=== PRIVATE	====================================
+int TR_GetReversOP(int op=OP_BUY){
+   int res=op;
+   
+   if(op==OP_BUY)res=OP_SELL;
+   if(op==OP_SELL)res=OP_BUY;
+   if(op==OP_BUYSTOP)res==OP_SELLSTOP;
+   if(op==OP_SELLSTOP)res=OP_BUYSTOP;
+   if(op==OP_BUYLIMIT)res=OP_SELLLIMIT;
+   if(op==OP_SELLLIMIT)res=OP_BUYLIMIT;
+   
+   return(res);
+}
+
 double TR_getMarketPrice(int mode, int ty=0, string sy=""){
 	/**
 		\version	0.0.0.1

@@ -19,6 +19,7 @@ enum CANDLE_PROP{
 input int      AVG_Period=15;
 
 double CodeBuffer[];
+
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
 //+------------------------------------------------------------------+

@@ -5,19 +5,33 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2014, MetaQuotes Software Corp."
 #property link      "http://www.mql5.com"
-#property version   "1.10"
+#property version   "1.2"
 #property strict
 
-#define EXP "eFXO.Fractal"
+#define EXP "eCandleCode"
 #define VER "1.1_2014.05.02"
+
+#define input_PRC_TPSL
 
 int hf=0;
 
 input string s1="===== MAIN =====";
 input int SL=20;     //SL fix
+
+#ifdef input_PRC_TPSL
 input double SL_percent = 0; // SL in percent
+#else 
+double SL_percent = 0; // SL in percent   
+#endif 
+
 input int TP=50;     //TP fix
+
+#ifdef input_PRC_TPSL
 input double TP_percent = 0; // TP in percent
+#else
+double TP_percent = 0; // TP in percent
+#endif 
+
 input string h1="Будет использоваться при Lot_percent=0";
 input double Lot=0.1;
 input string h2="Использовать процент от свободных средств для открытия позиции";
@@ -25,7 +39,11 @@ input double Lot_percent=0; // Lot in percent
 input string e1="================";
 
 #include <sysBase.mqh>
+
+#define iFr
 #include <iFractal.mqh>
+
+
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
@@ -121,6 +139,11 @@ int GetFractalSignal(){
 void InitSignals(){
    
    //Фракталы.
+#ifdef iFr  
    aFR_init();
 	hf=aFR_set(2, 2, 0);
+#endif 
+
+	
+	
 }

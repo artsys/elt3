@@ -26,7 +26,7 @@ int OnInit()
   ArrayResize(aLVLUp,AmountLevels,1000); 
   ArrayResize(aLVLDw,AmountLevels,1000);
 //---
-   d=Digits>=4?2:1;
+   d=Digits>=4?2:0;
    DrawLevels();
 
    return(INIT_SUCCEEDED);

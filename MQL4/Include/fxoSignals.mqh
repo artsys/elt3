@@ -76,6 +76,7 @@ int fSI_TMA(){
 
 void fSI_TMASendStop(int sig=0){ 
    zx
+   
    double tma_up=0, tma_dw=0;;
    
    string f=StringConcatenate(""

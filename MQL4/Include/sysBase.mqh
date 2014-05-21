@@ -28,7 +28,7 @@ string comadd="";
 #property link      "http:\\forexmd.ucoz.org"
 #property strict
 
-bool bDebug=false;
+bool bDebug=true;
 bool bNeedDelClosed=false;
 
 double dNearestBuyPrice=100000;
@@ -200,7 +200,7 @@ void B_Select(double &a[][], int &aI[], string f){
 
 void WriteFile(string folder="Трассировка")
   {
-   if(!bDebug)return;
+   //if(!bDebug)return;
    int han=FileOpen(folder+".mqh",FILE_WRITE|FILE_TXT|FILE_ANSI," ");
    if(han!=INVALID_HANDLE)
      {

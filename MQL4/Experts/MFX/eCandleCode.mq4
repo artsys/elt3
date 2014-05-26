@@ -5,13 +5,15 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2014, MetaQuotes Software Corp."
 #property link      "http://www.mql5.com"
-#property version   "1.2"
+#property version   "1.3"
 #property strict
 
 #define EXP "eCandleCode"
-#define VER "1.2_2014.05.15"
+#define VER "1.3_2014.05.26"
 
 #define CANDLECODE
+
+int thisCandleCode=0;
 
 //COMPILER DEFINES
 //#define input_PRC_TPSL
@@ -95,6 +97,11 @@ void Autoopen(){
    signal=GetSignal();
    int op=signal;
    
+   if(thisCandleCode==118||thisCandleCode==3||thisCandleCode==57||thisCandleCode==96||thisCandleCode==32){
+      if(op==OP_BUY)op==OP_SELL;
+      if(op==OP_SELL)op==OP_BUY;
+   }
+   
    if(CloseOnRevers){
       fCloseRevers(signal);
    }
@@ -138,6 +145,8 @@ int GetCandleCodeSignal(){
    
    double cd1=iCustom(Symbol(),PERIOD_D1,"iCandlesPropHBL_2.0",15,0,1);
    double cd2=iCustom(Symbol(),PERIOD_D1,"iCandlesPropHBL_2.0",15,0,2);
+   
+   thisCandleCode=cd1;
    
    PrintFormat("cd1=%f",cd1);
    PrintFormat("cd2=%f",cd2);

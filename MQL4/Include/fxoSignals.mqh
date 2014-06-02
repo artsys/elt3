@@ -5,7 +5,10 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2014, MetaQuotes Software Corp."
 #property link      "http://www.mql5.com"
+#property version    2.00
 #property strict
+
+double tma_up=0,tma_dw=0;
 
 input string  SI = "=== SIGNALS ===";
 input string  SI_TMA = "===== TMA =====";
@@ -37,6 +40,7 @@ int fSI_Main(){
    if(SI_TMA_use){
       res=fSI_TMA();
       if(SI_TMA_useStop){
+        // fSI_TMAMoveStop();
          if(res!=0){
             fSI_TMASendStop(res);
          } 
@@ -49,7 +53,9 @@ int fSI_Main(){
 
 int fSI_TMA(){
    int Signal=0;
-   double tma_up=iCustom(Symbol(),0,"TMA",SI_TMA_TimeFrame,SI_TMA_HalfLength, SI_TMA_Price, SI_TMA_ATRMultiplier, SI_TMA_ATRPeriod, SI_TMA_Interpolate, false, false,false,false,false,false,1,0);
+   tma_up=iCustom(Symbol(),0,"TMA",SI_TMA_TimeFrame,SI_TMA_HalfLength, SI_TMA_Price, SI_TMA_ATRMultiplier, SI_TMA_ATRPeriod, SI_TMA_Interpolate, false, false,false,false,false,false,1,0);
+   tma_dw=iCustom(Symbol(),0,"TMA",SI_TMA_TimeFrame,SI_TMA_HalfLength, SI_TMA_Price, SI_TMA_ATRMultiplier, SI_TMA_ATRPeriod, SI_TMA_Interpolate, false, false,false,false,false,false,2,0);
+   
    double this_price=Bid;
    
    //Ќормалицаци€ вещественных переменных
@@ -60,8 +66,7 @@ int fSI_TMA(){
    
    if(this_price>=tma_up_zone && this_price<=tma_up)Signal=-1;//sell
    
-   double tma_dw=iCustom(Symbol(),0,"TMA",SI_TMA_TimeFrame,SI_TMA_HalfLength, SI_TMA_Price, SI_TMA_ATRMultiplier, SI_TMA_ATRPeriod, SI_TMA_Interpolate, false, false,false,false,false,false,2,0);
-          this_price=Bid;
+   this_price=Bid;
    
    //Ќормалицаци€ вещественных переменных
    tma_dw=NormalizeDouble(tma_dw,Digits);
@@ -91,8 +96,8 @@ void fSI_TMASendStop(int sig=0){
    int rows=ArrayRange(aI,0);
    
    if(rows<=0){
-      tma_up=iCustom(Symbol(),0,"TMA",SI_TMA_TimeFrame,SI_TMA_HalfLength, SI_TMA_Price, SI_TMA_ATRMultiplier, SI_TMA_ATRPeriod, SI_TMA_Interpolate, false, false,false,false,false,false,1,0);
-      tma_dw=iCustom(Symbol(),0,"TMA",SI_TMA_TimeFrame,SI_TMA_HalfLength, SI_TMA_Price, SI_TMA_ATRMultiplier, SI_TMA_ATRPeriod, SI_TMA_Interpolate, false, false,false,false,false,false,2,0);
+     // tma_up=iCustom(Symbol(),0,"TMA",SI_TMA_TimeFrame,SI_TMA_HalfLength, SI_TMA_Price, SI_TMA_ATRMultiplier, SI_TMA_ATRPeriod, SI_TMA_Interpolate, false, false,false,false,false,false,1,0);
+     // tma_dw=iCustom(Symbol(),0,"TMA",SI_TMA_TimeFrame,SI_TMA_HalfLength, SI_TMA_Price, SI_TMA_ATRMultiplier, SI_TMA_ATRPeriod, SI_TMA_Interpolate, false, false,false,false,false,false,2,0);
       
       int cmd=iif(sig==1,OP_BUYSTOP,OP_SELLSTOP);
       
@@ -106,4 +111,35 @@ void fSI_TMASendStop(int sig=0){
       }
    }
    xz           
+}
+
+void fSI_TMAMoveStop(){
+   double tma_up=0, tma_dw=0;;
+   
+   //tma_up=iCustom(Symbol(),0,"TMA",SI_TMA_TimeFrame,SI_TMA_HalfLength, SI_TMA_Price, SI_TMA_ATRMultiplier, SI_TMA_ATRPeriod, SI_TMA_Interpolate, false, false,false,false,false,false,1,0);
+   //tma_dw=iCustom(Symbol(),0,"TMA",SI_TMA_TimeFrame,SI_TMA_HalfLength, SI_TMA_Price, SI_TMA_ATRMultiplier, SI_TMA_ATRPeriod, SI_TMA_Interpolate, false, false,false,false,false,false,2,0);
+   
+   string f=StringConcatenate(""
+            ,OE_MN,"==",MagicNumber
+            ," AND "
+            ,OE_IT,"==1"
+            ," AND "
+            ,OE_IP,"==1");
+            
+   SELECT(aEC,f);
+   
+   int rows=ArrayRange(aI,0);
+   
+   for(int i=0;i<rows;i++){
+      int ti=AId_Get2(aEC,aI,i,OE_TI);
+      int ty=AId_Get2(aEC,aI,i,OE_TY);
+      
+      if(ty==OP_BUYSTOP){
+         TR_MoveOrder(ti,tma_dw);
+      }
+      
+      if(ty==OP_SELLSTOP){
+         TR_MoveOrder(ti,tma_up);
+      }
+   }
 }

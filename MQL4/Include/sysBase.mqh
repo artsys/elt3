@@ -14,13 +14,17 @@
 			>Rev:0
 	*/
 
+#define SYSBASE
+
 string com="";
 string comadd="";
 #define tmr int tmrstrt=GetTickCount();
 #define ctmr " tmr:"+(string)(GetTickCount()-tmrstrt)
-#define zx tmr if(bDebug){ com+="if("+__FUNCSIG__+"){\n";comadd="";}
-#define zxadd(text) comadd+=text+";\n";
-#define xz if(bDebug){com=StringConcatenate(com,StringLen(comadd)>0?comadd+"\n":"",__FUNCTION__+ctmr+"};\n");comadd="";} 
+#define zx if(DEBUG)Print(__FUNCSIG__);
+#define xz "";
+
+#define DPRINT(text) if(DEBUG)Print(__FUNCTION__+" :: "+(string)text);
+#define DAIdPRINT(a,aI,text) if(DEBUG){AId_Print2(a,aI,4,__FUNCTION__+"_"+text);}
 	
 #define SELECT(a,text) int aI[]; ArrayResize(aI,0,1000); AId_Init2(a,aI); if(bDebug){AId_Print2(a,aI,4,"line_before"+__LINE__);} B_Select(a, aI, text); if(bDebug){AId_Print2(a,aI,4,"line_after"+__LINE__);}	
 	
@@ -84,7 +88,7 @@ void B_Deinit(){
 	*/
 	string file_oe=B_DBOE();
 	AId_STF2(aOE,file_oe);
-	WriteFile();
+	//WriteFile();
 }
 
 void B_Start(){
@@ -136,7 +140,6 @@ void B_Select(double &a[][], int &aI[], string f){
 			>Rev:0
 	*/
    zx
-   zxadd(f)
 	string fn="B_Select";
 	
 	if(StringFind(f,((string)OE_MN+"=="))<0)	f=StringConcatenate(OE_MN,"==",TR_MN," AND ",f);	

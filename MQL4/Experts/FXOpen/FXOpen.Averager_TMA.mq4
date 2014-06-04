@@ -8,7 +8,7 @@
 
 #property copyright "ForexHacked 2.5"
 #property link      "http://www.ForexHacked.com"
-#property version   "2.11"
+#property version   "2.2"
 
 string EA_Name = "FXOpen.Averager_TMA";
 #define EXP "FXO.AVG_TMA"

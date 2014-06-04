@@ -167,8 +167,9 @@ int OE_setPBT(int ti, int prop, double val){
 	int idx=OE_FIBT(ti);
 	aOE[idx][prop]=val;
 	
-	zxadd("aOE["+(string)idx+"]["+(string)prop+"]="+(string)aOE[idx][prop])
-	xz
+	//zxadd("aOE["+(string)idx+"]["+(string)prop+"]="+(string)aOE[idx][prop])
+	//xz
+	
 	return(idx);
 }	
 

@@ -8,8 +8,10 @@
 						 @3.1.0.2@2014.03.05@artamir	[*]	_OrderSend
 	*/
 
-#define TR_MODE_PRICE 1
-#define TR_MODE_PIP	2 
+enum TR_PRPIP{
+   TR_MODE_PRICE=1,
+   TR_MODE_PIP=2 
+};
 	
 extern string	TR_S = "==== TRADING ======================";
 extern double	TR_TwiseLots	= 20.0;						
@@ -1357,6 +1359,40 @@ bool TR_ModifySL(int ticket, double sl, int mode = 1){
 	}
 	
 	return(_OrderModify(ticket, -1, newsl, -1, -1, CLR_NONE));
+}
+
+bool TR_ModifySLInPlus(int ti, double sl, int mode=1){
+   if(!OrderSelect(ti,SELECT_BY_TICKET)) return(false);
+   
+   int ty=OrderType();
+   double old_sl=OrderStopLoss();
+   
+   double newsl = sl;
+	
+	if(mode == TR_MODE_PIP){
+		double op = OrderOpenPrice();
+		//--------------------------------------------------
+		if(ty == OP_BUY || ty == OP_BUYSTOP || ty == OP_BUYLIMIT){
+			newsl = op-sl*Point;
+		}
+		
+		//--------------------------------------------------
+		if(ty == OP_SELL || ty == OP_SELLSTOP || ty == OP_SELLLIMIT){
+			newsl = op + sl*Point;
+		}
+	
+		if(sl==0){newsl=0;}
+	} 
+	
+	if(ty==OP_BUY || ty==OP_BUYSTOP || ty==OP_BUYLIMIT){
+	   if(newsl<old_sl)return(false);
+	}
+	
+	if(ty==OP_SELL || ty==OP_SELLSTOP || ty==OP_SELLLIMIT){
+	   if(old_sl>0 && newsl>old_sl)return(false);
+	}
+	
+	return(TR_ModifySL(ti,newsl,TR_MODE_PRICE));
 }
 
 bool TR_ModifyPriceByTicket(int src_ti, int dest_ti){

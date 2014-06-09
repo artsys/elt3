@@ -25,14 +25,14 @@ string comadd="";
 
 #define DPRINT(text) if(DEBUG)Print(__FUNCTION__+" :: "+(string)text);
 #define DAIdPRINT(a,aI,text) if(DEBUG){AId_Print2(a,aI,4,__FUNCTION__+"_"+text);}
+#define DAIdPRINTALL(a,text) if(DEBUG){Print("DAIdPRINTALL"); int atI[]; ArrayResize(atI,0,1000); AId_Init2(a,atI); AId_Print2(a,atI,4,__FUNCTION__+"_"+text);}
 	
-#define SELECT(a,text) int aI[]; ArrayResize(aI,0,1000); AId_Init2(a,aI); if(bDebug){AId_Print2(a,aI,4,"line_before"+__LINE__);} B_Select(a, aI, text); if(bDebug){AId_Print2(a,aI,4,"line_after"+__LINE__);}	
+#define SELECT(a,text) int aI[]; ArrayResize(aI,0,1000); AId_Init2(a,aI); if(DEBUG){AId_Print2(a,aI,4,"line_before"+__LINE__);} B_Select(a, aI, text); if(DEBUG){AId_Print2(a,aI,4,"line_after"+__LINE__);}	
 	
 #property copyright "Copyright 2014, artamir"
 #property link      "http:\\forexmd.ucoz.org"
 #property strict
 
-bool bDebug=false;
 bool bNeedDelClosed=false;
 
 double dNearestBuyPrice=100000;
@@ -180,6 +180,17 @@ void B_Select(double &a[][], int &aI[], string f){
 			double val=(double)StrToDouble(aTemp[1]);
 			
 			AIF_filterAdd_AND(col,AI_GREAT,val,val);	
+		}	
+		
+		//..	GREAT ">="
+		ArrayResize(aTemp,0);
+		StringToArrayString(aTemp,e,">=");
+		e_rows=ArrayRange(aTemp,0);
+		if(e_rows>1){
+			col=StrToInteger(aTemp[0]);
+			double val=(double)StrToDouble(aTemp[1]);
+			
+			AIF_filterAdd_AND(col,AI_GREAT_OR_EQ,val,val);	
 		}	
 		//..	LESS "<<"
 		ArrayResize(aTemp,0);

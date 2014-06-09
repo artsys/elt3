@@ -181,9 +181,12 @@ double AId_Sum2(double &a[][], int &aI[], int col){
 	return(sum);
 }
 
-#define AI_EQ		0
-#define AI_GREAT	1
-#define AI_LESS		2
+enum AI_ASSERTIONS{
+   AI_EQ=0,
+   AI_GREAT=1,
+   AI_GREAT_OR_EQ=2,
+   AI_LESS=3
+};
 double AId_Compare(double v1, double v2){
 	/**
 		\version	0.0.0.1
@@ -685,22 +688,25 @@ void AId_Select2(double &a[][], int &aI[]){
 		
 		
 		if(f_aop==AI_EQ){
-			if(B_BSEL){
-				Print(fn,".AI_EQ");
-				if(f_col==10){
-				   AId_Print2(a,aI,4,"AI_Select_col_10");
-				}
-			}
 			first=AId_SearchFirst2(a, aI, f_col, f_min);
 			last=AId_SearchLast2(a, aI, f_col, f_min);
 		}
 		
 		if(f_aop==AI_GREAT){
-			if(B_BSEL){
-				Print(fn,".AI_GREAT");
-			}
+		   DPRINT("AI_GREAT::before search::f_col="+f_col+" :f_min="+f_min);
+
 			first=AId_SearchGreat2(a,aI,f_col,f_min);
 			last=AI_WHOLEARRAY;
+		}
+		
+		if(f_aop==AI_GREAT_OR_EQ){
+		   DPRINT("AI_GREAT_OR_EQ::before search::f_col="+f_col+" :f_min="+f_min);
+		   
+		   first=first=AId_SearchFirst2(a, aI, f_col, f_min);
+		   if(first==AI_NONE){
+		      first=AId_SearchGreat2(a,aI,f_col,f_min);
+		   }
+		   last=AI_WHOLEARRAY;
 		}
 		
 		if(f_aop==AI_LESS){

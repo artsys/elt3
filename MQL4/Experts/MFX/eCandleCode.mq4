@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2014, MetaQuotes Software Corp."
 #property link      "http://www.mql5.com"
-#property version   "1.3"
+#property version   "1.4"
 #property strict
 
 #define EXP "eCandleCode"
@@ -123,19 +123,27 @@ void Autoopen(){
       int ti=TR_SendMarket(op,_lot);
       TR_ModifyTP(ti,_tp,TR_MODE_PIP);
       TR_ModifySL(ti,_sl,TR_MODE_PIP);
+      
+      OE_setSTD(ti);
+      B_Start();
    }
 }
 
 
 int OrdersCount(){
+   zx
    int res=0;
-   
+   DAIdPRINTALL(aOE,(int)iTime(Symbol(),0,0));
+   DPRINT("iTime="+(int)iTime(Symbol(),0,0)); 
    string f=StringConcatenate(""
             ,OE_IT,"==1");
+            //," AND "
+            //,OE_OOT,">="+(int)iTime(Symbol(),0,0));
    
-   SELECT(aEC,f);
+   SELECT(aOE,f);
    res=ArrayRange(aI,0);
    
+   xz
    return(res);
 }
 
@@ -161,8 +169,8 @@ int GetCandleCodeSignal(){
    
    thisCandleCode=cd1;
    
-   PrintFormat("cd1=%f",cd1);
-   PrintFormat("cd2=%f",cd2);
+  // PrintFormat("cd1=%f",cd1);
+  // PrintFormat("cd2=%f",cd2);
    
    if(cd1>cd2)sig=OP_BUY;
    if(cd1<cd2)sig=OP_SELL;

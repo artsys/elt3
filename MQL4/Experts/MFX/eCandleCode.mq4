@@ -11,6 +11,7 @@
 #define EXP "eCandleCode"
 #define VER "1.3_2014.05.26"
 
+#define DEBUG false
 #define CANDLECODE
 
 int thisCandleCode=0;
@@ -108,7 +109,7 @@ void Autoopen(){
    
    Comment(op);
    
-   if(OrdersTotal()==0 && op>=0){
+   if(OrdersCount()<=0 && op>=0){
       double _lot=TR_Lot(Lot,Lot_percent);
       
       int _sl=SL,_tp=TP;
@@ -125,6 +126,18 @@ void Autoopen(){
    }
 }
 
+
+int OrdersCount(){
+   int res=0;
+   
+   string f=StringConcatenate(""
+            ,OE_IT,"==1");
+   
+   SELECT(aEC,f);
+   res=ArrayRange(aI,0);
+   
+   return(res);
+}
 
 int GetSignal(){
    int sig=-1;

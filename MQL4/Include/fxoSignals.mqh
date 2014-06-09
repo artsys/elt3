@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2014, MetaQuotes Software Corp."
 #property link      "http://www.mql5.com"
-#property version    2.00
+#property version    2.3
 #property strict
 
 double tma_up=0,tma_dw=0;
@@ -14,6 +14,7 @@ input string  SI = "=== SIGNALS ===";
 input string  SI_TMA = "===== TMA =====";
 extern bool   SI_TMA_use                  = true; //Use TMA  
 extern bool   SI_TMA_useStop              = true; //Use StopOrders
+extern bool   SI_TMA_useMarketPrice       = true; //Use Market Price
 extern int    SI_TMA_SODelta              = 30; //Stoporders delta
 extern string SI_TMA_TimeFrame            = "current time frame"; //TimeFrame
 extern int    SI_TMA_HalfLength           = 56;//HalfLength
@@ -129,8 +130,13 @@ void fSI_TMASendStop(int sig=0){
 void fSI_TMAMoveStop(){
    double tma_up=0, tma_dw=0;;
    
-   tma_up=iCustom(Symbol(),0,"TMA",SI_TMA_TimeFrame,SI_TMA_HalfLength, SI_TMA_Price, SI_TMA_ATRMultiplier, SI_TMA_ATRPeriod, SI_TMA_Interpolate, false, false,false,false,false,false,1,0);
-   tma_dw=iCustom(Symbol(),0,"TMA",SI_TMA_TimeFrame,SI_TMA_HalfLength, SI_TMA_Price, SI_TMA_ATRMultiplier, SI_TMA_ATRPeriod, SI_TMA_Interpolate, false, false,false,false,false,false,2,0);
+   if(!SI_TMA_useMarketPrice){
+      tma_up=iCustom(Symbol(),0,"TMA",SI_TMA_TimeFrame,SI_TMA_HalfLength, SI_TMA_Price, SI_TMA_ATRMultiplier, SI_TMA_ATRPeriod, SI_TMA_Interpolate, false, false,false,false,false,false,1,0);
+      tma_dw=iCustom(Symbol(),0,"TMA",SI_TMA_TimeFrame,SI_TMA_HalfLength, SI_TMA_Price, SI_TMA_ATRMultiplier, SI_TMA_ATRPeriod, SI_TMA_Interpolate, false, false,false,false,false,false,2,0);
+   }else{
+      tma_up=MarketInfo(Symbol(),MODE_ASK);
+      tma_dw=MarketInfo(Symbol(),MODE_BID);
+   }   
    
    string f=StringConcatenate(""
             ,OE_MN,"==",MagicNumber
@@ -148,11 +154,20 @@ void fSI_TMAMoveStop(){
       int ty=AId_Get2(aEC,aI,i,OE_TY);
       
       if(ty==OP_BUYSTOP){
-         TR_MoveOrder(ti,tma_dw+SI_TMA_SODelta*Point);
+         if(!SI_TMA_useMarketPrice){
+            TR_MoveOrder(ti,tma_dw+SI_TMA_SODelta*Point);
+         }else{
+            TR_MoveOrderBetterPrice(ti,tma_dw+SI_TMA_SODelta*Point);
+         }
+            
       }
       
       if(ty==OP_SELLSTOP){
-         TR_MoveOrder(ti,tma_up-SI_TMA_SODelta*Point);
+         if(!SI_TMA_useMarketPrice){
+            TR_MoveOrder(ti,tma_up-SI_TMA_SODelta*Point);
+         }else{
+            TR_MoveOrderBetterPrice(ti,tma_up-SI_TMA_SODelta*Point);
+         }
       }
    }
 }

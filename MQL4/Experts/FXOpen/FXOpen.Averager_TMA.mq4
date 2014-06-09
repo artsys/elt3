@@ -8,9 +8,11 @@
 
 #property copyright "ForexHacked 2.5"
 #property link      "http://www.ForexHacked.com"
-#property version   "2.2"
+#property version   "2.3"
 
-string EA_Name = "FXOpen.Averager_TMA";
+#define DEBUG false
+
+extern string EA_Name = "FXO.AVG_TMA";
 #define EXP "FXO.AVG_TMA"
 
 #include <fxoSignals.mqh>
@@ -44,7 +46,7 @@ extern bool MassHedge = FALSE;
 extern double MassHedgeBooster = 1.01;
 extern int TradesDeep = 5;
 
-int PipStarter = 31;
+extern int PipStarter = 31;
 int RSIPeriod=14;   
 
 

@@ -60,6 +60,7 @@ void E_Start(void){
 	ArrayResize(aE,0);	//Обнулили массив событий
 	for(int i=0;i<=OrdersTotal();i++){
 		if(!OrderSelect(i,SELECT_BY_POS,MODE_TRADES)) continue;
+		if(OrderSymbol() != Symbol()) continue;
 		int idx=OE_setSTD(OrderTicket());
 		if(idx>-1){
 			AId_CopyRow2(aOE,aEC,idx);

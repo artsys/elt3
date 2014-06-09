@@ -60,8 +60,16 @@ int OnCalculate(const int rates_total,
                 const int &spread[])
   {
 //---
-   int limit=rates_total-prev_calculated-1;
-   if(limit<0)limit=0;
+   int limit=rates_total-prev_calculated;
+   if(limit<0)limit=1;
+   if(limit>1){
+      ArrayInitialize(MA,EMPTY_VALUE);
+      ArrayInitialize(MAL,EMPTY_VALUE);
+      ArrayInitialize(FBH,EMPTY_VALUE);
+      ArrayInitialize(FBL,EMPTY_VALUE);
+      limit=rates_total;
+   }
+   
    for(int i=limit;i>=0; i--){
       double ma=iMA(Symbol(),0,MAPer,0,MAMethod,MAAppliedPrice,i);
       double ma_level=ma+MALevel*Point;

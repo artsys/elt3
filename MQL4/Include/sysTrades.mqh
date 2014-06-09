@@ -1570,6 +1570,41 @@ bool TR_MoveOrder(int src_ti, double pr, int mode = 1){
 	return(_OrderModify(src_ti, new_pr, new_sl, new_tp, -1));
 }
 
+bool TR_MoveOrderBetterPrice(int src_ti, double pr, int mode=1){
+   if(!OrderSelect(src_ti,SELECT_BY_TICKET)) return(false);
+   
+   int ty=OrderType();
+   
+   
+   double new_pr=0;
+   if(mode==TR_MODE_PIP){
+      if(ty==OP_BUYSTOP || ty==OP_SELLLIMIT){
+         new_pr=OrderOpenPrice()-MathAbs(pr)*Point;
+      }
+      
+      if(ty==OP_BUYLIMIT || ty==OP_SELLSTOP){
+         new_pr=OrderOpenPrice()+MathAbs(pr)*Point;
+      }
+   }
+   
+   if(mode==TR_MODE_PRICE){
+      new_pr=pr;
+      if(ty==OP_BUYSTOP || ty==OP_SELLLIMIT){
+         if(new_pr>=OrderOpenPrice()){
+            return(false);
+         }
+      }
+      
+      if(ty==OP_BUYLIMIT || ty==OP_SELLSTOP){
+         if(new_pr<=OrderOpenPrice()){
+            return(false);
+         }
+      }
+   }
+   
+   return(TR_MoveOrder(src_ti, new_pr, TR_MODE_PRICE));
+}
+
 bool TR_MoveToOrder(	int dest_ti /** тикет-получатель */
 					, 	int src_ti	/** тикет-источник*/){
 	/**

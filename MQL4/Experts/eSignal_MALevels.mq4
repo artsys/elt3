@@ -46,7 +46,8 @@ void OnTick()
 //---
       
       
-      for(int i=0; i<=500; i+50){
+      for(int i=0; i<=5000; i=i+500){
+         Print("i="+i);
          Print("i="+i);
          int minus=1;
          for(int j=0;j<2;j++){

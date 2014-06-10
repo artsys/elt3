@@ -5,11 +5,12 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2014, MetaQuotes Software Corp."
 #property link      "http://www.mql5.com"
-#property version   "1.2"
+#property version   "1.3"
 #property strict
 
 #define EXP "eCandleCode"
-#define VER "1.1_2014.05.02"
+#define VER "1.3_2014.05.02"
+#define DEBUG false
 
 #define input_PRC_TPSL
 
@@ -118,12 +119,20 @@ int GetSignal(){
 int GetFractalSignal(){
    int sig=-1;
    
-   int aU[]={1,0};
-   int aD[]={1,0};
+   int aU[]={0,0,0};
+   int aD[]={0,0,0};
    
-   for(int i=0;i<2;i++){
-      aU[i]=iFR_getNearestUpBar(hf,aU[0]+i);
-      aD[i]=iFR_getNearestDwBar(hf,aD[0]+i);
+   for(int i=0;i<3;i++){
+      int bar_u=1,bar_d;
+      if(i==0){
+         bar_u=1;
+         bar_d=1;
+      }else{
+         bar_u=aU[i-1];
+         bar_d=aD[i-1];
+      }
+      aU[i]=iFR_getNearestUpBar(hf,bar_u+1);
+      aD[i]=iFR_getNearestDwBar(hf,bar_d+1);
    }
    
    if(aU[0]>1 && aU[0]<=3){
@@ -132,7 +141,25 @@ int GetFractalSignal(){
 
    if(aD[0]>1 && aD[0]<=3){
       if(Low[aD[0]]>Low[aD[1]])sig=OP_BUY;
-   }   
+   }  
+   
+   int last_u=aU[0];
+   int last_d=aD[0];
+   int cnt=0;
+   for(int i=1; i<3; i++){
+      if(aU[i]==last_u){
+         cnt++;
+      }
+      last_u=aU[i];
+      
+      if(aD[i]==last_d){
+         cnt++;
+      }   
+      last_d=aD[i];
+   }
+   
+   if(cnt>0)sig=-1;
+    
    return(sig);
 }
 

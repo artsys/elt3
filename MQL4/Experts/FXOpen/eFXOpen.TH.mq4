@@ -23,15 +23,20 @@
 #property strict
 #property stacksize 256
 
+#define DEBUG false
+
+double dZeroPrice=0;
+double dBalanceOst=0;
 
 input string s1="===== MAIN =====";
 input int Step=20;	//Ўаг между ордерами
 input int TP=50; //“ейкпрофит (на каждый ордер отдельно)
 input int Levels=5; // ол. уровней от позиции.
 input double Lot=0.1;
+input double Multy=2;
 input string e1="================";
-bool		CMFB_use=false; //закрывать минусовые ордера из средств баланса.
-int		CMFB_pips=50; //закрывать ордера, ушедшие в минуз больше заданного значени€ (в пунктах)
+input bool		CMFB_use=false; //закрывать минусовые ордера из средств баланса.
+input int		CMFB_pips=50; //закрывать ордера, ушедшие в минуз больше заданного значени€ (в пунктах)
 
 #define EXP "eTH"\
 #define VER "3.1.0.9_2014.03.07"
@@ -51,7 +56,8 @@ int OnInit(){
 	B_Init();
 	
 	//--------------------------------------
-	xz return(INIT_SUCCEEDED);
+	xz 
+	return(INIT_SUCCEEDED);
 }
 
 void OnDeinit(const int reason){
@@ -116,12 +122,14 @@ int startext(void){
 
 	DelUnused();
 	
-	Comment("aOE=",ArrayRange(aOE,0)
+	Comment("Balance Ost=",DoubleToStr(dBalanceOst,2)
+	      ,"\nZeroPrice=",DoubleToStr(dZeroPrice,Digits)
+	      ,"\naOE=",ArrayRange(aOE,0)
 	      ,"\naEC=",ArrayRange(aEC,0)
+	      ,"\nOrdersTotal="+OrdersTotal()
 	      ,"\nQSMaxCount=",maxQScount
 		  ,"\nCallCounter=",CallCounter
-		  ,"\nmax_buy=",dMaxBuyPrice
-		  ,"\n"+ctmr);	  
+		  ,"\nmax_buy=",dMaxBuyPrice);	  
 	xz
 	return(0);
 }
@@ -286,7 +294,7 @@ void CMFB(){
 	
 	if(rows<=0)return; //«начит у нас нет профита дл€ закрыти€ минусов.
 	
-	double profit=AId_Sum2(aOE, aI, OE_OPR);
+	double profit=AId_Sum2(aOE, aI, OE_OPR)+dBalanceOst;
 	//Comment("Closed profit=",profit);
 	
 	//¬ыбираем ордера которые ушли в минус больше заданного значени€.
@@ -295,8 +303,8 @@ void CMFB(){
 		,OE_IM,"==1"
 		," AND "
 		,OE_CP2OOP,"<<",-CMFB_pips);
-	ArrayResize(aI,0);
-	AId_Init2(aEC,aI,OE_IM);
+	ArrayResize(aI,0,1000);
+	AId_Init2(aEC,aI);
 	
 	B_Select(aEC,aI,f);
 	
@@ -308,10 +316,16 @@ void CMFB(){
 	if(rows<=0){xz return;} //нет таких ордеров.
 	int i=0;
 	while(profit>0&&i<rows){
+	   if(aI[i]>=ArrayRange(aEC,0)){
+	      i++;
+	      continue;
+	      DAIdPRINTALL(aEC,"OUT_OF_RANGE_aI_"+aI[i]);
+	   }   
 		int ti=aEC[aI[i]][OE_TI];
 		double opr=aEC[aI[i]][OE_OPR];
 		if(MathAbs(opr)<=profit){
 			if(TR_CloseByTicket(ti)){
+			   B_Start();
 				profit=profit-MathAbs(opr);
 				bNeedDelClosed=true;
 			}	
@@ -322,6 +336,11 @@ void CMFB(){
 	}
 	
 	if(bNeedDelClosed){
+	   f=OE_IC+"==1 AND "+OE_IM+"==1";
+	   DAIdPRINTALL(aOE,"Before_delClosed");
+	   SELECT(aOE,f);
+	   DAIdPRINT(aOE,aI,"After_Select");
+	   dBalanceOst=AId_Sum2(aOE, aI, OE_OPR)+dBalanceOst;
 		OE_delClosed();
 		bNeedDelClosed=false;
 	}
@@ -347,12 +366,8 @@ void TN(){
 	AId_Init2(aEC,aI,OE_IM);
 	//AId_Print2(aEC,aI,4,"TN_IM1");
 	
-	string f=StringConcatenate(""
-		,OE_IM,"==1");
-	//B_BSEL=true;
+	string f=StringConcatenate("",OE_IM,"==1");
  	B_Select(aEC,aI,f);
-   //B_BSEL=false;
-   //AId_Print2(aEC,aI,4,"TN_IM1_select");
 	int rows=ArrayRange(aI,0);
 	
 	if(rows<=0){xz return;}
@@ -391,6 +406,7 @@ void TN_checkCO(int pti){
 	OrderSelect(pti,SELECT_BY_TICKET);
 	int pty=OrderType();
 	double poop=OrderOpenPrice();
+	double pol=OrderLots();
 	double max_buy=dMaxBuyPrice;
 	double min_sell=dMinSellPrice;
 	
@@ -422,7 +438,7 @@ void TN_checkCO(int pti){
 		if(rows<=0){
 			ArrayResize(d,0);
 			int AddPips=Step*lvl;
-			TR_SendPending_array(d, ty,	poop, AddPips, GetLot(), TP);
+			TR_SendPending_array(d, ty,	poop, AddPips, GetLot(ty,poop,AddPips,pol), TP);
 		}
 	}	
 	xz	
@@ -443,6 +459,7 @@ void TN_checkRev(int pti){
 	OrderSelect(pti,SELECT_BY_TICKET);
 	int pty=OrderType();
 	double poop=OrderOpenPrice();
+	double pol=OrderLots();
 	
 	int typ=-1,tyo=-1;
 	double roop=-1;
@@ -465,7 +482,8 @@ void TN_checkRev(int pti){
 		double d[];
 		ArrayResize(d,0);
 		int AddPips=Step;
-		TR_SendPending_array(d, tyo, poop, AddPips, GetLot(), TP);
+		//TR_SendPending_array(d, tyo, poop, AddPips, GetLot(), TP);
+		TR_SendPending_array(d, tyo, poop, AddPips, pol, TP);
 		
 		int rows=ArrayRange(d,0);
 		for(int i=0;i<rows;i++){
@@ -518,10 +536,11 @@ void Autoopen(){
 	if(OrdersTotal()==0){
 		int ti=TR_SendBUY(Lot);
 		TR_ModifyTP(ti,TP,TR_MODE_PIP);
+		dZeroPrice=OE_getPBT(ti,OE_OOP);
 	}	
 }
 
-double GetLot(){
+double GetLot(int ty=-1, double oop=0, int add_pips=0, double pol=0){
 	/**
 		\version	0.0.0.1
 		\date		2014.03.06
@@ -532,6 +551,24 @@ double GetLot(){
 					 @0.0.0.1@2014.03.06@artamir	[+]	GetLot
 			>Rev:0
 	*/
-
-	return(Lot);
+	if(ty==-1)return(Lot);
+	
+	double _send_price=0;
+	int _pips_to_zero=0;
+	int _koef=1;
+   if(ty==OP_BUYSTOP){
+      _send_price=oop+add_pips*Point;
+      _pips_to_zero=(_send_price-dZeroPrice)/Point;
+   }
+   
+   if(ty==OP_SELLSTOP){
+      _send_price=oop-add_pips*Point;
+      _pips_to_zero=(dZeroPrice-_send_price)/Point;
+   }
+   _koef=MathFloor(_pips_to_zero/(Step*Levels+Step/2));
+   double res=MathMax(MathMax(_koef*Multy*Lot,Lot),pol);
+   
+   
+   
+	return(res);
 }

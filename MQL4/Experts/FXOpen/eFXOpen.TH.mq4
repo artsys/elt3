@@ -37,6 +37,10 @@ input double Multy=2;
 input string e1="================";
 input bool		CMFB_use=false; //закрывать минусовые ордера из средств баланса.
 input int		CMFB_pips=50; //закрывать ордера, ушедшие в минуз больше заданного значени€ (в пунктах)
+input string e2="================";
+input	bool FIXProfit_use=false;	//«акрывать все ордера при достижении заданного профита.
+input	double FIXProfit_amount=500; //«начение фиксированного профита дл€ закрыти€ всех ордеров.
+
 
 #define EXP "eTH"\
 #define VER "3.1.0.9_2014.03.07"
@@ -115,6 +119,8 @@ int startext(void){
 	if(!CMFB_use)OE_delClosed();
 	    
 	CMFB();
+   
+   FIXProfit();
  
 	TN();
 
@@ -345,6 +351,67 @@ void CMFB(){
 		bNeedDelClosed=false;
 	}
 	xz
+}
+
+bool FIXProfit(){
+	/**
+		\version	0.0.0.1
+		\date		2014.01.08
+		\author		Morochin <artamir> Artiom
+		\details	«акрытие ордеров при достижении фикс профита.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.01.08@artamir	[]	FIXProfit
+			>Rev:0
+	*/
+
+	string fn="FIXProfit";
+	
+	if(!FIXProfit_use)return(true);
+	
+	int aI[]; ArrayResize(aI,0,1000);AId_Init2(aOE,aI);
+	double profit=AId_Sum2(aOE,aI,OE_OPR);
+	
+	if(profit<FIXProfit_amount)return(false);
+	
+	CloseAllOrders();
+	bNeedDelClosed=true;
+	return(true);
+}
+
+
+void CloseAllOrders(){
+	/**
+		\version	0.0.0.0
+		\date		2014.01.08
+		\author		Morochin <artamir> Artiom
+		\details	«акрывает все ордера.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+	string fn="CloseAllOrders";
+	
+	string f="";
+	f=StringConcatenate(f
+		,OE_IT,"==1"
+		," AND "
+		,OE_MN,"==",TR_MN);
+		
+	short aI[];
+	ArrayResize(aI,0);
+	AI_Init2(aOE, aI);
+		
+	//-------------------------------------------
+	B_Select(aOE, aI, f);
+	int rows=ArrayRange(aI,0);
+	Print(fn, ".rows=",rows);
+	for(int idx = 0; idx < rows; idx++){
+		int ti = aOE[aI[idx]][OE_TI];
+		
+		TR_CloseByTicket(ti);
+	}
+		
 }
 
 void TN(){

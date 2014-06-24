@@ -344,3 +344,29 @@ void OE_delClosed(){
 	ArrayResize(aOE,ArrayRange(aEC,0));
 	ArrayCopy(aOE,aEC,0,0,WHOLE_ARRAY);
 }
+
+void OE_Move(int dest, int src, int count=-1){
+   if(count==0 || dest==src)return;
+   
+   if(dest<src){
+      for(int i=0;i<count;i++){
+         if(src+i>ArrayRange(aOE,0)-1)continue;
+         for(int c=0;c<OE_MAX; c++){
+            aOE[dest+i][c]=aOE[src+i][c];
+         }
+      }
+   }
+}
+
+void OE_DelPending(){
+   int rows=ArrayRange(aOE,0);
+   for(int i=rows-1;i>=0;i--){
+      if(aOE[i][OE_IC]==1 && aOE[i][OE_IP]==1){
+         if(i==ArrayRange(aOE,0)-1){
+            ArrayResize(aOE,(rows-1));
+            continue;
+         }
+         OE_Move(i,i+1,rows-i-1);
+      }
+   }  
+}

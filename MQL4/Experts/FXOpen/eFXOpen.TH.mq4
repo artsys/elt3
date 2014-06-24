@@ -25,6 +25,8 @@
 
 #define DEBUG false
 
+double fix_profit=0;
+
 double dZeroPrice=0;
 double dBalanceOst=0;
 
@@ -38,11 +40,13 @@ input string e1="================";
 input bool		CMFB_use=false; //закрывать минусовые ордера из средств баланса.
 input int		CMFB_pips=50; //закрывать ордера, ушедшие в минуз больше заданного значени€ (в пунктах)
 input string e2="================";
-input	bool FIXProfit_use=false;	//«акрывать все ордера при достижении заданного профита.
-input	double FIXProfit_amount=500; //«начение фиксированного профита дл€ закрыти€ всех ордеров.
+//«акрывать все ордера при достижении заданного профита.
+input	bool FIXProfit_use=false;	
+//«начение фиксированного профита дл€ закрыти€ всех ордеров.
+input	double FIXProfit_amount=500; 
 
 
-#define EXP "eTH"\
+#define EXP "eTH"
 #define VER "3.1.0.9_2014.03.07"
 #include <sysBase.mqh>
 
@@ -113,14 +117,17 @@ int startext(void){
 	dMinSellPrice=getMinSellPrice();
 	if(dMaxBuyPrice<0)dMaxBuyPrice=1000000;
 	if(dMinSellPrice<0)dMinSellPrice=0;
+	
+	OE_DelPending();
 	   
 	B_Start();
 	
-	if(!CMFB_use)OE_delClosed();
+	if(!CMFB_use && !FIXProfit_use)OE_delClosed();
+	
 	    
 	CMFB();
    
-   FIXProfit();
+  if(FIXProfit()) return(0);
  
 	TN();
 
@@ -129,6 +136,7 @@ int startext(void){
 	DelUnused();
 	
 	Comment("Balance Ost=",DoubleToStr(dBalanceOst,2)
+	      ,"\nFixProfit=",fix_profit
 	      ,"\nZeroPrice=",DoubleToStr(dZeroPrice,Digits)
 	      ,"\naOE=",ArrayRange(aOE,0)
 	      ,"\naEC=",ArrayRange(aEC,0)
@@ -364,18 +372,18 @@ bool FIXProfit(){
 					 @0.0.0.1@2014.01.08@artamir	[]	FIXProfit
 			>Rev:0
 	*/
-
+   zx
 	string fn="FIXProfit";
 	
 	if(!FIXProfit_use)return(true);
 	
 	int aI[]; ArrayResize(aI,0,1000);AId_Init2(aOE,aI);
-	double profit=AId_Sum2(aOE,aI,OE_OPR);
-	
-	if(profit<FIXProfit_amount)return(false);
+	fix_profit=AId_Sum2(aOE,aI,OE_OPR);
+	if(fix_profit<FIXProfit_amount){xz return(false);}
 	
 	CloseAllOrders();
-	bNeedDelClosed=true;
+	bNeedDelClosed=true; 
+	xz
 	return(true);
 }
 
@@ -398,9 +406,9 @@ void CloseAllOrders(){
 		," AND "
 		,OE_MN,"==",TR_MN);
 		
-	short aI[];
+	int aI[];
 	ArrayResize(aI,0);
-	AI_Init2(aOE, aI);
+	AId_Init2(aOE, aI);
 		
 	//-------------------------------------------
 	B_Select(aOE, aI, f);

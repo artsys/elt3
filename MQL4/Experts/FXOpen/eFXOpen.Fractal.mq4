@@ -4,12 +4,12 @@
 //|                                              http://www.mql5.com |
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2014, MetaQuotes Software Corp."
-#property link      "http://www.mql5.com"
-#property version   "1.3"
+#property link      "http://forum.fxopen.ru"
+#property version   "1.4"
 #property strict
 
-#define EXP "eCandleCode"
-#define VER "1.3_2014.05.02"
+#define EXP "eFXO.Fractal"
+#define VER "1.4_2014.06.23"
 #define DEBUG false
 
 #define input_PRC_TPSL
@@ -51,6 +51,8 @@ input string e1="================";
 int OnInit()
   {
 //---
+   Print("Выполнено по заказу SerpentFX");
+   Print("Ветка советника: http://forum.fxopen.ru/showthread.php?100284-sovetnik-fxopen-fractal&p=1921950&viewfull=1#post1921950");
    B_Init();
    InitSignals();
 //---

@@ -14,6 +14,7 @@
 			>Rev:0
 	*/
 
+
 #define SYSBASE
 
 string com="";
@@ -32,6 +33,7 @@ string comadd="";
 #property copyright "Copyright 2014, artamir"
 #property link      "http:\\forexmd.ucoz.org"
 #property strict
+#property library
 
 bool bNeedDelClosed=false;
 
@@ -91,7 +93,7 @@ void B_Deinit(){
 	//WriteFile();
 }
 
-void B_Start(){
+void B_Start()export{
 	/**
 		\version	0.0.0.1
 		\date		2014.03.03
@@ -103,10 +105,9 @@ void B_Start(){
 			>Rev:0
 	*/
 	zx
-	
+	if(bNeedDelClosed){OE_delClosed(); bNeedDelClosed=false;}
 	isTick=true;
 	E_Start();
-	if(bNeedDelClosed)OE_delClosed();
 	xz
 }
 

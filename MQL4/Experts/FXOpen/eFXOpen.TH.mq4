@@ -23,7 +23,7 @@
 #property strict
 #property stacksize 256
 
-#define DEBUG false
+#define DEBUG2
 
 double fix_profit=0;
 
@@ -379,9 +379,11 @@ bool FIXProfit(){
 	
 	int aI[]; ArrayResize(aI,0,1000);AId_Init2(aOE,aI);
 	fix_profit=AId_Sum2(aOE,aI,OE_OPR);
+	DPRINT2("fix_profit="+fix_profit);
 	if(fix_profit<FIXProfit_amount){xz return(false);}
 	
 	CloseAllOrders();
+	OE_delClosed();
 	bNeedDelClosed=true; 
 	xz
 	return(true);

@@ -140,7 +140,7 @@ int OE_FIBT(int ti){
 	int aI[];
 	ArrayResize(aI,0);
 	AId_Init2(aOE,aI);
-	AId_QuickSort2(aOE,aI,-1,-1,OE_TI);
+	AId_InsertSort2(aOE,aI,OE_TI);
 	int idx=AId_SearchFirst2(aOE,aI,OE_TI,ti);
 	if(idx==AI_NONE){
 		idx=OE_addRow(ti);
@@ -209,7 +209,8 @@ int OE_setSTD(int ti){
 	aOE[idx][OE_SL]	=		OrderStopLoss();
 	aOE[idx][OE_MN]	=		OrderMagicNumber();
 	aOE[idx][OE_LOT]=		OrderLots();
-	aOE[idx][OE_OPR]=		OrderProfit();
+	aOE[idx][OE_OPR]=		OrderProfit()+OrderCommission();
+	DPRINT("OrderProfit="+OrderProfit());
 	aOE[idx][OE_OCP]=		OrderClosePrice();
 	aOE[idx][OE_OCT]=(int)	OrderCloseTime();
 	

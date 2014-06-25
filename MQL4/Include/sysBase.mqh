@@ -21,14 +21,37 @@ string com="";
 string comadd="";
 #define tmr int tmrstrt=GetTickCount();
 #define ctmr " tmr:"+(string)(GetTickCount()-tmrstrt)
-#define zx if(DEBUG)Print(__FUNCSIG__);
-#define xz "";
+#define zx 
+#define xz 
 
-#define DPRINT(text) if(DEBUG)Print(__FUNCTION__+" :: "+(string)text);
-#define DAIdPRINT(a,aI,text) if(DEBUG){AId_Print2(a,aI,4,__FUNCTION__+"_"+text);}
-#define DAIdPRINTALL(a,text) if(DEBUG){Print("DAIdPRINTALL"); int atI[]; ArrayResize(atI,0,1000); AId_Init2(a,atI); AId_Print2(a,atI,4,__FUNCTION__+"_"+text);}
-	
-#define SELECT(a,text) int aI[]; ArrayResize(aI,0,1000); AId_Init2(a,aI); if(DEBUG){AId_Print2(a,aI,4,"line_before"+__LINE__);} B_Select(a, aI, text); if(DEBUG){AId_Print2(a,aI,4,"line_after"+__LINE__);}	
+#ifdef DEBUG
+   #define DPRINT(text) if(DEBUG)Print(__FUNCTION__+" :: "+(string)text);
+   #define DAIdPRINT(a,aI,text) if(DEBUG){AId_Print2(a,aI,4,__FUNCTION__+"_"+text);}
+   #define DAIdPRINTALL(a,text) if(DEBUG){Print("DAIdPRINTALL"); int atI[]; ArrayResize(atI,0,1000); AId_Init2(a,atI); AId_Print2(a,atI,4,__FUNCTION__+"_"+text);}
+#else 
+   #ifdef DEBUG2
+      #define DPRINT2(text) Print(__FUNCTION__+" :: "+(string)text);
+      #define DAIdPRINT2(a,aI,text) AId_Print2(a,aI,4,__FUNCTION__+"_"+text);
+      #define DAIdPRINTALL2(a,text) Print("DAIdPRINTALL"); int atI[]; ArrayResize(atI,0,1000); AId_Init2(a,atI); AId_Print2(a,atI,4,__FUNCTION__+"_"+text);
+   #else
+      #define DPRINT2(text)
+      #define DAIdPRINT2(a,aI,text)
+      #define DAIdPRINTALL2(a,text)   
+   #endif 
+   
+   #define DPRINT(text)
+   #define DAIdPRINT(a,aI,text)
+   #define DAIdPRINTALL(a,text)
+#endif    
+
+#define BEFORE AId_Print2(a,aI,4,"line_before"+__LINE__);
+#define AFTER AId_Print2(a,aI,4,"line_after"+__LINE__);
+#define IFDEBUG_BEFORE #ifdef	DEBUG BEFORE #endif
+#define IFDEBUG_AFTER #ifdef DEBUG AFTER #endif 
+#define IFDEBUG2_BEFORE #ifdef	DEBUG2 BEFORE #endif
+#define IFDEBUG2_AFTER #ifdef DEBUG2 AFTER #endif
+
+#define SELECT(a,text) int aI[]; ArrayResize(aI,0,1000); AId_Init2(a,aI); B_Select(a, aI, text);
 	
 #property copyright "Copyright 2014, artamir"
 #property link      "http:\\forexmd.ucoz.org"
@@ -59,7 +82,9 @@ bool isTick=false;
 
 #include <sysTrades.mqh>//}	
 
-void B_Init(){
+#define TOPENBUYPOS if(OrdersTotal()==0){TR_SendBUY(0.1);}
+
+void B_Init(string expert_name="")export{
 	/**
 		\version	0.0.0.1
 		\date		2014.03.03
@@ -73,11 +98,11 @@ void B_Init(){
 	OE_init();
 	E_Init();
 	
-	string file_oe=B_DBOE();
+	string file_oe=B_DBOE(expert_name);
 	AId_RFF2(aOE,file_oe);
 }
 
-void B_Deinit(){
+void B_Deinit(string expert_name="")export{
 	/**
 		\version	0.0.0.1
 		\date		2014.03.03
@@ -88,7 +113,7 @@ void B_Deinit(){
 					 @0.0.0.1@2014.03.03@artamir	[+]	B_Deinit
 			>Rev:0
 	*/
-	string file_oe=B_DBOE();
+	string file_oe=B_DBOE(expert_name);
 	AId_STF2(aOE,file_oe);
 	//WriteFile();
 }
@@ -111,7 +136,7 @@ void B_Start()export{
 	xz
 }
 
-string B_DBOE(){
+string B_DBOE(string expert_name){
 	/**
 		\version	0.0.0.1
 		\date		2014.03.03
@@ -122,8 +147,11 @@ string B_DBOE(){
 					 @0.0.0.1@2014.03.03@artamir	[+]	B_DBOE
 			>Rev:0
 	*/
+	#ifdef EXP
+	   expert_name=EXP;
+	#endif    
 	
-	string file=StringConcatenate("OE.",EXP,".",AccountNumber(),".",Symbol(),".tdb");
+	string file=StringConcatenate("OE.",expert_name,".",AccountNumber(),".",Symbol(),".tdb");
 	
 	return(file);
 }

@@ -342,6 +342,9 @@ void OE_delClosed(){
 	*/
 
 	string fn="OE_delClosed";
+	//DPRINT2();
+	if(bNeedDelClosed)bNeedDelClosed=false;
+	B_Start();
 	ArrayResize(aOE,ArrayRange(aEC,0));
 	ArrayCopy(aOE,aEC,0,0,WHOLE_ARRAY);
 }

@@ -21,7 +21,7 @@ string com="";
 string comadd="";
 #define tmr int tmrstrt=GetTickCount();
 #define ctmr " tmr:"+(string)(GetTickCount()-tmrstrt)
-#define zx 
+#define zx DPRINT2(__FUNCSIG__);
 #define xz 
 
 #ifdef DEBUG

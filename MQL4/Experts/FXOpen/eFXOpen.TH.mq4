@@ -234,7 +234,7 @@ double getNearestBuyPrice(){
    //AId_Print2(aEC,aBS,4,"aEC_Select_BuyStop_Above_Ask");  
    
    AI_Union(aB,aBS);
-   AId_QuickSort2(aEC,aB,-1,-1,OE_OOP);
+   AId_InsertSort2(aEC,aB,OE_OOP);
   // AId_Print2(aEC,aB,4,"aEC_Union_Buy_BuyStop_Above_Ask");
    
    double oop=AId_Get2(aEC,aB,0,OE_OOP);
@@ -441,20 +441,26 @@ void TN(){
 	//Print(fn);	
 	int aI[]; ArrayResize(aI,0,1000);
 	AId_Init2(aEC,aI,OE_IM);
-	//AId_Print2(aEC,aI,4,"TN_IM1");
+	AId_Print2(aEC,aI,4,"TN_IM1_before");
 	
-	string f=StringConcatenate("",OE_IM,"==1");
+	string f=StringConcatenate(OE_IM,"==1");
  	B_Select(aEC,aI,f);
+ 	AId_Print2(aEC,aI,4,"TN_IM1_after");
+ 	
 	int rows=ArrayRange(aI,0);
-	
-	if(rows<=0){xz return;}
+	DPRINT2("rows="+rows);
+	//if(rows<=0){xz return;}
 	
 	for(int i=0;i<rows;i++){
 		int 	pti =AId_Get2(aEC,aI,i,OE_TI);
 		int 	pty =AId_Get2(aEC,aI,i,OE_TY);
 		double 	poop=AId_Get2(aEC,aI,i,OE_OOP);
-	   
+	   DPRINT2("pti="+pti);
+	   DPRINT2("pty="+pty);
+	   DPRINT2("poop="+poop);
+	   DPRINT2("poop > dNearestBuyPrice"+(string)(poop > dNearestBuyPrice));
 	   if(pty==OP_BUY && poop > dNearestBuyPrice)continue;
+	   DPRINT2("pty==OP_BUY && poop > dNearestBuyPrice");
 	   if(pty==OP_SELL && poop < dNearestSellPrice)continue;
 	   
 		TN_checkCO(pti);	
@@ -478,6 +484,7 @@ void TN_checkCO(int pti){
 			>Rev:0
 	*/
 	zx
+	Print(__FUNCSIG__);
 	string fn="TN_checkCO";
 	
 	OrderSelect(pti,SELECT_BY_TICKET);

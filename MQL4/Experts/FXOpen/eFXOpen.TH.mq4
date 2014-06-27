@@ -19,16 +19,22 @@
 
 #property copyright "Copyright 2014, artamir"
 #property link      "http:\\forexmd.ucoz.org"
-#property version   "310.0"
+#property version   "2.00"
 #property strict
 #property stacksize 256
 
-#define DEBUG2
+//#define DEBUG2
 
 double fix_profit=0;
 
 double dZeroPrice=0;
 double dBalanceOst=0;
+
+double dNearestBuyPrice=100000;
+double dMaxBuyPrice=100000;
+
+double dNearestSellPrice=0;
+double dMinSellPrice=0;
 
 input string s1="===== MAIN =====";
 input int Step=20;	//Шаг между ордерами
@@ -441,11 +447,11 @@ void TN(){
 	//Print(fn);	
 	int aI[]; ArrayResize(aI,0,1000);
 	AId_Init2(aEC,aI,OE_IM);
-	AId_Print2(aEC,aI,4,"TN_IM1_before");
+	//AId_Print2(aEC,aI,4,"TN_IM1_before");
 	
 	string f=StringConcatenate(OE_IM,"==1");
  	B_Select(aEC,aI,f);
- 	AId_Print2(aEC,aI,4,"TN_IM1_after");
+ 	//AId_Print2(aEC,aI,4,"TN_IM1_after");
  	
 	int rows=ArrayRange(aI,0);
 	DPRINT2("rows="+rows);
@@ -459,9 +465,9 @@ void TN(){
 	   DPRINT2("pty="+pty);
 	   DPRINT2("poop="+poop);
 	   DPRINT2("poop > dNearestBuyPrice"+(string)(poop > dNearestBuyPrice));
-	   if(pty==OP_BUY && poop > dNearestBuyPrice)continue;
+	   if(pty==OP_BUY && poop > dMaxBuyPrice)continue;
 	   DPRINT2("pty==OP_BUY && poop > dNearestBuyPrice");
-	   if(pty==OP_SELL && poop < dNearestSellPrice)continue;
+	   if(pty==OP_SELL && poop < dMinSellPrice)continue;
 	   
 		TN_checkCO(pti);	
 		TN_checkRev(pti);
@@ -484,7 +490,6 @@ void TN_checkCO(int pti){
 			>Rev:0
 	*/
 	zx
-	Print(__FUNCSIG__);
 	string fn="TN_checkCO";
 	
 	OrderSelect(pti,SELECT_BY_TICKET);
@@ -551,15 +556,14 @@ void TN_checkRev(int pti){
 		typ=OP_SELL;
 		tyo=OP_SELLSTOP;
 		roop=poop-Step*Point;
-		
-		if(Ask<=poop) return;
+		if(Ask<=roop) return;
 	}
 
 	if(pty==OP_SELL){
 		typ=OP_BUY;
 		tyo=OP_BUYSTOP;
 		roop=poop+Step*Point;
-		if(Bid>=poop)return;
+		if(Bid>=roop)return;
 	}
 	
 	if(TI_count(typ,roop)<=0&&TI_count(tyo,roop)<=0){		

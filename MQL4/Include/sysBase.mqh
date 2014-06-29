@@ -18,16 +18,16 @@
 #define SYSBASE
 
 string com="";
-string comadd="";
-#define tmr int tmrstrt=GetTickCount();
-#define ctmr " tmr:"+(string)(GetTickCount()-tmrstrt)
-#define zx DPRINT2(__FUNCSIG__);
-#define xz 
+string comadd=""; 
 
 #ifdef DEBUG
    #define DPRINT(text) if(DEBUG)Print(__FUNCTION__+" :: "+(string)text);
    #define DAIdPRINT(a,aI,text) if(DEBUG){AId_Print2(a,aI,4,__FUNCTION__+"_"+text);}
    #define DAIdPRINTALL(a,text) if(DEBUG){Print("DAIdPRINTALL"); int atI[]; ArrayResize(atI,0,1000); AId_Init2(a,atI); AId_Print2(a,atI,4,__FUNCTION__+"_"+text);}
+     
+   #define DPRINT2(text)
+   #define DAIdPRINT2(a,aI,text)
+   #define DAIdPRINTALL2(a,text) 
 #else 
    #ifdef DEBUG2
       #define DPRINT2(text) Print(__FUNCTION__+" :: "+(string)text);
@@ -42,6 +42,7 @@ string comadd="";
    #define DPRINT(text)
    #define DAIdPRINT(a,aI,text)
    #define DAIdPRINTALL(a,text)
+   
 #endif    
 
 #define BEFORE AId_Print2(a,aI,4,"line_before"+__LINE__);
@@ -50,6 +51,11 @@ string comadd="";
 #define IFDEBUG_AFTER #ifdef DEBUG AFTER #endif 
 #define IFDEBUG2_BEFORE #ifdef	DEBUG2 BEFORE #endif
 #define IFDEBUG2_AFTER #ifdef DEBUG2 AFTER #endif
+
+#define tmr int tmrstrt=GetTickCount();
+#define ctmr " tmr:"+(string)(GetTickCount()-tmrstrt)
+#define zx DPRINT2(__FUNCSIG__);
+#define xz
 
 #define SELECT(a,text) int aI[]; ArrayResize(aI,0,1000); AId_Init2(a,aI); B_Select(a, aI, text);
 	
@@ -166,7 +172,7 @@ void B_Select(double &a[][], int &aI[], string f){
 	string fn="B_Select";
 	
 	if(StringFind(f,((string)OE_MN+"=="))<0)	f=StringConcatenate(OE_MN,"==",TR_MN," AND ",f);	
-	
+	DPRINT2("f="+f);
 	AIF_init();
 	
 	//1. Раскладываем строку f по разделителю " AND "

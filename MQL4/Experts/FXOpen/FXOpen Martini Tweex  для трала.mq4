@@ -1,5 +1,6 @@
 #property copyright "forum.FXOpen.ru - MaxZ"
 #property link      "forum.FXOpen.ru"
+#property version "2.00"
 
 // Данный советник был написан по заказу на форуме FXOpen в теме:
 // http://forum.fxopen.ru/showthread.php?91373-%D0%9E%D1%82%D0%B4%D0%B0%D0%BC-%D1%81%D0%BE%D0%B2%D0%B5%D1%82%D0%BD%D0%B8%D0%BA-%D0%B8%D0%BD%D0%B4%D0%B8%D0%BA%D0%B0%D1%82%D0%BE%D1%80-%D0%B8%D0%BB%D0%B8-%D1%81%D0%BA%D1%80%D0%B8%D0%BF%D1%82-%D0%B7%D0%B0-%D0%B8%D0%B4%D0%B5%D1%8E
@@ -8,6 +9,11 @@
 // За основу советника был взят известный в интернете советник - Buldozer.
 // В советнике используется трал первого ордера, идею которого предложил Скиталка.
 // В разработке советника (трактовка ТЗ) активное участие принимал - Mik 2806. Огромное Ему спасибо!
+
+#define DEBUG2
+
+#include <eFXO.SlosTraling.mqh>
+#include <sysBase.mqh>
 
 extern   string   s0                   = "--- forum.FXOpen.ru ---";
 extern   string   s1                   = "Общие параметры:";
@@ -87,7 +93,7 @@ double   BS_SL;
 
 int      TimeFrame[10] = {0, 1, 5, 15, 30, 60, 240, 1440, 10080, 43200};
 
-int init()
+void init()
 {
    Symb = Symbol();
    TimeLastBar = Time[0];
@@ -98,8 +104,11 @@ int init()
    EnforcedLast = -1;
 }
 
-int start()
+void start()
 {
+   zx
+   startext();
+   DPRINT2("end startext");
    BsTemp = 0;
    SsTemp = 0;
    for (Pos = OrdersTotal()-1; Pos >= 0; Pos--)
@@ -1143,6 +1152,7 @@ double Modify(string modifyOP, double modifySL, double modifyTP, color modifyCL)
          break;
       }
    }
+   return(-1);
 }
 
 double GetLots(double Risk)

@@ -10,13 +10,13 @@
 //--- input parameters
 input bool     STR_Use=true;  //Slos traling
 input int      STR_PosAmount=2; //Positions amount
-input int      STR_PriceStart=25; //Price start
-input int      STR_PriceStep=10; //Price step
+input int      STR_PriceStart=250; //Price start
+input int      STR_PriceStep=100; //Price step
 input double   STR_SLKoef=0.5; //SL koef
 //input int      STR_SLStep=5; //SL step //-artamir@2014.06.09
 //input double   STR_SLMulti=1; //SL koef //-artamir@2014.06.09
 
-#define  DEBUG false
+//#define  DEBUG2 false
 
 #ifndef SYSBASE
    #define EXP "eFXO.SlosTraling"
@@ -45,16 +45,17 @@ void OnDeinit(const int reason)
 //+------------------------------------------------------------------+
 void OnTick(){
 //---
-   if(IsTesting()){
-      if(OrdersTotal()==0){
-         TR_SendSELL();
-      }
-   }   
+   //if(IsTesting()){
+   //   if(OrdersTotal()==0){
+   //      TR_SendSELL();
+   //   }
+   //}   
 
    startext();
 }
 //+------------------------------------------------------------------+
-void startext(){
+void startext()export{
+   zx
    bNeedDelClosed=true;
    
    B_Start();
@@ -71,12 +72,15 @@ void fSTR_Main(){
 }
 
 void fSTR_Check(int op){
+   zx
+   DAIdPRINTALL2(aEC,"before");
    string f=StringConcatenate(""
             ,OE_IT,"==1"
             ," AND "
             ,OE_TY,"==",op);
    SELECT(aEC,f);
-   
+   DAIdPRINT2(aEC,aI,"after");
+   DPRINT2(f);
    int rows=ArrayRange(aI,0);
    if(rows<STR_PosAmount)return; //Если меньше заданного количества позиций, тогда выходим.
    

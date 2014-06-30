@@ -30,6 +30,14 @@ input double   STR_SLKoef=0.5; //SL koef
 
 //{ === Для вызова из других советников.
 
+void PrintParams(){
+   Print("STR_Use="+_Use);
+   Print("STR_PosAmount="+_PosAmount);
+   Print("STR_PriceStart="+_PriceStart);
+   Print("STR_PriceStep="+_PriceStep);
+   Print("STR_SLKoef="+_SLKoef);
+}
+
 //{ === Блок установки инпут параметров
 void eFXOSlosTraling_Use(bool val)export{
    _Use=val;
@@ -98,6 +106,9 @@ void OnTick(){
 //+------------------------------------------------------------------+
 void startext(){
    zx
+   
+   //PrintParams();
+   
    bNeedDelClosed=true;
    
    B_Start();

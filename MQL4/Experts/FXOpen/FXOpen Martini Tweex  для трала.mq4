@@ -1,6 +1,6 @@
 #property copyright "forum.FXOpen.ru - MaxZ"
 #property link      "forum.FXOpen.ru"
-#property version "2.00"
+#property version "3.00"
 
 // Данный советник был написан по заказу на форуме FXOpen в теме:
 // http://forum.fxopen.ru/showthread.php?91373-%D0%9E%D1%82%D0%B4%D0%B0%D0%BC-%D1%81%D0%BE%D0%B2%D0%B5%D1%82%D0%BD%D0%B8%D0%BA-%D0%B8%D0%BD%D0%B4%D0%B8%D0%BA%D0%B0%D1%82%D0%BE%D1%80-%D0%B8%D0%BB%D0%B8-%D1%81%D0%BA%D1%80%D0%B8%D0%BF%D1%82-%D0%B7%D0%B0-%D0%B8%D0%B4%D0%B5%D1%8E
@@ -10,10 +10,21 @@
 // В советнике используется трал первого ордера, идею которого предложил Скиталка.
 // В разработке советника (трактовка ТЗ) активное участие принимал - Mik 2806. Огромное Ему спасибо!
 
-#define DEBUG2
+//#define DEBUG2
 
 #include <eFXO.SlosTraling.mqh>
-#include <sysBase.mqh>
+//#include <sysBase.mqh>
+
+input bool     STR_Use=true;  //Slos traling
+      bool        _Use=true;
+input int      STR_PosAmount=2; //Positions amount
+      int         _PosAmount=2; 
+input int      STR_PriceStart=250; //Price start
+      int         _PriceStart=250;
+input int      STR_PriceStep=100; //Price step
+      int         _PriceStep=100;
+input double   STR_SLKoef=0.5; //SL koef
+      double      _SLKoef=0.5;
 
 extern   string   s0                   = "--- forum.FXOpen.ru ---";
 extern   string   s1                   = "Общие параметры:";
@@ -106,9 +117,15 @@ void init()
 
 void start()
 {
-   zx
-   startext();
-   DPRINT2("end startext");
+   //zx
+   eFXOSlosTraling_Use(STR_Use);
+   eFXOSlosTraling_PosAmount(STR_PosAmount);
+   eFXOSlosTraling_PriceStart(STR_PriceStart);
+   eFXOSlosTraling_PriceStep(STR_PriceStep);
+   eFXOSlosTraling_SLKoef(STR_SLKoef);
+   
+   eFXOSlosTraling_startext();
+   
    BsTemp = 0;
    SsTemp = 0;
    for (Pos = OrdersTotal()-1; Pos >= 0; Pos--)
@@ -1155,16 +1172,16 @@ double Modify(string modifyOP, double modifySL, double modifyTP, color modifyCL)
    return(-1);
 }
 
-double GetLots(double Risk)
+double GetLots(double _risk)
 {
    double Free    = AccountFreeMargin();
    double One_Lot = MarketInfo(Symb, MODE_MARGINREQUIRED);
    double Value;
    
-   if (Risk > 0)
+   if (_risk > 0)
    {
       double Step    = MarketInfo(Symb, MODE_LOTSTEP);
-      Value   = MathFloor(Free*Risk/100/One_Lot/Step)*Step;
+      Value   = MathFloor(Free*_risk/100/One_Lot/Step)*Step;
    }
    else
       Value = LotsInit;

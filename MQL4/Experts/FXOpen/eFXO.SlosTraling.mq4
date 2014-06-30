@@ -5,14 +5,19 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2014, MetaQuotes Software Corp."
 #property link      "http://forum.fxopen.ru"
-#property version   "2.10"
+#property version   "3.10"
 #property strict
 //--- input parameters
 input bool     STR_Use=true;  //Slos traling
+      bool        _Use=true;
 input int      STR_PosAmount=2; //Positions amount
+      int         _PosAmount=2; 
 input int      STR_PriceStart=250; //Price start
+      int         _PriceStart=250;
 input int      STR_PriceStep=100; //Price step
+      int         _PriceStep=100;
 input double   STR_SLKoef=0.5; //SL koef
+      double      _SLKoef=0.5;
 //input int      STR_SLStep=5; //SL step //-artamir@2014.06.09
 //input double   STR_SLMulti=1; //SL koef //-artamir@2014.06.09
 
@@ -22,12 +27,49 @@ input double   STR_SLKoef=0.5; //SL koef
    #define EXP "eFXO.SlosTraling"
    #include <sysBase.mqh>
 #endif
+
+//{ === Для вызова из других советников.
+
+//{ === Блок установки инпут параметров
+void eFXOSlosTraling_Use(bool val)export{
+   _Use=val;
+}
+
+void eFXOSlosTraling_PosAmount(int val)export{
+   _PosAmount=val;
+}
+
+void eFXOSlosTraling_PriceStart(int val)export{
+   _PriceStart=val;
+}
+
+void eFXOSlosTraling_PriceStep(int val)export{
+  _PriceStep=val;
+}
+
+void eFXOSlosTraling_SLKoef(double val)export{
+  _SLKoef=val;
+}
+
+//}
+
+void eFXOSlosTraling_startext()export{
+   startext();
+}
+//}
+
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
 int OnInit()
   {
 //---
+   eFXOSlosTraling_Use(STR_Use);
+   eFXOSlosTraling_PosAmount(STR_PosAmount);
+   eFXOSlosTraling_PriceStart(STR_PriceStart);
+   eFXOSlosTraling_PriceStep(STR_PriceStep);
+   eFXOSlosTraling_SLKoef(STR_SLKoef);
+
    B_Init();
 //---
    return(INIT_SUCCEEDED);
@@ -54,7 +96,7 @@ void OnTick(){
    startext();
 }
 //+------------------------------------------------------------------+
-void startext()export{
+void startext(){
    zx
    bNeedDelClosed=true;
    
@@ -64,7 +106,7 @@ void startext()export{
 }
 
 void fSTR_Main(){
-   if(!STR_Use) return;
+   if(!_Use) return;
 
    fSTR_Check(OP_BUY);
    
@@ -82,7 +124,7 @@ void fSTR_Check(int op){
    DAIdPRINT2(aEC,aI,"after");
    DPRINT2(f);
    int rows=ArrayRange(aI,0);
-   if(rows<STR_PosAmount)return; //Если меньше заданного количества позиций, тогда выходим.
+   if(rows<_PosAmount)return; //Если меньше заданного количества позиций, тогда выходим.
    
    fSTR_CheckSelected(aI);
 }
@@ -108,17 +150,17 @@ void fSTR_CheckSelected(int &aI[]){
    DPRINT("profit_pips="+(string)profit_pips);
    
    //if(profit_pips<STR_PriceStep) return; //-artamir@2014.06.09
-   if(profit_pips<STR_PriceStart) return; //+artamir@2014.06.09
+   if(profit_pips<_PriceStart) return; //+artamir@2014.06.09
    
    //int max_levels=(profit_pips)/STR_PriceStep; //-artamir@2014.06.09
-   int max_levels=(profit_pips-STR_PriceStart)/STR_PriceStep; 
+   int max_levels=(profit_pips-_PriceStart)/_PriceStep; 
    DPRINT("max_levels="+(string)max_levels);
    
-   int max_level_pips=STR_PriceStart+max_levels*STR_PriceStep;//+artamir@2014.06.09
+   int max_level_pips=_PriceStart+max_levels*_PriceStep;//+artamir@2014.06.09
    DPRINT("max_level_pips="+(string)max_level_pips);
    
    //int sl_pips=STR_SLStep*STR_SLMulti*max_levels; //-artamir@2014.06.09
-   int sl_pips=max_level_pips*STR_SLKoef;
+   int sl_pips=max_level_pips*_SLKoef;
    
    int koef=(ty==OP_BUY)?(1.00):(-1.00);
    double max_level_price=wlpr+max_level_pips*Point*koef;

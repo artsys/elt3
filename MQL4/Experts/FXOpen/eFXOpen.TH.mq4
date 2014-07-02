@@ -17,13 +17,14 @@
 
 
 
+
 #property copyright "Copyright 2014, artamir"
 #property link      "http:\\forexmd.ucoz.org"
 #property version   "2.00"
 #property strict
 #property stacksize 256
 
-//#define DEBUG2
+#define DEBUG2
 
 double fix_profit=0;
 
@@ -37,9 +38,10 @@ double dNearestSellPrice=0;
 double dMinSellPrice=0;
 
 input string s1="===== MAIN =====";
-input int Step=20;	//Шаг между ордерами
-input int TP=50; //Тейкпрофит (на каждый ордер отдельно)
+input int Step=100;	//Шаг между ордерами
+input int TP=100; //Тейкпрофит (на каждый ордер отдельно)
 input int Levels=5; //Кол. уровней от позиции.
+input int EQLevels=3; //Кол. екви уровней.
 input double Lot=0.1;
 input double Multy=2;
 input string e1="================";
@@ -139,7 +141,7 @@ int startext(void){
 
 	Autoopen();
 
-	DelUnused();
+	//DelUnused();
 	
 	Comment("Balance Ost=",DoubleToStr(dBalanceOst,2)
 	      ,"\nFixProfit=",fix_profit
@@ -381,7 +383,7 @@ bool FIXProfit(){
    zx
 	string fn="FIXProfit";
 	
-	if(!FIXProfit_use)return(true);
+	if(!FIXProfit_use)return(false);
 	
 	int aI[]; ArrayResize(aI,0,1000);AId_Init2(aOE,aI);
 	fix_profit=AId_Sum2(aOE,aI,OE_OPR);
@@ -528,6 +530,7 @@ void TN_checkCO(int pti){
 			ArrayResize(d,0);
 			int AddPips=Step*lvl;
 			TR_SendPending_array(d, ty,	poop, AddPips, GetLot(ty,poop,AddPips,pol), TP);
+			B_Start();
 		}
 	}	
 	xz	
@@ -547,7 +550,7 @@ void TN_checkRev(int pti){
 	string fn="TN_checkRev";
 	OrderSelect(pti,SELECT_BY_TICKET);
 	int pty=OrderType();
-	double poop=OrderOpenPrice();
+	double poop=Norm_symb(OrderOpenPrice());
 	double pol=OrderLots();
 	
 	int typ=-1,tyo=-1;
@@ -555,24 +558,26 @@ void TN_checkRev(int pti){
 	if(pty==OP_BUY){
 		typ=OP_SELL;
 		tyo=OP_SELLSTOP;
-		roop=poop-Step*Point;
+		roop=Norm_symb(poop)-Step*Point;
 		if(Ask<=roop) return;
 	}
 
 	if(pty==OP_SELL){
 		typ=OP_BUY;
 		tyo=OP_BUYSTOP;
-		roop=poop+Step*Point;
+		roop=Norm_symb(poop)+Step*Point;
 		if(Bid>=roop)return;
 	}
 	
-	if(TI_count(typ,roop)<=0&&TI_count(tyo,roop)<=0){		
+	int cntp=TI_count(typ,roop);
+	int cnto=TI_count(tyo,roop);
+	if(cntp<=0&&cnto<=0){		
 		double d[];
 		ArrayResize(d,0);
 		int AddPips=Step;
 		//TR_SendPending_array(d, tyo, poop, AddPips, GetLot(), TP);
 		TR_SendPending_array(d, tyo, poop, AddPips, pol, TP);
-		
+		B_Start();
 		int rows=ArrayRange(d,0);
 		for(int i=0;i<rows;i++){
 			TN_checkCO(d[i]);
@@ -597,11 +602,15 @@ int TI_count(int ty, double oop){
 	int aI[];ArrayResize(aI,0);
 	AId_Init2(aEC,aI);
 	string f=StringConcatenate(""
-		,OE_OOP,"==",oop
+		,OE_OOP,">>",Norm_symb(oop)-1*Point
+		," AND "
+		,OE_OOP,"<<",Norm_symb(oop)+1*Point
 		," AND "
 		,OE_TY,"==",ty);
-		
+	
+	DAIdPRINT2(aEC,aI,"before");	
 	B_Select(aEC,aI,f);
+	DAIdPRINT2(aEC,aI,"after");
 		
 	int rows=ArrayRange(aI,0);
 	
@@ -619,6 +628,7 @@ void Autoopen(){
 					 @0.0.0.1@2014.03.06@artamir	[+]	Autoopen
 			>Rev:0
 	*/
+	zx
 	string fn="Autoopen";
 	
 	if(OrdersTotal()==0){
@@ -653,7 +663,7 @@ double GetLot(int ty=-1, double oop=0, int add_pips=0, double pol=0){
       _send_price=oop-add_pips*Point;
       _pips_to_zero=(dZeroPrice-_send_price)/Point;
    }
-   _koef=MathFloor(_pips_to_zero/(Step*Levels+Step/2));
+   _koef=MathFloor(_pips_to_zero/(Step*EQLevels+Step/2));
    double res=MathMax(MathMax(_koef*Multy*Lot,Lot),pol);
    
    

@@ -200,7 +200,7 @@ double AId_Compare(double v1, double v2){
 	*/
 	
 	string fn="AId_Compare";
-	if(MathAbs(v1-v2)<=0.00001)return(AI_EQ);
+	if(MathAbs(v1-v2)<=0.00000001)return(AI_EQ);
 	
 	if(v1>v2)return(AI_GREAT);
 	
@@ -392,7 +392,8 @@ int AId_QuickSearch2(double &a[][], int &aI[], int col=0, double element=0.0, in
 	
 	if(mode==AI_GREAT){
 		while(l<r){
-			int c=AId_Compare(AId_Get2(a,aI,m,col), element);
+		   double val=AId_Get2(a,aI,m,col);
+			int c=AId_Compare(val, element);
 			if(c==AI_GREAT){
 				r=m;
 				l=m;
@@ -690,35 +691,42 @@ void AId_Select2(double &a[][], int &aI[]){
 		if(f_aop==AI_EQ){
 			first=AId_SearchFirst2(a, aI, f_col, f_min);
 			last=AId_SearchLast2(a, aI, f_col, f_min);
+			DAIdPRINT2(a,aI,"before AI_EQ col_"+OE2Str(f_col)+"_val_"+(string)f_min);
 		}
 		
 		if(f_aop==AI_GREAT){
-		   DPRINT("AI_GREAT::before search::f_col="+f_col+" :f_min="+f_min);
-
+		   DPRINT2("AI_GREAT::before search::f_col="+f_col+" :f_min="+f_min);
+         DAIdPRINT2(a,aI,"before AI_GREAT col_"+OE2Str(f_col)+"_val_"+(string)f_min);
 			first=AId_SearchGreat2(a,aI,f_col,f_min);
 			last=AI_WHOLEARRAY;
+			
 		}
 		
 		if(f_aop==AI_GREAT_OR_EQ){
-		   DPRINT("AI_GREAT_OR_EQ::before search::f_col="+f_col+" :f_min="+f_min);
+		   DPRINT2("AI_GREAT_OR_EQ::before search::f_col="+f_col+" :f_min="+f_min);
 		   
 		   first=first=AId_SearchFirst2(a, aI, f_col, f_min);
 		   if(first==AI_NONE){
 		      first=AId_SearchGreat2(a,aI,f_col,f_min);
 		   }
 		   last=AI_WHOLEARRAY;
+		   DAIdPRINT2(a,aI,"before AI_GREAT_OR_EQ col_"+OE2Str(f_col)+"_val_"+(string)f_min);
 		}
 		
 		if(f_aop==AI_LESS){
+		   DPRINT2("AI_LESS::before search::f_col="+f_col+" :f_min="+f_min);
 			if(B_BSEL){
 				Print(fn,".AI_LESS");
 			}
 			first=0;
+			DAIdPRINT2(a,aI,"before AI_LESS col_"+OE2Str(f_col)+"_val_"+(string)f_min);
 			last=AId_SearchLess2(a,aI,f_col,f_min);
 		}
-	
+	   
 		AI_setInterval(aI,first,last);
-	}
+      DAIdPRINT2(a,aI,"after setInterval col_"+OE2Str(f_col)+"_val_"+(string)f_min);
+   }
+	
 	xz
 }
 

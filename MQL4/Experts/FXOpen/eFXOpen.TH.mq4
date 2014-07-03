@@ -24,7 +24,7 @@
 #property strict
 #property stacksize 256
 
-#define DEBUG2
+//#define DEBUG2
 
 double fix_profit=0;
 

@@ -33,8 +33,8 @@ string comadd="";
 #else 
    #ifdef DEBUG2
       #define DPRINT2(text) Print(__FUNCTION__+" :: "+(string)text);
-      #define DAIdPRINT2(a,aI,text) AId_Print2(a,aI,Digits,__FUNCTION__+"_"+text);
-      #define DAIdPRINTALL2(a,text) Print("DAIdPRINTALL"); int atI[]; ArrayResize(atI,0,1000); AId_Init2(a,atI); AId_Print2(a,atI,Digits,__FUNCTION__+"_"+text);
+      #define DAIdPRINT2(a,aI,text) //AId_Print2(a,aI,Digits,__FUNCTION__+"_"+text);
+      #define DAIdPRINTALL2(a,text) //Print("DAIdPRINTALL"); int atI[]; ArrayResize(atI,0,1000); AId_Init2(a,atI); AId_Print2(a,atI,Digits,__FUNCTION__+"_"+text);
    #else
       #define DPRINT2(text)
       #define DAIdPRINT2(a,aI,text)

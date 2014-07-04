@@ -24,7 +24,7 @@
 #property strict
 #property stacksize 256
 
-//#define DEBUG2
+#define DEBUG2
 
 double fix_profit=0;
 
@@ -472,7 +472,8 @@ void TN(){
 	   if(pty==OP_SELL && poop < dMinSellPrice)continue;
 	   
 		TN_checkCO(pti);	
-		TN_checkRev(pti);
+		//TN_checkRev(pti);
+		TN_checkCO(pti,-1);
 	}
 	xz
 }
@@ -480,7 +481,7 @@ void TN(){
  
 
 
-void TN_checkCO(int pti){
+void TN_checkCO(int pti, int RevKoef=1){
 	/**
 		\version	0.0.0.1
 		\date		2014.03.06
@@ -503,18 +504,30 @@ void TN_checkCO(int pti){
 	
 	for(int lvl=1;lvl<=Levels;lvl++){
 		int ty=-1;
-		double lvloop=poop+iif((pty==OP_BUY||pty==OP_BUYSTOP),1,-1)*Step*lvl*Point;
-		
+		double lvloop=poop+iif((pty==OP_BUY||pty==OP_BUYSTOP),1,-1)*Step*lvl*Point*RevKoef;
+		DPRINT2("pt1="+pti+"; lvl="+lvl+"; lvloop="+lvloop);
 		if(pty==OP_BUY||pty==OP_BUYSTOP){
-			ty=OP_BUYSTOP;
-			if(lvloop<Ask)continue;
-			if(lvloop>max_buy)continue;
+			if(RevKoef==1){
+   			ty=OP_BUYSTOP;
+   			if(lvloop<Ask)continue;
+   			if(lvloop>max_buy)continue;
+   		}else{
+   		   ty=OP_SELLSTOP;
+   		   if(lvloop>Bid)continue;
+			   if(lvloop<min_sell)continue;
+   		}	
 		}
 		
 		if(pty==OP_SELL||pty==OP_SELLSTOP){
-			ty=OP_SELLSTOP;
-			if(lvloop>Bid)continue;
-			if(lvloop<min_sell)continue;
+			if(RevKoef==1){
+   			ty=OP_SELLSTOP;
+   			if(lvloop>Bid)continue;
+   			if(lvloop<min_sell)continue;
+			}else{
+			   ty=OP_BUYSTOP;
+   			if(lvloop<Ask)continue;
+   			if(lvloop>max_buy)continue;
+			}
 		}
 		
 		int aI[];ArrayResize(aI,0);

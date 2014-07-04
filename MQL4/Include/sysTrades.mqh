@@ -413,6 +413,9 @@ int TR_SendSELLSTOP_array(		double &d[] //{
 	*/
 	
 	//----------------------------------------------------
+	zx
+	DPRINT2("parameters^=============");
+	DPRINT2("StartPrice="+StartPrice+"; AddPips="+AddPips);
 	double SendPrice = 0;
 	double sendVol	= 0;
 	int countSends = 0;
@@ -437,6 +440,9 @@ int TR_SendSELLSTOP_array(		double &d[] //{
 	}
 	
 	SendPrice = Norm_symb((_StartPrice - AddPips*Point));
+	DPRINT2("after==========");
+	DPRINT2("StartPrice="+StartPrice+"; AddPips="+AddPips);
+	DPRINT2("_StartPrice="+_StartPrice+"; AddPips*Point"+(AddPips*Point)+"; SendPrice="+SendPrice);
 	
 	//--------------
 	if(TPPip > 0){
@@ -478,7 +484,7 @@ int TR_SendSELLSTOP_array(		double &d[] //{
 			rest_vol = rest_vol - sendVol;
 		}
 	}
-
+   xz
 	//------------------------------------------------------
 	return(ArrayRange(d,0));
 } //}
@@ -696,6 +702,7 @@ int TR_SendPending_array(		double &d[]	//{
 			>Rev:0
 	*/
 	zx
+	DPRINT2("type="+type+"; StartPrice="+StartPrice+"; AddPips="+AddPips);
 	if(type == OP_BUYSTOP	){return(TR_SendBUYSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
 	if(type == OP_BUYLIMIT	){return(TR_SendBUYLIMIT_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
 	if(type == OP_SELLSTOP	){return(TR_SendSELLSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
@@ -996,7 +1003,7 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 	//-----------------------------------------------------------
 	// Предопределенные переменные
 	//-----------------------------------------------------------
-	
+	zx
 	string fn="_OrderSend";
 	if(OrdersTotal()>=TR_MaxOrdersCount&&TR_MaxOrdersCount>0) return(-1);
 	//-----------------------------------------------------------
@@ -1079,7 +1086,7 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 				
 				price = dAsk + STOPLEVEL*Point;
 				
-				//return(-1);
+				return(-1);
 			}
 		}
 		
@@ -1088,7 +1095,7 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 			if(price >= (dBid - STOPLEVEL*Point)){
 				
 				price = dBid - STOPLEVEL*Point;
-				//return(-1);
+				return(-1);
 			}
 		}
 	//}

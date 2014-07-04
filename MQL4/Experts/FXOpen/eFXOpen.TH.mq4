@@ -20,11 +20,11 @@
 
 #property copyright "Copyright 2014, artamir"
 #property link      "http:\\forexmd.ucoz.org"
-#property version   "2.00"
+#property version   "2.1"
 #property strict
-#property stacksize 256
+//#property stacksize 256
 
-#define DEBUG2
+//#define DEBUG2
 
 double fix_profit=0;
 
@@ -274,7 +274,7 @@ double getNearestSellPrice(){
    //AId_Print2(aEC,aBS,4,"aEC_Select_BuyStop_Above_Ask");  
    
    AI_Union(aB,aBS);
-   AId_QuickSort2(aEC,aB,-1,-1,OE_OOP);
+   AId_InsertSort2(aEC,aB,OE_OOP);
   // AId_Print2(aEC,aB,4,"aEC_Union_Buy_BuyStop_Above_Ask");
    
    double oop=AId_Get2(aEC,aB,(ArrayRange(aB,0)-1),OE_OOP);

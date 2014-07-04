@@ -20,7 +20,7 @@
 
 #property copyright "Copyright 2014, artamir"
 #property link      "http:\\forexmd.ucoz.org"
-#property version   "2.1"
+#property version   "2.10"
 #property strict
 //#property stacksize 256
 

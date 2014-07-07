@@ -44,8 +44,8 @@ void E_Init(void){
 
 void E_Start(void){
 	/**
-		\version	0.0.0.1
-		\date		2014.03.03
+		\version	0.0.0.2
+		\date		2014.07.07
 		\author		Morochin <artamir> Artiom
 		\details	ѕо идее должна вызыватьс€ в начале каждого цикла работы советника. (ф-ци€ старт)
 		\internal
@@ -58,12 +58,14 @@ void E_Start(void){
 	
 	ArrayResize(aEC,0);	//ќбнулили массив текущих ордеров, которые есть в терминале.
 	ArrayResize(aE,0);	//ќбнулили массив событий
+	ArrayResize(aTO,0); //ќбнулили массив ордеров в терминале.
 	for(int i=0;i<=OrdersTotal();i++){
 		if(!OrderSelect(i,SELECT_BY_POS,MODE_TRADES)) continue;
 		if(OrderSymbol() != Symbol()) continue;
 		int idx=OE_setSTD(OrderTicket());
 		if(idx>-1){
 			AId_CopyRow2(aOE,aEC,idx);
+			AId_CopyRow2(aOE,aTO,idx);
 		}
 	}
 	

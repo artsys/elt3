@@ -1104,7 +1104,8 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 	int res = OrderSend(symbol, cmd, volume, price, slippage, stoploss, takeprofit, comment, lMN, expiration, arrow_color);
 	
 	if(res > 0){
-		OE_setSTD(res);
+		T_Start(res);
+		//OE_setSTD(res);
 	}
 	
 	//------------------------------------------------------
@@ -1135,8 +1136,8 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 
 bool _OrderModify(int ticket, double price, double stoploss, double takeprofit, datetime expiration, color clr=CLR_NONE){
 	/*
-		>Ver	:	0.0.0.5
-		>Date	:	2013.12.31
+		>Ver	:	0.0.0.6
+		>Date	:	2014.07.07
 		>History:	
 					@0.0.0.5@2013.12.31@artamir	[*]	ƒобавлена проверка, если ордер уже закрыт.
 			@0.0.4@2012.10.01@artamir	[*] critical change
@@ -1217,6 +1218,9 @@ bool _OrderModify(int ticket, double price, double stoploss, double takeprofit, 
 	//------------------------------------------------------
 	if(needModify){
 		bool res = OrderModify(ticket, price, stoploss, takeprofit, expiration, clr);
+		if(res){
+		   T_Start();
+		}
 		
 		//--------------------------------------------------
 		int err = GetLastError();

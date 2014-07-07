@@ -1,6 +1,6 @@
    /**
-		\version	0.0.0.5
-		\date		2014.03.06
+		\version	0.0.0.6
+		\date		2014.07.07
 		\author		Morochin <artamir> Artiom
 		\details	База для советников. Сборник сервисных процедур/функций.
 		Для правильной работы необходимо, чтоб в советниках были определены константы: EXP - Уникальное имя эксперта, нужное для создания файлов данных эксперта.
@@ -80,6 +80,7 @@ bool isTick=false;
 #include <sysIndexedArray.mqh>
 
 #include <sysOE.mqh>
+#include <sysTerminal.mqh>
 #include <sysEvents.mqh> 
 
 #include <sysTrades.mqh>//}	

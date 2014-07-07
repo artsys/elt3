@@ -1,10 +1,11 @@
 	/**
-		\version	3.1.0.13
-		\date		2014.03.08
+		\version	3.1.0.14
+		\date		2014.07.07
 		\author		Morochin <artamir> Artiom
 		\details	Расширенная информация об ордерах.
 		\internal
 			>Hist:													
+			       @3.1.0.14@2014.07.07@artamir	[+]	OE_USR2
 					 @3.1.0.13@2014.03.08@artamir	[+]	OE_delClosed
 					 @3.1.0.12@2014.03.07@artamir	[!]	OE_FIBT
 					 @3.1.0.10@2014.03.07@artamir	[+]	OE_delClosed
@@ -47,7 +48,8 @@
 #define OE_BOT    20 //
 
 #define OE_USR1   21
-#define OE_MAX		22
+#define OE_USR2   22
+#define OE_MAX		23
 
 double	aOE[][OE_MAX];
 
@@ -85,7 +87,9 @@ string OE2Str(int i){
 		case 17: return("OE_CP2SL");
 		case 18: return("OE_CP2TP");
 		case 19: return("OE_CP2OP");
+		case 20: return("OE_BOT");
 		case 21: return("OE_USR1");
+		case 22: return("OE_USR2");
 		default: return("UDF");
 	}
 }

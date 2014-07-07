@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2014, MetaQuotes Software Corp."
 #property link      "http://forum.fxopen.ru"
-#property version   "3.10"
+#property version   "3.11"
 #property strict
 //--- input parameters
 input bool     STR_Use=true;  //Slos traling
@@ -59,6 +59,9 @@ void eFXOSlosTraling_SLKoef(double val)export{
   _SLKoef=val;
 }
 
+void eFXOSlosTraling_MN(int val)export{
+   TR_MN=val;
+}
 //}
 
 void eFXOSlosTraling_startext()export{

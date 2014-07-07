@@ -1,26 +1,6 @@
-	/**
-		\version	3.1.0.9
-		\date		2014.03.07
-		\author		Morochin <artamir> Artiom
-		\details	Собиратель тренда (Trend Harvester)
-		\internal
-			>Hist:									
-					 @3.1.0.9@2014.03.07@artamir	[*]	CMFB
-					 @3.1.0.7@2014.03.06@artamir	[+]	TI_count
-					 @3.1.0.6@2014.03.06@artamir	[+]	TN_checkRev
-					 @3.1.0.4@2014.03.06@artamir	[+]	TN_checkCO
-					 @3.1.0.3@2014.03.06@artamir	[+]	Autoopen
-					 @3.1.0.2@2014.03.06@artamir	[+]	GetLot
-					 @3.1.0.1@2014.03.06@artamir	[+]	TN
-			>Rev:0
-	*/
-
-
-
-
-#property copyright "Copyright 2014, artamir"
-#property link      "http:\\forexmd.ucoz.org"
-#property version   "2.10"
+	#property copyright "Copyright 2014, artamir"
+#property link      "http:\\forum.fxopen.ru"
+#property version   "2.20"
 #property strict
 //#property stacksize 256
 
@@ -502,6 +482,8 @@ void TN_checkCO(int pti, int RevKoef=1){
 	double max_buy=dMaxBuyPrice;
 	double min_sell=dMinSellPrice;
 	
+	int _addPips=0;
+	
 	for(int lvl=1;lvl<=Levels;lvl++){
 		int ty=-1;
 		double lvloop=poop+iif((pty==OP_BUY||pty==OP_BUYSTOP),1,-1)*Step*lvl*Point*RevKoef;
@@ -512,6 +494,7 @@ void TN_checkCO(int pti, int RevKoef=1){
    			if(lvloop<Ask)continue;
    			if(lvloop>max_buy)continue;
    		}else{
+   		 //  _addPips=-Step;
    		   ty=OP_SELLSTOP;
    		   if(lvloop>Bid)continue;
 			   if(lvloop<min_sell)continue;
@@ -524,6 +507,7 @@ void TN_checkCO(int pti, int RevKoef=1){
    			if(lvloop>Bid)continue;
    			if(lvloop<min_sell)continue;
 			}else{
+			  // _addPips=-Step;
 			   ty=OP_BUYSTOP;
    			if(lvloop<Ask)continue;
    			if(lvloop>max_buy)continue;
@@ -542,7 +526,7 @@ void TN_checkCO(int pti, int RevKoef=1){
 		if(rows<=0){
 			ArrayResize(d,0);
 			int AddPips=Step*lvl;
-			TR_SendPending_array(d, ty,	poop, AddPips, GetLot(ty,poop,AddPips,pol), TP);
+			TR_SendPending_array(d, ty,	poop, AddPips, GetLot(ty,poop,AddPips+_addPips,pol), TP);
 			B_Start();
 		}
 	}	
@@ -647,7 +631,7 @@ void Autoopen(){
 	if(OrdersTotal()==0){
 		int ti=TR_SendBUY(Lot);
 		TR_ModifyTP(ti,TP,TR_MODE_PIP);
-		dZeroPrice=OE_getPBT(ti,OE_OOP);
+		dZeroPrice=OE_getPBT(ti,OE_OOP)-Step/2*Point;
 	}	
 }
 
@@ -668,16 +652,22 @@ double GetLot(int ty=-1, double oop=0, int add_pips=0, double pol=0){
 	int _pips_to_zero=0;
 	int _koef=1;
    if(ty==OP_BUYSTOP){
-      _send_price=oop+add_pips*Point;
-      _pips_to_zero=(_send_price-dZeroPrice)/Point;
+      _send_price=Norm_symb(oop)+add_pips*Point;
+      _pips_to_zero=(Norm_symb(_send_price)-Norm_symb(dZeroPrice))/Point;
    }
    
    if(ty==OP_SELLSTOP){
-      _send_price=oop-add_pips*Point;
-      _pips_to_zero=(dZeroPrice-_send_price)/Point;
+      _send_price=Norm_symb(oop)-add_pips*Point;
+      _pips_to_zero=(Norm_symb(dZeroPrice)-Norm_symb(_send_price))/Point;
    }
-   _koef=MathFloor(_pips_to_zero/(Step*EQLevels+Step/2));
-   double res=MathMax(MathMax(_koef*Multy*Lot,Lot),pol);
+   _koef=MathCeil(_pips_to_zero/(Step*EQLevels));
+   
+   double res=Lot;
+   for(int i=0; i<_koef&&_koef>0; i++){
+      res*=Multy;
+   }
+   
+   res=MathMax(MathMax(res,Lot),pol);
    
    
    

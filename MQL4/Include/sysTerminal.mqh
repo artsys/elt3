@@ -19,6 +19,7 @@ void T_Start(){
       if(OrderSymbol()!=Symbol())continue;
       
       int idx=OE_setSTD(OrderTicket());
+      OE_aDataSetInOE(idx);
       AId_CopyRow2(aOE,aTO,idx);
    }
 }

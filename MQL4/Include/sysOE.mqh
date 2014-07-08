@@ -378,3 +378,30 @@ void OE_DelPending(){
       }
    }  
 }
+
+double aOEData[][OE_MAX];
+void OE_aDataErase(){
+   ArrayResize(aOEData,0);
+}
+
+void OE_aDataSetProp(int col, double val){
+   if(ArrayRange(aOEData,0)<=0){
+      ArrayResize(aOEData,1);
+      ArrayInitialize(aOEData,EMPTY_VALUE);
+   }
+   
+   aOEData[0][col]=val;
+}
+
+void OE_aDataSetInOE(int idx_OE=0){
+   if(ArrayRange(aOEData,0)<=0)return;
+   
+   for(int c=0;c<OE_MAX;c++){
+      double val=aOEData[0][c];
+      
+      if(val==EMPTY_VALUE)continue;
+      aOE[idx_OE][c]=val;   
+   }
+   
+   OE_aDataErase();
+}

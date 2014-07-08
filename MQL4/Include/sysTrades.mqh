@@ -1104,7 +1104,7 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 	int res = OrderSend(symbol, cmd, volume, price, slippage, stoploss, takeprofit, comment, lMN, expiration, arrow_color);
 	
 	if(res > 0){
-		T_Start(res);
+		T_Start();
 		//OE_setSTD(res);
 	}
 	

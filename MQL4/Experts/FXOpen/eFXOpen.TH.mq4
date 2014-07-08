@@ -7,7 +7,6 @@
 //#define DEBUG2
 
 double fix_profit=0;
-
 double dZeroPrice=0;
 double dBalanceOst=0;
 

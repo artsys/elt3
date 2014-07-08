@@ -9,6 +9,7 @@
 #property strict
 
 //#define DEBUG2
+//#define TRACING
 
 double fix_profit=0;
 double dZeroPrice=0;
@@ -70,14 +71,51 @@ void eFXOTH_startext()export{
 }
 
 void CheckRevers(){
-   string f=StringConcatenate(""
-                  ,OE_IM,"==1"
-                  ," AND "
-                  ,OE_IT,"==1");
+   string f=StringConcatenate("",OE_IM,"==1");
    SELECT(aTO,f);
-   
+   int rows=ArrayRange(aI,0);
+   for(int i=0;i<rows;i++){
+      int pti=AId_Get2(aTO,aI,i,OE_TI);
+      int pty=AId_Get2(aTO,aI,i,OE_TY);
+      double poop=AId_Get2(aTO,aI,i,OE_OOP);
+      double plot=AId_Get2(aTO,aI,i,OE_LOT);
+      
+      double oop=poop-Step*Point*iif(pty==OP_BUY,1,-1);
+      
+      int tyo=-1,typ=-1;
+      if(pty==OP_BUY){
+         tyo=OP_SELLSTOP;
+         typ=OP_SELL;
+      }else{
+         tyo=OP_BUYSTOP;
+         typ=OP_BUY;
+      }
+      
+      int cnt_orders=CntTIOnPrice(tyo,oop);
+      int cnt_pos=CntTIOnPrice(typ,oop);
+      
+      if(cnt_orders<=0 && cnt_pos<=0){
+         double d[];
+         ArrayResize(d,0);
+         TR_SendPending_array(d, tyo,	oop, 0, plot, TP);
+      }
+      
+   }
 }
 
+int CntTIOnPrice(int ty, double oop){
+   string f=StringConcatenate(""
+                       ,OE_TY,"==",ty
+                       ," AND "
+                       ,OE_OOP,"==",oop
+                       ," AND "
+                       ,OE_IT,"==1");
+                       
+   SELECT(aTO,f);
+   int rows=ROWS(aI);
+   return(rows);                       
+}
+ 
 void Autoopen(){
    if(OrdersTotal()==0){
       dZeroPrice=Bid;

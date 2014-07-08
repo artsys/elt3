@@ -33,8 +33,8 @@ string comadd="";
 #else 
    #ifdef DEBUG2
       #define DPRINT2(text) Print(__FUNCTION__+" :: "+(string)text);
-      #define DAIdPRINT2(a,aI,text) //AId_Print2(a,aI,Digits,__FUNCTION__+"_"+text);
-      #define DAIdPRINTALL2(a,text) //Print("DAIdPRINTALL"); int atI[]; ArrayResize(atI,0,1000); AId_Init2(a,atI); AId_Print2(a,atI,Digits,__FUNCTION__+"_"+text);
+      #define DAIdPRINT2(a,aI,text) AId_Print2(a,aI,Digits,__FUNCTION__+"_"+text);
+      #define DAIdPRINTALL2(a,text) Print("DAIdPRINTALL"); int atI[]; ArrayResize(atI,0,1000); AId_Init2(a,atI); AId_Print2(a,atI,Digits,__FUNCTION__+"_"+text);
    #else
       #define DPRINT2(text)
       #define DAIdPRINT2(a,aI,text)
@@ -47,19 +47,20 @@ string comadd="";
    
 #endif    
 
-#define BEFORE AId_Print2(a,aI,4,"line_before"+__LINE__);
-#define AFTER AId_Print2(a,aI,4,"line_after"+__LINE__);
+#define BEFORE(a) AId_Print2(a,aI,4,"line_before"+__LINE__);
+#define AFTER(a) AId_Print2(a,aI,4,"line_after"+__LINE__);
 #define IFDEBUG_BEFORE #ifdef	DEBUG BEFORE #endif
 #define IFDEBUG_AFTER #ifdef DEBUG AFTER #endif 
-#define IFDEBUG2_BEFORE #ifdef	DEBUG2 BEFORE #endif
-#define IFDEBUG2_AFTER #ifdef DEBUG2 AFTER #endif
+#define IFDEBUG2_BEFORE(a) #ifdef	DEBUG2 BEFORE(a) #endif
+#define IFDEBUG2_AFTER(a) #ifdef DEBUG2 AFTER(a) #endif
 
 #define tmr int tmrstrt=GetTickCount();
 #define ctmr " tmr:"+(string)(GetTickCount()-tmrstrt)
-#define zx DPRINT2(__FUNCSIG__);
+#define zx #ifdef TRACING DPRINT2(__FUNCSIG__); #endif 
 #define xz
 
 #define SELECT(a,text) int aI[]; ArrayResize(aI,0,1000); AId_Init2(a,aI); B_Select(a, aI, text);
+#define ROWS(aI) ArrayRange(aI,0);
 	
 #property copyright "Copyright 2014, artamir"
 #property link      "http:\\forexmd.ucoz.org"

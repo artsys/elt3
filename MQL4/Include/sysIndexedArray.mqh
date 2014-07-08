@@ -107,12 +107,11 @@ double AId_Get2(double &a[][], int &aI[], int idx=0, int col=0){
 	*/
 
 	string fn="AId_Get2";
-	
 	int rows=ArrayRange(aI,0); 
 	if(rows<=0)return((double)AI_NONE);
 	
 	if(idx>=rows){
-		Print(fn,"idx>rows");
+		Print(fn,":: idx>rows ("+idx+">"+rows+")");
 		return(AI_NONE);
 	}	
 	
@@ -747,17 +746,17 @@ void AId_Print2(double &a[][], int &aI[], int d = 4, string fn = "AId_PrintArray
 	
 	i++;
 	//------------------------------------------------------
-	int ROWS = ArrayRange(aI, 0);
-	int COLS = ArrayRange(a,1);
+	int rows = ArrayRange(aI, 0);
+	int cols = ArrayRange(a,1);
 	
 	//------------------------------------------------------
 	fn = i+"_"+fn+".iar";
 	
 	//------------------------------------------------------
 	int handle = FileOpen(fn, FILE_CSV|FILE_WRITE, "\t");
-	for(int idx_1 = 0; idx_1 < ROWS; idx_1++){
+	for(int idx_1 = 0; idx_1 < rows; idx_1++){
 		string s = "";
-		for(int idx_2 = 0; idx_2 < COLS; idx_2++){
+		for(int idx_2 = 0; idx_2 < cols; idx_2++){
 			s = StringConcatenate(s,"\t", "[aI["+idx_1+"],"+aI[idx_1]+"]["+idx_2+"]_"+OE2Str(idx_2),DoubleToStr(a[aI[idx_1]][idx_2], d));
 		}
 		FileWrite(handle, s);
@@ -789,16 +788,16 @@ void AId_STF2(double &a[][], string fn, int d = 4){
 			d		- количество знаков после запятой.
 	*/	
 	
-	int ROWS = ArrayRange(a, 0);
-	int COLS = ArrayRange(a, 1);
+	int rows = ArrayRange(a, 0);
+	int cols = ArrayRange(a, 1);
 	
 	int H = FileOpen(fn, FILE_CSV|FILE_WRITE);
 	
 	//------------------------------------------------------
-	for(int idx1 = 0; idx1 < ROWS; idx1++){
+	for(int idx1 = 0; idx1 < rows; idx1++){
 		
 		//--------------------------------------------------
-		for(int idx2 = 0; idx2 < COLS; idx2++){
+		for(int idx2 = 0; idx2 < cols; idx2++){
 			
 			//----------------------------------------------
 			double val = a[idx1][idx2];
@@ -856,10 +855,10 @@ void AId_RFF2(double &a[][], string fn){
 			double	val		= Struc_KeyValue_double(str, "@val_");
 		
 		//--------------------------------------------------
-		int ROWS = ArrayRange(a, 0);
+		int rows = ArrayRange(a, 0);
 		
 		//--------------------------------------------------
-		if(idx1 >= ROWS){
+		if(idx1 >= rows){
 			ArrayResize(a, idx1+1);
 		}
 		

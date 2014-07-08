@@ -128,7 +128,7 @@ int TR_SendBUYSTOP_array(		double &d[] //{
 	
 	if(Sy==""){Sy=Symbol();}
 	
-	int ROWS = 0;
+	int rows = 0;
 	
 	ArrayResize(d,0);
 	
@@ -170,10 +170,10 @@ int TR_SendBUYSTOP_array(		double &d[] //{
 		ticket = _OrderSend(Sy, OP_BUYSTOP, sendVol, SendPrice, 0, SLPrice, TPPrice, Comm, mn);
 		
 		if(ticket > 0){
-			ROWS++;
-			ArrayResize(d, ROWS);
+			rows++;
+			ArrayResize(d, rows);
 			
-			idx = ROWS-1;
+			idx = rows-1;
 			d[idx] = ticket;
 			
 			rest_vol = rest_vol - sendVol;
@@ -225,7 +225,7 @@ int TR_SendBUYLIMIT_array(		double &d[] //{
 	double TPPrice	= 0;
 	double SLPrice	= 0;
 	double rest_vol	= Vol;
-	int ROWS = 0;
+	int rows = 0;
 	
 	if(Sy==""){Sy=Symbol();}
 	
@@ -268,10 +268,10 @@ int TR_SendBUYLIMIT_array(		double &d[] //{
 		ticket = _OrderSend(Sy, OP_BUYLIMIT, sendVol, SendPrice, 0, SLPrice, TPPrice, Comm, mn);
 		
 		if(ticket > 0){
-			ROWS++;
-			ArrayResize(d, ROWS);
+			rows++;
+			ArrayResize(d, rows);
 			
-			idx = ROWS-1;
+			idx = rows-1;
 			d[idx] = ticket;
 			
 			rest_vol = rest_vol - sendVol;
@@ -430,7 +430,7 @@ int TR_SendSELLSTOP_array(		double &d[] //{
 	
 	if(Sy==""){Sy=Symbol();}
 	
-	int ROWS = 0;
+	int rows = 0;
 	
 	ArrayResize(d,0);
 	
@@ -475,10 +475,10 @@ int TR_SendSELLSTOP_array(		double &d[] //{
 		ticket = _OrderSend(Sy, OP_SELLSTOP, sendVol, SendPrice, 0, SLPrice, TPPrice, Comm, mn);
 		
 		if(ticket > 0){
-			ROWS++;
-			ArrayResize(d, ROWS);
+			rows++;
+			ArrayResize(d, rows);
 			
-			idx = ROWS-1;
+			idx = rows-1;
 			d[idx] = ticket;
 			
 			rest_vol = rest_vol - sendVol;
@@ -531,7 +531,7 @@ int TR_SendSELLLIMIT_array(		double &d[]	//{
 	
 	if(Sy==""){Sy=Symbol();}
 	
-	int ROWS = 0;
+	int rows = 0;
 	
 	ArrayResize(d,0);
 	
@@ -573,10 +573,10 @@ int TR_SendSELLLIMIT_array(		double &d[]	//{
 		ticket = _OrderSend(Sy, OP_SELLLIMIT, sendVol, SendPrice, 0, SLPrice, TPPrice, Comm, mn);
 		
 		if(ticket > 0){
-			ROWS++;
-			ArrayResize(d, ROWS);
+			rows++;
+			ArrayResize(d, rows);
 			
-			idx = ROWS-1;
+			idx = rows-1;
 			d[idx] = ticket;
 			
 			rest_vol = rest_vol - sendVol;

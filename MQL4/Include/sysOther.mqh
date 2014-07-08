@@ -22,26 +22,26 @@ int StringToArrayString(string &a[], string s, string del = ";"){
 	*/
 	string fn="StringToArrayString";
 	int pR = StringFind(s, del, 0);
-	int ROWS = ArrayRange(a,0);
-	int lastROW = ROWS-1;
+	int rows = ArrayRange(a,0);
+	int lastROW = rows-1;
 	if(pR > -1){
-		ROWS = ROWS + 1;
-		ArrayResize(a, ROWS);
+		rows = rows + 1;
+		ArrayResize(a, rows);
 		
 		lastROW++;
 		a[lastROW] = StringSubstr(s, 0, pR);
 		s=StringSubstr(s, pR+StringLen(del), StringLen(s)-pR+StringLen(del));
-		ROWS=StringToArrayString(a, s, del);
+		rows=StringToArrayString(a, s, del);
 	}else{
-		ROWS = ROWS + 1;
-		ArrayResize(a, ROWS);
+		rows = rows + 1;
+		ArrayResize(a, rows);
 		
 		lastROW++;
 		a[lastROW] = s;
-		return(ROWS);
+		return(rows);
 	}
 	
-	return(ROWS);
+	return(rows);
 }
 
 double iif( bool condition, double ifTrue, double ifFalse ){

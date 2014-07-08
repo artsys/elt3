@@ -51,11 +51,30 @@ void startext()export{
 }
 
 void Autoopen(){
+   double sar=SAR_get("",0,SAR_Step,SAR_Maximum,1);
+   bool isUp=SAR_isUP("",0,SAR_Step,SAR_Maximum,1);
    int SAR_StartBar=SAR_getNearestChange("",0,SAR_Step,SAR_Maximum,1);
    datetime SAR_StartTime=Time[SAR_StartBar];
    
    string add_filter=" AND "+OE_OOT+">>"+(int)SAR_StartTime;
-   Comment(add_filter);
+   
+   int ty1=-1,ty2=-1;
+   if(isUp){
+      ty1=OP_BUY;
+      ty2=OP_BUYSTOP;
+   }else{
+      ty1=OP_SELL;
+      ty2=OP_SELLSTOP;
+   }
+   
+   int cnt=CntTY(ty1,ty2,add_filter);
+   
+   if(cnt<=0){
+      double d[];
+      ArrayResize(d,0);
+      TR_SendPending_array(d,ty2,sar,0,0.1,50,50);
+   }
+   Comment(add_filter,"\nsar=",sar);
 }
 
 int CntTY(int ty1=-1, int ty2=-1, string addF=""){
@@ -86,7 +105,7 @@ int SAR_getNearestChange(string sy="", int tf=0, double step=0.02, double maximu
    if(sy=="")sy=Symbol();
    bool isUP=SAR_isUP(sy,tf,step,maximum,shift);
    int bar=shift;
-   while((isUP==SAR_isUP(sy,tf,step,maximum,bar) || bar<Bars)){
+   while((isUP==SAR_isUP(sy,tf,step,maximum,bar) && bar<Bars)){
       bar++;
    }
    
@@ -95,7 +114,7 @@ int SAR_getNearestChange(string sy="", int tf=0, double step=0.02, double maximu
 
 bool SAR_isUP(string sy="", int tf=0, double step=0.02, double maximum=0.2, int shift=1){
    bool res=false;
-   
+   if(sy=="")sy=Symbol();
    double sar=SAR_get(sy,tf,step,maximum,shift);
    
    if(sar>=High[shift])res=true;
@@ -104,7 +123,7 @@ bool SAR_isUP(string sy="", int tf=0, double step=0.02, double maximum=0.2, int 
 
 bool SAR_isDW(string sy="", int tf=0, double step=0.02, double maximum=0.2, int shift=1){
    bool res=false;
-   
+   if(sy=="")sy=Symbol();
    double sar=SAR_get(sy,tf,step,maximum,shift);
    
    if(sar<=Low[shift])res=true;
@@ -112,5 +131,6 @@ bool SAR_isDW(string sy="", int tf=0, double step=0.02, double maximum=0.2, int 
 }
 
 double SAR_get(string sy="", int tf=0, double step=0.02, double maximum=0.2, int shift=1){
+   if(sy=="")sy=Symbol();
    return(iSAR(sy,tf,step,maximum,shift));
 }

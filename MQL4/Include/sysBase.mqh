@@ -60,6 +60,7 @@ string comadd="";
 #define xz
 
 #define SELECT(a,text) int aI[]; ArrayResize(aI,0,1000); AId_Init2(a,aI); B_Select(a, aI, text);
+#define SELECT2(a,aI,text) ArrayResize(aI,0,1000); AId_Init2(a,aI); B_Select(a, aI, text);
 #define ROWS(aI) ArrayRange(aI,0);
 	
 #property copyright "Copyright 2014, artamir"

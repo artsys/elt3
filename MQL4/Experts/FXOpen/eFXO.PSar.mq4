@@ -5,17 +5,29 @@
 //+------------------------------------------------------------------+
 #property copyright "DrJJ, artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.00"
+#property version   "1.00a"
 #property strict
+
+//#define DEBUG2
 
 #define EXP "eFXO.PSar"
 #define OE_PTI OE_USR1
 #define OE_LVL OE_USR2
 
+input string e1="=== EXPERT PROPERTIES ===";
+input double Lot=0.1;
+input double Multy=2;
+input int    MaxLevel=10; //Максимальное колено
+input string h1="Spread =-1: Спред вал. пары";
+input int    Spread=-1;
+input string i1="=== PSAR PROPERTIES ===";
 input double SAR_Step=0.02;
 input double SAR_Maximum=0.2;
 
 #include <sysBase.mqh>
+
+datetime dtNearestSarChange=0;
+int      iNearestSarChangeBar=Bars;
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
@@ -45,23 +57,97 @@ void OnTick()
 //+------------------------------------------------------------------+
 
 void startext()export{
+   DAIdPRINTALL2(aOE,"startext________");
+   SetNearestSarChange();
    B_Start();
-   
+   SAR_Traling();
+   CheckEvents();
    Autoopen();
 }
 
+void SetNearestSarChange(){
+   iNearestSarChangeBar=SAR_getNearestChange("",0,SAR_Step,SAR_Maximum,0);
+   dtNearestSarChange=Time[iNearestSarChangeBar]; 
+}
+
+void CheckEvents(){
+   int events_cnt=ROWS(aE);
+   for(int i=0; i<events_cnt;i++){
+      int event=aE[i][E_EVT];
+      int ti=aE[i][E_TI];
+      
+      if(event==EVT_CLS){
+         int cls_ty=OE_getPBT(ti,OE_CTY);
+         if(cls_ty==OE_CLOSED_BY_TP){
+            CheckChild(ti);
+         }
+      }
+   }
+}
+
+void CheckChild(ti){
+   string f=StringConcatenate(""
+            ,OE_PTI,"==",ti
+            ," AND "
+            ,OE_TY,">>",1);
+            
+   SELECT(aTO,f);
+   int cnt=ROWS(aI);
+   if(cnt<=0)return;
+   
+   for(int i=0;i<cnt;i++){
+      
+   }            
+}
+
+void SAR_Traling(){
+   bool isUP=SAR_isUP("",0,SAR_Step,SAR_Maximum,0);
+   int SAR_StartBar=SAR_getNearestChange("",0,SAR_Step,SAR_Maximum,0);
+   double sar=SAR_get("",0,SAR_Step,SAR_Maximum,0);
+   
+   int tyo=-1, add_spread=0;;
+   if(isUP){
+      tyo=OP_BUYSTOP;
+      if(Spread==-1){
+         add_spread=MarketInfo(Symbol(),MODE_SPREAD);
+      }else{
+         add_spread=Spread;
+      }
+      
+      sar+=add_spread*Point;
+   }
+   else tyo=OP_SELLSTOP;
+   
+   string add_filter=" AND "+OE_TY+"=="+tyo;
+   int aI[];
+   GetLastTI(aI,SAR_StartBar,add_filter);
+   
+   int cnt=ROWS(aI);
+   if(cnt<=0) return;
+   
+   for(int i=0;i<cnt;i++){
+      int ti=AId_Get2(aOE,aI,i,OE_TI);
+      TR_MoveOrder(ti,sar,TR_MODE_PRICE);
+   }   
+}
+
 void Autoopen(){
-   double sar=SAR_get("",0,SAR_Step,SAR_Maximum,1);
-   bool isUp=SAR_isUP("",0,SAR_Step,SAR_Maximum,1);
-   int SAR_StartBar=SAR_getNearestChange("",0,SAR_Step,SAR_Maximum,1);
+   double sar=SAR_get("",0,SAR_Step,SAR_Maximum,0);
+   bool isUp=SAR_isUP("",0,SAR_Step,SAR_Maximum,0);
+   int SAR_StartBar=SAR_getNearestChange("",0,SAR_Step,SAR_Maximum,0);
    datetime SAR_StartTime=Time[SAR_StartBar];
    
    string add_filter=" AND "+OE_OOT+">>"+(int)SAR_StartTime;
    
-   int ty1=-1,ty2=-1;
+   int ty1=-1,ty2=-1, add_spread=0;
    if(isUp){
       ty1=OP_BUY;
       ty2=OP_BUYSTOP;
+      if(Spread==-1){
+         add_spread=MarketInfo(Symbol(),MODE_SPREAD);
+      }else{
+         add_spread=Spread;
+      }
    }else{
       ty1=OP_SELL;
       ty2=OP_SELLSTOP;
@@ -70,11 +156,54 @@ void Autoopen(){
    int cnt=CntTY(ty1,ty2,add_filter);
    
    if(cnt<=0){
+      int pti=0, pty=-1, plevel=0;
+      double plot=0;
+      
+      double send_lot=0;
+      
+      int last_tickets_start=SAR_getNearestChange("",add_spread,SAR_Step,SAR_Maximum,SAR_StartBar);
+      int aI[];
+      GetLastTI(aI,last_tickets_start);
+      int rows=ROWS(aI);
+      if(rows>0){
+         pti=AId_Get2(aOE,aI,0,OE_TI);
+         pty=AId_Get2(aOE,aI,0,OE_TY);
+         plot=AId_Get2(aOE,aI,0,OE_LOT);
+         plevel=AId_Get2(aOE,aI,0,OE_LVL);
+      }
+      
+      int lvl=plevel+1;
+      send_lot=iif(plot>0,plot,Lot);
+      
+      if(lvl<=1 || lvl>MaxLevel){
+         send_lot=Lot;
+         lvl=1;
+      }else{
+         send_lot*=Multy;
+      }
+      
+      OE_bAutoEraseOEData=false;
+      OE_aDataErase();
+      OE_aDataSetProp(OE_LVL,lvl);
+      OE_aDataSetProp(OE_PTI, pti);
       double d[];
       ArrayResize(d,0);
-      TR_SendPending_array(d,ty2,sar,0,0.1,50,50);
+      
+      TR_SendPending_array(d,ty2,sar,0,send_lot,50,50);
+      
+      OE_aDataErase();
+      OE_bAutoEraseOEData=true;
    }
-   Comment(add_filter,"\nsar=",sar);
+   Comment(add_filter,"\nsar=",sar,"\nisUp=",isUp,"\ncnt=",cnt);
+}
+
+void GetLastTI(int &aI[], int start_bar, string add_filter=""){
+   ArrayResize(aI,0);
+   datetime start_time=Time[start_bar];
+   string f=StringConcatenate(""
+            , OE_OOT,">>",(int)start_time
+            , add_filter);
+   SELECT2(aOE,aI,f);         
 }
 
 int CntTY(int ty1=-1, int ty2=-1, string addF=""){
@@ -86,7 +215,7 @@ int CntTY(int ty1=-1, int ty2=-1, string addF=""){
    }
    
    if(ty2>-1){
-      res=CntTY(ty2);
+      res=CntTY(ty2,-1,addF);
    }
    
    f=StringConcatenate("" 
@@ -100,6 +229,8 @@ int CntTY(int ty1=-1, int ty2=-1, string addF=""){
    return(res);
 }
 
+
+//{ === SAR ====================================================================
 int SAR_getNearestChange(string sy="", int tf=0, double step=0.02, double maximum=0.2, int shift=1){
    
    if(sy=="")sy=Symbol();
@@ -134,3 +265,5 @@ double SAR_get(string sy="", int tf=0, double step=0.02, double maximum=0.2, int
    if(sy=="")sy=Symbol();
    return(iSAR(sy,tf,step,maximum,shift));
 }
+
+//} -----------------------------------------------------------------------------

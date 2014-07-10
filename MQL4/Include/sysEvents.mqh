@@ -21,9 +21,9 @@ double	aEO[][OE_MAX];
 #define E_EVT	1
 #define	E_MAX	2
 
-#define EVT_NEW		0
+#define EVT_NEW	0
 #define EVT_CHTY	1
-#define EVT_CLS		2
+#define EVT_CLS	2
 double	aE[][E_MAX];
 
 void E_Init(void){

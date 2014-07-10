@@ -21,6 +21,10 @@
 			>Rev:0
 	*/
 
+#define OE_CLOSED_BY_TP 1
+#define OE_CLOSED_BY_SL 2
+#define OE_CLOSED_BY_M 3 //Закрытие с рынка
+
 //--- Main info {
 #define	OE_TI    0	//OrderTicket()
 #define	OE_TY	   1	//OrderType()
@@ -40,7 +44,7 @@
 
 //------ Close data {
 #define OE_CPP		15	//Close profit in pips with sign (-/+)
-#define	OE_CTY	16	//Closed by sl/tp/from market (1,2,3);
+#define OE_CTY    16	//Closed by sl/tp/from market (1,2,3);
 #define OE_CP2SL	17	//Разность между ценой закрытия и сл в пунктах
 #define OE_CP2TP	18	//Разность между ценой закрытия и тп в пунктах
 #define OE_CP2OOP	19	//Разность между ценой закрытия и ценой открытия в пунктах }
@@ -224,6 +228,16 @@ int OE_setSTD(int ti){
 	}else{
 		aOE[idx][OE_IT]=	0;
 		aOE[idx][OE_IC]=	1;
+		if(OrderClosePrice()==OrderTakeProfit()){
+		   aOE[idx][OE_CTY]=OE_CLOSED_BY_TP;
+		}else{
+		   if(OrderClosePrice()==OrderStopLoss()){
+		      aOE[idx][OE_CTY]=OE_CLOSED_BY_SL;
+		   }else{
+		      aOE[idx][OE_CTY]=OE_CLOSED_BY_M;
+		   }
+		}
+		
 	}
 	
 	if(OrderType()<=1){
@@ -379,6 +393,7 @@ void OE_DelPending(){
    }  
 }
 
+bool OE_bAutoEraseOEData=true;
 double aOEData[][OE_MAX];
 void OE_aDataErase(){
    ArrayResize(aOEData,0);
@@ -403,5 +418,5 @@ void OE_aDataSetInOE(int idx_OE=0){
       aOE[idx_OE][c]=val;   
    }
    
-   OE_aDataErase();
+   if(OE_bAutoEraseOEData) OE_aDataErase();
 }

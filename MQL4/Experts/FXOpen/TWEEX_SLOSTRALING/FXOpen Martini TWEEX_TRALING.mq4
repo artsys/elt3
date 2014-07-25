@@ -124,7 +124,6 @@ void start()
    eFXOSlosTraling_PriceStep(STR_PriceStep);
    eFXOSlosTraling_SLKoef(STR_SLKoef);
    eFXOSlosTraling_MN(Magic);
-   
    eFXOSlosTraling_startext();
    
    BsTemp = 0;

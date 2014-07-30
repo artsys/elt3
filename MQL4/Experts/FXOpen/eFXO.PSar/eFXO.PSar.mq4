@@ -19,7 +19,11 @@ input double Lot=0.1;
 input double Multy=2;
 input int    MaxLevel=10; //Максимальное колено
 input string h1="Spread =-1: Спред вал. пары";
-input int    Spread=-1;
+input int    Spread_BuyStop=200;
+input int    Spread_SellStop=50;
+input string h2="Fixed value of tp/sl";
+input int    TPFix=200;
+input int    SLFix=200;
 input string i1="=== PSAR PROPERTIES ===";
 input double SAR_Step=0.02;
 input double SAR_Maximum=0.2;
@@ -61,6 +65,7 @@ void startext()export{
    SetNearestSarChange();
    B_Start();
    SAR_Traling();
+   //Traling_TPSL();
    CheckEvents();
    Autoopen();
    
@@ -88,6 +93,8 @@ void CheckEvents(){
 }
 
 void CheckChild(int ti){
+   
+   DAIdPRINTALL2(aOE, __FUNCTION__+"______________");
    string f=StringConcatenate(""
             ,OE_PTI,"==",ti
             ," AND "
@@ -118,6 +125,7 @@ void CheckChild(int ti){
 }
 
 void SAR_Traling(){
+   DAIdPRINTALL2(aOE,__FUNCTION__+"_________");
    bool isUP=SAR_isUP("",0,SAR_Step,SAR_Maximum,0);
    int SAR_StartBar=SAR_getNearestChange("",0,SAR_Step,SAR_Maximum,0);
    double sar=SAR_get("",0,SAR_Step,SAR_Maximum,0);
@@ -125,15 +133,23 @@ void SAR_Traling(){
    int tyo=-1, add_spread=0;;
    if(isUP){
       tyo=OP_BUYSTOP;
-      if(Spread==-1){
+      if(Spread_BuyStop==-1){
          add_spread=MarketInfo(Symbol(),MODE_SPREAD);
       }else{
-         add_spread=Spread;
+         add_spread=Spread_BuyStop;
       }
       
       sar+=add_spread*Point;
    }
-   else tyo=OP_SELLSTOP;
+   else{
+      tyo=OP_SELLSTOP;
+      if(Spread_SellStop==-1){
+         add_spread=MarketInfo(Symbol(),MODE_SPREAD);
+      }else{
+         add_spread=Spread_SellStop;
+      }
+      sar-=add_spread*Point;
+   }   
    
    string add_filter=" AND "+OE_TY+"=="+tyo;
    int aI[];
@@ -149,9 +165,11 @@ void SAR_Traling(){
 }
 
 void Autoopen(){
+   DAIdPRINTALL2(aOE,__FUNCTION__+"__________");
    double sar=SAR_get("",0,SAR_Step,SAR_Maximum,0);
    bool isUp=SAR_isUP("",0,SAR_Step,SAR_Maximum,0);
    int SAR_StartBar=SAR_getNearestChange("",0,SAR_Step,SAR_Maximum,0);
+   DPRINT2("SAR_StartBar="+SAR_StartBar);
    datetime SAR_StartTime=Time[SAR_StartBar];
    
    string add_filter=" AND "+OE_OOT+">>"+(int)SAR_StartTime;
@@ -160,14 +178,19 @@ void Autoopen(){
    if(isUp){
       ty1=OP_BUY;
       ty2=OP_BUYSTOP;
-      if(Spread==-1){
+      if(Spread_BuyStop==-1){
          add_spread=MarketInfo(Symbol(),MODE_SPREAD);
       }else{
-         add_spread=Spread;
+         add_spread=Spread_BuyStop;
       }
    }else{
       ty1=OP_SELL;
       ty2=OP_SELLSTOP;
+      if(Spread_SellStop==-1){
+         add_spread=MarketInfo(Symbol(),MODE_SPREAD);
+      }else{
+         add_spread=Spread_SellStop;
+      }
    }
    
    int cnt=CntTY(ty1,ty2,add_filter);
@@ -178,7 +201,7 @@ void Autoopen(){
       
       double send_lot=0;
       
-      int last_tickets_start=SAR_getNearestChange("",add_spread,SAR_Step,SAR_Maximum,SAR_StartBar);
+      int last_tickets_start=SAR_getNearestChange("",0,SAR_Step,SAR_Maximum,SAR_StartBar+1);
       int aI[];
       string add_filter=" AND "+OE_OOP+"<<"+(int)dtNearestSarChange;
       GetLastTI(aI,last_tickets_start,add_filter);;
@@ -207,15 +230,15 @@ void Autoopen(){
       double d[];
       ArrayResize(d,0);
       
-      TR_SendPending_array(d,ty2,sar,0,send_lot,50,50);
+      TR_SendPending_array(d,ty2,sar,add_spread,send_lot,TPFix,SLFix);
       
       OE_aDataErase();
       OE_bAutoEraseOEData=true;
    }
-   Comment(add_filter,"\nsar=",sar,"\nisUp=",isUp,"\ncnt=",cnt);
 }
 
 void GetLastTI(int &aI[], int start_bar, string add_filter=""){
+   DAIdPRINTALL2(aOE,__FUNCTION__+"_________");
    ArrayResize(aI,0);
    datetime start_time=Time[start_bar];
    string f=StringConcatenate(""

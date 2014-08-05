@@ -1,6 +1,6 @@
 	#property copyright "Copyright 2014, artamir"
 #property link      "http:\\forum.fxopen.ru"
-#property version   "2.20"
+#property version   "2.30"
 #property strict
 //#property stacksize 256
 
@@ -34,7 +34,6 @@ input	double FIXProfit_amount=500;
 
 
 #define EXP "eTH"
-#define VER "3.1.0.9_2014.03.07"
 #include <sysBase.mqh>
 
 int OnInit(){
@@ -97,6 +96,7 @@ int startext(void){
 			>Rev:0
 	*/
    zx
+   DAIdPRINTALL2(aOE,__FUNCTION__+"__________");
 	string fn="startext";
    
      
@@ -471,6 +471,7 @@ void TN_checkCO(int pti, int RevKoef=1){
 					 @0.0.0.1@2014.03.06@artamir	[+]	TN_checkCO
 			>Rev:0
 	*/
+	DAIdPRINTALL2(aOE,__FUNCTION__+"____ti_"+pti);
 	zx
 	string fn="TN_checkCO";
 	
@@ -516,7 +517,9 @@ void TN_checkCO(int pti, int RevKoef=1){
 		int aI[];ArrayResize(aI,0);
 		AId_Init2(aEC,aI,OE_OOP);
 		string f=StringConcatenate(""
-			,OE_OOP,"==",lvloop);
+			,OE_OOP,"<<",lvloop+(Step-1)*Point
+			," AND "
+			,OE_OOP,">>",lvloop-(Step-1)*Point);
 		
 		B_Select(aEC,aI,f);
 		
@@ -630,7 +633,7 @@ void Autoopen(){
 	if(OrdersTotal()==0){
 		int ti=TR_SendBUY(Lot);
 		TR_ModifyTP(ti,TP,TR_MODE_PIP);
-		dZeroPrice=OE_getPBT(ti,OE_OOP)-Step/2*Point;
+		dZeroPrice=OE_getPBT(ti,OE_OOP);//-(Step/2)*Point;
 	}	
 }
 

@@ -111,7 +111,7 @@ double AId_Get2(double &a[][], int &aI[], int idx=0, int col=0){
 	if(rows<=0)return((double)AI_NONE);
 	
 	if(idx>=rows){
-		Print(fn,":: idx>rows ("+idx+">"+rows+")");
+		DPRINT2("idx>rows ("+idx+">"+rows+")");
 		return(AI_NONE);
 	}	
 	

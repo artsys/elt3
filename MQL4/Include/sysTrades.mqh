@@ -702,7 +702,7 @@ int TR_SendPending_array(		double &d[]	//{
 			>Rev:0
 	*/
 	zx
-	DPRINT2("type="+type+"; StartPrice="+StartPrice+"; AddPips="+AddPips);
+	DPRINT2("type="+(string)type+"; StartPrice="+(string)StartPrice+"; AddPips="+(string)AddPips);
 	if(type == OP_BUYSTOP	){return(TR_SendBUYSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
 	if(type == OP_BUYLIMIT	){return(TR_SendBUYLIMIT_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
 	if(type == OP_SELLSTOP	){return(TR_SendSELLSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}

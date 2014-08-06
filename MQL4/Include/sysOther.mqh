@@ -189,10 +189,10 @@ string UCase(string str){
 	int l = StringLen(str);
 	
 	for(int i = 0; i < l; i++){
-		int chr = StringGetChar(str, i);
+		ushort chr = (ushort)StringGetChar(str, i);
 		
 		if(chr >= 97 && chr <= 122){
-			str = StringSetChar(str,i,(chr-32));
+			str = StringSetChar(str,i,(ushort)(chr-32));
 		}
 	}
 	
@@ -215,7 +215,7 @@ void SelectedSymbols(){
 	*/
 
 	int h = FileOpenHistory("symbols.sel",FILE_BIN|FILE_READ);	//открываем файл обзора рынка.
-	int symbols_count = (FileSize(h)-2)/130+1; //всего выбрано валютных пар.
+	int symbols_count = (int)(FileSize(h)-2)/130+1; //всего выбрано валютных пар.
 	
 	int start_ofset = 4;// первые 4 байта пропускаем.
 	
@@ -225,7 +225,7 @@ void SelectedSymbols(){
 		int total_ofset = start_ofset+128*i;	//расчет офсета с начала файла.
 		FileSeek(h,total_ofset,SEEK_SET);		//переводим курсор на расчитанный офсет.
 		s = FileReadString(h,10);				//читаем 10 байт (содержат название валютной пары)
-		Print(i+": "+s);						//делаем с названием что хотим.
+		Print((string)i+": "+(string)s);						//делаем с названием что хотим.
 	}
 	FileClose(h);	//закрываем файл.
 }

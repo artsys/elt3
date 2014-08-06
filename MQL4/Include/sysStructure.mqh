@@ -21,7 +21,7 @@ int Struc_KeyValue_int(string str, string key = "@p", int def = -1){
 			return int value by key from format string
 	*/
 	
-	return(StrToInteger(Struc_StringKeyValue(str,key,def)));
+	return(StrToInteger(Struc_StringKeyValue(str,key,(string)def)));
 }
 
 double Struc_KeyValue_double(string str, string key = "@p"){
@@ -70,7 +70,7 @@ string Struc_StringKeyValue(string str = "", string key = "@p", string def = "-1
 	int lKeyLen	= StringLen(key);
 	lPosEnd		= StringFind(str,d,lPosStart+1);	// find position of "@" in str after lPosStart 
 	lPosStart	= lPosStart + lKeyLen;
-	int	len		= iif(lPosEnd == -1, -1, lPosEnd - lPosStart);
+	int	len		= (int)iif(lPosEnd == -1, -1, lPosEnd - lPosStart);
 	//---
 	return(StringSubstr(str, lPosStart, len));
 }

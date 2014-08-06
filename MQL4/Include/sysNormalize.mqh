@@ -29,7 +29,7 @@ double Norm_symb(double d, string sy = "", int add = 0){//..
 		return(0);
 	}
 	//----------------------------------
-	int di = MarketInfo(sy,	MODE_DIGITS);
+	int di = (int)MarketInfo(sy,	MODE_DIGITS);
 	return(NormalizeDouble(d, di+add));
 }//.
 

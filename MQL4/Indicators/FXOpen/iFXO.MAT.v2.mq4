@@ -3,9 +3,9 @@
 //|                        Copyright 2014, MetaQuotes Software Corp. |
 //|                                              http://www.mql5.com |
 //+------------------------------------------------------------------+
-#property copyright "Copyright 2014, MetaQuotes Software Corp."
-#property link      "http://www.mql5.com"
-#property version   "1.00"
+#property copyright "forum.fxopen.ru"
+#property link      "http://forum.fxopen.ru"
+#property version   "2.10"
 #property strict
 #property indicator_chart_window
 #property indicator_buffers 1
@@ -25,6 +25,8 @@ input int                  NormDigits=4; //Digits
 //--- indicator buffers
 double         MATBuffer[];
 double         MA[];
+
+string         objName="";
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
 //+------------------------------------------------------------------+
@@ -43,8 +45,25 @@ int OnInit()
 //--- setting a code from the Wingdings charset as the property of PLOT_ARROW
    //PlotIndexSetInteger(0,PLOT_ARROW,159);
 //---
+   string sParams= "@1p"+(string)Step
+                  +"@2p"+(string)MA_per
+                  +"@3p"+(string)MA_mode
+                  +"@4p"+(string)MA_applied_price
+                  +"@5p"+(string)NormDigits;
+                  
+   objName="MAT"+(string)Period();               
+   if(ObjectFind(objName)==-1){
+      ObjectCreate(objName,OBJ_LABEL,0,Time[0],Open[0]);
+      ObjectSetText(objName,sParams,10);
+   }               
    return(INIT_SUCCEEDED);
   }
+  
+void OnDeinit(const int reason){
+   if(ObjectFind(objName)>-1){
+      ObjectDelete(objName);
+   }
+}  
 //+------------------------------------------------------------------+
 //| Custom indicator iteration function                              |
 //+------------------------------------------------------------------+
@@ -59,7 +78,7 @@ int OnCalculate(const int rates_total,
                 const long &volume[],
                 const int &spread[])
   {
-//---
+//--
    if(rates_total<Bars)return(0);
 
   int lim=rates_total-prev_calculated;

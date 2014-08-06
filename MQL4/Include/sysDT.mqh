@@ -23,7 +23,7 @@ int DT_delta(){
 	
 	//------------------------------------------------------
 	static int 	delta;
-	datetime 	TC_old;
+	datetime 	TC_old=0;
 	bool 		TC_changed=false;
 	
 	//------------------------------------------------------
@@ -36,8 +36,8 @@ int DT_delta(){
 	
 	//------------------------------------------------------
 	if(TC_changed){
-		if(delta>0){delta=MathMin(delta,TL-TC);}
-		else{delta=TL-TC;}
+		if(delta>0){delta=(int)MathMin(delta,TL-TC);}
+		else{delta=(int)(TL-TC);}
 	}
 	
 	//------------------------------------------------------
@@ -123,7 +123,7 @@ string DT_Time2Str(datetime t){
 			>Rev:0
 	*/
 	
-	string res=TimeHour(t)+":"+TimeMinute(t)+":"+TimeSeconds(t);
+	string res=(string)TimeHour(t)+":"+(string)TimeMinute(t)+":"+(string)TimeSeconds(t);
 	
 	return(res);
 }

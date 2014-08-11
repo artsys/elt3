@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2014, MetaQuotes Software Corp."
 #property link      "http://forum.fxopen.ru"
-#property version   "3.11"
+#property version   "4.00"
 #property strict
 //--- input parameters
 input bool     STR_Use=true;  //Slos traling

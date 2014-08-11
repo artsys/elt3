@@ -119,7 +119,7 @@ void E_Events(void){
 	AId_Init2(aEC,aIC); AId_Init2(aEO,aIO);
 	
 	for(int ic=0;ic<ArrayRange(aIC,0);ic++){
-		int cti=AId_Get2(aEC,aIC,ic,OE_TI);
+		int cti=(int)AId_Get2(aEC,aIC,ic,OE_TI);
 		int io=AId_SearchFirst2(aEO, aIO, OE_TI, cti);
 		
 		if(io==AI_NONE){
@@ -128,16 +128,16 @@ void E_Events(void){
 		}
 	
 		//Изменился тип ордера.
-		int cty=AId_Get2(aEC,aIC,ic,OE_TY);
-		int oty=AId_Get2(aEO,aIO,io,OE_TY);
+		int cty=(int)AId_Get2(aEC,aIC,ic,OE_TY);
+		int oty=(int)AId_Get2(aEO,aIO,io,OE_TY);
 		if(cty!=oty){
 			EVENT_ChTY(cti);
 		}
 	}
 	
 	for(int io=0; io<ArrayRange(aIO,0);io++){
-		int oti=AId_Get2(aEO,aIO,io,OE_TI);
-		int ic=AId_SearchFirst2(aEC, aIC, OE_TI, oti);
+		int oti=(int)AId_Get2(aEO,aIO,io,OE_TI);
+		int ic=(int)AId_SearchFirst2(aEC, aIC, OE_TI, oti);
 		
 		if(ic==AI_NONE){
 			//Print(fn,"->EVENT_Closed()");

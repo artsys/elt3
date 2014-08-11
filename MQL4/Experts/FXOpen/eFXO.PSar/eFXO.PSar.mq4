@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "DrJJ, artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.20a"
+#property version   "1.30"
 #property strict
 
 //#define DEBUG2
@@ -57,6 +57,7 @@ void OnTick()
   {
 //---
    startext(); 
+   
   }
 //+------------------------------------------------------------------+
 
@@ -65,7 +66,7 @@ void startext()export{
    SetNearestSarChange();
    B_Start();
    SAR_Traling();
-   //Traling_TPSL();
+   Traling_TPSL();
    CheckEvents();
    Autoopen();
    
@@ -75,6 +76,38 @@ void startext()export{
 void SetNearestSarChange(){
    iNearestSarChangeBar=SAR_getNearestChange("",0,SAR_Step,SAR_Maximum,0);
    dtNearestSarChange=Time[iNearestSarChangeBar]; 
+}
+
+void Traling_TPSL(){
+   double sar=SAR_get("",0,SAR_Step,SAR_Maximum,0);
+   bool isUP=SAR_isUP("",0,SAR_Step,SAR_Maximum,0);
+   
+   int typ=-1;
+   int add_spread=0;
+   if(isUP){
+      typ=OP_SELL;
+      if(Spread_BuyStop==-1){
+         sar+=MarketInfo(NULL,MODE_SPREAD)*Point;
+      }else{
+         sar+=Spread_BuyStop*Point;
+      }
+   }else{
+      typ=OP_BUY;
+      if(Spread_SellStop==-1){
+         sar-=MarketInfo(NULL,MODE_SPREAD)*Point;
+      }else{
+         sar-=Spread_SellStop*Point;
+      }
+   }
+   
+   string f=(string)OE_TY+"=="+(string)typ;
+   SELECT(aTO,f);
+   
+   int rows=ROWS(aI);
+   for(int i=0; i<rows; i++){
+      int ti=AId_Get2(aTO,aI,i,OE_TI);
+      TR_ModifySL(ti,sar,TR_MODE_PRICE);
+   }
 }
 
 void CheckEvents(){
@@ -203,7 +236,7 @@ void Autoopen(){
       
       int last_tickets_start=SAR_getNearestChange("",0,SAR_Step,SAR_Maximum,SAR_StartBar+1);
       int aI[];
-      string add_filter=" AND "+OE_OOP+"<<"+(int)dtNearestSarChange;
+      add_filter=" AND "+OE_OOP+"<<"+(int)dtNearestSarChange;
       GetLastTI(aI,last_tickets_start,add_filter);;
       int rows=ROWS(aI);
       if(rows>0){

@@ -22,6 +22,7 @@ input int                  MA_per=50;  //Period
 input ENUM_MA_METHOD       MA_mode=1;  //Method
 input ENUM_APPLIED_PRICE   MA_applied_price=0; //Applied Price
 input int                  NormDigits=4; //Digits
+input bool                 DelPropsOnDeinit=true;
 //--- indicator buffers
 double         MATBuffer[];
 double         MA[];
@@ -53,13 +54,15 @@ int OnInit()
                   
    objName="MAT"+(string)Period();               
    if(ObjectFind(objName)==-1){
-      ObjectCreate(objName,OBJ_LABEL,0,Time[0],Open[0]);
-      ObjectSetText(objName,sParams,10);
+      ObjectCreate(objName,OBJ_LABEL,0,0,0,0,0);
+      ObjectSetText(objName,sParams,0);
    }               
    return(INIT_SUCCEEDED);
   }
   
 void OnDeinit(const int reason){
+   if(!DelPropsOnDeinit)return;
+   
    if(ObjectFind(objName)>-1){
       ObjectDelete(objName);
    }

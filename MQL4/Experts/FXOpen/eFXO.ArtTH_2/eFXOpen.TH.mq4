@@ -35,7 +35,6 @@ input	double FIXProfit_amount=500;
 
 #define EXP "eTH"
 #include <sysBase.mqh>
-
 int OnInit(){
 	zx
 	/**

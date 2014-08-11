@@ -1,6 +1,6 @@
    /**
-		\version	0.0.0.6
-		\date		2014.07.07
+		\version	0.0.0.7
+		\date		2014.08.06
 		\author		Morochin <artamir> Artiom
 		\details	База для советников. Сборник сервисных процедур/функций.
 		Для правильной работы необходимо, чтоб в советниках были определены константы: EXP - Уникальное имя эксперта, нужное для создания файлов данных эксперта.
@@ -60,8 +60,10 @@ string comadd="";
 #define xz
 
 bool SELECT_UsePreselectedArray=false;
+
 #define SELECT(a,text) int aI[]; ArrayResize(aI,0,1000); AId_Init2(a,aI); B_Select(a, aI, text);
 #define SELECT2(a,aI,text) if(!SELECT_UsePreselectedArray) {ArrayResize(aI,0,1000); AId_Init2(a,aI);} B_Select(a, aI, text);  SELECT_UsePreselectedArray=false;
+
 #define ROWS(aI) ArrayRange(aI,0);
 	
 #property copyright "Copyright 2014, artamir"
@@ -85,8 +87,8 @@ bool isTick=false;
 #include <sysOE.mqh>
 #include <sysTerminal.mqh>
 #include <sysEvents.mqh> 
-
-#include <sysTrades.mqh>//}	
+#include <sysTrades.mqh>
+//}	
 
 #define TOPENBUYPOS if(OrdersTotal()==0){TR_SendBUY(0.1);}
 
@@ -177,8 +179,11 @@ void B_Select(double &a[][], int &aI[], string f){
    zx
 	string fn="B_Select";
 	
-	if(StringFind(f,((string)OE_MN+"=="))<0)	f=StringConcatenate(OE_MN,"==",TR_MN," AND ",f);	
-	DPRINT2("f="+f);
+	#ifdef SYSTRADES
+	   Alert("defined SYSTRADES");
+   	if(StringFind(f,((string)OE_MN+"=="))<0)	f=StringConcatenate(OE_MN,"==",TR_MN," AND ",f);	
+   	DPRINT2("f="+f);
+	#endif 
 	AIF_init();
 	
 	//1. Раскладываем строку f по разделителю " AND "
@@ -200,8 +205,8 @@ void B_Select(double &a[][], int &aI[], string f){
 		int col=-1; double val=0.0;
 		
 		if(e_rows>1){
-			int col=StrToInteger(aTemp[0]);
-			double val=StrToDouble(aTemp[1]);
+			col=StrToInteger(aTemp[0]);
+			val=StrToDouble(aTemp[1]);
 			
 			AIF_filterAdd_AND(col,AI_EQ,val,val);	
 		}
@@ -212,7 +217,7 @@ void B_Select(double &a[][], int &aI[], string f){
 		e_rows=ArrayRange(aTemp,0);
 		if(e_rows>1){
 			col=StrToInteger(aTemp[0]);
-			double val=(double)StrToDouble(aTemp[1]);
+			val=(double)StrToDouble(aTemp[1]);
 			
 			AIF_filterAdd_AND(col,AI_GREAT,val,val);	
 		}	
@@ -223,7 +228,7 @@ void B_Select(double &a[][], int &aI[], string f){
 		e_rows=ArrayRange(aTemp,0);
 		if(e_rows>1){
 			col=StrToInteger(aTemp[0]);
-			double val=(double)StrToDouble(aTemp[1]);
+			val=(double)StrToDouble(aTemp[1]);
 			
 			AIF_filterAdd_AND(col,AI_GREAT_OR_EQ,val,val);	
 		}	
@@ -233,7 +238,7 @@ void B_Select(double &a[][], int &aI[], string f){
 		e_rows=ArrayRange(aTemp,0);
 		if(e_rows>1){
 			col=StrToInteger(aTemp[0]);
-			double val=(double)StrToDouble(aTemp[1]);
+			val=(double)StrToDouble(aTemp[1]);
 			AIF_filterAdd_AND(col,AI_LESS,val,val);	
 		}	
 		//}

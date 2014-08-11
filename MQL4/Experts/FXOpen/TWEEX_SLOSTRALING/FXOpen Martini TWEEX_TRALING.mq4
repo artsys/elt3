@@ -1,6 +1,6 @@
 #property copyright "forum.FXOpen.ru - MaxZ"
 #property link      "forum.FXOpen.ru"
-#property version "3.10"
+#property version "4.00"
 
 // Данный советник был написан по заказу на форуме FXOpen в теме:
 // http://forum.fxopen.ru/showthread.php?91373-%D0%9E%D1%82%D0%B4%D0%B0%D0%BC-%D1%81%D0%BE%D0%B2%D0%B5%D1%82%D0%BD%D0%B8%D0%BA-%D0%B8%D0%BD%D0%B4%D0%B8%D0%BA%D0%B0%D1%82%D0%BE%D1%80-%D0%B8%D0%BB%D0%B8-%D1%81%D0%BA%D1%80%D0%B8%D0%BF%D1%82-%D0%B7%D0%B0-%D0%B8%D0%B4%D0%B5%D1%8E

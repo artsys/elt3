@@ -7,7 +7,7 @@
 				>Hist:															
 						 @3.1.0.2@2014.03.05@artamir	[*]	_OrderSend
 	*/
-
+#define SYSTRADES
 enum TR_PRPIP{
    TR_MODE_PRICE=1,
    TR_MODE_PIP=2 
@@ -645,11 +645,11 @@ int TR_SendSTOPLikeOrder_array(double &d[], int src_ti = 0, int AddPips = 0, dou
 		>Desc	:	¬ыставление ордеров, подобных заданному ордеру.
 	*/
 	
-	double	StartPrice = 0.0;
-	string	Comm = "like order: ";
-	int		Type = -1;
-	int		Magic = 0;
-	double	Lot = 0;
+	double	_StartPrice = 0.0;
+	string	_Comm = "like order: ";
+	int		_Type = -1;
+	int		_Magic = 0;
+	double	_Lot = 0;
 	
 	//------------------------------------------------------
 	if(src_ti <= 0) return(-1);
@@ -658,18 +658,18 @@ int TR_SendSTOPLikeOrder_array(double &d[], int src_ti = 0, int AddPips = 0, dou
 	if(!OrderSelect(src_ti, SELECT_BY_TICKET)) return(-1);
 	
 	//------------------------------------------------------
-	StartPrice = Norm_symb(OrderOpenPrice());
-	Comm = Comm + OrderTicket();
-	Type = OrderType();
-	Lot = OrderLots()*lot_multi;
-	Magic = OrderMagicNumber();
+	_StartPrice = Norm_symb(OrderOpenPrice());
+	_Comm = _Comm + (string)OrderTicket();
+	_Type = OrderType();
+	_Lot = OrderLots()*lot_multi;
+	_Magic = OrderMagicNumber();
 	
-	if(Type == OP_BUY || Type == OP_BUYSTOP){
-		return(TR_SendBUYSTOP_array(d, StartPrice, AddPips, Lot, 0, 0, Comm, Magic));
+	if(_Type == OP_BUY || _Type == OP_BUYSTOP){
+		return(TR_SendBUYSTOP_array(d, _StartPrice, AddPips, _Lot, 0, 0, _Comm, _Magic));
 	}
 	
-	if(Type == OP_SELL || Type == OP_SELLSTOP){
-		return(TR_SendSELLSTOP_array(d, StartPrice, AddPips, Lot, 0, 0, Comm, Magic));
+	if(_Type == OP_SELL || _Type == OP_SELLSTOP){
+		return(TR_SendSELLSTOP_array(d, _StartPrice, AddPips, _Lot, 0, 0, _Comm, _Magic));
 	}
 	
 	return(0);
@@ -905,7 +905,7 @@ int TR_GetReversOP(int op=OP_BUY){
    
    if(op==OP_BUY)res=OP_SELL;
    if(op==OP_SELL)res=OP_BUY;
-   if(op==OP_BUYSTOP)res==OP_SELLSTOP;
+   if(op==OP_BUYSTOP)res=OP_SELLSTOP;
    if(op==OP_SELLSTOP)res=OP_BUYSTOP;
    if(op==OP_BUYLIMIT)res=OP_SELLLIMIT;
    if(op==OP_SELLLIMIT)res=OP_BUYLIMIT;
@@ -1517,8 +1517,8 @@ bool TR_MoveOrder(int src_ti, double pr, int mode = 1){
 					 @0.0.1@2013.04.25@artamir	[]	TR_MoveOrder
 	*/
 
-	double	src_pr, src_tp, src_sl;
-	double	new_pr, new_tp, new_sl;
+	double	src_pr=0.0, src_tp=0.0, src_sl=0.0;
+	double	new_pr=0.0, new_tp=0.0, new_sl=0.0;
 	
 	int src_ty; 
 	double src_delta_tp, src_delta_sl;
@@ -1776,7 +1776,7 @@ bool TR_CloseByTicket(int ticket){
 	}
 	
 	if(!res){
-		Print(fn," ERR:"+GetLastError());
+		Print(fn," ERR:"+(string)GetLastError());
 	}
 	
 	//------------------------------------------------------

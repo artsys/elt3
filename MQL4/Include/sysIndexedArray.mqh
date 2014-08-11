@@ -304,7 +304,7 @@ void AId_QuickSort2(double &a[][], int &aI[], int idx_min=-1, int idx_max=-1, in
 	if(idx_max<0){idx_max=ArrayRange(aI,0)-1;}
 	
 	int i=idx_min, j=idx_max;
-	int idx_pivot = MathRound((i+j)/2);
+	int idx_pivot = (int)MathRound((i+j)/2);
 	double pivot_value = NormalizeDouble((a[aI[i]][col]+a[aI[j]][col]+a[aI[idx_pivot]][col])/3,8); //усредненное значение первого, последнего и среднего элемента массива. 
 	while(i<j){
 		if(mode == AI_ASC){
@@ -370,7 +370,7 @@ int AId_QuickSearch2(double &a[][], int &aI[], int col=0, double element=0.0, in
 	
 	if(mode==AI_EQ){
 		while(l<r){
-			int c=AId_Compare(AId_Get2(a,aI,m,col), element);
+			int c=(int)AId_Compare(AId_Get2(a,aI,m,col), element);
 			if(c==AI_GREAT){
 				r=m;
 			}else{
@@ -384,7 +384,7 @@ int AId_QuickSearch2(double &a[][], int &aI[], int col=0, double element=0.0, in
 			m=l+(r-l)/2;
 		}
 		
-		int c=AId_Compare(AId_Get2(a,aI,r,col), element);
+		int c=(int)AId_Compare(AId_Get2(a,aI,r,col), element);
 		if(c==AI_EQ)return(r);
 		else return(AI_NONE);	
 	}
@@ -392,7 +392,7 @@ int AId_QuickSearch2(double &a[][], int &aI[], int col=0, double element=0.0, in
 	if(mode==AI_GREAT){
 		while(l<r){
 		   double val=AId_Get2(a,aI,m,col);
-			int c=AId_Compare(val, element);
+			int c=(int)AId_Compare(val, element);
 			if(c==AI_GREAT){
 				r=m;
 				l=m;
@@ -402,14 +402,14 @@ int AId_QuickSearch2(double &a[][], int &aI[], int col=0, double element=0.0, in
 			m=l+(r-l)/2;
 		}
 		
-		int c=AId_Compare(AId_Get2(a,aI,r,col), element);
+		int c=(int)AId_Compare(AId_Get2(a,aI,r,col), element);
 		if(c==AI_GREAT)return(r);
 		else return(AI_NONE);	
 	}
 	
 	if(mode==AI_LESS){
 		while(l<r){
-			int c=AId_Compare(AId_Get2(a,aI,m,col), element);
+			int c=(int)AId_Compare(AId_Get2(a,aI,m,col), element);
 			if(c==AI_LESS){
 				r=m;
 				l=m;
@@ -419,7 +419,7 @@ int AId_QuickSearch2(double &a[][], int &aI[], int col=0, double element=0.0, in
 			m=l+(r-l)/2;
 		}
 		
-		int c=AId_Compare(AId_Get2(a,aI,r,col), element);
+		int c=(int)AId_Compare(AId_Get2(a,aI,r,col), element);
 		if(c==AI_LESS)return(r);
 		else return(AI_NONE);	
 	}
@@ -672,8 +672,8 @@ void AId_Select2(double &a[][], int &aI[]){
 	}	
 	
 	for(int filter_idx=0; filter_idx<filter_rows; filter_idx++){
-		int		f_col=AIF_filter[filter_idx][AIF_COL];
-		int		f_aop=AIF_filter[filter_idx][AIF_AOP];
+		int		f_col=(int)AIF_filter[filter_idx][AIF_COL];
+		int		f_aop=(int)AIF_filter[filter_idx][AIF_AOP];
 		double	f_min=AIF_filter[filter_idx][AIF_MIN];
 		double	f_max=AIF_filter[filter_idx][AIF_MAX];
 		
@@ -750,14 +750,14 @@ void AId_Print2(double &a[][], int &aI[], int d = 4, string fn = "AId_PrintArray
 	int cols = ArrayRange(a,1);
 	
 	//------------------------------------------------------
-	fn = i+"_"+fn+".iar";
+	fn = (string)i+"_"+(string)fn+".iar";
 	
 	//------------------------------------------------------
 	int handle = FileOpen(fn, FILE_CSV|FILE_WRITE, "\t");
 	for(int idx_1 = 0; idx_1 < rows; idx_1++){
 		string s = "";
 		for(int idx_2 = 0; idx_2 < cols; idx_2++){
-			s = StringConcatenate(s,"\t", "[aI["+idx_1+"],"+aI[idx_1]+"]["+idx_2+"]_"+OE2Str(idx_2),DoubleToStr(a[aI[idx_1]][idx_2], d));
+			s = StringConcatenate(s,"\t", "[aI["+(string)idx_1+"],"+(string)aI[idx_1]+"]["+(string)idx_2+"]_"+OE2Str(idx_2),DoubleToStr(a[aI[idx_1]][idx_2], d));
 		}
 		FileWrite(handle, s);
 	}
@@ -803,8 +803,8 @@ void AId_STF2(double &a[][], string fn, int d = 4){
 			double val = a[idx1][idx2];
 			
 			//----------------------------------------------
-			string str = "@idx1_"+idx1
-						+"@idx2_"+idx2
+			string str = "@idx1_"+(string)idx1
+						+"@idx2_"+(string)idx2
 						+"@val_"+DoubleToStr(a[idx1][idx2], d)
 						+"@des_"+OE2Str(idx2);
 						

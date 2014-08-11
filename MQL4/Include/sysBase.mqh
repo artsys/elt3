@@ -106,8 +106,11 @@ void B_Init(string expert_name="")export{
 	OE_init();
 	E_Init();
 	
-	string file_oe=B_DBOE(expert_name);
-	AId_RFF2(aOE,file_oe);
+	
+	if(!IsTesting()){
+	   string file_oe=B_DBOE(expert_name);
+	   AId_RFF2(aOE,file_oe);
+	}   
 }
 
 void B_Deinit(string expert_name="")export{
@@ -180,7 +183,7 @@ void B_Select(double &a[][], int &aI[], string f){
 	string fn="B_Select";
 	
 	#ifdef SYSTRADES
-	   Alert("defined SYSTRADES");
+	  // Alert("defined SYSTRADES");
    	if(StringFind(f,((string)OE_MN+"=="))<0)	f=StringConcatenate(OE_MN,"==",TR_MN," AND ",f);	
    	DPRINT2("f="+f);
 	#endif 

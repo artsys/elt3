@@ -70,6 +70,9 @@ void startext()export{
    CheckEvents();
    Autoopen();
    
+   int iBarDelHistory=SAR_getNearestChange("",0,SAR_Step,SAR_Maximum,iNearestSarChangeBar+1);
+   OE_DelBeforeDatetime(Time[iBarDelHistory]);
+   
    Comment("iNearestSarChangeBar=",iNearestSarChangeBar);
 }
 
@@ -240,10 +243,10 @@ void Autoopen(){
       GetLastTI(aI,last_tickets_start,add_filter);;
       int rows=ROWS(aI);
       if(rows>0){
-         pti=AId_Get2(aOE,aI,0,OE_TI);
-         pty=AId_Get2(aOE,aI,0,OE_TY);
-         plot=AId_Get2(aOE,aI,0,OE_LOT);
-         plevel=AId_Get2(aOE,aI,0,OE_LVL);
+         pti=AId_Get2(aOE,aI,(rows-1),OE_TI);
+         pty=AId_Get2(aOE,aI,(rows-1),OE_TY);
+         plot=AId_Get2(aOE,aI,(rows-1),OE_LOT);
+         plevel=AId_Get2(aOE,aI,(rows-1),OE_LVL);
       }
       
       int lvl=plevel+1;
@@ -277,7 +280,8 @@ void GetLastTI(int &aI[], int start_bar, string add_filter=""){
    string f=StringConcatenate(""
             , OE_OOT,">>",(int)start_time
             , add_filter);
-   SELECT2(aOE,aI,f);         
+   SELECT2(aOE,aI,f);  
+   AId_InsertSort2(aOE,aI,OE_OOT);       
 }
 
 int CntTY(int ty1=-1, int ty2=-1, string addF=""){

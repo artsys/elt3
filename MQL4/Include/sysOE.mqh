@@ -367,6 +367,8 @@ void OE_delClosed(){
 	ArrayCopy(aOE,aEC,0,0,WHOLE_ARRAY);
 }
 
+
+
 void OE_Move(int dest, int src, int count=-1){
    if(count==0 || dest==src)return;
    
@@ -385,12 +387,26 @@ void OE_DelPending(){
    for(int i=rows-1;i>=0;i--){
       if(aOE[i][OE_IC]==1 && aOE[i][OE_IP]==1){
          if(i==ArrayRange(aOE,0)-1){
-            ArrayResize(aOE,(rows-1));
+            ArrayResize(aOE,(ArrayRange(aOE,0)-1));
             continue;
          }
          OE_Move(i,i+1,rows-i-1);
       }
    }  
+}
+
+void OE_DelBeforeDatetime(datetime d=0){
+   int rows=ArrayRange(aOE,0);
+   for(int i=rows-1;i>=0;i--){
+      if(aOE[i][OE_IC]==1 && aOE[i][OE_OOT]<(double)d){
+         if(i==ArrayRange(aOE,0)-1){
+            ArrayResize(aOE,(ArrayRange(aOE,0)-1));
+            continue;
+         }
+         OE_Move(i,i+1,rows-i-1);
+         ArrayResize(aOE,ArrayRange(aOE,0)-1);
+      }
+   }
 }
 
 bool OE_bAutoEraseOEData=true;

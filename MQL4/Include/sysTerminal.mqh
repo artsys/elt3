@@ -7,6 +7,8 @@
 #property link      "http://forexmd.ucoz.org"
 #property strict
 
+int T_SendedTI=0;
+
 double aTO[][OE_MAX];
 
 void T_Start(){
@@ -19,6 +21,10 @@ void T_Start(){
       if(OrderSymbol()!=Symbol())continue;
       
       int idx=OE_setSTD(OrderTicket());
+      if(T_SendedTI==OrderTicket()){
+         OE_setFSTDByIDX(idx);
+         T_SendedTI=0;
+      }
       OE_aDataSetInOE(idx);
       AId_CopyRow2(aOE,aTO,idx);
    }

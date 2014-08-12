@@ -766,7 +766,7 @@ void AId_Print2(double &a[][], int &aI[], int d = 4, string fn = "AId_PrintArray
 	
 }
 
-void AId_STF2(double &a[][], string fn, int d = 4){
+void AId_STF2(double &a[][], string fn, int d = 8){
 	/*
 		>Ver	:	0.0.0.5
 		>Date	:	2014.03.03

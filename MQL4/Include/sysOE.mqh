@@ -51,11 +51,21 @@
 
 #define OE_BOT    20 //
 
-#define OE_USR1   21
-#define OE_USR2   22
-#define OE_MAX		23
+#define OE_DTY    21 // направление позиции/ордера (100-бай, 101-селл)
+#define OE_FOOP   22 //Цена по которой был выставлен ордер.
+
+#define OE_USR1   23
+#define OE_USR2   24
+#define OE_MAX		25
 
 double	aOE[][OE_MAX];
+
+int OE_isSended=0;
+
+enum OE_DIRECTION{
+   OE_DTY_BUY=100,
+   OE_DTY_SELL=101,
+};
 
 string OE2Str(int i){
 	/**
@@ -86,14 +96,16 @@ string OE2Str(int i){
 		case 13: return("OE_CP");
 		case 14: return("OE_IC");
 		
-		case 15: return("OE_CPP(close profit in pips)");
-		case 16: return("OE_CTY(closing type)");
-		case 17: return("OE_CP2SL");
-		case 18: return("OE_CP2TP");
-		case 19: return("OE_CP2OP");
-		case 20: return("OE_BOT");
-		case 21: return("OE_USR1");
-		case 22: return("OE_USR2");
+		case OE_CPP: return("OE_CPP(close profit in pips)");
+		case OE_CTY: return("OE_CTY(closing type)");
+		case OE_CP2SL: return("OE_CP2SL");
+		case OE_CP2TP: return("OE_CP2TP");
+		case OE_CP2OOP: return("OE_CP2OP");
+		case OE_BOT: return("OE_BOT");
+		case OE_DTY: return("OE_DTY");
+		case OE_FOOP: return("OE_FOOP");
+		case OE_USR1: return("OE_USR1");
+		case OE_USR2: return("OE_USR2");
 		default: return("UDF");
 	}
 }
@@ -222,6 +234,17 @@ int OE_setSTD(int ti){
 	aOE[idx][OE_OCP]=		OrderClosePrice();
 	aOE[idx][OE_OCT]=(int)	OrderCloseTime();
 	
+	if(OrderType()==OP_BUY || OrderType()==OP_BUYSTOP || OrderType()==OP_BUYLIMIT){
+	   aOE[idx][OE_DTY]=OE_DTY_BUY;
+	}else{
+	   aOE[idx][OE_DTY]=OE_DTY_SELL;
+	}
+	
+	if(OE_isSended){
+      OE_isSended=false;
+      aOE[idx][OE_FOOP]=aOE[idx][OE_OOP];
+   }
+	
 	if((int)OrderCloseTime() == 0){
 		aOE[idx][OE_IT]=	1;
 		aOE[idx][OE_IC]=	0;
@@ -270,6 +293,11 @@ int OE_setSTD(int ti){
 	}
 
 	return(idx);
+}
+
+int OE_setFSTDByIDX(int idx){
+   aOE[idx][OE_FOOP]=aOE[idx][OE_OOP];
+   return(idx);
 }
 
 int OE_setCLS(int ti){

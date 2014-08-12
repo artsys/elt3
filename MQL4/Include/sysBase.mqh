@@ -47,6 +47,19 @@ string comadd="";
    
 #endif    
 
+bool bDebug3=false;
+#ifdef DEBUG3
+   input bool Debug=true;
+   
+   #define DAIdPRINTALL3(a,text) if(Debug){Print("DAIdPRINTALL"); int atI[]; ArrayResize(atI,0,1000); AId_Init2(a,atI); AId_Print2(a,atI,Digits,__FUNCTION__+"_"+text);}
+   #define DAIdPRINT3(a,aI,text) AId_Print2(a,aI,Digits,__FUNCTION__+"_"+text);
+   #define DPRINT3(text) Print(__FUNCTION__+" :: "+(string)text);
+#else 
+    #define DAIdPRINTALL3(a,text)
+    #define DAIdPRINT3(a,aI,text)
+    #define DPRINT3(text)  
+#endif 
+
 #define BEFORE(a) AId_Print2(a,aI,4,"line_before"+__LINE__);
 #define AFTER(a) AId_Print2(a,aI,4,"line_after"+__LINE__);
 #define IFDEBUG_BEFORE #ifdef	DEBUG BEFORE #endif

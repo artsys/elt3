@@ -56,7 +56,8 @@
 
 #define OE_USR1   23
 #define OE_USR2   24
-#define OE_MAX		25
+#define OE_USR3   25
+#define OE_MAX		26
 
 double	aOE[][OE_MAX];
 
@@ -106,6 +107,7 @@ string OE2Str(int i){
 		case OE_FOOP: return("OE_FOOP");
 		case OE_USR1: return("OE_USR1");
 		case OE_USR2: return("OE_USR2");
+		case OE_USR3: return("OE_USR3");
 		default: return("UDF");
 	}
 }

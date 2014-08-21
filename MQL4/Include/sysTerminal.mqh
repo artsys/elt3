@@ -23,9 +23,10 @@ void T_Start(){
       int idx=OE_setSTD(OrderTicket());
       if(T_SendedTI==OrderTicket()){
          OE_setFSTDByIDX(idx);
+         OE_aDataSetInOE(idx);
          T_SendedTI=0;
       }
-      OE_aDataSetInOE(idx);
+      //
       AId_CopyRow2(aOE,aTO,idx);
    }
 }

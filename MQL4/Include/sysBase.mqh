@@ -77,7 +77,7 @@ bool SELECT_UsePreselectedArray=false;
 #define SELECT(a,text) int aI[]; ArrayResize(aI,0,1000); AId_Init2(a,aI); B_Select(a, aI, text);
 #define SELECT2(a,aI,text) if(!SELECT_UsePreselectedArray) {ArrayResize(aI,0,1000); AId_Init2(a,aI);} B_Select(a, aI, text);  SELECT_UsePreselectedArray=false;
 
-#define ROWS(aI) ArrayRange(aI,0);
+#define ROWS(aI) ArrayRange(aI,0)
 	
 #property copyright "Copyright 2014, artamir"
 #property link      "http:\\forexmd.ucoz.org"
@@ -124,6 +124,8 @@ void B_Init(string expert_name="")export{
 	   string file_oe=B_DBOE(expert_name);
 	   AId_RFF2(aOE,file_oe);
 	}   
+	
+	T_Start();
 }
 
 void B_Deinit(string expert_name="")export{

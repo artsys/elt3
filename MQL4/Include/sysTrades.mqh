@@ -1100,6 +1100,10 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 		}
 	//}
 	
+	if(comment==""){
+	   comment=(string)price;
+	}
+	
 	//------------------------------------------------------
 	int res = OrderSend(symbol, cmd, volume, price, slippage, stoploss, takeprofit, comment, lMN, expiration, arrow_color);
 	

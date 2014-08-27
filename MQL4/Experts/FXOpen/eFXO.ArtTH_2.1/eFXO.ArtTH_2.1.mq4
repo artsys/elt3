@@ -9,8 +9,8 @@
 #property strict
 
 input string s1="===== MAIN =====";
-input int LevelStep=20;	//Шаг между ордерами
-input int TP=40; //Тейкпрофит (на каждый ордер отдельно)
+input int LevelStep=5;	//Шаг между ордерами
+input int TP=15; //Тейкпрофит (на каждый ордер отдельно)
 input int Levels=5; //Кол. уровней от позиции.
 input int EQLevels=3; //Кол. екви уровней.
 input double Lot=0.1;
@@ -27,6 +27,7 @@ input	double FIXProfit_amount=500;
 
 //Глобальные переменные.
 double gdFOP=0.0; //уровень открытия первого ордера.
+double fix_profit=0;
 
 //#define DEBUG3
 
@@ -71,10 +72,16 @@ void OnTick()
 
 void startext(){
    DPRINT3(__FUNCTION__);
+   if(ROWS(aTO)<=0){
+      fix_profit=0;
+      gdFOP=0;
+   }
+   
    B_Start("artTH");
    
    //Закрытие позиций
-      //
+      //Фикс профит
+      FIXProfit();
    
    //Открытие позиций
       //Проверка сетки
@@ -84,6 +91,9 @@ void startext(){
       
    Comment(""
       ,"\ngdFOP="+gdFOP
+      ,"\nFIXProfit=",fix_profit
+      ,"\naOE=",ROWS(aOE)
+      ,"\naTO=",ROWS(aTO)
    );
 }
 
@@ -206,6 +216,7 @@ void Autoopen(){
    
    OE_aDataSetProp(OE_MAIN,1);
    int ti=TR_SendBUY(Lot);
+   TR_ModifyTP(ti,TP,TR_MODE_PIP);
    SELECT(aTO,OE_TI+"=="+ti);
    int rows=ROWS(aI);
    if(rows<=0){
@@ -240,4 +251,12 @@ bool FIXProfit(){
 	bNeedDelClosed=true; 
 	xz
 	return(true);
+}
+
+void CloseAllOrders(){
+   int rows=ROWS(aTO);
+   for(int i=0; i<rows; i++){
+      int ti=aTO[i][OE_TI];
+      TR_CloseByTicket(ti);
+   }
 }

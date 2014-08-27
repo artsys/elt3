@@ -28,6 +28,8 @@ input	double FIXProfit_amount=500;
 //Глобальные переменные.
 double gdFOP=0.0; //уровень открытия первого ордера.
 
+//#define DEBUG3
+
 #include <sysBase.mqh>
 
 #define OE_MAIN OE_USR1
@@ -68,9 +70,11 @@ void OnTick()
 //+------------------------------------------------------------------+
 
 void startext(){
+   DPRINT3(__FUNCTION__);
    B_Start("artTH");
    
    //Закрытие позиций
+      //
    
    //Открытие позиций
       //Проверка сетки
@@ -91,12 +95,13 @@ void TN(){
    //Выбираем все бай ордера.
    
    SELECT(aTO,OE_IM+"==1");
+   DAIdPRINT3(aTO,aI,"IM_1");
    int rows=ROWS(aI);
    for(int i=0; i<rows; i++){
       int ti=AId_Get2(aTO,aI,i,OE_TI);
+      DAIdPRINT3(aTO,aI,"TI="+ti);
       CheckNet(ti);
-      CheckNet(ti,true);
-      
+      CheckNet(ti,true);   
    }
    
 }
@@ -164,7 +169,9 @@ void CheckNet(const int pti, const bool revers=false){
          }
       }
       
-      SELECT(aTO,OE_FOOP+"=="+_lvl_pr+" AND "+OE_DTY+"=="+_dty);
+      string f=OE_FOOP+"=="+_lvl_pr+" AND "+OE_DTY+"=="+_dty;
+      SELECT(aTO,f);
+      DAIdPRINT3(aTO,aI,f);
       if(ROWS(aI)<=0){
          double d[];
          int cmd=-1;
@@ -185,7 +192,7 @@ double GetLvlLot(int cnt){
    for(int i=1;i<=cnt;i++){
       
       if(i%EQLevels==0){
-         res+=Lot;
+         res*=Multy;
       }
    }
    
@@ -205,4 +212,32 @@ void Autoopen(){
       return; //Почему то не нашли тикет в ордерах терминала.
    }
    gdFOP=AId_Get2(aTO,aI,0,OE_FOOP);
+}
+
+bool FIXProfit(){
+	/**
+		\version	0.0.0.1
+		\date		2014.01.08
+		\author		Morochin <artamir> Artiom
+		\details	Закрытие ордеров при достижении фикс профита.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.01.08@artamir	[]	FIXProfit
+			>Rev:0
+	*/
+   zx
+	string fn="FIXProfit";
+	
+	if(!FIXProfit_use)return(false);
+	
+	int aI[]; ArrayResize(aI,0,1000);AId_Init2(aOE,aI);
+	fix_profit=AId_Sum2(aOE,aI,OE_OPR);
+	DPRINT2("fix_profit="+fix_profit);
+	if(fix_profit<FIXProfit_amount){xz return(false);}
+	
+	CloseAllOrders();
+	OE_delClosed();
+	bNeedDelClosed=true; 
+	xz
+	return(true);
 }

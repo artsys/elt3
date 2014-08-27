@@ -144,7 +144,7 @@ void B_Deinit(string expert_name="")export{
 	//WriteFile();
 }
 
-void B_Start()export{
+void B_Start(string expert_name="")export{
 	/**
 		\version	0.0.0.1
 		\date		2014.03.03
@@ -159,6 +159,11 @@ void B_Start()export{
 	if(bNeedDelClosed){OE_delClosed(); bNeedDelClosed=false;}
 	isTick=true;
 	E_Start();
+	
+	if(!IsTesting()){
+	   string file_oe=B_DBOE(expert_name);
+	   AId_STF2(aOE,file_oe);
+	}
 	xz
 }
 

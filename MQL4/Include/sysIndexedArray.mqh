@@ -791,7 +791,9 @@ void AId_STF2(double &a[][], string fn, int d = 8){
 	int rows = ArrayRange(a, 0);
 	int cols = ArrayRange(a, 1);
 	
-	int H = FileOpen(fn, FILE_CSV|FILE_WRITE);
+	if(FileIsExist(fn)){FileDelete(fn);}
+	
+	int H = FileOpen(fn, FILE_TXT|FILE_WRITE);
 	
 	//------------------------------------------------------
 	for(int idx1 = 0; idx1 < rows; idx1++){

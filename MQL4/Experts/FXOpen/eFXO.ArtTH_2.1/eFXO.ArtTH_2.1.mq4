@@ -5,20 +5,20 @@
 //+------------------------------------------------------------------+
 #property copyright "artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "2.40"
+#property version   "2.50"
 #property strict
 
 input string s1="===== MAIN =====";
-input int LevelStep=5;	//Шаг между ордерами
+input int LevelStep=10;	//Шаг между ордерами
 input int TP=15; //Тейкпрофит (на каждый ордер отдельно)
 input int Levels=5; //Кол. уровней от позиции.
 input int EQLevels=3; //Кол. екви уровней.
 input double Lot=0.1;
 input double Multy=2;
 input bool UseParentLot=true;
-input string e1="================";
-input bool		CMFB_use=false; //закрывать минусовые ордера из средств баланса.
-input int		CMFB_pips=50; //закрывать ордера, ушедшие в минуз больше заданного значения (в пунктах)
+ string e1="================";
+ bool		CMFB_use=false; //закрывать минусовые ордера из средств баланса.
+ int		CMFB_pips=50; //закрывать ордера, ушедшие в минуз больше заданного значения (в пунктах)
 input string e2="================";
 //Закрывать все ордера при достижении заданного профита.
 input	bool FIXProfit_use=false;	
@@ -34,6 +34,8 @@ double fix_profit=0;
 #include <sysBase.mqh>
 
 #define OE_MAIN OE_USR1
+#define OE_LVLPR OE_USR2
+#define OE_FOP OE_USR3
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
@@ -42,13 +44,12 @@ int OnInit()
 //---
   B_Init("artTH");
 
-  SELECT(aTO,(string)OE_MAIN+"==1");
-  int rows=ROWS(aI);
+  int rows=ROWS(aTO);
   if(rows<=0){
    return(0);
   }
   
-  gdFOP=AId_Get2(aTO,aI,0,OE_FOOP);
+  gdFOP=aTO[0][OE_FOP];
 //---
    return(INIT_SUCCEEDED);
   }
@@ -120,7 +121,7 @@ void CheckNet(const int pti, const bool revers=false){
    SELECT(aTO,OE_TI+"=="+pti);
    int      pdty=    AId_Get2(aTO,aI,0,OE_DTY);
    int      pty=     AId_Get2(aTO,aI,0,OE_TY);
-   double   pfoop=   AId_Get2(aTO,aI,0,OE_FOOP);
+   double   pfoop=   AId_Get2(aTO,aI,0,OE_LVLPR);
    double   plot=    AId_Get2(aTO,aI,0,OE_LOT);
    
    int _op=1;
@@ -171,6 +172,9 @@ void CheckNet(const int pti, const bool revers=false){
          }
          
          _lvl_lot=GetLvlLot(_cnt);
+         if(_lvl_lot>10){
+            MessageBox("lvl_lot="+_lvl_lot+" _cnt="+_cnt+" line"+__LINE__);
+         }
       }else{
          if(UseParentLot){
             _lvl_lot=plot;
@@ -190,6 +194,13 @@ void CheckNet(const int pti, const bool revers=false){
          }else{
             cmd=OP_SELLSTOP;
          }
+         if(_lvl_lot>10){
+            MessageBox("lvl_lot="+_lvl_lot+" "+__LINE__);
+         }
+         gsComment="PR"+(string)_lvl_pr+"PTI"+(string)pti;
+         
+         OE_aDataSetProp(OE_FOP,gdFOP);
+         OE_aDataSetProp(OE_LVLPR,_lvl_pr);
          TR_SendPending_array(d,cmd,_lvl_pr,0,_lvl_lot,TP);
       }
       
@@ -223,6 +234,11 @@ void Autoopen(){
       return; //Почему то не нашли тикет в ордерах терминала.
    }
    gdFOP=AId_Get2(aTO,aI,0,OE_FOOP);
+   
+   int idx_OE=OE_FIBT(ti);
+   OE_aDataSetProp(OE_FOP,gdFOP);
+   OE_aDataSetProp(OE_LVLPR,gdFOP);
+   OE_aDataSetInOE(idx_OE);
 }
 
 bool FIXProfit(){
@@ -260,3 +276,5 @@ void CloseAllOrders(){
       TR_CloseByTicket(ti);
    }
 }
+
+void SetPriceLabel(double )

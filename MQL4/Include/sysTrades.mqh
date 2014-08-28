@@ -12,6 +12,8 @@ enum TR_PRPIP{
    TR_MODE_PRICE=1,
    TR_MODE_PIP=2 
 };
+
+string gsComment="";
 	
 extern string	TR_S = "==== TRADING ======================";
 extern double	TR_TwiseLots	= 20.0;						
@@ -1101,7 +1103,11 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 	//}
 	
 	if(comment==""){
-	   comment=(string)price;
+	   comment=gsComment;
+	   
+	   if(comment==""){
+	      comment="p"+(string)price+" L"+(string)volume;
+	   }
 	}
 	
 	//------------------------------------------------------

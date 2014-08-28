@@ -84,7 +84,10 @@ bool SELECT_UsePreselectedArray=false;
 #property strict
 #property library
 
-bool bNeedDelClosed=false;
+bool bNeedDelClosed=true;  //автоматическое удаление закрытых ордеров.
+                           //устанавливается при инициализации советника.
+                           //если установлено значение false то необходимо 
+                           //обеспечить ручную очистку массива aOE.
 
 bool B_BSEL=false;
 bool isTick=false;
@@ -156,7 +159,8 @@ void B_Start(string expert_name="")export{
 			>Rev:0
 	*/
 	zx
-	if(bNeedDelClosed){OE_delClosed(); bNeedDelClosed=false;}
+	//if(bNeedDelClosed){OE_delClosed(); bNeedDelClosed=false;}
+   if(bNeedDelClosed){OE_delClosed();}
 	isTick=true;
 	E_Start();
 	

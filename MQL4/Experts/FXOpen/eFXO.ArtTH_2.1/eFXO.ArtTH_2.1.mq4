@@ -276,5 +276,3 @@ void CloseAllOrders(){
       TR_CloseByTicket(ti);
    }
 }
-
-void SetPriceLabel(double )

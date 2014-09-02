@@ -415,7 +415,6 @@ int TR_SendSELLSTOP_array(		double &d[] //{
 	*/
 	
 	//----------------------------------------------------
-	zx
 	DPRINT2("parameters^=============");
 	DPRINT2("StartPrice="+StartPrice+"; AddPips="+AddPips);
 	double SendPrice = 0;
@@ -486,7 +485,6 @@ int TR_SendSELLSTOP_array(		double &d[] //{
 			rest_vol = rest_vol - sendVol;
 		}
 	}
-   xz
 	//------------------------------------------------------
 	return(ArrayRange(d,0));
 } //}
@@ -705,10 +703,10 @@ int TR_SendPending_array(		double &d[]	//{
 	*/
 	zx
 	DPRINT2("type="+(string)type+"; StartPrice="+(string)StartPrice+"; AddPips="+(string)AddPips);
-	if(type == OP_BUYSTOP	){return(TR_SendBUYSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
-	if(type == OP_BUYLIMIT	){return(TR_SendBUYLIMIT_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
-	if(type == OP_SELLSTOP	){return(TR_SendSELLSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
-	if(type == OP_SELLLIMIT	){return(TR_SendSELLLIMIT_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
+	if(type == OP_BUYSTOP	){xz return(TR_SendBUYSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
+	if(type == OP_BUYLIMIT	){xz return(TR_SendBUYLIMIT_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
+	if(type == OP_SELLSTOP	){xz return(TR_SendSELLSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
+	if(type == OP_SELLLIMIT	){xz return(TR_SendSELLLIMIT_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
 	xz
 	return(0);
 }	//}
@@ -1005,9 +1003,8 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 	//-----------------------------------------------------------
 	// ѕредопределенные переменные
 	//-----------------------------------------------------------
-	zx
 	string fn="_OrderSend";
-	if(OrdersTotal()>=TR_MaxOrdersCount&&TR_MaxOrdersCount>0) return(-1);
+	if(OrdersTotal()>=TR_MaxOrdersCount&&TR_MaxOrdersCount>0){ return(-1);}
 	//-----------------------------------------------------------
 	// Ѕлок проверок на правильность переданных параметров.
 	//-----------------------------------------------------------
@@ -1088,7 +1085,8 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 				
 				price = dAsk + STOPLEVEL*Point;
 				
-				return(-1);
+				
+				 return(-1);
 			}
 		}
 		
@@ -1097,7 +1095,7 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 			if(price >= (dBid - STOPLEVEL*Point)){
 				
 				price = dBid - STOPLEVEL*Point;
-				return(-1);
+				 return(-1);
 			}
 		}
 	//}
@@ -1114,6 +1112,9 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 	int res = OrderSend(symbol, cmd, volume, price, slippage, stoploss, takeprofit, comment, lMN, expiration, arrow_color);
 	
 	if(res > 0){
+	   if(res>=12){
+	      DAIdPRINTALL3(aOEData,"_______ti=="+res);
+	   }
 	   T_SendedTI=res;
 	   OE_isSended=true;
 		T_Start();

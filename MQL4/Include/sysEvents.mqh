@@ -53,7 +53,7 @@ void E_Start(void){
 					 @0.0.0.1@2014.03.03@artamir	[+]	E_Start
 			>Rev:0
 	*/
-	zx
+	
 	string fn="aE_Start";
 	
 	ArrayResize(aEC,0);	//Обнулили массив текущих ордеров, которые есть в терминале.
@@ -62,16 +62,30 @@ void E_Start(void){
 	for(int i=0;i<=OrdersTotal();i++){
 		if(!OrderSelect(i,SELECT_BY_POS,MODE_TRADES)) continue;
 		if(OrderSymbol() != Symbol()) continue;
+		
+		if(OrderTicket()>=12){
+		   DAIdPRINTALL3(aOE,"before aOE.ti="+OrderTicket())
+		}   
+		
 		int idx=OE_setSTD(OrderTicket());
+		
+		if(OrderTicket()>=12){
+		   DAIdPRINTALL3(aOE,"after setSTD aOE.ti="+OrderTicket())
+		}
+		
 		if(idx>-1){
 			AId_CopyRow2(aOE,aEC,idx);
 			AId_CopyRow2(aOE,aTO,idx);
+		}
+		
+		if(OrderTicket()>=12){
+		   DAIdPRINTALL3(aOE,"after aOE.ti="+OrderTicket());
+		   DAIdPRINTALL3(aTO,"after aTO.ti="+OrderTicket());
 		}
 	}
 	
 	E_Events();
 	E_End();
-	xz
 }
 
 void E_End(){

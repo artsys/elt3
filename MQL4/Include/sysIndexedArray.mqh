@@ -663,7 +663,7 @@ void AId_Select2(double &a[][], int &aI[]){
 					 @0.0.0.1@2014.02.28@artamir	[+]	AId_Select2
 			>Rev:0
 	*/
-	zx
+	
 	string fn="AId_Select2";
 	int filter_rows=ArrayRange(AIF_filter,0);
 	
@@ -726,7 +726,7 @@ void AId_Select2(double &a[][], int &aI[]){
       DAIdPRINT2(a,aI,"after setInterval col_"+OE2Str(f_col)+"_val_"+(string)f_min);
    }
 	
-	xz
+	
 }
 
 void AId_Print2(double &a[][], int &aI[], int d = 4, string fn = "AId_PrintArray_"){

@@ -186,7 +186,7 @@ int OE_setPBT(int ti, int prop, double val){
 					 @0.0.0.1@2014.03.01@artamir	[+]	OE_setPBT
 			>Rev:0
 	*/
-	zx
+	
 	string fn="OE_setPBT";
 	int idx=OE_FIBT(ti);
 	aOE[idx][prop]=val;
@@ -457,7 +457,10 @@ void OE_aDataSetProp(int col, double val){
 }
 
 void OE_aDataSetInOE(int idx_OE=0){
-   if(ArrayRange(aOEData,0)<=0)return;
+   if(ArrayRange(aOEData,0)<=0){
+      DPRINT3("ERROR: "+idx_OE+" no rows in aOEData!!!");
+      return;
+   }   
    
    for(int c=0;c<OE_MAX;c++){
       double val=aOEData[0][c];
@@ -466,5 +469,20 @@ void OE_aDataSetInOE(int idx_OE=0){
       aOE[idx_OE][c]=val;   
    }
    
-   if(OE_bAutoEraseOEData) OE_aDataErase();
+   if(OE_bAutoEraseOEData){
+      OE_aDataErase();
+   }   
+}
+
+void OE_aDataSetInTI(int ti=0){
+   if(ti<=0){
+      Print(__FUNCTION__+" ERROR :: ti="+ti);
+   }
+   int idx=OE_FIBT(ti);
+   for(int c=0;c<OE_MAX;c++){
+      double val=aOEData[0][c];
+      
+      if(val==EMPTY_VALUE)continue;
+      aOE[idx][c]=val;   
+   }
 }

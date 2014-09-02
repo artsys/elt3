@@ -62,8 +62,8 @@ bool Debug=true;
 
 #define tmr int tmrstrt=GetTickCount();
 #define ctmr " tmr:"+(string)(GetTickCount()-tmrstrt)
-#define zx #ifdef TRACING DPRINT2(__FUNCSIG__); #endif 
-#define xz
+#define zx #ifdef TRACING TRAC_AddString("<"+__FUNCTION__+">"); #endif  
+#define xz #ifdef TRACING TRAC_AddString("</"+__FUNCTION__+">"); #endif  
 
 bool SELECT_UsePreselectedArray=false;
 
@@ -84,6 +84,8 @@ bool bNeedDelClosed=true;  //автоматическое удаление закрытых ордеров.
 
 bool B_BSEL=false;
 bool isTick=false;
+
+#include <sysTracing.mqh>
 
 #include <sysOther.mqh> //{
 #include <sysNormalize.mqh>
@@ -112,6 +114,10 @@ void B_Init(string expert_name="")export{
 					 @0.0.0.1@2014.03.03@artamir	[+]	B_Init
 			>Rev:0
 	*/
+	#ifdef TRACING
+	   TRAC_Init();
+	#endif 
+	
 	OE_init();
 	E_Init();
 	
@@ -135,6 +141,10 @@ void B_Deinit(string expert_name="")export{
 					 @0.0.0.1@2014.03.03@artamir	[+]	B_Deinit
 			>Rev:0
 	*/
+	#ifdef TRACING
+	   TRAC_Deinit();
+	#endif 
+	
 	string file_oe=B_DBOE(expert_name);
 	AId_STF2(aOE,file_oe);
 	//WriteFile();
@@ -151,7 +161,7 @@ void B_Start(string expert_name="")export{
 					 @0.0.0.1@2014.03.03@artamir	[+]	B_Start
 			>Rev:0
 	*/
-	zx
+	
    if(bNeedDelClosed){OE_delClosed();}
 	isTick=true;
 	E_Start();
@@ -160,7 +170,7 @@ void B_Start(string expert_name="")export{
 	   string file_oe=B_DBOE(expert_name);
 	   AId_STF2(aOE,file_oe);
 	}
-	xz
+	
 }
 
 string B_DBOE(string expert_name){
@@ -195,7 +205,7 @@ void B_Select(double &a[][], int &aI[], string f){
 					 @0.0.0.1@2014.01.23@artamir	[+]	Select
 			>Rev:0
 	*/
-   zx
+   
 	string fn="B_Select";
 	
 	#ifdef SYSTRADES
@@ -267,7 +277,7 @@ void B_Select(double &a[][], int &aI[], string f){
 	//-------------------------------------------
 	AId_Select2(a,aI);
 
-   xz
+   
 }
 
 

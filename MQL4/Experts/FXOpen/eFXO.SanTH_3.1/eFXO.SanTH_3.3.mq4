@@ -9,6 +9,7 @@
 #property strict
 
 #define DEBUG3
+#define TRACING
 
 input string s1="===== MAIN =====";
 input int LevelStep=10;	//Шаг между ордерами
@@ -54,6 +55,7 @@ int OnInit()
 void OnDeinit(const int reason)
   {
 //---
+
    B_Deinit("eFXO.SanTH");
   }
 //+------------------------------------------------------------------+
@@ -67,6 +69,7 @@ void OnTick()
 //+------------------------------------------------------------------+
 
 void startext(){
+   DAIdPRINTALL3(aOE,"___________________");
    B_Start("eFXO.SanTH");
    
    //Закрытие позиций
@@ -82,6 +85,7 @@ void startext(){
       ,"\nexp.last_buy_pr=",expert_info.last_buy_pr
       ,"\nexp.last_sell_lot=",expert_info.last_sell_lot
       ,"\nexp.last_sell_pr=",expert_info.last_sell_pr);
+      
 }
 
 void Checking(){
@@ -270,17 +274,20 @@ void TrendNet(const double start_level, const double start_lot, const OE_DIRECTI
       SELECT(aTO,f);
      // DAIdPRINT3(aTO,aI,"aTO_f "+f);
       if(ROWS(aI)<=0){
+         zx
          OE_aDataSetProp(OE_FOP,gdFOP);
          OE_aDataSetProp(OE_LVLPR,_lvl_pr);
          gsComment="PR"+(string)_lvl_pr+" SL"+(string)start_level+" DTY"+dty;
          double d[];
+         Debug=true;
          TR_SendPending_array(d,cmd,_lvl_pr,0,_lvl_lot,TP);
-         OE_aDataErase();
-         if(ROWS(d)>0&&d[0]>=14){
+         if(ROWS(d)>0&&d[0]>=12){
             bool tDebug=Debug;
             Debug=true;
-            DAIdPRINTALL3(aTO,"aTO_________ti14");
+            DAIdPRINTALL3(aTO,"aTO_________ti="+(int)d[0]);
             Debug=tDebug;
+            
+            
          }
          if(expert_info.autoopen){
             if(dty==OE_DTY_BUY){
@@ -289,7 +296,8 @@ void TrendNet(const double start_level, const double start_lot, const OE_DIRECTI
                expert_info.last_sell_pr=_lvl_pr;
             }
             
-         }   
+         }
+         xz   
       }
    }
    expert_info.autoopen=false;

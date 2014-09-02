@@ -12,6 +12,7 @@ int T_SendedTI=0;
 double aTO[][OE_MAX];
 
 void T_Start(){
+   
    //Перечитывает ордера из терминала, создавая из них массив
    
    int t=OrdersTotal();
@@ -26,7 +27,15 @@ void T_Start(){
          OE_aDataSetInOE(idx);
          T_SendedTI=0;
       }
-      //
+      if(OrderTicket()>=12){
+         DAIdPRINTALL3(aOE,"before aOE.ti="+OrderTicket());
+         DAIdPRINTALL3(aTO,"before aTO.ti="+OrderTicket());
+      }
       AId_CopyRow2(aOE,aTO,idx);
+      if(OrderTicket()>=12){
+         DAIdPRINTALL3(aOE,"after aOE.ti="+OrderTicket());
+         DAIdPRINTALL3(aTO,"after aTO.ti="+OrderTicket());
+      }
    }
+   
 }

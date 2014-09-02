@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.10"
+#property version   "1.20"
 #property strict
 
 //#define DEBUG3
@@ -31,6 +31,8 @@ int giTickVol=0;
 
 
 double aTicks[][2];
+input bool              InversSignal=false;
+      bool             _InversSignal=false;
 
 input int               TPFix=20;
       int              _TPFix=20;
@@ -313,10 +315,18 @@ signal_struct GetSignal(){
    
    
    if(dtMaxTickPr>dtMinTickPr){
-      res.cmd=OP_BUY;
+      if(!InversSignal){
+         res.cmd=OP_BUY;
+      }else{
+         res.cmd=OP_SELL;
+      }   
       res.time=dtMinTickPr;
    }else{
-      res.cmd=OP_SELL;
+      if(!InversSignal){
+         res.cmd=OP_SELL;
+      }else{
+         res.cmd=OP_BUY;
+      }   
       res.time=dtMaxTickPr;
    }
    

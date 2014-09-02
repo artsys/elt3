@@ -26,34 +26,27 @@ string comadd="";
    #define DPRINT(text) if(DEBUG)Print(__FUNCTION__+" :: "+(string)text);
    #define DAIdPRINT(a,aI,text) if(DEBUG){AId_Print2(a,aI,4,__FUNCTION__+"_"+text);}
    #define DAIdPRINTALL(a,text) if(DEBUG){Print("DAIdPRINTALL"); int atI[]; ArrayResize(atI,0,1000); AId_Init2(a,atI); AId_Print2(a,atI,4,__FUNCTION__+"_"+text);}
-     
-   #define DPRINT2(text)
-   #define DAIdPRINT2(a,aI,text)
-   #define DAIdPRINTALL2(a,text) 
 #else 
-   #ifdef DEBUG2
-      #define DPRINT2(text) Print(__FUNCTION__+" :: "+(string)text);
-      #define DAIdPRINT2(a,aI,text) AId_Print2(a,aI,Digits,__FUNCTION__+"_"+text);
-      #define DAIdPRINTALL2(a,text) Print("DAIdPRINTALL"); int atI[]; ArrayResize(atI,0,1000); AId_Init2(a,atI); AId_Print2(a,atI,Digits,__FUNCTION__+"_"+text);
-   #else
-      #define DPRINT2(text)
-      #define DAIdPRINT2(a,aI,text)
-      #define DAIdPRINTALL2(a,text)   
-   #endif 
-   
    #define DPRINT(text)
    #define DAIdPRINT(a,aI,text)
    #define DAIdPRINTALL(a,text)
-   
-#endif    
+#endif 
 
-bool bDebug3=false;
-#ifdef DEBUG3
-   input bool Debug=true;
-   
+#ifdef DEBUG2
+   #define DPRINT2(text) Print(__FUNCTION__+" :: "+(string)text);
+   #define DAIdPRINT2(a,aI,text) AId_Print2(a,aI,Digits,__FUNCTION__+"_"+text);
+   #define DAIdPRINTALL2(a,text) Print("DAIdPRINTALL"); int atI[]; ArrayResize(atI,0,1000); AId_Init2(a,atI); AId_Print2(a,atI,Digits,__FUNCTION__+"_"+text);
+#else
+   #define DPRINT2(text)
+   #define DAIdPRINT2(a,aI,text)
+   #define DAIdPRINTALL2(a,text)   
+#endif 
+
+bool Debug=true;
+#ifdef DEBUG3 
    #define DAIdPRINTALL3(a,text) if(Debug){Print("DAIdPRINTALL"); int atI[]; ArrayResize(atI,0,1000); AId_Init2(a,atI); AId_Print2(a,atI,Digits,__FUNCTION__+"_"+text);}
    #define DAIdPRINT3(a,aI,text) AId_Print2(a,aI,Digits,__FUNCTION__+"_"+text);
-   #define DPRINT3(text) Print(__FUNCTION__+" :: "+(string)text);
+   #define DPRINT3(text) if(Debug) Print(__FUNCTION__+" :: "+(string)text);
 #else 
     #define DAIdPRINTALL3(a,text)
     #define DAIdPRINT3(a,aI,text)
@@ -159,7 +152,6 @@ void B_Start(string expert_name="")export{
 			>Rev:0
 	*/
 	zx
-	//if(bNeedDelClosed){OE_delClosed(); bNeedDelClosed=false;}
    if(bNeedDelClosed){OE_delClosed();}
 	isTick=true;
 	E_Start();

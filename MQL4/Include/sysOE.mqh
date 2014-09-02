@@ -158,8 +158,10 @@ int OE_FIBT(int ti){
 			>Hist:		
 					 @0.0.0.3@2014.03.07@artamir	[!]	Исправлен баг с поиском элемента.
 					 @0.0.0.1@2014.03.01@artamir	[+]	OE_FIBT
-			>Rev:0
+			>Rev:493
 	*/
+	
+	/*
 	string fn="OE_FIBT";
 	int aI[];
 	ArrayResize(aI,0);
@@ -171,7 +173,21 @@ int OE_FIBT(int ti){
 	}else{
 		idx=aI[idx];
 	}
-	
+	*/
+	int idx=-1;
+	DAIdPRINTALL3(aOE,"before select.ti="+ti);
+	SELECT(aOE,OE_TI+"=="+ti);
+	if(ROWS(aI)<=0){
+	   idx=OE_addRow(ti);
+	}else{
+	   if(ROWS(aI)==1){
+	      idx=aI[0];
+	   }else{
+	      Print(__FUNCTION__+" ERROR :: Больше одного элемента с тикетом="+ti);
+	      DAIdPRINT3(aOE,aI,"ERROR.ti="+ti);
+	      idx=-1;
+	   }
+	}
 	return(idx);
 }
 
@@ -223,7 +239,11 @@ int OE_setSTD(int ti){
 	*/
 	string fn="OE_setSTD";
 	if(!OrderSelect(ti, SELECT_BY_TICKET)) return(-1); //если ордер не найден, то выходим.
+	DAIdPRINTALL3(aOE,"before ti="+ti);
+
 	int idx=OE_FIBT(ti);
+	
+	DAIdPRINTALL3(aOE,"after FIBT idx="+idx);
 	
 	aOE[idx][OE_TI]	=		OrderTicket();
 	aOE[idx][OE_TY]	=		OrderType();
@@ -396,7 +416,7 @@ void OE_delClosed(){
 	//if(bNeedDelClosed)bNeedDelClosed=false;
 	//B_Start();
 	ArrayResize(aOE,ArrayRange(aTO,0));
-	ArrayCopy(aOE,aEC,0,0,WHOLE_ARRAY);
+	ArrayCopy(aOE,aTO,0,0,WHOLE_ARRAY);
 }
 
 

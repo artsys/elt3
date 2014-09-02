@@ -1112,9 +1112,7 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 	int res = OrderSend(symbol, cmd, volume, price, slippage, stoploss, takeprofit, comment, lMN, expiration, arrow_color);
 	
 	if(res > 0){
-	   if(res>=12){
-	      DAIdPRINTALL3(aOEData,"_______ti=="+res);
-	   }
+	   DAIdPRINTALL3(aOEData,"_______ti=="+res);
 	   T_SendedTI=res;
 	   OE_isSended=true;
 		T_Start();

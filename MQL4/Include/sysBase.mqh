@@ -44,7 +44,7 @@ string comadd="";
 
 bool Debug=true;
 #ifdef DEBUG3 
-   #define DAIdPRINTALL3(a,text) if(Debug){Print("DAIdPRINTALL"); int atI[]; ArrayResize(atI,0,1000); AId_Init2(a,atI); AId_Print2(a,atI,Digits,__FUNCTION__+"_"+text);}
+   #define DAIdPRINTALL3(a,text) if(Debug){int atI[]; ArrayResize(atI,0,1000); AId_Init2(a,atI); AId_Print2(a,atI,Digits,__FUNCTION__+"_"+text);}
    #define DAIdPRINT3(a,aI,text) AId_Print2(a,aI,Digits,__FUNCTION__+"_"+text);
    #define DPRINT3(text) if(Debug) Print(__FUNCTION__+" :: "+(string)text);
 #else 
@@ -163,6 +163,7 @@ void B_Start(string expert_name="")export{
 	*/
 	
    if(bNeedDelClosed){OE_delClosed();}
+   DAIdPRINTALL3(aOE,"after OE_delClosed");
 	isTick=true;
 	E_Start();
 	

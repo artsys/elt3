@@ -20,6 +20,9 @@ void T_Start(){
    for(int i=0;i<=t;i++){
       if(!OrderSelect(i,SELECT_BY_POS,MODE_TRADES)) continue;
       if(OrderSymbol()!=Symbol())continue;
+      #ifdef SYSTRADES
+         if(OrderMagicNumber()!=TR_MN)continue;
+      #endif 
       
       DAIdPRINTALL3(aOE,"before setSTD aOE.ti="+OrderTicket());
       int idx=OE_setSTD(OrderTicket());

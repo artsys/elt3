@@ -58,20 +58,18 @@ void E_Start(void){
 	
 	ArrayResize(aEC,0);	//Обнулили массив текущих ордеров, которые есть в терминале.
 	ArrayResize(aE,0);	//Обнулили массив событий
-	ArrayResize(aTO,0); //Обнулили массив ордеров в терминале.
 	for(int i=0;i<=OrdersTotal();i++){
 		if(!OrderSelect(i,SELECT_BY_POS,MODE_TRADES)) continue;
 		if(OrderSymbol() != Symbol()) continue;
 		
 		DAIdPRINTALL3(aOE,"before setSTD aOE.ti="+OrderTicket())   
 		
-		int idx=OE_setSTD(OrderTicket());
+		int idx=OE_FIBT(OrderTicket());
 		
 		DAIdPRINTALL3(aOE,"after setSTD aOE.ti="+OrderTicket())
 		
 		if(idx>-1){
 			AId_CopyRow2(aOE,aEC,idx);
-			AId_CopyRow2(aOE,aTO,idx);
 		}
 		
 		DAIdPRINTALL3(aOE,"after CopyROW aOE.ti="+OrderTicket());

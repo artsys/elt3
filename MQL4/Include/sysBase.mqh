@@ -63,6 +63,28 @@ bool Debug=true;
     #define DPRINT4(text)  
 #endif 
 
+#ifdef DEBUG5
+   #define DAIdPRINTALL5(a,text) if(1==1){int atI[]; ArrayResize(atI,0,1000); AId_Init2(a,atI); AId_Print2(a,atI,Digits,__FUNCTION__+"_"+text);};
+   #define DAIdPRINT5(a,aI,text) AId_Print2(a,aI,Digits,__FUNCTION__+"_"+text);
+   #define DPRINT5(text) Print(__FUNCTION__+" :: "+(string)text);
+#else 
+    #define DAIdPRINTALL5(a,text)
+    #define DAIdPRINT5(a,aI,text)
+    #define DPRINT5(text)  
+#endif 
+
+#ifdef DEBUGERR
+   #define DAIdPRINTERRALL(a,text) if(1==1){int atI[]; ArrayResize(atI,0,1000); AId_Init2(a,atI); AId_Print2(a,atI,Digits,__FUNCTION__+"_"+text);};
+   #define DAIdPRINTERR(a,aI,text) AId_Print2(a,aI,Digits,__FUNCTION__+"_"+text);
+   //#define DPRINT5(text) Print(__FUNCTION__+" :: "+(string)text);
+   #define DBREACK int aArrayForEAStop[]; int a=aArrayForEAStop[-1];
+#else 
+    #define DAIdPRINTERRALL(a,text)
+    #define DAIdPRINTERR(a,aI,text)
+    //#define DPRINT5(text) 
+    #define DBREACK 
+#endif 
+
 #define BEFORE(a) AId_Print2(a,aI,4,"line_before"+__LINE__);
 #define AFTER(a) AId_Print2(a,aI,4,"line_after"+__LINE__);
 #define IFDEBUG_BEFORE #ifdef	DEBUG BEFORE #endif
@@ -72,8 +94,8 @@ bool Debug=true;
 
 #define tmr int tmrstrt=GetTickCount();
 #define ctmr " tmr:"+(string)(GetTickCount()-tmrstrt)
-#define zx #ifdef TRACING TRAC_AddString("<"+__FUNCTION__+">"); #endif  
-#define xz #ifdef TRACING TRAC_AddString("</"+__FUNCTION__+">"); #endif  
+#define zx #ifdef TRACING TRAC_AddString("if{"+__FUNCTION__+"\n"); #endif  
+#define xz #ifdef TRACING TRAC_AddString(__FUNCTION__+"}"); #endif  
 
 bool SELECT_UsePreselectedArray=false;
 
@@ -135,6 +157,11 @@ void B_Init(string expert_name="")export{
 	if(!IsTesting()){
 	   string file_oe=B_DBOE(expert_name);
 	   AId_RFF2(aOE,file_oe);
+	   
+	   #ifdef SAVE_EXPERT_INFO
+	      string file_ei=B_EXP_INFO(expert_name);
+	      B_Read_Expert_Info(expert_name);
+	   #endif 
 	}   
 	
 	T_Start();
@@ -157,6 +184,11 @@ void B_Deinit(string expert_name="")export{
 	
 	string file_oe=B_DBOE(expert_name);
 	AId_STF2(aOE,file_oe);
+	
+	#ifdef SAVE_EXPERT_INFO
+	   string file_ei=B_EXP_INFO(expert_name);
+	   B_Save_Expert_Info(file_ei);
+	#endif    
 	//WriteFile();
 }
 
@@ -175,13 +207,39 @@ void B_Start(string expert_name="")export{
    if(bNeedDelClosed){OE_delClosed();}
    DAIdPRINTALL3(aOE,"after OE_delClosed");
 	isTick=true;
-	//E_Start();
 	T_Start();
+	E_Start();
 	if(!IsTesting()){
 	   string file_oe=B_DBOE(expert_name);
 	   AId_STF2(aOE,file_oe);
+	   
+	   #ifdef SAVE_EXPERT_INFO
+	      string file_ei=B_EXP_INFO(expert_name);
+	      B_Save_Expert_Info(file_ei);
+	   #endif   
 	}
 	
+}
+
+void B_Save_Expert_Info(const string expert_name){
+   #ifdef SAVE_EXPERT_INFO
+      if(FileIsExist(expert_name)){
+         FileDelete(expert_name);
+      }
+      int h=FileOpen(expert_name,FILE_ANSI|FILE_BIN|FILE_WRITE);
+      FileWriteStruct(h,expert_info);
+      FileFlush(h);
+      FileClose(h);
+   #endif 
+}
+
+void B_Read_Expert_Info(const string expert_name){
+   #ifdef SAVE_EXPERT_INFO
+      int h=FileOpen(expert_name,FILE_ANSI|FILE_BIN|FILE_READ);
+      FileReadStruct(h,expert_info);
+      FileFlush(h);
+      FileClose(h);
+   #endif 
 }
 
 string B_DBOE(string expert_name){
@@ -199,10 +257,31 @@ string B_DBOE(string expert_name){
 	   expert_name=EXP;
 	#endif    
 	
-	string file=StringConcatenate("OE.",expert_name,".",AccountNumber(),".",Symbol(),".tdb");
+	string file=StringConcatenate(expert_name,".OE.",AccountNumber(),".",Symbol(),".tdb");
 	
 	return(file);
 }
+
+string B_EXP_INFO(string expert_name){
+	/**
+		\version	0.0.0.1
+		\date		2014.03.03
+		\author		Morochin <artamir> Artiom
+		\details	Имя файла-хранилища масива aOE.
+		\internal
+			>Hist:	
+					 @0.0.0.1@2014.03.03@artamir	[+]	B_DBOE
+			>Rev:0
+	*/
+	#ifdef EXP
+	   expert_name=EXP;
+	#endif    
+	
+	string file=StringConcatenate(expert_name,".info.",AccountNumber(),".",Symbol(),".struc");
+	
+	return(file);
+}
+
 
 void B_Select(double &a[][], int &aI[], string f){
 	/**

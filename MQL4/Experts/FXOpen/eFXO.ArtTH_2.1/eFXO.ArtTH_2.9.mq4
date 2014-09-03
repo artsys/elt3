@@ -5,8 +5,15 @@
 //+------------------------------------------------------------------+
 #property copyright "artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "2.70"
+#property version   "2.90"
 #property strict
+
+#define SAVE_EXPERT_INFO
+struct expert_info_struct{
+   double closed_profit;
+};
+
+expert_info_struct expert_info={0};
 
 input string s1="===== MAIN =====";
 input int LevelStep=10;	//Шаг между ордерами
@@ -29,11 +36,6 @@ input	double FIXProfit_amount=10;
 double gdFOP=0.0; //уровень открытия первого ордера.
 double fix_profit=0;
 
-struct expert_info_struct{
-   double closed_profit;
-};
-
-expert_info_struct expert_info={0};
 //#define DEBUG4
 //#define DEBUGERR
 

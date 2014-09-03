@@ -148,6 +148,7 @@ int OE_addRow(int ti){
 	return(t);
 }
 
+bool OE_autoAddRow=true;
 int OE_FIBT(int ti){
 	/**
 		\version	0.0.0.3
@@ -177,15 +178,19 @@ int OE_FIBT(int ti){
 	int idx=-1;
 	DAIdPRINTALL3(aOE,"before select.ti="+ti);
 	SELECT(aOE,OE_TI+"=="+ti);
-	if(ROWS(aI)<=0){
+	if(ROWS(aI)<=0 && OE_autoAddRow){
 	   idx=OE_addRow(ti);
 	}else{
 	   if(ROWS(aI)==1){
 	      idx=aI[0];
 	   }else{
-	      Print(__FUNCTION__+" ERROR :: Больше одного элемента с тикетом="+ti);
-	      DAIdPRINT3(aOE,aI,"ERROR.ti="+ti);
-	      idx=-1;
+	      if(ROWS(aI)>1){
+   	      Print(__FUNCTION__+" ERROR :: Больше одного элемента с тикетом="+ti);
+   	      DAIdPRINTERR(aOE,aI,"ERROR.ti="+ti);
+   	      TRAC_WriteFile();
+   	      DBREACK;
+   	      idx=-1;
+   	   }   
 	   }
 	}
 	return(idx);
@@ -242,6 +247,11 @@ int OE_setSTD(int ti){
 	DAIdPRINTALL3(aOE,"before ti="+ti);
 
 	int idx=OE_FIBT(ti);
+	
+	if(idx<0){
+	   Print(__FUNCTION__+" :: Can't find idx for ti="+ti);
+	   return(-1);
+	}
 	
 	DAIdPRINTALL3(aOE,"after FIBT idx="+idx);
 	
@@ -337,7 +347,11 @@ int OE_setCLS(int ti){
 	*/
 	string fn="OE_setCLS";
 	if(!OrderSelect(ti,SELECT_BY_TICKET)) return(-1);
+	
+	bool tOE_autoAddRow=OE_autoAddRow;
+	OE_autoAddRow=false;
 	int idx=OE_setSTD(ti);
+	OE_autoAddRow=tOE_autoAddRow;
 	
 	return(idx);
 }

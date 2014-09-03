@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.20"
+#property version   "1.21"
 #property strict
 
 //#define DEBUG3
@@ -133,6 +133,10 @@ void VTY_startext()export{
    double vty=aVol2[d][h];
    
    if(vty<iMinVTY){
+      Comment("d=",d,"; h=",h
+            ,"\nMaxVTY=",iMaxVTY
+            ,"\nMinVTY=",iMinVTY
+            ,"\nVTY=",vty);
       return; //Этот час не подходит для торговли.
    }
    

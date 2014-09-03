@@ -12,7 +12,7 @@ int T_SendedTI=0;
 double aTO[][OE_MAX];
 
 void T_Start(){
-   DAIdPRINTALL3(aOE,"__________");
+   DAIdPRINTALL4(aOE,"__________");
    //Перечитывает ордера из терминала, создавая из них массив
    
    int t=OrdersTotal();

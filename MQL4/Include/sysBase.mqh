@@ -53,6 +53,16 @@ bool Debug=true;
     #define DPRINT3(text)  
 #endif 
 
+#ifdef DEBUG4 
+   #define DAIdPRINTALL4(a,text) if(Debug){int atI[]; ArrayResize(atI,0,1000); AId_Init2(a,atI); AId_Print2(a,atI,Digits,__FUNCTION__+"_"+text);}
+   #define DAIdPRINT4(a,aI,text) AId_Print2(a,aI,Digits,__FUNCTION__+"_"+text);
+   #define DPRINT4(text) if(Debug) Print(__FUNCTION__+" :: "+(string)text);
+#else 
+    #define DAIdPRINTALL4(a,text)
+    #define DAIdPRINT4(a,aI,text)
+    #define DPRINT4(text)  
+#endif 
+
 #define BEFORE(a) AId_Print2(a,aI,4,"line_before"+__LINE__);
 #define AFTER(a) AId_Print2(a,aI,4,"line_after"+__LINE__);
 #define IFDEBUG_BEFORE #ifdef	DEBUG BEFORE #endif
@@ -165,8 +175,8 @@ void B_Start(string expert_name="")export{
    if(bNeedDelClosed){OE_delClosed();}
    DAIdPRINTALL3(aOE,"after OE_delClosed");
 	isTick=true;
-	E_Start();
-	
+	//E_Start();
+	T_Start();
 	if(!IsTesting()){
 	   string file_oe=B_DBOE(expert_name);
 	   AId_STF2(aOE,file_oe);

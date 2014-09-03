@@ -410,7 +410,7 @@ void OE_delClosed(){
 					 @0.0.0.1@2014.03.08@artamir	[+]	OE_delClosed
 			>Rev:0
 	*/
-
+   DAIdPRINTALL4(aTO,"__________");
 	string fn="OE_delClosed";
 	//DPRINT2();
 	//if(bNeedDelClosed)bNeedDelClosed=false;

@@ -282,6 +282,7 @@ void TrendNet(const double start_level, const double start_lot, const OE_DIRECTI
       }
       
       if(dty==OE_DTY_BUY){
+         if(_lvl_pr<Bid)continue; //все равно не сможем выставить байстоп ниже цены
          if(_lvl_pr>expert_info.zero_pr){
             if(!expert_info.autoopen && _lvl_pr>expert_info.last_buy_pr){
                continue;
@@ -291,6 +292,7 @@ void TrendNet(const double start_level, const double start_lot, const OE_DIRECTI
             _lvl_lot=start_lot;
          }
       }else{
+         if(_lvl_pr>Bid)continue; //все равно не сможем выставить селлстоп выше цены
          if(_lvl_pr<expert_info.zero_pr){
             _lvl_lot=expert_info.last_sell_lot;
             if(!expert_info.autoopen && _lvl_pr<expert_info.last_sell_pr){

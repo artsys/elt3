@@ -203,4 +203,5 @@ void EVENT_Closed(int ti){
 	aE[idx][E_EVT]=EVT_CLS;
 	//Print(fn,"->OE_setCLS()");
 	OE_setCLS(ti);
+	EXP_EventMNGR(ti, EVT_CLS);
 }

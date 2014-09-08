@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2014, MetaQuotes Software Corp."
 #property link      "http://forum.fxopen.ru"
-#property version   "4.00"
+#property version   "5.00"
 #property strict
 //--- input parameters
 input bool     STR_Use=true;  //Slos traling
@@ -18,12 +18,21 @@ input int      STR_PriceStep=100; //Price step
       int         _PriceStep=100;
 input double   STR_SLKoef=0.5; //SL koef
       double      _SLKoef=0.5;
+input int      STR_XStepsBefore=2; //XStepsBefore
+      int         _XStepsBefore=2;           
+input double   STR_SLKoefMinus=0.1; //SLKoefMinus
+      double      _SLKoefMinus=0.1;           
+input double   STR_SLMinimum=0.1; //SLMin
+      double      _SLMinimum=0.1;           
+      
+      
 //input int      STR_SLStep=5; //SL step //-artamir@2014.06.09
 //input double   STR_SLMulti=1; //SL koef //-artamir@2014.06.09
 
 //#define  DEBUG2 false
 
 #ifndef SYSBASE
+   void EXP_EventMNGR(int ti, int event){}
    #define EXP "eFXO.SlosTraling"
    #include <sysBase.mqh>
 #endif
@@ -62,6 +71,20 @@ void eFXOSlosTraling_SLKoef(double val)export{
 void eFXOSlosTraling_MN(int val)export{
    TR_MN=val;
 }
+
+void eFXOSlosTraling_XStepsBefore(int val)export{
+  _XStepsBefore=val;
+}
+
+void eFXOSlosTraling_SLKoefMinus(double val)export{
+  _SLKoefMinus=val;
+}
+
+void eFXOSlosTraling_SLMinimum(double val)export{
+  _SLMinimum=val;
+}
+
+
 //}
 
 void eFXOSlosTraling_startext()export{
@@ -80,7 +103,10 @@ int OnInit()
    eFXOSlosTraling_PriceStart(STR_PriceStart);
    eFXOSlosTraling_PriceStep(STR_PriceStep);
    eFXOSlosTraling_SLKoef(STR_SLKoef);
-
+   eFXOSlosTraling_XStepsBefore(STR_XStepsBefore);
+   eFXOSlosTraling_SLKoefMinus(STR_SLKoefMinus);
+   eFXOSlosTraling_SLMinimum(STR_SLMinimum);
+   
    B_Init();
 //---
    return(INIT_SUCCEEDED);
@@ -173,8 +199,19 @@ void fSTR_CheckSelected(int &aI[]){
    int max_level_pips=_PriceStart+max_levels*_PriceStep;//+artamir@2014.06.09
    DPRINT("max_level_pips="+(string)max_level_pips);
    
+   int max_decrease_level=max_levels-_XStepsBefore;
+   
    //int sl_pips=STR_SLStep*STR_SLMulti*max_levels; //-artamir@2014.06.09
-   int sl_pips=max_level_pips*_SLKoef;
+   int sl_pips=0;
+      if(max_decrease_level<=0){
+         sl_pips=max_level_pips*_SLKoef;
+      }else{
+         double dsl_koef=_SLKoef-(max_decrease_level*_SLKoefMinus);
+         if(dsl_koef<_SLMinimum){
+            dsl_koef=_SLMinimum;
+         }
+         sl_pips=max_level_pips*dsl_koef;
+      }   
    
    int koef=(ty==OP_BUY)?(1.00):(-1.00);
    double max_level_price=wlpr+max_level_pips*Point*koef;

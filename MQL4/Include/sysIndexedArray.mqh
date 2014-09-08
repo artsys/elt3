@@ -847,7 +847,7 @@ void AId_RFF2(double &a[][], string fn){
 	ArrayResize(a, 0);
 	
 	//------------------------------------------------------
-	int H = FileOpen(fn, FILE_CSV|FILE_READ);
+	int H = FileOpen(fn, FILE_TXT|FILE_READ);
 	
 	//------------------------------------------------------
 	while(!FileIsEnding(H)){
@@ -867,6 +867,8 @@ void AId_RFF2(double &a[][], string fn){
 		//--------------------------------------------------
 		a[idx1][idx2] = val;
 	}
+	
+	FileClose(H);
 }
 
 //}

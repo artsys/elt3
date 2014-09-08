@@ -44,7 +44,11 @@ int OnInit()
   {
 //---
    bNeedDelClosed=false;
+    int err=GetLastError();
+    Print("err1=",err);
    B_Init(EXP);
+    err=GetLastError();
+    Print("err2=",err);
 //---
    return(INIT_SUCCEEDED);
   }
@@ -362,14 +366,24 @@ int SAR_getNearestChange(string sy="", int tf=0, double step=0.02, double maximu
 bool SAR_isUP(string sy="", int tf=0, double step=0.02, double maximum=0.2, int shift=1){
    bool res=false;
    if(sy=="")sy=Symbol();
-   double sar=SAR_get(sy,tf,step,maximum,shift);
    
+   if(shift>Bars){
+      return(false);
+   }
+   
+   double sar=SAR_get(sy,tf,step,maximum,shift);
+ 
    if(sar>=(High[shift]+Low[shift])/2)res=true;
    return(res);
 }
 
 bool SAR_isDW(string sy="", int tf=0, double step=0.02, double maximum=0.2, int shift=1){
    bool res=false;
+   
+   if(shift>Bars){
+      return(false);
+   }
+   
    if(sy=="")sy=Symbol();
    double sar=SAR_get(sy,tf,step,maximum,shift);
    

@@ -26,6 +26,14 @@ input int      STR_PriceStep=100; //Price step
 input double   STR_SLKoef=0.5; //SL koef
       double      _SLKoef=0.5;
 
+input int      STR_XStepsBefore=2; //XStepsBefore
+      int         _XStepsBefore=2;           
+input double   STR_SLKoefMinus=0.1; //SLKoefMinus
+      double      _SLKoefMinus=0.1;           
+input double   STR_SLMinimum=0.1; //SLMin
+      double      _SLMinimum=0.1;           
+
+
 extern   string   s0                   = "--- forum.FXOpen.ru ---";
 extern   string   s1                   = "Общие параметры:";
 extern   int      Slippage             = 2;
@@ -124,6 +132,11 @@ void start()
    eFXOSlosTraling_PriceStep(STR_PriceStep);
    eFXOSlosTraling_SLKoef(STR_SLKoef);
    eFXOSlosTraling_MN(Magic);
+   
+   eFXOSlosTraling_XStepsBefore(STR_XStepsBefore);
+   eFXOSlosTraling_SLKoefMinus(STR_SLKoefMinus);
+   eFXOSlosTraling_SLMinimum(STR_SLMinimum);
+   
    eFXOSlosTraling_startext();
    
    BsTemp = 0;

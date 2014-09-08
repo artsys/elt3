@@ -24,6 +24,8 @@ input double   STR_SLKoef=0.5; //SL koef
 //#define  DEBUG2 false
 
 #ifndef SYSBASE
+   void EXP_EventMNGR();
+
    #define EXP "eFXO.SlosTraling"
    #include <sysBase.mqh>
 #endif

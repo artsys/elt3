@@ -53,12 +53,13 @@
 
 #define OE_DTY    21 // направление позиции/ордера (100-бай, 101-селл)
 #define OE_FOOP   22 //Цена по которой был выставлен ордер.
+#define OE_FOOT   27 //Время когда был выставлен ордер.
 
 #define OE_USR1   23
 #define OE_USR2   24
 #define OE_USR3   25
 #define OE_USR4   26
-#define OE_MAX		27
+#define OE_MAX		28
 
 double	aOE[][OE_MAX];
 
@@ -331,6 +332,7 @@ int OE_setSTD(int ti){
 
 int OE_setFSTDByIDX(int idx){
    aOE[idx][OE_FOOP]=aOE[idx][OE_OOP];
+   aOE[idx][OE_FOOT]=aOE[idx][OE_OOT];
    return(idx);
 }
 

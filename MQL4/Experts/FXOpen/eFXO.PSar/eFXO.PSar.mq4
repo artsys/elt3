@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "DrJJ, artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.30"
+#property version   "1.40"
 #property strict
 
 //#define DEBUG2
@@ -32,12 +32,14 @@ input double SAR_Maximum=0.2;
 
 datetime dtNearestSarChange=0;
 int      iNearestSarChangeBar=Bars;
+int      iLastTiStart=Bars;
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
 int OnInit()
   {
 //---
+   bNeedDelClosed=false;
    B_Init(EXP);
 //---
    return(INIT_SUCCEEDED);
@@ -73,7 +75,11 @@ void startext()export{
    int iBarDelHistory=SAR_getNearestChange("",0,SAR_Step,SAR_Maximum,iNearestSarChangeBar+1);
    OE_DelBeforeDatetime(Time[iBarDelHistory]);
    
-   Comment("iNearestSarChangeBar=",iNearestSarChangeBar);
+   Comment("iNearestSarChangeBar=",iNearestSarChangeBar
+         ,"\ndtNearestSarChange=",dtNearestSarChange
+         ,"\niLastTiStart=",iLastTiStart
+         ,"\naOE=",ROWS(aOE)
+         ,"\naTO=",ROWS(aTO));
 }
 
 void SetNearestSarChange(){
@@ -208,7 +214,7 @@ void Autoopen(){
    DPRINT2("SAR_StartBar="+SAR_StartBar);
    datetime SAR_StartTime=Time[SAR_StartBar];
    
-   string add_filter=" AND "+OE_OOT+">>"+(int)SAR_StartTime;
+   string add_filter=" AND "+OE_FOOT+">>"+(int)SAR_StartTime;
    
    int ty1=-1,ty2=-1, add_spread=0;
    if(isUp){
@@ -238,6 +244,7 @@ void Autoopen(){
       double send_lot=0;
       
       int last_tickets_start=SAR_getNearestChange("",0,SAR_Step,SAR_Maximum,SAR_StartBar+1);
+      iLastTiStart=last_tickets_start;
       int aI[];
       add_filter=" AND "+OE_OOP+"<<"+(int)dtNearestSarChange;
       GetLastTI(aI,last_tickets_start,add_filter);;
@@ -278,10 +285,10 @@ void GetLastTI(int &aI[], int start_bar, string add_filter=""){
    ArrayResize(aI,0);
    datetime start_time=Time[start_bar];
    string f=StringConcatenate(""
-            , OE_OOT,">>",(int)start_time
+            , OE_FOOT,">>",(int)start_time
             , add_filter);
    SELECT2(aOE,aI,f);  
-   AId_InsertSort2(aOE,aI,OE_OOT);       
+   AId_InsertSort2(aOE,aI,OE_FOOT);       
 }
 
 int CntTY(int ty1=-1, int ty2=-1, string addF=""){
@@ -326,7 +333,7 @@ bool SAR_isUP(string sy="", int tf=0, double step=0.02, double maximum=0.2, int 
    if(sy=="")sy=Symbol();
    double sar=SAR_get(sy,tf,step,maximum,shift);
    
-   if(sar>=High[shift])res=true;
+   if(sar>=(High[shift]+Low[shift])/2)res=true;
    return(res);
 }
 
@@ -335,7 +342,7 @@ bool SAR_isDW(string sy="", int tf=0, double step=0.02, double maximum=0.2, int 
    if(sy=="")sy=Symbol();
    double sar=SAR_get(sy,tf,step,maximum,shift);
    
-   if(sar<=Low[shift])res=true;
+   if(sar<=(High[shift]-Low[shift])/2)res=true;
    return(res);
 }
 

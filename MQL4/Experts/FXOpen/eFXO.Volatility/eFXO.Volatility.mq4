@@ -5,10 +5,10 @@
 //+------------------------------------------------------------------+
 #property copyright "artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.21"
+#property version   "1.30"
 #property strict
 
-//#define DEBUG3
+//#define DEBUG5
 
 struct signal_struct{
          int type;
@@ -21,6 +21,7 @@ struct signal_struct{
 struct expert_info_struct{
    double profit;
    double last_lot;
+   double need_lot;
 };
 
 double aVol3[7][24][2];
@@ -178,9 +179,10 @@ void VTY_startext()export{
 
 void CheckIfNetClosed(){
    string f=OE_MAINSIGTIME+"=="+(int)last_main_sig.time;
-   DAIdPRINTALL3(aTO,"__________");
+   DAIdPRINTALL5(aTO,"__________");
    SELECT(aTO,f);
-   DAIdPRINT3(aTO,aI,"MST_"+(int)last_main_sig.time);
+   DAIdPRINT5(aTO,aI,"MST_"+(int)last_main_sig.time);
+   DAIdPRINTALL5(aOE,"aOE closed net");
    if(ROWS(aI)<=0){
       
       CheckNetProfit();
@@ -205,7 +207,7 @@ void CheckNetProfit(){
    DAIdPRINTALL3(aOE,"_____________________");
    SELECT(aOE,f);
    DAIdPRINT3(aOE,aI,"selected");
-   expert_info.profit=AId_Sum2(aOE,aI,OE_OPR);
+   expert_info.profit+=AId_Sum2(aOE,aI,OE_OPR);
     
 }
 
@@ -263,6 +265,7 @@ void CheckTIBySignal(signal_struct &sig){
       double _lot=GetLot(sig);
       int ti=TR_SendMarket(sig.cmd,_lot); 
       if(ti>0){
+         expert_info.last_lot=expert_info.need_lot;
          SELECT(aTO,OE_TI+"=="+ti);
          int rows=ROWS(aI);
          last_main_sig.price=AId_Get2(aTO,aI,0,OE_OOP);
@@ -281,7 +284,7 @@ double GetLot(signal_struct &sig){
       }else{
          res=LotFix;
       }
-      expert_info.last_lot=res;
+      expert_info.need_lot=res;
    }else{
       res=expert_info.last_lot;
    }

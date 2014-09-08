@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "DrJJ, artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.40"
+#property version   "1.6"
 #property strict
 
 //#define DEBUG2
@@ -27,6 +27,10 @@ input int    SLFix=200;
 input string i1="=== PSAR PROPERTIES ===";
 input double SAR_Step=0.02;
 input double SAR_Maximum=0.2;
+
+void EXP_EventMNGR_forward(int ti, int event){
+   EXP_EventMNGR(ti, event);
+}
 
 #include <sysBase.mqh>
 
@@ -66,13 +70,15 @@ void OnTick()
 void startext()export{
    DAIdPRINTALL2(aOE,"startext________");
    SetNearestSarChange();
-   B_Start();
+   B_Start(EXP);
    SAR_Traling();
    Traling_TPSL();
-   CheckEvents();
+   //CheckEvents();
    Autoopen();
    
-   int iBarDelHistory=SAR_getNearestChange("",0,SAR_Step,SAR_Maximum,iNearestSarChangeBar+1);
+   int start_bar=GetFirstOpenBar();
+   
+   int iBarDelHistory=SAR_getNearestChange("",0,SAR_Step,SAR_Maximum,start_bar+1);
    OE_DelBeforeDatetime(Time[iBarDelHistory]);
    
    Comment("iNearestSarChangeBar=",iNearestSarChangeBar
@@ -80,6 +86,31 @@ void startext()export{
          ,"\niLastTiStart=",iLastTiStart
          ,"\naOE=",ROWS(aOE)
          ,"\naTO=",ROWS(aTO));
+}
+
+int GetFirstOpenBar(){
+   int res=Bars;
+   int aI[];
+   AId_Init2(aTO,aI);
+   AId_InsertSort2(aTO,aI,OE_FOOT);
+   if(ROWS(aI)>0){
+      res=iBarShift(NULL,0,AId_Get2(aTO,aI,0,OE_FOOT));   
+   }
+   
+   return(res);
+}
+
+void EXP_EventMNGR(int ti, int event){
+   if(event==EVT_CLS){
+      EXP_EventClosed(ti);
+   }
+}
+
+void EXP_EventClosed(int ti){
+   int cls_ty=OE_getPBT(ti,OE_CTY);
+   if(cls_ty==OE_CLOSED_BY_TP){
+      CheckChild(ti);
+   }
 }
 
 void SetNearestSarChange(){

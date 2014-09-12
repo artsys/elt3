@@ -5,14 +5,22 @@
 //+------------------------------------------------------------------+
 #property copyright "DrJJ, artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.6"
+#property version   "1.7"
 #property strict
 
 //#define DEBUG2
 
+#define SAVE_EXPERT_INFO
+struct expert_info_struct{
+   int seria;
+};
+
+expert_info_struct expert_info={0};
+
 #define EXP "eFXO.PSar"
 #define OE_PTI OE_USR1
 #define OE_LVL OE_USR2
+#define OE_SERIA OE_USR3
 
 input string e1="=== EXPERT PROPERTIES ===";
 input double Lot=0.1;
@@ -44,11 +52,7 @@ int OnInit()
   {
 //---
    bNeedDelClosed=false;
-    int err=GetLastError();
-    Print("err1=",err);
    B_Init(EXP);
-    err=GetLastError();
-    Print("err2=",err);
 //---
    return(INIT_SUCCEEDED);
   }
@@ -80,10 +84,14 @@ void startext()export{
    //CheckEvents();
    Autoopen();
    
-   int start_bar=GetFirstOpenBar();
-   
-   int iBarDelHistory=SAR_getNearestChange("",0,SAR_Step,SAR_Maximum,start_bar+1);
-   OE_DelBeforeDatetime(Time[iBarDelHistory]);
+   GROUP(aTO,OE_SERIA);
+   if(ROWS(aI)>0){
+      AId_InsertSort2(aTO,aI,OE_SERIA);
+      int delBeforeBar=GetStartClosedSeria(AId_Get2(aTO,aI,0,OE_SERIA));
+      if(delBeforeBar<Bars){
+         OE_DelBeforeDatetime(Time[delBeforeBar]);
+      }   
+   }   
    
    Comment("iNearestSarChangeBar=",iNearestSarChangeBar
          ,"\ndtNearestSarChange=",dtNearestSarChange
@@ -101,6 +109,17 @@ int GetFirstOpenBar(){
       res=iBarShift(NULL,0,AId_Get2(aTO,aI,0,OE_FOOT));   
    }
    
+   return(res);
+}
+
+int GetStartClosedSeria(int seria){
+   int res=Bars;
+   SELECT(aOE,OE_SERIA+"=="+seria+" AND "+OE_IC+"==1");
+   if(ROWS(aI)>0){
+      AId_InsertSort2(aOE,aI,OE_FOOT);
+      
+      res=iBarShift(NULL,0,(int)AId_Get2(aOE,aI,0,OE_FOOT));
+   }
    return(res);
 }
 
@@ -171,9 +190,9 @@ void CheckEvents(){
 
 void CheckChild(int ti){
    
-   DAIdPRINTALL2(aOE, __FUNCTION__+"______________");
+   int pseria=OE_getPBT(ti,OE_SERIA);
    string f=StringConcatenate(""
-            ,OE_PTI,"==",ti
+            ,OE_SERIA,"==",pseria
             ," AND "
             ,OE_TY,">>",1);
             
@@ -191,9 +210,12 @@ void CheckChild(int ti){
       
       TR_CloseByTicket(child_ti);
       
+      expert_info.seria=Time[0];
+      
       OE_bAutoEraseOEData=false;
       OE_aDataErase();
       OE_aDataSetProp(OE_LVL,lvl);
+      OE_aDataSetProp(OE_SERIA,expert_info.seria);
       double d[];
       TR_SendPending_array(d,child_ty,_oop,0,Lot,_tp,_sl,"",-1,"",TR_MODE_PRICE);
       OE_aDataErase();
@@ -273,6 +295,9 @@ void Autoopen(){
    int cnt=CntTY(ty1,ty2,add_filter);
    
    if(cnt<=0){
+      if(expert_info.seria==0){
+         expert_info.seria=Time[0];
+      }   
       int pti=0, pty=-1, plevel=0;
       double plot=0;
       
@@ -305,6 +330,7 @@ void Autoopen(){
       OE_aDataErase();
       OE_aDataSetProp(OE_LVL,lvl);
       OE_aDataSetProp(OE_PTI, pti);
+      OE_aDataSetProp(OE_SERIA,expert_info.seria);
       double d[];
       ArrayResize(d,0);
       

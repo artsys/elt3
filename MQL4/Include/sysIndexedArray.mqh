@@ -180,6 +180,39 @@ double AId_Sum2(double &a[][], int &aI[], int col){
 	return(sum);
 }
 
+void AId_MoveRow(int &aI[], int dest, int src, int count=-1){
+   if(count==0 || dest==src)return;
+   
+   if(dest<src){
+      for(int i=0;i<count;i++){
+         if(src+i>ArrayRange(aI,0)-1)continue;
+            
+         aI[dest+i]=aI[src+i];
+      }
+   }
+}
+
+void AId_Group2(double &a[][], int &aI[], const int col=0){
+   int rows=ROWS(aI);
+   if(rows<=0){
+      return;
+   }
+   
+   double last_val=0;
+   for(int i=rows-1; i>=0; i--){
+      double val=AId_Get2(a,aI,i,col);
+      if(AId_Compare(val,last_val)==AI_EQ){
+         if(i==ROWS(aI)){
+            ArrayResize(aI,(ROWS(aI)-1));
+            continue;
+         }
+         
+         AId_MoveRow(aI,i,i+1,rows-i-1);
+         ArrayResize(aI,(ROWS(aI)-1));
+      }
+   }
+}
+
 enum AI_ASSERTIONS{
    AI_EQ=0,
    AI_GREAT=1,

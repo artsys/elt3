@@ -103,6 +103,8 @@ bool SELECT_UsePreselectedArray=false;
 #define SELECT2(a,aI,text) if(!SELECT_UsePreselectedArray) {ArrayResize(aI,0,1000); AId_Init2(a,aI);} B_Select(a, aI, text);  SELECT_UsePreselectedArray=false;
 
 #define ROWS(aI) ArrayRange(aI,0)
+
+#define GROUP(a, col) int aI[]; ArrayResize(aI,0,1000); AId_Init2(a,aI);  AId_Group2(a, aI, col); 
 	
 #property copyright "Copyright 2014, artamir"
 #property link      "http:\\forexmd.ucoz.org"

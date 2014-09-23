@@ -61,7 +61,9 @@ void E_Start(void){
 	for(int i=0;i<=OrdersTotal();i++){
 		if(!OrderSelect(i,SELECT_BY_POS,MODE_TRADES)) continue;
 		if(OrderSymbol() != Symbol()) continue;
-		
+		if(TR_MN>=0){
+		   if(OrderMagicNumber()!=TR_MN)continue;
+		}
 		DAIdPRINTALL3(aOE,"before setSTD aOE.ti="+OrderTicket())   
 		
 		int idx=OE_FIBT(OrderTicket());

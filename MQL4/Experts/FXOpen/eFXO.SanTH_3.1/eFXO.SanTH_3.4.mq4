@@ -42,6 +42,10 @@ input	bool FIXProfit_use=true;
 //Значение фиксированного профита для закрытия всех ордеров.
 input	double FIXProfit_amount=10; 
 
+void EXP_EventMNGR_forward(int ti, int event){
+   EXP_EventMNGR(ti, event);
+}
+
 #include <sysBase.mqh>
 
 #define OE_LVLPR OE_USR1
@@ -80,6 +84,13 @@ void OnTick()
    startext();
   }
 //+------------------------------------------------------------------+
+
+void EXP_EventMNGR(int ti, int event){
+   if(event==EVT_CLS){
+      //EXP_EventClosed(ti);
+   }
+}
+
 
 void startext(){
    DAIdPRINTALL3(aOE,"___________________");

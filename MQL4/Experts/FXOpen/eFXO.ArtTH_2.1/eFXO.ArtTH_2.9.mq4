@@ -40,6 +40,10 @@ double fix_profit=0;
 //#define DEBUGERR
 
 
+void EXP_EventMNGR_forward(int ti, int event){
+   EXP_EventMNGR(ti, event);
+}
+
 #include <sysBase.mqh>
 
 #define OE_MAIN OE_USR1
@@ -80,6 +84,13 @@ void OnTick()
    startext();
   }
 //+------------------------------------------------------------------+
+
+void EXP_EventMNGR(int ti, int event){
+   if(event==EVT_CLS){
+//      EXP_EventClosed(ti);
+   }
+}
+
 
 void startext(){
    DPRINT3(__FUNCTION__);

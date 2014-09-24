@@ -17,7 +17,7 @@ string gsComment="";
 	
 extern string	TR_S = "==== TRADING ======================";
 extern double	TR_TwiseLots	= 20.0;						
-extern int		TR_MN = 0;									
+extern int		TR_MN = 0;	
 extern string	TR_E = "===================================";
 
 //{	//=== SENDING	====================================
@@ -702,7 +702,6 @@ int TR_SendPending_array(		double &d[]	//{
 			>Rev:0
 	*/
 	zx
-	DPRINT2("type="+(string)type+"; StartPrice="+(string)StartPrice+"; AddPips="+(string)AddPips);
 	if(type == OP_BUYSTOP	){xz return(TR_SendBUYSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
 	if(type == OP_BUYLIMIT	){xz return(TR_SendBUYLIMIT_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
 	if(type == OP_SELLSTOP	){xz return(TR_SendSELLSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}

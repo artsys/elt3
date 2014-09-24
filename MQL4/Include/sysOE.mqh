@@ -233,6 +233,17 @@ void OE_setPBI(int idx, int prop, double val){
 	aOE[idx][prop]=val;
 }
 
+OE_DIRECTION OE_getDTYByType(int ty){
+   OE_DIRECTION res;
+   if(ty==OP_BUY || ty==OP_BUYSTOP || ty==OP_BUYLIMIT){
+      res=OE_DTY_BUY;
+   }else{
+      res=OE_DTY_SELL;
+   }
+   
+   return(res);
+}
+
 int OE_setSTD(int ti){
 	/**
 		\version	0.0.0.0
@@ -269,11 +280,8 @@ int OE_setSTD(int ti){
 	aOE[idx][OE_OCP]=		OrderClosePrice();
 	aOE[idx][OE_OCT]=(int)	OrderCloseTime();
 	
-	if(OrderType()==OP_BUY || OrderType()==OP_BUYSTOP || OrderType()==OP_BUYLIMIT){
-	   aOE[idx][OE_DTY]=OE_DTY_BUY;
-	}else{
-	   aOE[idx][OE_DTY]=OE_DTY_SELL;
-	}
+	aOE[idx][OE_DTY]=OE_getDTYByType(OrderType());
+	
 	
 	if(OE_isSended){
       OE_isSended=false;

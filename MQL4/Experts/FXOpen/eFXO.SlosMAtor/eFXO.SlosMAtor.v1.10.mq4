@@ -33,7 +33,7 @@ input int TPFix=500;
 input int SLFix=500;
 input double Lot=0.1;
 input double Multy=3;
-
+//Если Multy <=0 тогда считаем, что усреднение отключено.
 input int MAPeriod=50;
 input ENUM_MA_METHOD MAMethod=MODE_SMA;
 input ENUM_APPLIED_PRICE MAAppPrice=PRICE_CLOSE;
@@ -172,6 +172,7 @@ void Autoopen(){
          DAIdPRINT5(aTO,aI,"after select2 "+f);
          double _lot=Lot;
          if(ROWS(aI)>0){
+            if(Multy<=0) return; //Усреднение отключено.
             DPRINT5("sig.ma_lvl="+signal.ma_lvl);
             if(MathAbs(signal.ma_lvl)<=MathAbs((signal.cmd==OP_BUYSTOP)?last_signal_buy.ma_lvl:last_signal_sell.ma_lvl)) return;
             

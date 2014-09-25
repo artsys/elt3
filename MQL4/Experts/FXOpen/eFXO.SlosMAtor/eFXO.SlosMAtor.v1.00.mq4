@@ -33,11 +33,6 @@ input int TPFix=500;
 input int SLFix=500;
 input double Lot=0.1;
 input double Multy=3;
-
-input int MAPeriod=50;
-input ENUM_MA_METHOD MAMethod=MODE_SMA;
-input ENUM_APPLIED_PRICE MAAppPrice=PRICE_CLOSE;
-
 input string MALevels="50;-50;100;-100;200;-200;300;-300";
 
 input bool useDynDelta=false; //use Dynamic delta
@@ -235,7 +230,7 @@ signal_info GetEmptySignal(){
 signal_info GetSignal(){
    signal_info sig=GetEmptySignal();
    
-   double ma=iMA(NULL,0,MAPeriod,0,MAMethod,MAAppPrice,1);
+   double ma=iMA(NULL,0,50,0,1,PRICE_CLOSE,1);
    
    string asMALvl[];
    ArrayResize(asMALvl,0);

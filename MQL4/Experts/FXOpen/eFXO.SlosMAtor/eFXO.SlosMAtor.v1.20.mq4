@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.00"
+#property version   "1.20"
 #property strict
 
 //#define DEBUG5
@@ -33,8 +33,10 @@ input int TPFix=500;
 input int SLFix=500;
 input double Lot=0.1;
 input double Multy=3;
+//Если Multy <=0 тогда считаем, что усреднение отключено.
 input bool useDeltaLoss=true;
-input double DeltaLoss=100;
+input int DeltaLoss=100;
+input int DeltaOrders=100;
 
 input int MAPeriod=50;
 input ENUM_MA_METHOD MAMethod=MODE_SMA;
@@ -174,11 +176,12 @@ void Autoopen(){
          DAIdPRINT5(aTO,aI,"after select2 "+f);
          double _lot=Lot;
          if(ROWS(aI)>0){
+            if(Multy<=0) return; //Усреднение отключено.
             DPRINT5("sig.ma_lvl="+signal.ma_lvl);
             
             if(!useDeltaLoss||!SimpleOpens(signal.cmd)){
-            	if(MathAbs(signal.ma_lvl)<=MathAbs((signal.cmd==OP_BUYSTOP)?last_signal_buy.ma_lvl:last_signal_sell.ma_lvl)) return;
-            }
+            	if(MathAbs(signal.ma_lvl)<=MathAbs((signal.cmd==OP_BUYSTOP)?last_signal_buy.ma_lvl:last_signal_sell.ma_lvl)) return;            	
+            }	
             
             AId_InsertSort2(aTO,aI,OE_LOT);
             _lot=AId_Get2(aTO,aI,(ROWS(aI)-1),OE_LOT);
@@ -215,12 +218,13 @@ bool SimpleOpens(int ty){
 							?(AId_Get2(aTO,aI,0,OE_OOP))
 							:(AId_Get2(aTO,aI,rows-1,OE_OOP));
 		res=(dty==OE_DTY_BUY)
-					?(Bid<oop-DeltaLoss*Point)
-					:(Bid>oop+DeltaLoss*Point);					
+					?((Bid<oop-DeltaLoss*Point)&& (High[1]<oop-DeltaOrders*Point))
+					:((Bid>oop+DeltaLoss*Point)&& (Low[1]>oop+DeltaOrders*Point));								
 	}
 	
 	return(res);
 }
+
 
 double GetDynDelta(OE_DIRECTION dty){
    if(!useDynDelta)return(0);

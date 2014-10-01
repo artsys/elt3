@@ -52,9 +52,9 @@ int OnInit()
                   +"@4p"+(string)MA_applied_price
                   +"@5p"+(string)NormDigits;
                   
-   objName="MAT"+(string)Period();               
+   objName="MATv210_artamir"+(string)Period();               
    if(ObjectFind(objName)==-1){
-      ObjectCreate(objName,OBJ_LABEL,0,0,0,0,0);
+      ObjectCreate(objName,OBJ_TEXT,0,0,0,0,0);
       ObjectSetText(objName,sParams,0);
    }               
    return(INIT_SUCCEEDED);

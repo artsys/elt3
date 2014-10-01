@@ -1,5 +1,5 @@
 //+------------------------------------------------------------------+
-//|                                               eFXO.SlosMAtor.mq4 |
+//|                                               eFXO.SlosFiborg.mq4 |
 //|                                                          artamir |
 //|                                           http://forum.fxopen.ru |
 //+------------------------------------------------------------------+
@@ -33,14 +33,11 @@ input int TPFix=500;
 input int SLFix=500;
 input double Lot=0.1;
 input double Multy=3;
-input bool useDeltaLoss=true;
-input double DeltaLoss=100;
-
-input int MAPeriod=50;
-input ENUM_MA_METHOD MAMethod=MODE_SMA;
-input ENUM_APPLIED_PRICE MAAppPrice=PRICE_CLOSE;
-
-input string MALevels="50;-50;100;-100;200;-200;300;-300";
+//Если Multy <=0 тогда считаем, что усреднение отключено.
+input string IndicatorFolder="FXOpen";
+input ENUM_TIMEFRAMES TFPivot=PERIOD_D1;
+input int MaxLevels=10;
+input int StartLevel=21;
 
 input bool useDynDelta=false; //use Dynamic delta
 
@@ -174,11 +171,9 @@ void Autoopen(){
          DAIdPRINT5(aTO,aI,"after select2 "+f);
          double _lot=Lot;
          if(ROWS(aI)>0){
+            if(Multy<=0) return; //Усреднение отключено.
             DPRINT5("sig.ma_lvl="+signal.ma_lvl);
-            
-            if(!useDeltaLoss||!SimpleOpens(signal.cmd)){
-            	if(MathAbs(signal.ma_lvl)<=MathAbs((signal.cmd==OP_BUYSTOP)?last_signal_buy.ma_lvl:last_signal_sell.ma_lvl)) return;
-            }
+            if(MathAbs(signal.ma_lvl)<=MathAbs((signal.cmd==OP_BUYSTOP)?last_signal_buy.ma_lvl:last_signal_sell.ma_lvl)) return;
             
             AId_InsertSort2(aTO,aI,OE_LOT);
             _lot=AId_Get2(aTO,aI,(ROWS(aI)-1),OE_LOT);
@@ -200,26 +195,6 @@ void Autoopen(){
          }
       }
    }
-}
-
-bool SimpleOpens(int ty){
-	bool res=false;
-	
-	int dty=(ty==OP_BUYSTOP)?OE_DTY_BUY:OE_DTY_SELL;
-	
-	SELECT(aTO,OE_DTY+"=="+dty);
-	int rows=ROWS(aI);
-	if(rows>0){
-		AId_InsertSort2(aTO,aI,OE_OOP);
-		double oop=(dty==OE_DTY_BUY)
-							?(AId_Get2(aTO,aI,0,OE_OOP))
-							:(AId_Get2(aTO,aI,rows-1,OE_OOP));
-		res=(dty==OE_DTY_BUY)
-					?(Bid<oop-DeltaLoss*Point)
-					:(Bid>oop+DeltaLoss*Point);					
-	}
-	
-	return(res);
 }
 
 double GetDynDelta(OE_DIRECTION dty){
@@ -257,30 +232,44 @@ signal_info GetEmptySignal(){
    return(empty);
 }
 
+int GetNextFibo(int thisFibo){
+	int a=1,b=1,i=1;
+	while(b<thisFibo+1){
+		b=a+b;
+		a=b-a;
+		i++;
+	}
+	return(b);
+}
+
+
 signal_info GetSignal(){
    signal_info sig=GetEmptySignal();
    
-   double ma=iMA(NULL,0,MAPeriod,0,MAMethod,MAAppPrice,1);
+   double pvt=iCustom(NULL,0
+   						,(IndicatorFolder=="")?"":(IndicatorFolder+"\\")+"iFXO.PivotAbsolutFibo",TFPivot,false,0,1);
    
-   string asMALvl[];
-   ArrayResize(asMALvl,0);
-   StringToArrayString(asMALvl,MALevels,";");
-   
-   int rows=ROWS(asMALvl);
+   int rows=MaxLevels;
+   int fibo=StartLevel-1;
+   int dig=(Digits==3||Digits==5)?10:1;
    for(int i=0;i<rows;i++){
-      string sMALvl=asMALvl[i];
-      int iMALvl=StringToInteger(sMALvl);
-      double dMALvl=ma+iMALvl*Point;
-      if(iMALvl!=0){
-         if(High[1]>dMALvl && Low[1]<dMALvl){
-            if(iMALvl<0){
+      
+      fibo=GetNextFibo(fibo);
+     
+     for(int i=0;i<2;i++){
+     	fibo=-1*fibo;
+      double dFiboLvl=pvt+fibo*(dig)*Point;
+      if(fibo!=0){
+         if(High[1]>dFiboLvl && Low[1]<dFiboLvl){
+            if(fibo<0){
                sig.cmd=OP_BUYSTOP;
             }else{
                sig.cmd=OP_SELLSTOP;
             }
-            sig.ma_lvl=iMALvl;
+            sig.ma_lvl=fibo;
          }
       }
+     }
    }
    
    return(sig);

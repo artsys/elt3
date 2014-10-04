@@ -10,17 +10,22 @@
 
 //#define DEBUG5
 
-#define SAVE_EXPERT_INFO
-struct expert_info_struct{};
-expert_info_struct expert_info;
-
 struct signal_info{
    int cmd;
    int ma_lvl;
 };
-
 signal_info last_signal_buy={-1,0};
 signal_info last_signal_sell={-1,0};
+
+#define SAVE_EXPERT_INFO
+struct expert_info_struct{
+	int buy_cmd;
+	int buy_ma_lvl;
+	int sell_cmd;
+	int sell_ma_lvl;
+};
+
+expert_info_struct expert_info={-1,0,-1,0};
 
 void EXP_EventMNGR_forward(int ti, int event){
    EXP_EventMNGR(ti, event);
@@ -81,7 +86,11 @@ bool isNewBar=true;
 int OnInit()
   {
 //---
-   
+   B_Init("SlosMator");
+   last_signal_buy.cmd=expert_info.buy_cmd;
+   last_signal_buy.ma_lvl=expert_info.buy_ma_lvl;
+   last_signal_sell.cmd=expert_info.sell_cmd;
+   last_signal_sell.ma_lvl=expert_info.sell_ma_lvl;
 //---
    return(INIT_SUCCEEDED);
   }
@@ -91,7 +100,12 @@ int OnInit()
 void OnDeinit(const int reason)
   {
 //---
+   expert_info.buy_cmd=last_signal_buy.cmd;
+   expert_info.buy_ma_lvl=last_signal_buy.ma_lvl;
+   expert_info.sell_cmd=last_signal_sell.cmd;
+   expert_info.sell_ma_lvl=last_signal_sell.ma_lvl;
    
+   B_Deinit("SlosMator");
   }
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |

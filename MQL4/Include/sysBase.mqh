@@ -94,8 +94,8 @@ bool Debug=true;
 
 #define tmr int tmrstrt=GetTickCount();
 #define ctmr " tmr:"+(string)(GetTickCount()-tmrstrt)
-#define zx #ifdef TRACING TRAC_AddString("if{"+__FUNCTION__+"\n"); #endif  
-#define xz #ifdef TRACING TRAC_AddString(__FUNCTION__+"}"); #endif  
+#define zx //#ifdef TRACING TRAC_AddString("if{"+__FUNCTION__+"\n"); #endif  
+#define xz //#ifdef TRACING TRAC_AddString(__FUNCTION__+"}"); #endif  
 
 bool SELECT_UsePreselectedArray=false;
 

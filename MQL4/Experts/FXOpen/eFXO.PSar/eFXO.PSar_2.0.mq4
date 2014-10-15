@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "DrJJ, artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.7"
+#property version   "2.0"
 #property strict
 
 //#define DEBUG2
@@ -13,9 +13,11 @@
 #define SAVE_EXPERT_INFO
 struct expert_info_struct{
    int seria;
+   int level;
+   int lot;
 };
 
-expert_info_struct expert_info={0};
+expert_info_struct expert_info={0,0,0};
 
 #define EXP "eFXO.PSar"
 #define OE_PTI OE_USR1
@@ -62,6 +64,7 @@ int OnInit()
 void OnDeinit(const int reason)
   {
 //---
+	bNeedDelClosed=false;
    B_Deinit(EXP);
   }
 //+------------------------------------------------------------------+
@@ -76,22 +79,24 @@ void OnTick()
 //+------------------------------------------------------------------+
 
 void startext()export{
+   
    DAIdPRINTALL2(aOE,"startext________");
    SetNearestSarChange();
    B_Start(EXP);
+   
    SAR_Traling();
-   Traling_TPSL();
+   //Traling_TPSL();
    //CheckEvents();
    Autoopen();
    
-   GROUP(aTO,OE_SERIA);
-   if(ROWS(aI)>0){
-      AId_InsertSort2(aTO,aI,OE_SERIA);
-      int delBeforeBar=GetStartClosedSeria(AId_Get2(aTO,aI,0,OE_SERIA));
-      if(delBeforeBar<Bars){
-         OE_DelBeforeDatetime(Time[delBeforeBar]);
-      }   
-   }   
+   //GROUP(aTO,OE_SERIA);
+   //if(ROWS(aI)>0){
+   //   AId_InsertSort2(aTO,aI,OE_SERIA);
+   //   int delBeforeBar=GetStartClosedSeria(AId_Get2(aTO,aI,0,OE_SERIA));
+   //   if(delBeforeBar<Bars){
+   //      OE_DelBeforeDatetime(Time[delBeforeBar]);
+   //   }   
+   //}   
    
    Comment("iNearestSarChangeBar=",iNearestSarChangeBar
          ,"\ndtNearestSarChange=",dtNearestSarChange
@@ -223,122 +228,77 @@ void CheckChild(int ti){
    }            
 }
 
-void SAR_Traling(){
-   DAIdPRINTALL2(aOE,__FUNCTION__+"_________");
-   bool isUP=SAR_isUP("",0,SAR_Step,SAR_Maximum,0);
-   int SAR_StartBar=SAR_getNearestChange("",0,SAR_Step,SAR_Maximum,0);
-   double sar=SAR_get("",0,SAR_Step,SAR_Maximum,0);
-   
-   int tyo=-1, add_spread=0;;
-   if(isUP){
-      tyo=OP_BUYSTOP;
-      if(Spread_BuyStop==-1){
-         add_spread=MarketInfo(Symbol(),MODE_SPREAD);
-      }else{
-         add_spread=Spread_BuyStop;
-      }
-      
-      sar+=add_spread*Point;
-   }
-   else{
-      tyo=OP_SELLSTOP;
-      if(Spread_SellStop==-1){
-         add_spread=MarketInfo(Symbol(),MODE_SPREAD);
-      }else{
-         add_spread=Spread_SellStop;
-      }
-      sar-=add_spread*Point;
-   }   
-   
-   string add_filter=" AND "+OE_TY+"=="+tyo;
-   int aI[];
-   GetLastTI(aI,SAR_StartBar,add_filter);
-   
-   int cnt=ROWS(aI);
-   if(cnt<=0) return;
-   
-   for(int i=0;i<cnt;i++){
-      int ti=AId_Get2(aOE,aI,i,OE_TI);
-      TR_MoveOrder(ti,sar,TR_MODE_PRICE);
-   }   
+void SAR_Traling(){ 
+   bool isUp=SAR_isUP("",0,SAR_Step,SAR_Maximum,0);
+	double pr=SAR_get("",0,SAR_Step,SAR_Maximum,0);
+	string f="";
+	if(isUp){
+		pr=pr+Spread_BuyStop*Point;
+		f=OE_TY+"=="+OP_BUYSTOP;
+		SELECT(aTO,f);
+		for(int i=0;i<ROWS(aI);i++){
+			TR_MoveOrder(AId_Get2(aTO,aI,i,OE_TI),pr,TR_MODE_PRICE);
+		}
+		f=OE_DTY+"=="+OE_DTY_SELL;
+		SELECT2(aTO,aI,f);
+		for(int i=0;i<ROWS(aI);i++){
+			TR_ModifySL(AId_Get2(aTO,aI,i,OE_TI),pr,TR_MODE_PRICE);
+		}
+	}else{
+		pr=pr-Spread_SellStop*Point;
+		f=OE_TY+"=="+OP_SELLSTOP;
+		SELECT(aTO,f);
+		for(int i=0;i<ROWS(aI);i++){
+			TR_MoveOrder(AId_Get2(aTO,aI,i,OE_TI),pr,TR_MODE_PRICE);
+		}
+		f=OE_DTY+"=="+OE_DTY_BUY;
+		SELECT2(aTO,aI,f);
+		for(int i=0;i<ROWS(aI);i++){
+			TR_ModifySL(AId_Get2(aTO,aI,i,OE_TI),pr,TR_MODE_PRICE);
+		}
+	}   
 }
 
 void Autoopen(){
+   
    DAIdPRINTALL2(aOE,__FUNCTION__+"__________");
    double sar=SAR_get("",0,SAR_Step,SAR_Maximum,0);
    bool isUp=SAR_isUP("",0,SAR_Step,SAR_Maximum,0);
    int SAR_StartBar=SAR_getNearestChange("",0,SAR_Step,SAR_Maximum,0);
-   DPRINT2("SAR_StartBar="+SAR_StartBar);
-   datetime SAR_StartTime=Time[SAR_StartBar];
    
-   string add_filter=" AND "+OE_FOOT+">>"+(int)SAR_StartTime;
+   int add_spread=0;
+   int cmd=-1;
    
-   int ty1=-1,ty2=-1, add_spread=0;
+   string f =" AND "+OE_FOOT+"<<"+(int)Time[SAR_StartBar];
+   string f1=" AND "+OE_FOOT+">="+(int)Time[SAR_StartBar];
    if(isUp){
-      ty1=OP_BUY;
-      ty2=OP_BUYSTOP;
-      if(Spread_BuyStop==-1){
-         add_spread=MarketInfo(Symbol(),MODE_SPREAD);
-      }else{
-         add_spread=Spread_BuyStop;
-      }
+   	cmd=OP_BUYSTOP;
+   	f=OE_TY+"=="+cmd+f;
+   	f1=OE_DTY+"=="+OE_DTY_BUY+f;
+   	add_spread=Spread_BuyStop;
    }else{
-      ty1=OP_SELL;
-      ty2=OP_SELLSTOP;
-      if(Spread_SellStop==-1){
-         add_spread=MarketInfo(Symbol(),MODE_SPREAD);
-      }else{
-         add_spread=Spread_SellStop;
-      }
+   	cmd=OP_SELLSTOP;
+   	f=OE_TY+"=="+cmd+f;
+   	f1=OE_DTY+"=="+OE_DTY_SELL+f;
+   	add_spread=Spread_SellStop;
    }
    
-   int cnt=CntTY(ty1,ty2,add_filter);
-   
-   if(cnt<=0){
-      if(expert_info.seria==0){
-         expert_info.seria=Time[0];
-      }   
-      int pti=0, pty=-1, plevel=0;
-      double plot=0;
-      
-      double send_lot=0;
-      
-      int last_tickets_start=SAR_getNearestChange("",0,SAR_Step,SAR_Maximum,SAR_StartBar+1);
-      iLastTiStart=last_tickets_start;
-      int aI[];
-      add_filter=" AND "+OE_OOP+"<<"+(int)dtNearestSarChange;
-      GetLastTI(aI,last_tickets_start,add_filter);;
-      int rows=ROWS(aI);
-      if(rows>0){
-         pti=AId_Get2(aOE,aI,(rows-1),OE_TI);
-         pty=AId_Get2(aOE,aI,(rows-1),OE_TY);
-         plot=AId_Get2(aOE,aI,(rows-1),OE_LOT);
-         plevel=AId_Get2(aOE,aI,(rows-1),OE_LVL);
-      }
-      
-      int lvl=plevel+1;
-      send_lot=iif(plot>0,plot,Lot);
-      
-      if(lvl<=1 || lvl>MaxLevel){
-         send_lot=Lot;
-         lvl=1;
-      }else{
-         send_lot*=Multy;
-      }
-      
-      OE_bAutoEraseOEData=false;
-      OE_aDataErase();
-      OE_aDataSetProp(OE_LVL,lvl);
-      OE_aDataSetProp(OE_PTI, pti);
-      OE_aDataSetProp(OE_SERIA,expert_info.seria);
-      double d[];
-      ArrayResize(d,0);
-      
-      TR_SendPending_array(d,ty2,sar,add_spread,send_lot,TPFix,SLFix);
-      
-      OE_aDataErase();
-      OE_bAutoEraseOEData=true;
+   //Удаляем зависшие отложенники.
+   SELECT(aTO,f);
+   for(int i=0; i<ROWS(aI);i++){
+   	TR_CloseByTicket(AId_Get2(aTO,aI,i,OE_TI));
    }
+   
+   SELECT2(aTO,aI,f1);
+   if(ROWS(aI)>0){
+   	return;
+   }
+   
+   double _lot=expert_info.lot*Multy;
+   
+   double d[];
+   ArrayResize(d,0);
+   TR_SendPending_array(d,cmd,sar,add_spread,_lot,TPFix,SLFix);
 }
 
 void GetLastTI(int &aI[], int start_bar, string add_filter=""){

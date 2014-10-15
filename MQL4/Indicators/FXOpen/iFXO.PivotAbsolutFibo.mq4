@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.00"
+#property version   "1.10"
 #property strict
 #property indicator_chart_window
 
@@ -131,11 +131,12 @@ void pDrawLevels(int BarIndex, int tfpBarIndex){
 		
 		double pvt=Pivot[BarIndex];
 		
-		double pr=pvt+thisFibo*Point;
+		int dig=(Digits==3||Digits==5)?10:1;
+		double pr=pvt+thisFibo*dig*Point;
 		string name=sPref+"@l"+thisFibo+"@t"+(int)dtStart;
 		DrawTLine(name,dtStart,pr,dtEnd,pr,w);
 		
-		pr=pvt-thisFibo*Point;
+		pr=pvt-thisFibo*dig*Point;
 		name=sPref+"@l-"+thisFibo+"@t"+(int)dtStart;
 		DrawTLine(name,dtStart,pr,dtEnd,pr,w);
 	}

@@ -76,7 +76,9 @@ bool isNewBar=true;
 int OnInit()
   {
 //---
-   
+   if(Multy<=0){
+   	Print("Усреднение отключено!");
+   }
 //---
    return(INIT_SUCCEEDED);
   }
@@ -171,7 +173,10 @@ void Autoopen(){
          DAIdPRINT5(aTO,aI,"after select2 "+f);
          double _lot=Lot;
          if(ROWS(aI)>0){
-            if(Multy<=0) return; //Усреднение отключено.
+            if(Multy<=0){ 
+            	return; //Усреднение отключено.
+            }
+            	
             DPRINT5("sig.ma_lvl="+signal.ma_lvl);
             if(MathAbs(signal.ma_lvl)<=MathAbs((signal.cmd==OP_BUYSTOP)?last_signal_buy.ma_lvl:last_signal_sell.ma_lvl)) return;
             

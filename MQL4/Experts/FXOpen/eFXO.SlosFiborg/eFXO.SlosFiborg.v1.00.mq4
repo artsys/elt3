@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.00"
+#property version   "1.10"
 #property strict
 
 //#define DEBUG5
@@ -17,10 +17,11 @@ expert_info_struct expert_info;
 struct signal_info{
    int cmd;
    int ma_lvl;
+   int tf;
 };
 
-signal_info last_signal_buy={-1,0};
-signal_info last_signal_sell={-1,0};
+signal_info last_signal_buy={-1,0,0};
+signal_info last_signal_sell={-1,0,0};
 
 void EXP_EventMNGR_forward(int ti, int event){
    EXP_EventMNGR(ti, event);
@@ -76,9 +77,12 @@ bool isNewBar=true;
 int OnInit()
   {
 //---
+	B_Init("FXO.SlosFiborg");
    if(Multy<=0){
    	Print("Усреднение отключено!");
    }
+   
+   TR_bUseColors=true;
 //---
    return(INIT_SUCCEEDED);
   }
@@ -88,7 +92,7 @@ int OnInit()
 void OnDeinit(const int reason)
   {
 //---
-   
+   B_Deinit("FXO.SlosFiborg");
   }
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |
@@ -119,7 +123,7 @@ void EXP_EventMNGR(int ti, int event){
 }
 
 void startext(){
-   B_Start();
+   B_Start("FXO.SlosFiborg");
    
    fIsNewBar();
    

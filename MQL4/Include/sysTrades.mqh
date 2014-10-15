@@ -13,6 +13,13 @@ enum TR_PRPIP{
    TR_MODE_PIP=2 
 };
 
+bool TR_bUseColors=false;
+enum TR_CLRS{
+	TR_clrBUY=clrBlue,
+	TR_clrSELL=clrRed,
+	TR_clrModify=clrYellow,
+};
+
 string gsComment="";
 	
 extern string	TR_S = "==== TRADING ======================";
@@ -169,7 +176,9 @@ int TR_SendBUYSTOP_array(		double &d[] //{
 		
 		sendVol = Norm_vol(sendVol);
 		
-		ticket = _OrderSend(Sy, OP_BUYSTOP, sendVol, SendPrice, 0, SLPrice, TPPrice, Comm, mn);
+		color _clr=(TR_bUseColors)?TR_clrBUY:clrNONE;
+		
+		ticket = _OrderSend(Sy, OP_BUYSTOP, sendVol, SendPrice, 0, SLPrice, TPPrice, Comm, mn, 0, _clr);
 		
 		if(ticket > 0){
 			rows++;
@@ -473,7 +482,9 @@ int TR_SendSELLSTOP_array(		double &d[] //{
 		
 		sendVol = Norm_vol(sendVol);
 		
-		ticket = _OrderSend(Sy, OP_SELLSTOP, sendVol, SendPrice, 0, SLPrice, TPPrice, Comm, mn);
+		color _clr=(TR_bUseColors)?TR_clrSELL:clrNONE;
+		
+		ticket = _OrderSend(Sy, OP_SELLSTOP, sendVol, SendPrice, 0, SLPrice, TPPrice, Comm, mn,0,_clr);
 		
 		if(ticket > 0){
 			rows++;
@@ -1587,8 +1598,9 @@ bool TR_MoveOrder(int src_ti, double pr, int mode = 1){
 	new_tp = Norm_symb(new_tp);
 	new_sl = Norm_symb(new_sl);
 	
+	color _clr=(TR_bUseColors)?TR_clrModify:clrNONE;
 	//------------------------------------------------------
-	return(_OrderModify(src_ti, new_pr, new_sl, new_tp, -1));
+	return(_OrderModify(src_ti, new_pr, new_sl, new_tp, -1,_clr));
 }
 
 bool TR_MoveOrderBetterPrice(int src_ti, double pr, int mode=1){

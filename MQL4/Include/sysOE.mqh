@@ -107,6 +107,7 @@ string OE2Str(int i){
 		case OE_BOT: return("OE_BOT");
 		case OE_DTY: return("OE_DTY");
 		case OE_FOOP: return("OE_FOOP");
+		case OE_FOOT: return("OE_FOOT");
 		case OE_USR1: return("OE_USR1");
 		case OE_USR2: return("OE_USR2");
 		case OE_USR3: return("OE_USR3");

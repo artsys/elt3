@@ -217,7 +217,8 @@ enum AI_ASSERTIONS{
    AI_EQ=0,
    AI_GREAT=1,
    AI_GREAT_OR_EQ=2,
-   AI_LESS=3
+   AI_LESS=3,
+   AI_LESS_OR_EQ=4,
 };
 double AId_Compare(double v1, double v2){
 	/**
@@ -753,6 +754,17 @@ void AId_Select2(double &a[][], int &aI[]){
 			first=0;
 			DAIdPRINT2(a,aI,"before AI_LESS col_"+OE2Str(f_col)+"_val_"+(string)f_min);
 			last=AId_SearchLess2(a,aI,f_col,f_min);
+		}
+		
+		if(f_aop==AI_LESS_OR_EQ){
+		   DPRINT2("AI_LESS_OR_EQ::before search::f_col="+f_col+" :f_min="+f_min);
+		   
+		   last=first=AId_SearchLast2(a, aI, f_col, f_min);
+		   if(last==AI_NONE){
+		      last=AId_SearchLess2(a,aI,f_col,f_min);
+		   }
+		   first=0;
+		   DAIdPRINT2(a,aI,"before AI_LESS_OR_EQ col_"+OE2Str(f_col)+"_val_"+(string)f_min);
 		}
 	   
 		AI_setInterval(aI,first,last);

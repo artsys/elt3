@@ -10,6 +10,8 @@
 
 //#define DEBUG5
 
+string sPref="eSlosFiborg";
+
 #define SAVE_EXPERT_INFO
 struct expert_info_struct{};
 expert_info_struct expert_info;
@@ -35,12 +37,14 @@ input int SLFix=500;
 input double Lot=0.1;
 input double Multy=3;
 //Если Multy <=0 тогда считаем, что усреднение отключено.
-input string IndicatorFolder="FXOpen";
+//input string IndicatorFolder="FXOpen";
 input ENUM_TIMEFRAMES TFPivot=PERIOD_D1;
 input int MaxLevels=10;
 input int StartLevel=21;
 
 input bool useDynDelta=false; //use Dynamic delta
+
+input bool drawPVT=false;
 
 #include <eFXO.SlosTraling.mqh>
 //#include <sysBase.mqh>
@@ -251,12 +255,55 @@ int GetNextFibo(int thisFibo){
 	return(b);
 }
 
+void DrawTLine(string Name, datetime dtTime1, double dPr1, datetime dtTime2, double dPr2, int w=1){
+	if(ObjectFind(Name)<=-1){
+		ObjectCreate(Name,OBJ_TREND,0,dtTime1,dPr1,dtTime2,dPr2);
+	}
+	
+	ObjectSet(Name,OBJPROP_TIME1,dtTime1);
+	ObjectSet(Name,OBJPROP_PRICE1,dPr1);
+	ObjectSet(Name,OBJPROP_TIME2,dtTime2);
+	ObjectSet(Name,OBJPROP_PRICE2,dPr2);
+	ObjectSet(Name,OBJPROP_RAY,false);
+	ObjectSet(Name,OBJPROP_WIDTH,w);
+}
+
+void DeleteObjects(){
+	int t=ObjectsTotal();
+	for(int i=t-1;i>=0;i--){
+		string n=ObjectName(i);
+		if(StringFind(n,sPref)>=0){
+			ObjectDelete(n);
+		}
+	}
+}
+
+double GetPVT(){
+	int start_bar=iBarShift(NULL,0,iTime(NULL,TFPivot,1));
+	int end_bar=iBarShift(NULL,0,iTime(NULL,TFPivot,0));
+	
+	int cnt=start_bar-end_bar;
+	int min_bar=iLowest(NULL,0,MODE_LOW,cnt,end_bar);
+	int max_bar=iHighest(NULL,0,MODE_HIGH,cnt,end_bar);
+	
+	double _c=iClose(NULL,0,(end_bar+1));
+	double _h=iHigh(NULL,0,max_bar);
+	double _l=iLow(NULL,0,min_bar);
+	
+	double pvt=(_h+_l+_c)/3;
+	string name=sPref+"#PVT#"+(int)Time[start_bar];
+	if(drawPVT){
+		DrawTLine(name,Time[end_bar],pvt,(Time[end_bar]+60*TFPivot),pvt,1);
+	}
+	
+	return(pvt);
+}
 
 signal_info GetSignal(){
    signal_info sig=GetEmptySignal();
    
-   double pvt=iCustom(NULL,0
-   						,(IndicatorFolder=="")?"":(IndicatorFolder+"\\")+"iFXO.PivotAbsolutFibo",TFPivot,false,0,1);
+   double pvt=	GetPVT();//iCustom(NULL,0
+   				//		,(IndicatorFolder=="")?"":(IndicatorFolder+"\\")+"iFXO.PivotAbsolutFibo",TFPivot,false,0,1);
    
    int rows=MaxLevels;
    int fibo=StartLevel-1;

@@ -12,9 +12,9 @@
 
 #define SAVE_EXPERT_INFO
 struct expert_info_struct{
-   int seria;
-   int level;
-   int lot;
+   int 		seria;
+   int 		level;
+   double 	lot;
 };
 
 expert_info_struct expert_info={0,0,0};
@@ -102,7 +102,9 @@ void startext()export{
          ,"\ndtNearestSarChange=",dtNearestSarChange
          ,"\niLastTiStart=",iLastTiStart
          ,"\naOE=",ROWS(aOE)
-         ,"\naTO=",ROWS(aTO));
+         ,"\naTO=",ROWS(aTO)
+         ,"\nEI.level="+expert_info.level
+         ,"\nEI.lot="+expert_info.lot);
 }
 
 int GetFirstOpenBar(){
@@ -274,12 +276,12 @@ void Autoopen(){
    if(isUp){
    	cmd=OP_BUYSTOP;
    	f=OE_TY+"=="+cmd+f;
-   	f1=OE_DTY+"=="+OE_DTY_BUY+f;
+   	f1=OE_DTY+"=="+OE_DTY_BUY+f1;
    	add_spread=Spread_BuyStop;
    }else{
    	cmd=OP_SELLSTOP;
    	f=OE_TY+"=="+cmd+f;
-   	f1=OE_DTY+"=="+OE_DTY_SELL+f;
+   	f1=OE_DTY+"=="+OE_DTY_SELL+f1;
    	add_spread=Spread_SellStop;
    }
    
@@ -294,11 +296,25 @@ void Autoopen(){
    	return;
    }
    
+   if(expert_info.level>=MaxLevel){
+   	SetExpertInfo(cmd,0,0);
+   }
+   
    double _lot=expert_info.lot*Multy;
+   if(_lot<=0){
+   	_lot=Lot;
+   }
    
    double d[];
    ArrayResize(d,0);
    TR_SendPending_array(d,cmd,sar,add_spread,_lot,TPFix,SLFix);
+   
+   SetExpertInfo(cmd,(expert_info.level+1),_lot);
+}
+
+void SetExpertInfo(int cmd, int _level, double _lot){
+	expert_info.level=_level;
+	expert_info.lot=_lot;
 }
 
 void GetLastTI(int &aI[], int start_bar, string add_filter=""){

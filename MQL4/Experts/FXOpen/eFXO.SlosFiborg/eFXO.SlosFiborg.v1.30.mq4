@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.20"
+#property version   "1.30"
 #property strict
 
 //#define DEBUG5
@@ -24,6 +24,9 @@ struct signal_info{
 
 signal_info last_signal_buy={-1,0,0};
 signal_info last_signal_sell={-1,0,0};
+
+int aFibo[200];
+int StartFiboIndex=0;
 
 void EXP_EventMNGR_forward(int ti, int event){
    EXP_EventMNGR(ti, event);
@@ -87,6 +90,15 @@ int OnInit()
    }
    
    TR_bUseColors=true;
+   
+   CalcFiboLevels();
+   
+   int i=1;
+   while(StartLevel>aFibo[i]){
+   	i++;
+   }
+   
+   StartFiboIndex=i-1;
 //---
    return(INIT_SUCCEEDED);
   }
@@ -152,6 +164,19 @@ void EXP_EventClosed(int ti){
 		}else{
 			last_signal_sell=GetEmptySignal();
 		}
+	}else{
+		int aIP[];
+		f=OE_IM+"==1 AND "+OE_DTY+"=="+_dty;
+		SELECT2(aTO,aIP,f);
+		int r_pos=ROWS(aIP);
+		
+		if(r_pos<=0){
+			if(_dty==OE_DTY_BUY){
+				last_signal_buy=GetEmptySignal();
+			}else{
+				last_signal_sell=GetEmptySignal();
+			}
+		}	
 	}
 }
 
@@ -186,7 +211,9 @@ void TralOrders(){
       }
       double dynDelta=((dty==OE_DTY_BUY)?1:-1)*GetDynDelta(dty);
       dynDelta+=dynDelta*0.1;
-      TR_MoveOrder(AId_Get2(aTO,aI,i,OE_TI),(pr+dynDelta));
+      
+      TR_MoveOrderBetterPrice(AId_Get2(aTO,aI,i,OE_TI),(pr+dynDelta));
+      //TR_MoveOrder(AId_Get2(aTO,aI,i,OE_TI),(pr+dynDelta));
    }
 }
 
@@ -339,9 +366,9 @@ signal_info GetSignal(){
    int dig=(Digits==3||Digits==5)?10:1;
    for(int i=0;i<rows;i++){
       
-      fibo=GetNextFibo(fibo);
+      fibo=aFibo[StartFiboIndex+i];//GetNextFibo(fibo);
      
-     for(int i=0;i<2;i++){
+     for(int j=0;j<2;j++){
      	fibo=-1*fibo;
       double dFiboLvl=pvt+fibo*(dig)*Point;
       if(fibo!=0){
@@ -369,4 +396,14 @@ void fIsNewBar(){
    }else{
       isNewBar=false;
    }
+}
+
+void CalcFiboLevels(){
+	for(int i=1;i<50;i++){
+		if(i==1){
+			aFibo[i]=1;
+		}else{
+			aFibo[i]=GetNextFibo(aFibo[i-1]);
+		}	
+	}
 }

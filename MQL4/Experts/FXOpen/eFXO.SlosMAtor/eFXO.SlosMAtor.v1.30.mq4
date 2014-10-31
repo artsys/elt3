@@ -131,8 +131,37 @@ void OnTick(){
 
 void EXP_EventMNGR(int ti, int event){
    if(event==EVT_CLS){
-      //EXP_EventClosed(ti);
+      EXP_EventClosed(ti);
    }
+}
+
+void EXP_EventClosed(int ti){
+	int _dty=OE_getPBT(ti,OE_DTY);
+	string f=OE_IP+"==1 AND "+OE_DTY+"=="+_dty;
+	int aI[];
+	SELECT2(aTO,aI,f);
+	
+	int r_ord=ROWS(aI);
+	if(r_ord>0){
+		int aIP[];
+		f=OE_IM+"==1 AND "+OE_DTY+"=="+_dty;
+		SELECT2(aTO,aIP,f);
+		int r_pos=ROWS(aIP);
+		
+		if(r_pos>0){
+			return; // у нас еще есть рыночные ордера
+		}
+		
+		for(int i=0;i<r_ord;i++){
+			TR_CloseByTicket(AId_Get2(aTO,aI,i,OE_TI));
+		}
+		
+		if(_dty==OE_DTY_BUY){
+			last_signal_buy=GetEmptySignal();	
+		}else{
+			last_signal_sell=GetEmptySignal();
+		}
+	}
 }
 
 void startext(){

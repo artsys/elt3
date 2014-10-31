@@ -98,7 +98,7 @@ int OnInit()
    	i++;
    }
    
-   StartFiboIndex=i-1;
+   StartFiboIndex=i;
 //---
    return(INIT_SUCCEEDED);
   }

@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.30"
+#property version   "1.40"
 #property strict
 
 //#define DEBUG5
@@ -17,13 +17,14 @@ struct expert_info_struct{};
 expert_info_struct expert_info;
 
 struct signal_info{
-   int cmd;
-   int ma_lvl;
-   int tf;
+   int		cmd;
+   int		ma_lvl;
+   int		tf;
+   double	pvt;
 };
 
-signal_info last_signal_buy={-1,0,0};
-signal_info last_signal_sell={-1,0,0};
+signal_info last_signal_buy={-1,0,0,0};
+signal_info last_signal_sell={-1,0,0,0};
 
 int aFibo[200];
 int StartFiboIndex=0;
@@ -189,10 +190,17 @@ void startext(){
    
    Autoopen();
    
+   if(ROWS(aTO)<=0){
+   	last_signal_buy=GetEmptySignal();
+   	last_signal_sell=GetEmptySignal();
+   }
+   
    Comment("\nlsb.cmd="+last_signal_buy.cmd
             ,"\nlsb.ma_lvl="+last_signal_buy.ma_lvl
+            ,"\nlsb.pvt="+last_signal_buy.pvt
             ,"\nlss.cmd="+last_signal_sell.cmd
             ,"\nlss.ma_lvl="+last_signal_sell.ma_lvl
+				,"\nlss.pvt="+last_signal_sell.pvt
             );
 }
 
@@ -296,7 +304,7 @@ double GetDynDelta(OE_DIRECTION dty){
 }
 
 signal_info GetEmptySignal(){
-   signal_info empty={-1,0};
+   signal_info empty={-1,0,0,0};
    
    return(empty);
 }
@@ -358,8 +366,20 @@ double GetPVT(){
 signal_info GetSignal(){
    signal_info sig=GetEmptySignal();
    
-   double pvt=	GetPVT();//iCustom(NULL,0
-   				//		,(IndicatorFolder=="")?"":(IndicatorFolder+"\\")+"iFXO.PivotAbsolutFibo",TFPivot,false,0,1);
+   double pvt_buy=0;
+   double pvt_sell=0;
+   
+   if(last_signal_buy.pvt>0){
+   	pvt_buy=last_signal_buy.pvt;
+   }else{
+   	pvt_buy=GetPVT();
+   }
+   
+   if(last_signal_sell.pvt>0){
+   	pvt_sell=last_signal_sell.pvt;
+   }else{
+   	pvt_sell=GetPVT();
+   }
    
    int rows=MaxLevels;
    int fibo=StartLevel-1;
@@ -369,6 +389,7 @@ signal_info GetSignal(){
       fibo=aFibo[StartFiboIndex+i];//GetNextFibo(fibo);
      
      for(int j=0;j<2;j++){
+     	double pvt=(j==0)?pvt_buy:pvt_sell;
      	fibo=-1*fibo;
       double dFiboLvl=pvt+fibo*(dig)*Point;
       if(fibo!=0){
@@ -379,6 +400,7 @@ signal_info GetSignal(){
                sig.cmd=OP_SELLSTOP;
             }
             sig.ma_lvl=fibo;
+            sig.pvt=pvt;
          }
       }
      }

@@ -20,7 +20,7 @@
 
 input ENUM_TIMEFRAMES TFPivot=PERIOD_D1;
 input bool DrawLevels=true;
-input int DrawBegin=30;
+input int DrawBegin=300;
 input int MaxLevels=3;
 input int StartLevel=21;
 //ряд фибо=1,1,2,3,5,8,13,21,34,55,89,144,

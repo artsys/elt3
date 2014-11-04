@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.40"
+#property version   "1.50"
 #property strict
 
 //#define DEBUG5
@@ -47,6 +47,7 @@ input int MaxLevels=10;
 input int StartLevel=21;
 
 input bool useDynDelta=false; //use Dynamic delta
+input double DynDeltaKoef=0.1; //Dynamic delta koef.
 
 input bool drawPVT=false;
 
@@ -218,7 +219,7 @@ void TralOrders(){
          pr=Low[1];
       }
       double dynDelta=((dty==OE_DTY_BUY)?1:-1)*GetDynDelta(dty);
-      dynDelta+=dynDelta*0.1;
+      dynDelta+=dynDelta*DynDeltaKoef;
       
       TR_MoveOrderBetterPrice(AId_Get2(aTO,aI,i,OE_TI),(pr+dynDelta));
       //TR_MoveOrder(AId_Get2(aTO,aI,i,OE_TI),(pr+dynDelta));

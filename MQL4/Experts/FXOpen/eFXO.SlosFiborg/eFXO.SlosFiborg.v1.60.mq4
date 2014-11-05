@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.50"
+#property version   "1.60"
 #property strict
 
 //#define DEBUG5
@@ -13,7 +13,17 @@
 string sPref="eSlosFiborg";
 
 #define SAVE_EXPERT_INFO
-struct expert_info_struct{};
+struct expert_info_struct{
+	int buy_cmd;
+	int buy_ma_lvl;
+	int buy_tf;
+	double buy_pvt;
+	
+	int sell_cmd;
+	int sell_ma_lvl;
+	int sell_tf;
+	double sell_pvt;
+};
 expert_info_struct expert_info;
 
 struct signal_info{
@@ -101,6 +111,8 @@ int OnInit()
    }
    
    StartFiboIndex=i;
+   
+   GetExpertInfo();
 //---
    return(INIT_SUCCEEDED);
   }
@@ -180,6 +192,32 @@ void EXP_EventClosed(int ti){
 			}
 		}	
 	}
+	
+	SetExpertInfo();
+}
+
+void SetExpertInfo(){
+	expert_info.buy_cmd=last_signal_buy.cmd;
+	expert_info.buy_ma_lvl=last_signal_buy.ma_lvl;
+	expert_info.buy_pvt=last_signal_buy.pvt;
+	expert_info.buy_tf=last_signal_buy.tf;
+	
+	expert_info.sell_cmd=last_signal_sell.cmd;
+	expert_info.sell_ma_lvl=last_signal_sell.ma_lvl;
+	expert_info.sell_pvt=last_signal_sell.pvt;
+	expert_info.sell_tf=last_signal_sell.tf;
+}
+
+void GetExpertInfo(){
+	last_signal_buy.cmd=expert_info.buy_cmd;
+	last_signal_buy.ma_lvl=expert_info.buy_ma_lvl;
+	last_signal_buy.pvt=expert_info.buy_pvt;
+	last_signal_buy.tf=expert_info.buy_tf;
+	
+	last_signal_sell.cmd=expert_info.sell_cmd;
+	last_signal_sell.ma_lvl=expert_info.sell_ma_lvl;
+	last_signal_sell.pvt=expert_info.sell_pvt;
+	last_signal_sell.tf=expert_info.sell_tf;
 }
 
 void startext(){
@@ -195,6 +233,8 @@ void startext(){
    	last_signal_buy=GetEmptySignal();
    	last_signal_sell=GetEmptySignal();
    }
+   
+   SetExpertInfo();
    
    Comment("\nlsb.cmd="+last_signal_buy.cmd
             ,"\nlsb.ma_lvl="+last_signal_buy.ma_lvl

@@ -238,7 +238,7 @@ void Autoopen(){
          double d[];
          double start_pr=iif(signal.cmd==OP_BUYSTOP,High[1],Low[1]);
          double dynDelta=iif(signal.cmd==OP_BUYSTOP,1,-1)*GetDynDelta((signal.cmd==OP_BUYSTOP)?OE_DTY_BUY:OE_DTY_SELL);
-         start_pr+=dynDelta;
+         start_pr+=dynDelta*DynDeltaKoef;
          
          f=OE_IM+"==1 AND "+OE_DTY+"=="+((signal.cmd==OP_BUYSTOP)?OE_DTY_BUY:OE_DTY_SELL);
          DAIdPRINTALL5(aTO,"before select2 "+f);

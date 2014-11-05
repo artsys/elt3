@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.60"
+#property version   "1.70"
 #property strict
 
 //#define DEBUG5
@@ -50,6 +50,7 @@ input int TPFix=500;
 input int SLFix=500;
 input double Lot=0.1;
 input double Multy=3;
+input int DeltaMin=10;
 //≈сли Multy <=0 тогда считаем, что усреднение отключено.
 //input string IndicatorFolder="FXOpen";
 input ENUM_TIMEFRAMES TFPivot=PERIOD_D1;
@@ -284,7 +285,7 @@ void Autoopen(){
          DAIdPRINTALL5(aTO,"before select2 "+f);
          SELECT2(aTO,aI,f);
          DAIdPRINT5(aTO,aI,"after select2 "+f);
-         double _lot=Lot;
+         double _lot=Lot,_pr=0;
          if(ROWS(aI)>0){
             if(Multy<=0){ 
             	return; //”среднение отключено.
@@ -296,6 +297,24 @@ void Autoopen(){
             AId_InsertSort2(aTO,aI,OE_LOT);
             _lot=AId_Get2(aTO,aI,(ROWS(aI)-1),OE_LOT);
             _lot=_lot*Multy;
+            _pr=AId_Get2(aTO,aI,OE_OOP);
+            
+            if(_pr>0){
+            	if(signal.cmd=OP_BUYSTOP){
+            		if(start_pr>=_pr-DeltaMin*Point){
+            			//÷ена выставлени€ усредн€ющего бай ордера 
+            			//будет выше цены последней позиции сетки.
+            			return;
+            		}
+            	}else{
+            		if(start_pr<=_pr+DeltaMin*Point){
+            			//÷ена выставлени€ усредн€ющего селл ордера 
+            			//будет ниже цены последней позиции сетки.
+            			return;
+            		}
+            	}
+            }
+            
          }else{
             if(signal.cmd==OP_BUYSTOP){
                last_signal_buy=GetEmptySignal();

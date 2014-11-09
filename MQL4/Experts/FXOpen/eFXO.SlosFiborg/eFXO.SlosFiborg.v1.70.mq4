@@ -51,6 +51,7 @@ input int SLFix=500;
 input double Lot=0.1;
 input double Multy=3;
 input int DeltaMin=10;
+input bool useSimpleMethod=false;
 //Если Multy <=0 тогда считаем, что усреднение отключено.
 //input string IndicatorFolder="FXOpen";
 input ENUM_TIMEFRAMES TFPivot=PERIOD_D1;
@@ -292,7 +293,10 @@ void Autoopen(){
             }
             	
             DPRINT5("sig.ma_lvl="+signal.ma_lvl);
-            if(MathAbs(signal.ma_lvl)<=MathAbs((signal.cmd==OP_BUYSTOP)?last_signal_buy.ma_lvl:last_signal_sell.ma_lvl)) return;
+            
+            if(!useSimpleMethod){
+            	if(MathAbs(signal.ma_lvl)<=MathAbs((signal.cmd==OP_BUYSTOP)?last_signal_buy.ma_lvl:last_signal_sell.ma_lvl)) return;
+            }	
             
             AId_InsertSort2(aTO,aI,OE_LOT);
             _lot=AId_Get2(aTO,aI,(ROWS(aI)-1),OE_LOT);
@@ -429,13 +433,13 @@ signal_info GetSignal(){
    double pvt_buy=0;
    double pvt_sell=0;
    
-   if(last_signal_buy.pvt>0){
+   if(last_signal_buy.pvt>0 && !useSimpleMethod){
    	pvt_buy=last_signal_buy.pvt;
    }else{
    	pvt_buy=GetPVT();
    }
    
-   if(last_signal_sell.pvt>0){
+   if(last_signal_sell.pvt>0 && !useSimpleMethod){
    	pvt_sell=last_signal_sell.pvt;
    }else{
    	pvt_sell=GetPVT();

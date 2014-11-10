@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.70"
+#property version   "1.80"
 #property strict
 
 //#define DEBUG5

@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.70"
+#property version   "1.71"
 #property strict
 
 //#define DEBUG5
@@ -269,6 +269,7 @@ void TralOrders(){
 }
 
 void Autoopen(){
+	BP();
    signal_info signal=GetSignal();
    
    if(signal.cmd>-1){
@@ -301,9 +302,10 @@ void Autoopen(){
             AId_InsertSort2(aTO,aI,OE_LOT);
             _lot=AId_Get2(aTO,aI,(ROWS(aI)-1),OE_LOT);
             _lot=_lot*Multy;
-            _pr=AId_Get2(aTO,aI,OE_OOP);
+            _pr=AId_Get2(aTO,aI,(ROWS(aI)-1),OE_OOP);
             
             if(_pr>0){
+            	BP();
             	if(signal.cmd=OP_BUYSTOP){
             		if(start_pr>=_pr-DeltaMin*Point){
             			//÷ена выставлени€ усредн€ющего бай ордера 
@@ -492,4 +494,34 @@ void CalcFiboLevels(){
 			aFibo[i]=GetNextFibo(aFibo[i-1]);
 		}	
 	}
+}
+
+//Breakpoint neither receive nor send back any parameters
+#include <WinUser32.mqh>
+void BP()
+{
+	return;
+   //It is expecting, that this function should work
+   //only in tester
+   if (!IsVisualMode()) return;
+   
+   MessageBox("Breack Point");
+   
+   //Preparing a data for printing
+   //Comment() function is used as 
+   //it give quite clear visualisation
+   string Comm="";
+   Comm=Comm+"Bid="+Bid+"\n";
+   Comm=Comm+"Ask="+Ask+"\n";
+   
+   Comment(Comm);
+   
+   //Press/release Pause button
+   //19 is a Virtual Key code of "Pause" button
+   //Sleep() is needed, because of the probability
+   //to misprocess too quick pressing/releasing
+   //of the button
+   keybd_event(19,0,0,0);
+   Sleep(10);
+   keybd_event(19,0,2,0);
 }

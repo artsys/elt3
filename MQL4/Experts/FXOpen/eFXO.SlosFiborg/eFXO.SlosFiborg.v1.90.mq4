@@ -244,16 +244,12 @@ void startext(){
    
    Comment("\nlsb.cmd="+last_signal_buy.cmd
             ,"\nlsb.ma_lvl="+last_signal_buy.ma_lvl
-            ,"\nlsb.pvt="+last_signal_buy.pvt
-            ,"\nddb="+gDymDeltaBuy
+            ,"\nlsb.pvt="+DoubleToStr(last_signal_buy.pvt,Digits)
+            ,"\nddb="+DoubleToStr(gDymDeltaBuy,Digits)
             ,"\nlss.cmd="+last_signal_sell.cmd
             ,"\nlss.ma_lvl="+last_signal_sell.ma_lvl
-				,"\nlss.pvt="+last_signal_sell.pvt
-            ,"\ndds="+gDymDeltaSell
-            
-            ,"\nlss.cmd="+signal.cmd
-            ,"\nlss.ma_lvl="+signal.ma_lvl
-				,"\nlss.pvt="+signal.pvt
+				,"\nlss.pvt="+DoubleToStr(last_signal_sell.pvt,Digits)
+            ,"\ndds="+DoubleToStr(gDymDeltaSell,Digits)
             );
 }
 
@@ -321,7 +317,7 @@ void Autoopen(){
             _pr=AId_Get2(aTO,aI,(ROWS(aI)-1),OE_OOP);
             
             if(_pr>0){
-            	if(signal.cmd=OP_BUYSTOP){
+            	if(signal.cmd==OP_BUYSTOP){
             		if(start_pr>=_pr-DeltaMin*Point){
             			//Цена выставления усредняющего бай ордера 
             			//будет выше цены последней позиции сетки.

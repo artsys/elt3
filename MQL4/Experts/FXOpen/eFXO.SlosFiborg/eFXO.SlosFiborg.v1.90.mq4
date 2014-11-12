@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.80"
+#property version   "1.90"
 #property strict
 
 //#define DEBUG5
@@ -35,6 +35,10 @@ struct signal_info{
 
 signal_info last_signal_buy={-1,0,0,0};
 signal_info last_signal_sell={-1,0,0,0};
+signal_info signal={-1,0,0,0};
+
+double gDymDeltaBuy=0;
+double gDymDeltaSell=0;
 
 int aFibo[200];
 int StartFiboIndex=0;
@@ -241,9 +245,15 @@ void startext(){
    Comment("\nlsb.cmd="+last_signal_buy.cmd
             ,"\nlsb.ma_lvl="+last_signal_buy.ma_lvl
             ,"\nlsb.pvt="+last_signal_buy.pvt
+            ,"\nddb="+gDymDeltaBuy
             ,"\nlss.cmd="+last_signal_sell.cmd
             ,"\nlss.ma_lvl="+last_signal_sell.ma_lvl
 				,"\nlss.pvt="+last_signal_sell.pvt
+            ,"\ndds="+gDymDeltaSell
+            
+            ,"\nlss.cmd="+signal.cmd
+            ,"\nlss.ma_lvl="+signal.ma_lvl
+				,"\nlss.pvt="+signal.pvt
             );
 }
 
@@ -280,6 +290,13 @@ void Autoopen(){
          double d[];
          double start_pr=iif(signal.cmd==OP_BUYSTOP,High[1],Low[1]);
          double dynDelta=iif(signal.cmd==OP_BUYSTOP,1,-1)*GetDynDelta((signal.cmd==OP_BUYSTOP)?OE_DTY_BUY:OE_DTY_SELL);
+         
+         if(signal.cmd==OP_BUYSTOP){
+         	gDymDeltaBuy=dynDelta;
+         }else{
+         	gDymDeltaSell=dynDelta;
+         }
+         
          start_pr+=dynDelta*DynDeltaKoef;
          
          f=OE_IM+"==1 AND "+OE_DTY+"=="+((signal.cmd==OP_BUYSTOP)?OE_DTY_BUY:OE_DTY_SELL);
@@ -301,7 +318,7 @@ void Autoopen(){
             AId_InsertSort2(aTO,aI,OE_LOT);
             _lot=AId_Get2(aTO,aI,(ROWS(aI)-1),OE_LOT);
             _lot=_lot*Multy;
-            _pr=AId_Get2(aTO,aI,OE_OOP);
+            _pr=AId_Get2(aTO,aI,(ROWS(aI)-1),OE_OOP);
             
             if(_pr>0){
             	if(signal.cmd=OP_BUYSTOP){

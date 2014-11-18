@@ -1,6 +1,6 @@
 #property copyright "MaxZ"
 #property link      "zagizop@yandex.ru"
-#property version   "3.10"
+#property version   "3.20"
 
 // Если у Вас есть идея для написания советника, индикатора или скрипта,
 // то Вам может помочь следующая тема:
@@ -23,6 +23,7 @@ extern   int      MA_Price       = 0;
 
 extern   string   s2             = "Дополнительные настройки:";
 extern   int      MAT_Digits     = 3;
+extern	int		MAT_Bars			= 1;
 extern   bool     MAT_Refresh    = true;
 
 extern   string   s3             = "Настройка толщины и цвета:";
@@ -54,14 +55,15 @@ int init()
                   +  "@6p"+(string)MA_Price
                   +  "@7p"
                   +  "@8p"+(string)MAT_Digits
-                  +  "@9p"+(string)MAT_Refresh
-                  +  "@10p"
-                  +  "@11p"+(string)MAT_Width
-                  +  "@12p"+(string)MAT_Color
-                  +  "@13p"
+                  +	"@9p"+(string)MAT_Bars
+                  +  "@10p"+(string)MAT_Refresh
+                  +  "@11p"
+                  +  "@12p"+(string)MAT_Width
+                  +  "@13p"+(string)MAT_Color
+                  +  "@14p"
                   ;
    
-   objName="MATv310"+(string)Period();               
+   objName="MATv320"+(string)Period();               
    if(ObjectFind(objName)==-1){
       ObjectCreate(objName,OBJ_TEXT,0,0,0,0,0);
       ObjectSetText(objName,sParams,0);
@@ -96,7 +98,10 @@ int start()
    for (i = limit; i >= 0; i--)
    {
       MA[i] = iMA(NULL, 0, MA_Period, MA_Shift, MA_Method, MA_Price, i);
-      if (NormalizeDouble(MA[i], MAT_Digits) > NormalizeDouble(MA[i+1], MAT_Digits)+0.5*Point || NormalizeDouble(MA[i], MAT_Digits) < NormalizeDouble(MA[i+1], MAT_Digits)-0.5*Point)
+      if (
+      		NormalizeDouble(MA[i], MAT_Digits) > NormalizeDouble(MA[i+MAT_Bars], MAT_Digits)+0.5*Point 
+      	|| 
+      		NormalizeDouble(MA[i], MAT_Digits) < NormalizeDouble(MA[i+MAT_Bars], MAT_Digits)-0.5*Point)
          MAT[i] = NormalizeDouble(MA[i], MAT_Digits);
    }
    return(0);

@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.90"
+#property version   "2.00"
 #property strict
 
 //#define DEBUG5
@@ -18,11 +18,13 @@ struct expert_info_struct{
 	int buy_ma_lvl;
 	int buy_tf;
 	double buy_pvt;
+	double buy_lot;
 	
 	int sell_cmd;
 	int sell_ma_lvl;
 	int sell_tf;
 	double sell_pvt;
+	double sell_lot; 
 };
 expert_info_struct expert_info;
 
@@ -37,8 +39,8 @@ signal_info last_signal_buy={-1,0,0,0};
 signal_info last_signal_sell={-1,0,0,0};
 signal_info signal={-1,0,0,0};
 
-double gDymDeltaBuy=0;
-double gDymDeltaSell=0;
+double gDynDeltaBuy=0;
+double gDynDeltaSell=0;
 
 int aFibo[200];
 int StartFiboIndex=0;
@@ -245,11 +247,11 @@ void startext(){
    Comment("\nlsb.cmd="+last_signal_buy.cmd
             ,"\nlsb.ma_lvl="+last_signal_buy.ma_lvl
             ,"\nlsb.pvt="+DoubleToStr(last_signal_buy.pvt,Digits)
-            ,"\nddb="+DoubleToStr(gDymDeltaBuy,Digits)
+            ,"\nddb="+DoubleToStr(gDynDeltaBuy,Digits)
             ,"\nlss.cmd="+last_signal_sell.cmd
             ,"\nlss.ma_lvl="+last_signal_sell.ma_lvl
 				,"\nlss.pvt="+DoubleToStr(last_signal_sell.pvt,Digits)
-            ,"\ndds="+DoubleToStr(gDymDeltaSell,Digits)
+            ,"\ndds="+DoubleToStr(gDynDeltaSell,Digits)
             );
 }
 
@@ -288,9 +290,9 @@ void Autoopen(){
          double dynDelta=iif(signal.cmd==OP_BUYSTOP,1,-1)*GetDynDelta((signal.cmd==OP_BUYSTOP)?OE_DTY_BUY:OE_DTY_SELL);
          
          if(signal.cmd==OP_BUYSTOP){
-         	gDymDeltaBuy=dynDelta;
+         	gDynDeltaBuy=dynDelta;
          }else{
-         	gDymDeltaSell=dynDelta;
+         	gDynDeltaSell=dynDelta;
          }
          
          start_pr+=dynDelta*DynDeltaKoef;

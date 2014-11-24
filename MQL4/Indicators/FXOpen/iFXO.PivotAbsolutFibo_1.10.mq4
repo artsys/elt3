@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.10"
+#property version   "1.20"
 #property strict
 #property indicator_chart_window
 
@@ -23,6 +23,7 @@ input bool DrawLevels=true;
 input int DrawBegin=300;
 input int MaxLevels=3;
 input int StartLevel=21;
+input color Color=clrRed;
 //ряд фибо=1,1,2,3,5,8,13,21,34,55,89,144,
 
 string sPref="#PivotAbs"+(int)TimeLocal();
@@ -41,6 +42,7 @@ int OnInit()
   } 
   
   SetIndexBuffer(0,Pivot);
+  SetIndexStyle(0,DRAW_LINE,STYLE_SOLID,2,Color);
 //---
    return(INIT_SUCCEEDED);
   }
@@ -133,11 +135,11 @@ void pDrawLevels(int BarIndex, int tfpBarIndex){
 		
 		int dig=(Digits==3||Digits==5)?10:1;
 		double pr=pvt+thisFibo*dig*Point;
-		string name=sPref+"@l"+thisFibo+"@t"+(int)dtStart;
+		string name=sPref+"@tf"+(string)TFPivot+"@l"+thisFibo+"@t"+(int)dtStart;
 		DrawTLine(name,dtStart,pr,dtEnd,pr,w);
 		
 		pr=pvt-thisFibo*dig*Point;
-		name=sPref+"@l-"+thisFibo+"@t"+(int)dtStart;
+		name=sPref+"@tf"+(string)TFPivot+"@l-"+thisFibo+"@t"+(int)dtStart;
 		DrawTLine(name,dtStart,pr,dtEnd,pr,w);
 	}
 }
@@ -153,6 +155,7 @@ void DrawTLine(string Name, datetime dtTime1, double dPr1, datetime dtTime2, dou
 	ObjectSet(Name,OBJPROP_PRICE2,dPr2);
 	ObjectSet(Name,OBJPROP_RAY,false);
 	ObjectSet(Name,OBJPROP_WIDTH,w);
+	ObjectSet(Name,OBJPROP_COLOR,Color);
 }
 
 void DeleteObjects(){

@@ -24,6 +24,7 @@ double	aEO[][OE_MAX];
 #define EVT_NEW	0
 #define EVT_CHTY	1
 #define EVT_CLS	2
+#define EVT_CHPR	3
 double	aE[][E_MAX];
 
 void E_Init(void){
@@ -141,6 +142,13 @@ void E_Events(void){
 		if(cty!=oty){
 			EVENT_ChTY(cti);
 		}
+		
+		//Изменилась цена открытия ордера
+		double cpr=(double)AId_Get2(aEC,aIC,ic,OE_OOP);
+		double opr=(double)AId_Get2(aEO,aIO,io,OE_OOP);
+		if(cpr!=opr){
+			EVENT_ChPR(cti);
+		}
 	}
 	
 	for(int io=0; io<ArrayRange(aIO,0);io++){
@@ -170,6 +178,7 @@ void EVENT_New(int ti){
 	int idx=AId_AddRow2(aE);
 	aE[idx][E_TI]=ti;
 	aE[idx][E_EVT]=EVT_NEW;
+	EXP_EventMNGR(ti, EVT_NEW);
 }
 
 void EVENT_ChTY(int ti){
@@ -186,6 +195,24 @@ void EVENT_ChTY(int ti){
 	int idx=AId_AddRow2(aE);
 	aE[idx][E_TI]=ti;
 	aE[idx][E_EVT]=EVT_CHTY;
+	EXP_EventMNGR(ti, EVT_CHTY);
+}
+
+void EVENT_ChPR(int ti){
+	/**
+		\version	0.0.0.0
+		\date		2014.03.03
+		\author		Morochin <artamir> Artiom
+		\details	Событие - изменение типа позиции/ордера.
+		\internal
+			>Hist:
+			>Rev:0
+	*/
+	string fn="EVENT_ChPR";
+	int idx=AId_AddRow2(aE);
+	aE[idx][E_TI]=ti;
+	aE[idx][E_EVT]=EVT_CHPR;
+	EXP_EventMNGR(ti, EVT_CHPR);
 }
 
 void EVENT_Closed(int ti){

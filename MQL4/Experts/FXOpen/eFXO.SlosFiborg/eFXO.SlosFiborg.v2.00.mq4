@@ -19,12 +19,16 @@ struct expert_info_struct{
 	int buy_tf;
 	double buy_pvt;
 	double buy_lot;
+	int buy_tralpips;
+	double buy_price;
 	
 	int sell_cmd;
 	int sell_ma_lvl;
 	int sell_tf;
 	double sell_pvt;
 	double sell_lot; 
+	double sell_tralpips;
+	double sell_price;
 };
 expert_info_struct expert_info;
 
@@ -56,6 +60,11 @@ input int TPFix=500;
 input int SLFix=500;
 input double Lot=0.1;
 input double Multy=3;
+
+input bool	useTralLots=false;
+input int	TralLots_pips=10;
+input double TralLots_Plus=0.1;
+
 input int DeltaMin=10;
 input bool useSimpleMethod=false;
 //Если Multy <=0 тогда считаем, что усреднение отключено.
@@ -90,7 +99,7 @@ input double   STR_SLMinimum=0.1; //SLMin
 //+------------------------------------------------------------------+
 //| DEFINES
 //+------------------------------------------------------------------+
-#define OE_LVL OE_USR1
+#define OE_LASTOOP OE_USR1
 
 //+------------------------------------------------------------------+
 //| GLOBAL VARS
@@ -158,10 +167,50 @@ void EXP_EventMNGR(int ti, int event){
    if(event==EVT_CLS){
       EXP_EventClosed(ti);
    }
+   
+   if(event==EVT_CHPR){
+   	EXP_EventChangedPrice(ti);
+   }
+}
+
+void EXP_EventChangedPrice(int ti){
+	DAIdPRINTALL5(aTO,"___________");
+	if(!useTralLots) return;
+	
+	SELECT(aTO,OE_TI+"=="+ti);
+	if(ROWS(aI)<=0)return;
+	
+	double _oop=AId_Get2(aTO,aI,0,OE_OOP);
+	double _last_oop=AId_Get2(aTO,aI,0,OE_LASTOOP);
+	double _foop=AId_Get2(aTO,aI,0,OE_FOOP);
+	OE_DIRECTION _dty=AId_Get2(aTO,aI,0,OE_DTY);
+	
+	if(_last_oop<=0){
+		_last_oop=_foop;
+	}
+	
+	int _pips=((_dty==OE_DTY_BUY)?(_last_oop-_oop):(_oop-_last_oop))/Point;
+	DPRINT5("pips="+_pips);
+	if(_pips<TralLots_pips) return;
+	
+	
+	
+	double d[];
+	TR_SendSTOPLikeOrder_array(d,ti,0,1,TralLots_Plus);
+	if(ROWS(d)>0)TR_CloseByTicket(ti);
+	for(int i=0; i<ROWS(d); i++){
+		int _ti=d[i];
+		int idx=OE_FIBT(_ti);
+		OE_setPBI(idx, OE_LASTOOP,_oop);
+	}
+	DAIdPRINTALL5(aTO,"__________");
 }
 
 void EXP_EventClosed(int ti){
 	int _dty=OE_getPBT(ti,OE_DTY);
+	int _ip=OE_getPBT(ti,OE_IP);
+	if(_ip>=1)return;
+	
 	string f=OE_IP+"==1 AND "+OE_DTY+"=="+_dty;
 	int aI[];
 	SELECT2(aTO,aI,f);
@@ -248,10 +297,16 @@ void startext(){
             ,"\nlsb.ma_lvl="+last_signal_buy.ma_lvl
             ,"\nlsb.pvt="+DoubleToStr(last_signal_buy.pvt,Digits)
             ,"\nddb="+DoubleToStr(gDynDeltaBuy,Digits)
+            ,"\n\n"
+            ,"\nb.price="+expert_info.buy_price
+            ,"\n\n"
             ,"\nlss.cmd="+last_signal_sell.cmd
             ,"\nlss.ma_lvl="+last_signal_sell.ma_lvl
 				,"\nlss.pvt="+DoubleToStr(last_signal_sell.pvt,Digits)
             ,"\ndds="+DoubleToStr(gDynDeltaSell,Digits)
+            ,"\n\n"
+            ,"\ns.price="+expert_info.sell_price
+            ,"\n\n"
             );
 }
 
@@ -272,8 +327,7 @@ void TralOrders(){
       dynDelta+=dynDelta*DynDeltaKoef;
       
       TR_MoveOrderBetterPrice(AId_Get2(aTO,aI,i,OE_TI),(pr+dynDelta));
-      //TR_MoveOrder(AId_Get2(aTO,aI,i,OE_TI),(pr+dynDelta));
-   }
+   }   
 }
 
 void Autoopen(){
@@ -345,9 +399,13 @@ void Autoopen(){
          TR_SendPending_array(d,signal.cmd,start_pr,0,_lot,TPFix,SLFix);
          
          if(signal.cmd==OP_BUYSTOP){
-           last_signal_buy=signal;
+        		last_signal_buy=signal;
+      		expert_info.buy_price=start_pr;
+      		expert_info.buy_tralpips=0;
          }else{
-           last_signal_sell=signal;
+        		last_signal_sell=signal;
+        		expert_info.sell_price=start_pr;
+      		expert_info.sell_tralpips=0;
          }
       }
    }

@@ -646,10 +646,10 @@ int TR_SendSELLLIMIT(double StartPrice, int AddPips = 0, double Vol = 0.01, int 
 	return(ticket);
 }
 
-int TR_SendSTOPLikeOrder_array(double &d[], int src_ti = 0, int AddPips = 0, double lot_multi = 2){
+int TR_SendSTOPLikeOrder_array(double &d[], int src_ti = 0, int AddPips = 0, double lot_multi = 1, double lot_plus = 0){
 	/*
-		>Ver	:	0.0.1
-		>Date	:	2013.03.02
+		>Ver	:	0.0.2
+		>Date	:	2014.11.24
 		>Hist	:
 			@0.0.1@2013.03.02@artamir	[]
 		>Author	:	Morochin <artamir> Artiom
@@ -672,7 +672,7 @@ int TR_SendSTOPLikeOrder_array(double &d[], int src_ti = 0, int AddPips = 0, dou
 	_StartPrice = Norm_symb(OrderOpenPrice());
 	_Comm = _Comm + (string)OrderTicket();
 	_Type = OrderType();
-	_Lot = OrderLots()*lot_multi;
+	_Lot = OrderLots()*lot_multi+lot_plus;
 	_Magic = OrderMagicNumber();
 	
 	if(_Type == OP_BUY || _Type == OP_BUYSTOP){

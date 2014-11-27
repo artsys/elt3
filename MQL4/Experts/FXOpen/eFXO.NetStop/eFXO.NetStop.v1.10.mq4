@@ -5,10 +5,11 @@
 //+------------------------------------------------------------------+
 #property copyright "artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.00"
+#property version   "1.10"
 #property strict
 
-#define DEBUG5
+//#define DEBUG5
+//#define DEBUGERR
 //+------------------------------------------------------------------+
 //| Основные дефайны                                                 |
 //+------------------------------------------------------------------+
@@ -93,6 +94,11 @@ void OnTick()
 void startext(){
 	B_Start("NetStop");
 	
+	if(ROWS(aTO)<OrdersTotal()){
+		DAIdPRINTALL5(aTO,"aTO rows less than OrdersTotal");
+		DBREACK;
+	}
+	
 	if(ROWS(aTO)<=0){
 		expert_info.start_pr=(Bid+Ask)/2;
 		expert_info.buy_lot=0;
@@ -147,19 +153,23 @@ double GetTotalProfit(){
 void CheckNet(OE_DIRECTION dty){
 	double start_pr=GetStartPrice(dty);
 	double tp_pr=GetTPPrice(dty);
+	if(tp_pr==0){
+		DPRINT5("tp_pr="+tp_pr);
+		DBREACK;
+	}
 	double koef=(dty==OE_DTY_BUY)?1:-1;	
 	int cnt=MathAbs(((start_pr-tp_pr)/Point)/S);
 	for(int i=1; i<=cnt; i++){
-		double _lvl_pr=start_pr+koef*i*S*Point;
+		double _lvl_pr=Norm_symb(start_pr+koef*i*S*Point);
 		CheckLevel(dty,_lvl_pr);
 	}
 }
 
 void CheckLevel(OE_DIRECTION dty, double lvl_pr){
 	string f=OE_DTY+"=="+dty+" AND "+OE_FOOP+"=="+lvl_pr;
-	//DAIdPRINTALL5(aTO,"before "+f);
+	DAIdPRINTALL5(aTO,"aTO before "+f);
 	SELECT(aTO,f);
-	//DAIdPRINT5(aTO,aI,"after "+f);
+	DAIdPRINT5(aTO,aI,"aTO after "+f);
 	if(ROWS(aI)>0) return;
 	
 	int cmd=-1;

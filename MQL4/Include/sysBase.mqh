@@ -205,11 +205,11 @@ void B_Start(string expert_name="")export{
 					 @0.0.0.1@2014.03.03@artamir	[+]	B_Start
 			>Rev:0
 	*/
-	
-   if(bNeedDelClosed){OE_delClosed();}
-   DAIdPRINTALL3(aOE,"after OE_delClosed");
 	isTick=true;
 	T_Start();
+	
+	if(bNeedDelClosed){OE_delClosed();}
+	
 	E_Start();
 	if(!IsTesting()){
 	   string file_oe=B_DBOE(expert_name);
@@ -220,7 +220,6 @@ void B_Start(string expert_name="")export{
 	      B_Save_Expert_Info(file_ei);
 	   #endif   
 	}
-	
 }
 
 void B_Save_Expert_Info(const string expert_name){

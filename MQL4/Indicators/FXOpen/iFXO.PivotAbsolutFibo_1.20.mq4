@@ -76,9 +76,9 @@ int OnCalculate(const int rates_total,
 	   ArrayInitialize(Pivot,0.0);
 	  }
 	  
-	  if(lim<0)lim=1;
+	  if(lim<0)lim=2;
 	  
-	  if(lim>1)lim=rates_total;
+	  if(lim>2)lim=rates_total;
 	  
 	  lim--;
 	  

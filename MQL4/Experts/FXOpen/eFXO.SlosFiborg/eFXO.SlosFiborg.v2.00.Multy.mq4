@@ -348,9 +348,7 @@ void Autoopen(){
        
             _lvl=AId_Get2(aTO,aI,(ROWS(aI)-1),OE_LVL);
             _lot=AId_Get2(aTO,aI,(ROWS(aI)-1),OE_LOT);
-            DPRINT5("_lvl="+_lvl);
-            DPRINT5("_lot="+_lot);
-            _lvl++;
+           
             double _multy=Multy;
             if(useMulty){
             	if(_lvl==0) _multy=Multy1;
@@ -360,6 +358,7 @@ void Autoopen(){
             	if(_lvl>=4) _multy=Multy5;
             }
             
+            _lvl++;
             _lot=_lot*_multy;
             _pr=AId_Get2(aTO,aI,(ROWS(aI)-1),OE_OOP);
             

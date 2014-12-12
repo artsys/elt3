@@ -214,13 +214,13 @@ void Autoopen(){
          start_pr+=dynDelta;
          
          f=OE_IM+"==1 AND "+OE_DTY+"=="+((signal.cmd==OP_BUYSTOP)?OE_DTY_BUY:OE_DTY_SELL);
-         DAIdPRINTALL5(aTO,"before select2 "+f);
+         
          SELECT2(aTO,aI,f);
-         DAIdPRINT5(aTO,aI,"after select2 "+f);
+         
          double _lot=Lot;
          if(ROWS(aI)>0){
             if(Multy<=0) return; //Усреднение отключено.
-            DPRINT5("sig.ma_lvl="+signal.ma_lvl);
+        
             
             if(!useDeltaLoss||!SimpleOpens(signal.cmd)){
             	if(MathAbs(signal.ma_lvl)<=MathAbs((signal.cmd==OP_BUYSTOP)?last_signal_buy.ma_lvl:last_signal_sell.ma_lvl)) return;            	

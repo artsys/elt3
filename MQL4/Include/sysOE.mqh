@@ -178,7 +178,6 @@ int OE_FIBT(int ti){
 	}
 	*/
 	int idx=-1;
-	DAIdPRINTALL3(aOE,"before select.ti="+ti);
 	SELECT(aOE,OE_TI+"=="+ti);
 	if(ROWS(aI)<=0 && OE_autoAddRow){
 	   idx=OE_addRow(ti);
@@ -257,7 +256,7 @@ int OE_setSTD(int ti){
 	*/
 	string fn="OE_setSTD";
 	if(!OrderSelect(ti, SELECT_BY_TICKET)) return(-1); //если ордер не найден, то выходим.
-	DAIdPRINTALL3(aOE,"before ti="+ti);
+
 
 	int idx=OE_FIBT(ti);
 	
@@ -266,7 +265,6 @@ int OE_setSTD(int ti){
 	   return(-1);
 	}
 	
-	DAIdPRINTALL3(aOE,"after FIBT idx="+idx);
 	
 	aOE[idx][OE_TI]	=		OrderTicket();
 	aOE[idx][OE_TY]	=		OrderType();
@@ -277,7 +275,6 @@ int OE_setSTD(int ti){
 	aOE[idx][OE_MN]	=		OrderMagicNumber();
 	aOE[idx][OE_LOT]=		OrderLots();
 	aOE[idx][OE_OPR]=		OrderProfit()+OrderCommission();
-	DPRINT("OrderProfit="+OrderProfit());
 	aOE[idx][OE_OCP]=		OrderClosePrice();
 	aOE[idx][OE_OCT]=(int)	OrderCloseTime();
 	
@@ -435,7 +432,7 @@ void OE_delClosed(){
 					 @0.0.0.1@2014.03.08@artamir	[+]	OE_delClosed
 			>Rev:0
 	*/
-   DAIdPRINTALL4(aTO,"__________");
+   
 	string fn="OE_delClosed";
 	//DPRINT2();
 	//if(bNeedDelClosed)bNeedDelClosed=false;
@@ -503,7 +500,7 @@ void OE_aDataSetProp(int col, double val){
 
 void OE_aDataSetInOE(int idx_OE=0){
    if(ArrayRange(aOEData,0)<=0){
-      DPRINT3("ERROR: "+idx_OE+" no rows in aOEData!!!");
+     
       return;
    }   
    

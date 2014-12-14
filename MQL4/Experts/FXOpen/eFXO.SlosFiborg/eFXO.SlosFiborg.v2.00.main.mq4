@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.90"
+#property version   "2.00"
 #property strict
 
 //#define DEBUG5
@@ -18,11 +18,13 @@ struct expert_info_struct{
 	int buy_ma_lvl;
 	int buy_tf;
 	double buy_pvt;
+	int buy_level;
 	
 	int sell_cmd;
 	int sell_ma_lvl;
 	int sell_tf;
 	double sell_pvt;
+	int sell_level;
 };
 expert_info_struct expert_info;
 
@@ -31,6 +33,7 @@ struct signal_info{
    int		ma_lvl;
    int		tf;
    double	pvt;
+   int		level;
 };
 
 signal_info last_signal_buy={-1,0,0,0};
@@ -54,10 +57,17 @@ input int TPFix=500;
 input int SLFix=500;
 input double Lot=0.1;
 input double Multy=3;
+ bool useMulty=false;
+ double Multy1=1;
+ double Multy2=1;
+ double Multy3=2;
+ double Multy4=3;
+ double Multy5=5;
 input int DeltaMin=10;
 input bool useSimpleMethod=false;
-//Если Multy <=0 тогда считаем, что усреднение отключено.
-//input string IndicatorFolder="FXOpen";
+
+input int MaxNodes=100; //Кол. узлов в сетке
+
 input ENUM_TIMEFRAMES TFPivot=PERIOD_D1;
 input int MaxLevels=10;
 input int StartLevel=21;
@@ -152,12 +162,20 @@ void OnTick(){
 }
 //+------------------------------------------------------------------+
 
+
+//+------------------------------------------------------------------+
+//|EXP_EventMNGR                                                                  |
+//+------------------------------------------------------------------+
 void EXP_EventMNGR(int ti, int event){
    if(event==EVT_CLS){
       EXP_EventClosed(ti);
    }
 }
 
+
+//+------------------------------------------------------------------+
+//|EXP_EventClosed                                                                  |
+//+------------------------------------------------------------------+
 void EXP_EventClosed(int ti){
 	int _dty=OE_getPBT(ti,OE_DTY);
 	string f=OE_IP+"==1 AND "+OE_DTY+"=="+_dty;
@@ -202,6 +220,9 @@ void EXP_EventClosed(int ti){
 	SetExpertInfo();
 }
 
+//+------------------------------------------------------------------+
+//|SetExpertInfo                                                                  |
+//+------------------------------------------------------------------+
 void SetExpertInfo(){
 	expert_info.buy_cmd=last_signal_buy.cmd;
 	expert_info.buy_ma_lvl=last_signal_buy.ma_lvl;
@@ -214,6 +235,9 @@ void SetExpertInfo(){
 	expert_info.sell_tf=last_signal_sell.tf;
 }
 
+//+------------------------------------------------------------------+
+//|GetExpertInfo                                                                  |
+//+------------------------------------------------------------------+
 void GetExpertInfo(){
 	last_signal_buy.cmd=expert_info.buy_cmd;
 	last_signal_buy.ma_lvl=expert_info.buy_ma_lvl;
@@ -226,15 +250,18 @@ void GetExpertInfo(){
 	last_signal_sell.tf=expert_info.sell_tf;
 }
 
+//+------------------------------------------------------------------+
+//|  startext                                                                |
+//+------------------------------------------------------------------+
 void startext(){
    B_Start("FXO.SlosFiborg");
    
    fIsNewBar();
-   
+  
    TralOrders();
-   
+  
    Autoopen();
-   
+  
    if(ROWS(aTO)<=0){
    	last_signal_buy=GetEmptySignal();
    	last_signal_sell=GetEmptySignal();
@@ -251,8 +278,12 @@ void startext(){
 				,"\nlss.pvt="+DoubleToStr(last_signal_sell.pvt,Digits)
             ,"\ndds="+DoubleToStr(gDymDeltaSell,Digits)
             );
+            
 }
 
+//+------------------------------------------------------------------+
+//|TralOrders                                                                  |
+//+------------------------------------------------------------------+
 void TralOrders(){
    if(!isNewBar) return;
    
@@ -274,15 +305,18 @@ void TralOrders(){
    }
 }
 
+//+------------------------------------------------------------------+
+//|Autoopen                                                                  |
+//+------------------------------------------------------------------+
 void Autoopen(){
    signal_info signal=GetSignal();
    
    if(signal.cmd>-1){
       
       string f=OE_IP+"==1 AND "+OE_DTY+"=="+((signal.cmd==OP_BUYSTOP)?OE_DTY_BUY:OE_DTY_SELL);
-      SELECT(aTO,f);
+      SELECT(aTO,f); //выборка ордеров совы по заданному направлению.
       
-      if(ROWS(aI)<=0){
+      if(ROWS(aI)<=0){ //если в заданном направлении ордеров нет.
          double d[];
          double start_pr=iif(signal.cmd==OP_BUYSTOP,High[1],Low[1]);
          double dynDelta=iif(signal.cmd==OP_BUYSTOP,1,-1)*GetDynDelta((signal.cmd==OP_BUYSTOP)?OE_DTY_BUY:OE_DTY_SELL);
@@ -296,24 +330,43 @@ void Autoopen(){
          start_pr+=dynDelta*DynDeltaKoef;
          
          f=OE_IM+"==1 AND "+OE_DTY+"=="+((signal.cmd==OP_BUYSTOP)?OE_DTY_BUY:OE_DTY_SELL);
-         DAIdPRINTALL5(aTO,"before select2 "+f);
-         SELECT2(aTO,aI,f);
-         DAIdPRINT5(aTO,aI,"after select2 "+f);
+     
+         SELECT2(aTO,aI,f);//выборка всех позиций заданного направления.
+   
          double _lot=Lot,_pr=0;
-         if(ROWS(aI)>0){
+         int _lvl=0;
+         
+         if(ROWS(aI)>0){ //если есть позиции.
             if(Multy<=0){ 
             	return; //Усреднение отключено.
             }
-            	
-            DPRINT5("sig.ma_lvl="+signal.ma_lvl);
             
             if(!useSimpleMethod){
             	if(MathAbs(signal.ma_lvl)<=MathAbs((signal.cmd==OP_BUYSTOP)?last_signal_buy.ma_lvl:last_signal_sell.ma_lvl)) return;
             }	
             
-            AId_InsertSort2(aTO,aI,OE_LOT);
+            AId_InsertSort2(aTO,aI,OE_OOT);
+       
+            _lvl=AId_Get2(aTO,aI,(ROWS(aI)-1),OE_LVL);
             _lot=AId_Get2(aTO,aI,(ROWS(aI)-1),OE_LOT);
-            _lot=_lot*Multy;
+            _lvl++;
+            
+            if(_lvl>=MaxNodes){
+            	//Если количество уровней больше заданного, 
+            	//то прервем выставление ордеров. 
+            	return;
+            }
+            
+            double _multy=Multy;
+            if(useMulty){
+            	if(_lvl==0) _multy=Multy1;
+            	if(_lvl==1) _multy=Multy2;
+            	if(_lvl==2) _multy=Multy3;
+            	if(_lvl==3) _multy=Multy4;
+            	if(_lvl>=4) _multy=Multy5;
+            }
+            
+            _lot=_lot*_multy;
             _pr=AId_Get2(aTO,aI,(ROWS(aI)-1),OE_OOP);
             
             if(_pr>0){
@@ -332,7 +385,7 @@ void Autoopen(){
             	}
             }
             
-         }else{
+         }else{ //если позиций нет
             if(signal.cmd==OP_BUYSTOP){
                last_signal_buy=GetEmptySignal();
             }else{
@@ -341,6 +394,10 @@ void Autoopen(){
          }
          
          TR_SendPending_array(d,signal.cmd,start_pr,0,_lot,TPFix,SLFix);
+         
+         for(int i=0; i<ROWS(d);i++){
+         	OE_setPBT(d[i],OE_LVL,_lvl);
+         }
          
          if(signal.cmd==OP_BUYSTOP){
            last_signal_buy=signal;

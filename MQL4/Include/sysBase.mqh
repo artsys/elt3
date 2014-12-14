@@ -64,13 +64,13 @@ bool Debug=true;
 #endif 
 
 #ifdef DEBUG5
-   #define DAIdPRINTALL5(a,text) if(1==1){int atI[]; ArrayResize(atI,0,1000); AId_Init2(a,atI); AId_Print2(a,atI,Digits,__FUNCTION__+"_"+text);};
-   #define DAIdPRINT5(a,aI,text) AId_Print2(a,aI,Digits,__FUNCTION__+"_"+text);
-   #define DPRINT5(text) Print(__FUNCTION__+" :: "+(string)text);
+   //#define DAIdPRINTALL5(a,text) if(1==1){int atI[]; ArrayResize(atI,0,1000); AId_Init2(a,atI); AId_Print2(a,atI,Digits,__FUNCTION__+"_"+text);};
+   //#define DAIdPRINT5(a,aI,text) AId_Print2(a,aI,Digits,__FUNCTION__+"_"+text);
+   //#define DPRINT5(text) Print(__FUNCTION__+" :: "+(string)text);
 #else 
-    #define DAIdPRINTALL5(a,text)
-    #define DAIdPRINT5(a,aI,text)
-    #define DPRINT5(text)  
+    //#define DAIdPRINTALL5(a,text)
+    //#define DAIdPRINT5(a,aI,text)
+    //#define DPRINT5(text)  
 #endif 
 
 #ifdef DEBUGERR
@@ -302,7 +302,7 @@ void B_Select(double &a[][], int &aI[], string f){
 	#ifdef SYSTRADES
 	  // Alert("defined SYSTRADES");
    	if(StringFind(f,((string)OE_MN+"=="))<0)	f=StringConcatenate(OE_MN,"==",TR_MN," AND ",f);	
-   	DPRINT2("f="+f);
+   	
 	#endif 
 	AIF_init();
 	

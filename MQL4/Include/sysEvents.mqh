@@ -54,7 +54,7 @@ void E_Start(void){
 					 @0.0.0.1@2014.03.03@artamir	[+]	E_Start
 			>Rev:0
 	*/
-	DAIdPRINTALL(aOE,"__________");
+
 	string fn="aE_Start";
 	
 	ArrayResize(aEC,0);	//Обнулили массив текущих ордеров, которые есть в терминале.
@@ -65,17 +65,16 @@ void E_Start(void){
 		if(TR_MN>=0){
 		   if(OrderMagicNumber()!=TR_MN)continue;
 		}
-		DAIdPRINTALL3(aOE,"before setSTD aOE.ti="+OrderTicket())   
 		
 		int idx=OE_FIBT(OrderTicket());
 		
-		DAIdPRINTALL3(aOE,"after setSTD aOE.ti="+OrderTicket())
+		
 		
 		if(idx>-1){
 			AId_CopyRow2(aOE,aEC,idx);
 		}
 		
-		DAIdPRINTALL3(aOE,"after CopyROW aOE.ti="+OrderTicket());
+		
 		
 	}
 	

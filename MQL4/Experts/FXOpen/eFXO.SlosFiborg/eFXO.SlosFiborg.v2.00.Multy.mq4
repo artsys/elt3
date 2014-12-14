@@ -65,8 +65,9 @@ input double Multy4=3;
 input double Multy5=5;
 input int DeltaMin=10;
 input bool useSimpleMethod=false;
-//Если Multy <=0 тогда считаем, что усреднение отключено.
-//input string IndicatorFolder="FXOpen";
+
+input int MaxNodes=100; //Кол. узлов в сетке
+
 input ENUM_TIMEFRAMES TFPivot=PERIOD_D1;
 input int MaxLevels=10;
 input int StartLevel=21;
@@ -349,6 +350,12 @@ void Autoopen(){
             _lvl=AId_Get2(aTO,aI,(ROWS(aI)-1),OE_LVL);
             _lot=AId_Get2(aTO,aI,(ROWS(aI)-1),OE_LOT);
            
+           if(_lvl>=MaxNodes){
+            	//Если количество уровней больше заданного, 
+            	//то прервем выставление ордеров. 
+            	return;
+            }
+            
             double _multy=Multy;
             if(useMulty){
             	if(_lvl==0) _multy=Multy1;

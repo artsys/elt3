@@ -111,7 +111,6 @@ double AId_Get2(double &a[][], int &aI[], int idx=0, int col=0){
 	if(rows<=0)return((double)AI_NONE);
 	
 	if(idx>=rows){
-		DPRINT2("idx>rows ("+idx+">"+rows+")");
 		return(AI_NONE);
 	}	
 	
@@ -724,51 +723,49 @@ void AId_Select2(double &a[][], int &aI[]){
 		if(f_aop==AI_EQ){
 			first=AId_SearchFirst2(a, aI, f_col, f_min);
 			last=AId_SearchLast2(a, aI, f_col, f_min);
-			DAIdPRINT2(a,aI,"before AI_EQ col_"+OE2Str(f_col)+"_val_"+(string)f_min);
+			
 		}
 		
 		if(f_aop==AI_GREAT){
-		   DPRINT2("AI_GREAT::before search::f_col="+f_col+" :f_min="+f_min);
-         DAIdPRINT2(a,aI,"before AI_GREAT col_"+OE2Str(f_col)+"_val_"+(string)f_min);
+		  
 			first=AId_SearchGreat2(a,aI,f_col,f_min);
 			last=AI_WHOLEARRAY;
 			
 		}
 		
 		if(f_aop==AI_GREAT_OR_EQ){
-		   DPRINT2("AI_GREAT_OR_EQ::before search::f_col="+f_col+" :f_min="+f_min);
 		   
 		   first=first=AId_SearchFirst2(a, aI, f_col, f_min);
 		   if(first==AI_NONE){
 		      first=AId_SearchGreat2(a,aI,f_col,f_min);
 		   }
 		   last=AI_WHOLEARRAY;
-		   DAIdPRINT2(a,aI,"before AI_GREAT_OR_EQ col_"+OE2Str(f_col)+"_val_"+(string)f_min);
+		   
 		}
 		
 		if(f_aop==AI_LESS){
-		   DPRINT2("AI_LESS::before search::f_col="+f_col+" :f_min="+f_min);
+		  
 			if(B_BSEL){
 				Print(fn,".AI_LESS");
 			}
 			first=0;
-			DAIdPRINT2(a,aI,"before AI_LESS col_"+OE2Str(f_col)+"_val_"+(string)f_min);
+			
 			last=AId_SearchLess2(a,aI,f_col,f_min);
 		}
 		
 		if(f_aop==AI_LESS_OR_EQ){
-		   DPRINT2("AI_LESS_OR_EQ::before search::f_col="+f_col+" :f_min="+f_min);
+		  
 		   
 		   last=first=AId_SearchLast2(a, aI, f_col, f_min);
 		   if(last==AI_NONE){
 		      last=AId_SearchLess2(a,aI,f_col,f_min);
 		   }
 		   first=0;
-		   DAIdPRINT2(a,aI,"before AI_LESS_OR_EQ col_"+OE2Str(f_col)+"_val_"+(string)f_min);
+		  
 		}
 	   
 		AI_setInterval(aI,first,last);
-      DAIdPRINT2(a,aI,"after setInterval col_"+OE2Str(f_col)+"_val_"+(string)f_min);
+     
    }
 	
 	

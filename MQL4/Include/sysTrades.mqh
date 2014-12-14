@@ -424,8 +424,7 @@ int TR_SendSELLSTOP_array(		double &d[] //{
 	*/
 	
 	//----------------------------------------------------
-	DPRINT2("parameters^=============");
-	DPRINT2("StartPrice="+StartPrice+"; AddPips="+AddPips);
+	
 	double SendPrice = 0;
 	double sendVol	= 0;
 	int countSends = 0;
@@ -450,9 +449,7 @@ int TR_SendSELLSTOP_array(		double &d[] //{
 	}
 	
 	SendPrice = Norm_symb((_StartPrice - AddPips*Point));
-	DPRINT2("after==========");
-	DPRINT2("StartPrice="+StartPrice+"; AddPips="+AddPips);
-	DPRINT2("_StartPrice="+_StartPrice+"; AddPips*Point"+(AddPips*Point)+"; SendPrice="+SendPrice);
+	
 	
 	//--------------
 	if(TPPip > 0){
@@ -1122,7 +1119,7 @@ int _OrderSend(string symbol = "", int cmd = OP_BUY, double volume= 0.0, double 
 	int res = OrderSend(symbol, cmd, volume, price, slippage, stoploss, takeprofit, comment, lMN, expiration, arrow_color);
 	
 	if(res > 0){
-	   DAIdPRINTALL3(aOEData,"_______ti=="+res);
+	   
 	   T_SendedTI=res;
 	   OE_isSended=true;
 		T_Start();

@@ -8,7 +8,7 @@
 #property version   "2.00"
 #property strict
 
-//#define DEBUG5
+#define DEBUG2
 
 string sPref="eSlosFiborg";
 
@@ -25,6 +25,8 @@ struct expert_info_struct{
 	int sell_tf;
 	double sell_pvt;
 	int sell_level;
+	
+	double closed_profit;
 };
 expert_info_struct expert_info;
 
@@ -76,6 +78,11 @@ input bool useDynDelta=false; //use Dynamic delta
 input double DynDeltaKoef=0.1; //Dynamic delta koef.
 
 input bool drawPVT=false;
+
+input bool useFixProfit=true;
+input double FixProfit_Amount=500;
+
+input double FixLossPRC=20; 
 
 #include <eFXO.SlosTraling.mqh>
 //#include <sysBase.mqh>
@@ -170,13 +177,64 @@ void EXP_EventMNGR(int ti, int event){
    if(event==EVT_CLS){
       EXP_EventClosed(ti);
    }
+   
+   if(event==EVT_CHTY){
+   	EXP_EventCHTY(ti);
+   }
 }
 
+
+//+------------------------------------------------------------------+
+//| EXP_EventCHTY                                                                 |
+//+------------------------------------------------------------------+
+void EXP_EventCHTY(int ti){
+	if(FixLossPRC<=0)return;
+
+	SELECT(aTO,OE_TI+"=="+ti);
+	if(ROWS(aI)<=0)return;
+	
+	OE_DIRECTION _dty=AId_Get2(aTO,aI,0,OE_DTY);
+	SELECT2(aTO,aI,OE_DTY+"=="+_dty);
+	if(ROWS(aI)<=0)return;
+	
+	double sum_lots=0, sum_pr_lots=0;
+	for(int i=0; i<ROWS(aI); i++){
+		double _opr=AId_Get2(aTO,aI,i,OE_OOP);
+		double _lot=AId_Get2(aTO,aI,i,OE_LOT);
+		
+		sum_lots+=_lot;
+		sum_pr_lots+=_opr*_lot;
+	}
+	
+	double wl=sum_pr_lots/sum_lots;
+	
+	double _tickvalue=MarketInfo(Symbol(),MODE_TICKVALUE);
+	double _ticklots=_tickvalue*sum_lots;
+	double _ab=AccountBalance();
+	double _loss_deposit=_ab*FixLossPRC/100;
+	double _loss_points=_loss_deposit/_ticklots;
+	
+	double _loss_pr=wl+iif(_dty==OE_DTY_BUY,-1.00,1.00)*_loss_points*Point;
+	DPRINT2("_tickvalue="+_tickvalue);
+	DPRINT2("_ticklots="+_ticklots);
+	DPRINT2("_ab="+_ab);
+	DPRINT2("_wl="+wl);
+	DPRINT2("_loss_deposit="+_loss_deposit);
+	DPRINT2("_loss_points="+_loss_points);
+	DPRINT2("_loss_pr="+_loss_pr);
+	for(int i=0;i<ROWS(aI);i++){
+		int ti=AId_Get2(aTO,aI,i,OE_TI);
+		TR_ModifySL(ti,_loss_pr,TR_MODE_PRICE);
+	}
+}
 
 //+------------------------------------------------------------------+
 //|EXP_EventClosed                                                                  |
 //+------------------------------------------------------------------+
 void EXP_EventClosed(int ti){
+	
+	expert_info.closed_profit+=(OrderProfit()+OrderCommission());
+
 	int _dty=OE_getPBT(ti,OE_DTY);
 	string f=OE_IP+"==1 AND "+OE_DTY+"=="+_dty;
 	int aI[];
@@ -258,6 +316,8 @@ void startext(){
    
    fIsNewBar();
   
+  	FixProfit();
+  
    TralOrders();
   
    Autoopen();
@@ -265,6 +325,7 @@ void startext(){
    if(ROWS(aTO)<=0){
    	last_signal_buy=GetEmptySignal();
    	last_signal_sell=GetEmptySignal();
+   	expert_info.closed_profit=0;
    }
    
    SetExpertInfo();
@@ -280,6 +341,28 @@ void startext(){
             );
             
 }
+
+void FixProfit(){
+	if(!useFixProfit)return;
+	
+	double sum=GetTotalProfit();
+	
+	if(sum>=FixProfit_Amount){
+		CloseAllTickets();
+	}
+}
+
+void CloseAllTickets(){
+	TR_CloseAll();
+}
+
+double GetTotalProfit(){
+	int aI[];
+	AId_Init2(aTO,aI);
+	double sum=AId_Sum2(aTO,aI,OE_OPR)+expert_info.closed_profit;
+	return(sum);
+}
+
 
 //+------------------------------------------------------------------+
 //|TralOrders                                                                  |

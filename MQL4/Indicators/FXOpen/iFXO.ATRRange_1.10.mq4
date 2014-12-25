@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.10"
+#property version   "1.20"
 #property strict
 #property indicator_chart_window
 #property indicator_buffers 3
@@ -82,7 +82,7 @@ int OnCalculate(const int rates_total,
 	for(int i=lim-1; i>=0; i--){
 		
 		int H1_open_index=iBarShift(NULL,TF,Time[i]);
-		MidBuffer[i]=open[H1_open_index];
+		MidBuffer[i]=iOpen(NULL,TF,H1_open_index);
 		
 		double atr=GetATR(i);
 		UpBuffer[i]=MidBuffer[i]+atr/2;

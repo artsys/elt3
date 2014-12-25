@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "2.00"
+#property version   "2.10"
 #property strict
 
 //#define DEBUG5
@@ -53,6 +53,7 @@ void EXP_EventMNGR_forward(int ti, int event){
 //+------------------------------------------------------------------+
 //| INPUTS
 //+------------------------------------------------------------------+
+input bool useTWIX=false;
 input int TPFix=500;
 input int SLFix=500;
 input double Lot=0.1;
@@ -311,17 +312,34 @@ void TralOrders(){
 void Autoopen(){
    signal_info signal=GetSignal();
    
-   if(signal.cmd>-1){
+   //+++++++++++++++++++++++++++++
+   int _cmd=signal.cmd;
+   
+   if(_cmd<=-1)return;
+   
+   if(useTWIX){
+   	if(signal.cmd==OP_BUYSTOP){
+   		if(last_signal_buy.ma_lvl==signal.ma_lvl) return;
+   	}else{
+   		if(last_signal_sell.ma_lvl==signal.ma_lvl) return;
+   	}
+   }
+   
+   if(useTWIX){
+   	_cmd=TR_GetReversOP(_cmd);
+   }
+   //+++++++++++++++++++++++++++++
+   if(_cmd>-1){
       
-      string f=OE_IP+"==1 AND "+OE_DTY+"=="+((signal.cmd==OP_BUYSTOP)?OE_DTY_BUY:OE_DTY_SELL);
+      string f=OE_IP+"==1 AND "+OE_DTY+"=="+(((_cmd==OP_BUYSTOP))?OE_DTY_BUY:OE_DTY_SELL);
       SELECT(aTO,f); //выборка ордеров совы по заданному направлению.
       
       if(ROWS(aI)<=0){ //если в заданном направлении ордеров нет.
          double d[];
-         double start_pr=iif(signal.cmd==OP_BUYSTOP,High[1],Low[1]);
-         double dynDelta=iif(signal.cmd==OP_BUYSTOP,1,-1)*GetDynDelta((signal.cmd==OP_BUYSTOP)?OE_DTY_BUY:OE_DTY_SELL);
+         double start_pr=iif((_cmd==OP_BUYSTOP),High[1],Low[1]);
+         double dynDelta=iif((_cmd==OP_BUYSTOP),1,-1)*GetDynDelta((_cmd==OP_BUYSTOP)?OE_DTY_BUY:OE_DTY_SELL);
          
-         if(signal.cmd==OP_BUYSTOP){
+         if(_cmd==OP_BUYSTOP){
          	gDymDeltaBuy=dynDelta;
          }else{
          	gDymDeltaSell=dynDelta;
@@ -329,7 +347,7 @@ void Autoopen(){
          
          start_pr+=dynDelta*DynDeltaKoef;
          
-         f=OE_IM+"==1 AND "+OE_DTY+"=="+((signal.cmd==OP_BUYSTOP)?OE_DTY_BUY:OE_DTY_SELL);
+         f=OE_IM+"==1 AND "+OE_DTY+"=="+(((_cmd==OP_BUYSTOP))?OE_DTY_BUY:OE_DTY_SELL);
      
          SELECT2(aTO,aI,f);//выборка всех позиций заданного направления.
    
@@ -369,8 +387,8 @@ void Autoopen(){
             _lot=_lot*_multy;
             _pr=AId_Get2(aTO,aI,(ROWS(aI)-1),OE_OOP);
             
-            if(_pr>0){
-            	if(signal.cmd==OP_BUYSTOP){
+            if(!useTWIX && _pr>0){
+            	if(_cmd==OP_BUYSTOP){
             		if(start_pr>=_pr-DeltaMin*Point){
             			//Цена выставления усредняющего бай ордера 
             			//будет выше цены последней позиции сетки.
@@ -393,7 +411,7 @@ void Autoopen(){
             }
          }
          
-         TR_SendPending_array(d,signal.cmd,start_pr,0,_lot,TPFix,SLFix);
+         TR_SendPending_array(d,_cmd,start_pr,0,_lot,TPFix,SLFix);
          
          for(int i=0; i<ROWS(d);i++){
          	OE_setPBT(d[i],OE_LVL,_lvl);

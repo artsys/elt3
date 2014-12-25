@@ -5,7 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2014, MetaQuotes Software Corp."
 #property link      "http://forum.fxopen.ru"
-#property version   "5.00"
+#property version   "6.00"
 #property strict
 //--- input parameters
 input bool     STR_Use=true;  //Slos traling
@@ -148,20 +148,18 @@ void startext(){
 void fSTR_Main(){
    if(!_Use) return;
 
-   fSTR_Check(OP_BUY);
+   fSTR_Check();
    
-   fSTR_Check(OP_SELL);
+   //fSTR_Check(OP_SELL);
 }
 
-void fSTR_Check(int op){
+void fSTR_Check(){
    zx
-   DAIdPRINTALL2(aEC,"before");
+   DAIdPRINTALL2(aTO,"before");
    string f=StringConcatenate(""
-            ,OE_IT,"==1"
-            ," AND "
-            ,OE_TY,"==",op);
+            ,OE_IT,"==1");
    SELECT(aEC,f);
-   DAIdPRINT2(aEC,aI,"after");
+   DAIdPRINT2(aTO,aI,"after");
    DPRINT2(f);
    int rows=ArrayRange(aI,0);
    if(rows<_PosAmount)return; //Если меньше заданного количества позиций, тогда выходим.
@@ -170,14 +168,33 @@ void fSTR_Check(int op){
 }
 
 void fSTR_CheckSelected(int &aI[]){
-   DAIdPRINT(aEC,aI,"aEC");
+   DAIdPRINT(aTO,aI,"aEC");
+   
+   double tickval=MarketInfo(Symbol(),MODE_TICKVALUE);
+   
    int rows=ArrayRange(aI,0);
    if(rows<=0)return;
    
-   int ty=AId_Get2(aEC,aI,0,OE_TY);
+   int ty=-1;//AId_Get2(aEC,aI,0,OE_TY);
    DPRINT("ty="+(string)ty);
    
-   double wlpr=fSTR_GetWLPrice(aI);
+   wl_struct wl_buy=fSTR_GetWLPrice(aI, OE_DTY_BUY);
+   wl_struct wl_sell=fSTR_GetWLPrice(aI, OE_DTY_SELL);
+   
+   double wlpr=0;
+   double netto_lots=MathAbs(wl_buy.lot-wl_sell.lot);
+   if(wl_buy.lot>wl_sell.lot){
+   	wlpr=wl_buy.pr+(wl_buy.pr-wl_sell.pr)*wl_sell.lot/netto_lots;
+   	ty=OP_BUY;
+   }
+
+	if(wl_buy.lot<wl_sell.lot){
+   	wlpr=wl_sell.pr-(wl_sell.pr-wl_buy.pr)*wl_buy.lot/netto_lots;
+   	ty=OP_SELL;
+   }   
+   
+   if(netto_lots==0)return;
+   
    DPRINT("wlpr="+(string)wlpr);
    
    double this_price = 0;
@@ -222,19 +239,33 @@ void fSTR_CheckSelected(int &aI[]){
    fSTR_SetSL(aI, sl_price); 
 }
 
-double fSTR_GetWLPrice(int &aI[]){
+struct wl_struct{
+	double pr;
+	double lot;
+};
+
+wl_struct fSTR_GetWLPrice(int &aI[], OE_DIRECTION dty){
+   
+   wl_struct wl;
+   int a2I[];
+   ArrayCopy(a2I,aI);
+   SELECT2(aTO,a2I,OE_DTY+"=="+dty);
+   
    double wl_pr=0, lots=0; 
-   int rows=ArrayRange(aI,0);
-   if(rows<=0) return(0);
+   
+   int rows=ROWS(a2I);
+   if(rows<=0) return(wl);
    
    for(int i=0; i<rows; i++){
-      double _lot=AId_Get2(aEC,aI,i,OE_LOT);
+      double _lot=AId_Get2(aTO,aI,i,OE_LOT);
       lots+=_lot;
-      wl_pr+=AId_Get2(aEC,aI,i,OE_OOP)*_lot;
+      wl_pr+=AId_Get2(aTO,aI,i,OE_OOP)*_lot;
    }
-   
    wl_pr=wl_pr/lots;
-   return(wl_pr);
+   
+   wl.pr=wl_pr;
+   wl.lot=lots;
+   return(wl);
 }
 
 void fSTR_SetSL(int &aI[], double sl_price){
@@ -242,7 +273,7 @@ void fSTR_SetSL(int &aI[], double sl_price){
    if(rows<=0)return;
    
    for(int i=0; i<rows; i++){
-      int ti=AId_Get2(aEC,aI,i,OE_TI);
+      int ti=AId_Get2(aTO,aI,i,OE_TI);
       TR_ModifySLInPlus(ti,sl_price,TR_MODE_PRICE);
    }
 }

@@ -1235,6 +1235,10 @@ bool _OrderModify(int ticket, double price, double stoploss, double takeprofit, 
 	
 	//------------------------------------------------------
 	if(needModify){
+		price = Norm_symb(price);
+		stoploss = Norm_symb(stoploss);
+		takeprofit = Norm_symb(takeprofit);
+	
 		bool res = OrderModify(ticket, price, stoploss, takeprofit, expiration, clr);
 		if(res){
 		   T_Start();
@@ -1245,7 +1249,7 @@ bool _OrderModify(int ticket, double price, double stoploss, double takeprofit, 
 		
 		//--------------------------------------------------
 		if(err == 130){
-			Print("ti = ", ticket, " p = ",price," s = ",stoploss, " t = ", takeprofit);
+			Print("ti = ", ticket, " p = ",price," s = ",stoploss, " t = ", takeprofit, " a = ", Ask, " b = ", Bid);
 		}
 		
 		//--------------------------------------------------

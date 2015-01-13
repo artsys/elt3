@@ -5,10 +5,10 @@
 //+------------------------------------------------------------------+
 #property copyright "artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "2.10"
+#property version   "2.00"
 #property strict
 
-//#define DEBUG2
+#define DEBUG2
 
 string sPref="eSlosFiborg";
 
@@ -349,7 +349,6 @@ void FixProfit(){
 	
 	if(sum>=FixProfit_Amount){
 		CloseAllTickets();
-		expert_info.closed_profit=0;
 	}
 }
 

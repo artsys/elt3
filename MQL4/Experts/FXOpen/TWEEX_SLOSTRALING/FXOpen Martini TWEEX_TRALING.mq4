@@ -1,6 +1,6 @@
 #property copyright "forum.FXOpen.ru - MaxZ"
 #property link      "forum.FXOpen.ru"
-#property version "4.00"
+#property version "5.00"
 
 // Данный советник был написан по заказу на форуме FXOpen в теме:
 // http://forum.fxopen.ru/showthread.php?91373-%D0%9E%D1%82%D0%B4%D0%B0%D0%BC-%D1%81%D0%BE%D0%B2%D0%B5%D1%82%D0%BD%D0%B8%D0%BA-%D0%B8%D0%BD%D0%B4%D0%B8%D0%BA%D0%B0%D1%82%D0%BE%D1%80-%D0%B8%D0%BB%D0%B8-%D1%81%D0%BA%D1%80%D0%B8%D0%BF%D1%82-%D0%B7%D0%B0-%D0%B8%D0%B4%D0%B5%D1%8E
@@ -11,9 +11,38 @@
 // В разработке советника (трактовка ТЗ) активное участие принимал - Mik 2806. Огромное Ему спасибо!
 
 //#define DEBUG2
+#define SAVE_EXPERT_INFO
+struct expert_info_struct{
+	double closed_profit;
+};
+
+expert_info_struct expert_info;
+
+void EXP_EventMNGR_forward(int ti, int event){
+   EXP_EventMNGR(ti, event);
+}
+
+#include <sysBase.mqh>
+
+
+void EXP_EventMNGR(int ti, int event){
+   if(event==EVT_CLS){
+      EXP_EventClosed(ti);
+   }
+}
+
+void EXP_EventClosed(int ti){
+	if(!OrderSelect(ti,SELECT_BY_TICKET)) return;
+	
+	expert_info.closed_profit+=(OrderProfit()+OrderCommission());
+}
+	
 
 #include <eFXO.SlosTraling.mqh>
 //#include <sysBase.mqh>
+
+input bool useFixProfit=true;
+input double FixProfit_Amount=500;
 
 input bool     STR_Use=true;  //Slos traling
       bool        _Use=true;
@@ -113,11 +142,20 @@ void init()
    Ss = 0;
    BS = 0;
    EnforcedLast = -1;
+   B_Init("MartiniTweex");
+}
+
+void deinit(){
+	B_Deinit("MartiniTweex");
 }
 
 void start()
 {
    //zx
+   B_Start("MartiniTweex");
+   FixProfit();
+   
+   
    eFXOSlosTraling_Use(STR_Use);
    eFXOSlosTraling_PosAmount(STR_PosAmount);
    eFXOSlosTraling_PriceStart(STR_PriceStart);
@@ -1200,4 +1238,25 @@ double GetLots(double _risk)
       return(-Value);
    
    return (Value);
+}
+
+void FixProfit(){
+	if(!useFixProfit)return;
+	
+	double sum=GetTotalProfit();
+	
+	if(sum>=FixProfit_Amount){
+		CloseAllTickets();
+	}
+}
+
+void CloseAllTickets(){
+	TR_CloseAll();
+}
+
+double GetTotalProfit(){
+	int aI[];
+	AId_Init2(aTO,aI);
+	double sum=AId_Sum2(aTO,aI,OE_OPR)+expert_info.closed_profit;
+	return(sum);
 }

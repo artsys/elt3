@@ -45,7 +45,7 @@ int TR_SendBUYSTOP (	double	StartPrice //{
 					,	int		TPPip = 0
 					,	int		SLPip = 0
 					,	string	Comm = ""
-					,	int		Magic = -1){
+					,	int		pMagic = -1){
 	/**
 		\version	0.0.1
 		\date		2013.04.22
@@ -75,10 +75,10 @@ int TR_SendBUYSTOP (	double	StartPrice //{
 
 	//------------------------------------------------------	
 	int mn = 0;
-	if(Magic <= -1){
+	if(pMagic <= -1){
 		mn = TR_MN;
 	}else{
-		mn = Magic;
+		mn = pMagic;
 	}
 	
 	//------------------------------------------------------
@@ -99,7 +99,7 @@ int TR_SendBUYSTOP_array(		double &d[] //{
 							,	double TPPip = 0
 							,	double SLPip = 0
 							,	string Comm = ""
-							,	int Magic = -1 /** по умолчанию магик берется из TR_MN */
+							,	int pMagic = -1 /** по умолчанию магик берется из TR_MN */
 							,	string Sy="" /** по умолчанию по текущему инструменту */
 							,	int Mode=2 /** по умолчанию тп и сл задаются в пунктах */
 							,	int pr_mode=0 /** при старт прайс=0 по умолчанию будет цена аск */){
@@ -162,10 +162,10 @@ int TR_SendBUYSTOP_array(		double &d[] //{
 	
 	//------------------------------------------------------
 	int mn = 0;
-	if(Magic <= -1){
+	if(pMagic <= -1){
 		mn = TR_MN;
 	}else{
-		mn = Magic;
+		mn = pMagic;
 	}
 	
 	//----------------------------------------------------
@@ -202,7 +202,7 @@ int TR_SendBUYLIMIT_array(		double &d[] //{
 							,	double TPPip = 0
 							,	double SLPip = 0
 							,	string Comm = ""
-							,	int Magic = -1
+							,	int pMagic = -1
 							,	string Sy=""
 							,	int Mode=2
 							,	int pr_mode=1 /** при старт прайс=0 по умолчанию будет цена бид */){
@@ -262,10 +262,10 @@ int TR_SendBUYLIMIT_array(		double &d[] //{
 	
 	//------------------------------------------------------
 	int mn = 0;
-	if(Magic <= -1){
+	if(pMagic <= -1){
 		mn = TR_MN;
 	}else{
-		mn = Magic;
+		mn = pMagic;
 	}
 	
 	//----------------------------------------------------
@@ -293,7 +293,7 @@ int TR_SendBUYLIMIT_array(		double &d[] //{
 	return(ArrayRange(d,0));
 } //}
 
-int TR_SendBUYLIMIT(double StartPrice, int AddPips = 0, double Vol = 0.01, int TPPip = 0, int SLPip = 0, string Comm = "", int Magic = -1){
+int TR_SendBUYLIMIT(double StartPrice, int AddPips = 0, double Vol = 0.01, int TPPip = 0, int SLPip = 0, string Comm = "", int pMagic = -1){
 	/*
 		>Ver	:	0.0.1
 		>Date	:	2012.07.31
@@ -324,10 +324,10 @@ int TR_SendBUYLIMIT(double StartPrice, int AddPips = 0, double Vol = 0.01, int T
 
 	//------------------------------------------------------
 	int mn = 0;
-	if(Magic <= -1){
+	if(pMagic <= -1){
 		mn = TR_MN;
 	}else{
-		mn = Magic;
+		mn = pMagic;
 	}
 	
 	//------------------------------------------------------
@@ -342,7 +342,7 @@ int TR_SendBUYLIMIT(double StartPrice, int AddPips = 0, double Vol = 0.01, int T
 	
 }
 
-int TR_SendSELLSTOP(double StartPrice, int AddPips = 0, double Vol = 0.01, int TPPip = 0, int SLPip = 0, string Comm = "", int Magic = -1){
+int TR_SendSELLSTOP(double StartPrice, int AddPips = 0, double Vol = 0.01, int TPPip = 0, int SLPip = 0, string Comm = "", int pMagic = -1){
 	/*
 		>Ver	:	0.0.6
 		>Date	:	2013.04.22
@@ -377,10 +377,10 @@ int TR_SendSELLSTOP(double StartPrice, int AddPips = 0, double Vol = 0.01, int T
 	
 	//------------------------------------------------------
 	int mn = 0;
-	if(Magic <= -1){
+	if(pMagic <= -1){
 		mn = TR_MN;
 	}else{
-		mn = Magic;
+		mn = pMagic;
 	}
 	
 	//----------------------------------------------------
@@ -388,7 +388,7 @@ int TR_SendSELLSTOP(double StartPrice, int AddPips = 0, double Vol = 0.01, int T
 	
 	//----------------------------------------------------
 	int ticket = -1;
-		ticket = _OrderSend("", OP_SELLSTOP, Vol, SendPrice, 0, SLPrice, TPPrice, Comm, Magic);
+		ticket = _OrderSend("", OP_SELLSTOP, Vol, SendPrice, 0, SLPrice, TPPrice, Comm, pMagic);
 	
 	//----------------------------------------------------
 	return(ticket);
@@ -401,7 +401,7 @@ int TR_SendSELLSTOP_array(		double &d[] //{
 							,	double TPPip = 0
 							,	double SLPip = 0
 							,	string Comm = ""
-							,	int Magic = -1
+							,	int pMagic = -1
 							,	string Sy=""
 							,	int Mode=2
 							,	int pr_mode=1 /** при старт прайс=0 по умолчанию будет цена бид */){
@@ -465,10 +465,10 @@ int TR_SendSELLSTOP_array(		double &d[] //{
 	
 	//------------------------------------------------------
 	int mn = 0;
-	if(Magic <= -1){
+	if(pMagic <= -1){
 		mn = TR_MN;
 	}else{
-		mn = Magic;
+		mn = pMagic;
 	}
 	
 	//----------------------------------------------------
@@ -504,7 +504,7 @@ int TR_SendSELLLIMIT_array(		double &d[]	//{
 							,	double TPPip = 0
 							,	double SLPip = 0
 							,	string Comm = ""
-							,	int Magic = -1
+							,	int pMagic = -1
 							,	string Sy=""
 							,	int Mode=2
 							,	int pr_mode=0){
@@ -564,10 +564,10 @@ int TR_SendSELLLIMIT_array(		double &d[]	//{
 	
 	//------------------------------------------------------
 	int mn = 0;
-	if(Magic <= -1){
+	if(pMagic <= -1){
 		mn = TR_MN;
 	}else{
-		mn = Magic;
+		mn = pMagic;
 	}
 	
 	//----------------------------------------------------
@@ -595,7 +595,7 @@ int TR_SendSELLLIMIT_array(		double &d[]	//{
 	return(ArrayRange(d,0));
 } //}
 
-int TR_SendSELLLIMIT(double StartPrice, int AddPips = 0, double Vol = 0.01, int TPPip = 0, int SLPip = 0, string Comm = "", int Magic = -1){
+int TR_SendSELLLIMIT(double StartPrice, int AddPips = 0, double Vol = 0.01, int TPPip = 0, int SLPip = 0, string Comm = "", int pMagic = -1){
 /*
 		>Ver	:	0.0.1
 		>Date	:	2012.08.03
@@ -626,10 +626,10 @@ int TR_SendSELLLIMIT(double StartPrice, int AddPips = 0, double Vol = 0.01, int 
 	
 	//------------------------------------------------------
 	int mn = 0;
-	if(Magic <= -1){
+	if(pMagic <= -1){
 		mn = TR_MN;
 	}else{
-		mn = Magic;
+		mn = pMagic;
 	}
 	
 	//------------------------------------------------------
@@ -692,7 +692,7 @@ int TR_SendPending_array(		double &d[]	//{
 							,	double TPPip = 0
 							,	double SLPip = 0
 							,	string Comm = ""
-							,	int Magic = -1
+							,	int pMagic = -1
 							,	string Sy=""
 							,	int Mode=2
 							,	int Pr_mode=2){
@@ -710,10 +710,10 @@ int TR_SendPending_array(		double &d[]	//{
 			>Rev:0
 	*/
 	zx
-	if(type == OP_BUYSTOP	){xz return(TR_SendBUYSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
-	if(type == OP_BUYLIMIT	){xz return(TR_SendBUYLIMIT_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
-	if(type == OP_SELLSTOP	){xz return(TR_SendSELLSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
-	if(type == OP_SELLLIMIT	){xz return(TR_SendSELLLIMIT_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,Magic, Sy, Mode, Pr_mode));}
+	if(type == OP_BUYSTOP	){xz return(TR_SendBUYSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,pMagic, Sy, Mode, Pr_mode));}
+	if(type == OP_BUYLIMIT	){xz return(TR_SendBUYLIMIT_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,pMagic, Sy, Mode, Pr_mode));}
+	if(type == OP_SELLSTOP	){xz return(TR_SendSELLSTOP_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,pMagic, Sy, Mode, Pr_mode));}
+	if(type == OP_SELLLIMIT	){xz return(TR_SendSELLLIMIT_array	(d,StartPrice,AddPips,Vol,TPPip,SLPip,Comm,pMagic, Sy, Mode, Pr_mode));}
 	xz
 	return(0);
 }	//}
@@ -1831,25 +1831,25 @@ void TR_CloseAll(int mn=-1){
 
 //}
 
-double TR_Lot(double Lots=0.0, int Percent=0)              // Позовательская функция
+double TR_Lot(double pLots=0.0, int Percent=0)              // Позовательская функция
    {
 // double Lots                                              Желаемое количество лотов
 // int Percent                                              Процент средств от эквити
-   double Lots_New = 0.0;                                // Искомое количество лотов
-   string Symb   =Symbol();                              // Финансовый инструмент
+   double _lots_New = 0.0;                                // Искомое количество лотов
+   string _symb   =Symbol();                              // Финансовый инструмент
 //---------------------------------------------------------------------------------- 1 --
    double Free   =AccountFreeMargin();                   // Свободные средства
-   double One_Lot=MarketInfo(Symb,MODE_MARGINREQUIRED);  // Стоимость 1 лота
-   double Min_Lot=MarketInfo(Symb,MODE_MINLOT);          // Минимальное количество лотов
-   double Step   =MarketInfo(Symb,MODE_LOTSTEP);         // Шаг изменения колич. лотов
+   double One_Lot=MarketInfo(_symb,MODE_MARGINREQUIRED);  // Стоимость 1 лота
+   double Min_Lot=MarketInfo(_symb,MODE_MINLOT);          // Минимальное количество лотов
+   double Step   =MarketInfo(_symb,MODE_LOTSTEP);         // Шаг изменения колич. лотов
 //---------------------------------------------------------------------------------- 2 --
-   if (Lots>0)                                           // Лоты заданы явно, ..
+   if (pLots>0)                                           // Лоты заданы явно, ..
       {                                                  // .. проверим этот вариант
-      double Money = Lots*One_Lot;                       // Стоимость ордера
+      double Money = pLots*One_Lot;                       // Стоимость ордера
       if (Money <= AccountFreeMargin())                  // Если средств хватает ..
-         Lots_New = Lots;                                // .. принимаем заданное
+         _lots_New = pLots;                                // .. принимаем заданное
       else                                               // Если не хватает ..
-         Lots_New = MathFloor(Free/One_Lot/Step)*Step;   // Расчёт лотов
+         _lots_New = MathFloor(Free/One_Lot/Step)*Step;   // Расчёт лотов
       }
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 3 --
    else                                                  // Если лоты не заданы
@@ -1857,18 +1857,18 @@ double TR_Lot(double Lots=0.0, int Percent=0)              // Позовательская фун
       if (Percent > 100)                                 // Задано ошибочно ..
          Percent = 100;                                  // .. то не более 100
       if (Percent == 0)                                  // Если установлен 0 ..
-         Lots_New = Min_Lot;                             // .. то минимальный лот
+         _lots_New = Min_Lot;                             // .. то минимальный лот
       else                                               // Желаем. колич.лотов:
-         Lots_New = MathFloor(Free*Percent/100/One_Lot/Step)*Step; // Расчёт колич. лотов
+         _lots_New = MathFloor(Free*Percent/100/One_Lot/Step)*Step; // Расчёт колич. лотов
       }
 //---------------------------------------------------------------------------------- 4 --
-   if (Lots_New < Min_Lot)                               // Если меньше допуст ..
-      Lots_New = Min_Lot;                                // .. то миниамальный
+   if (_lots_New < Min_Lot)                               // Если меньше допуст ..
+      _lots_New = Min_Lot;                                // .. то миниамальный
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 5 --
-   if (Lots_New*One_Lot > AccountFreeMargin())           // Не хватает (даже на мин. лот)
+   if (_lots_New*One_Lot > AccountFreeMargin())           // Не хватает (даже на мин. лот)
       return(0.0);                                       // Возвращаем 0 
 //---------------------------------------------------------------------------------- 6 --
-   return(Lots_New);                                     // Выход из функции
+   return(_lots_New);                                     // Выход из функции
    }
 
 enum TR_PRC_MODES{

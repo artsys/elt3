@@ -23,7 +23,7 @@ string com="";
 string comadd=""; 
 
 #ifdef DEBUG
-   #define DPRINT(text) if(DEBUG)Print(__FUNCTION__+" :: "+(string)text);
+   #define DPRINT(text) Print(__FUNCTION__+" :: "+(string)text);
    #define DAIdPRINT(a,aI,text) if(DEBUG){AId_Print2(a,aI,4,__FUNCTION__+"_"+text);}
    #define DAIdPRINTALL(a,text) if(DEBUG){Print("DAIdPRINTALL"); int atI[]; ArrayResize(atI,0,1000); AId_Init2(a,atI); AId_Print2(a,atI,4,__FUNCTION__+"_"+text);}
 #else 

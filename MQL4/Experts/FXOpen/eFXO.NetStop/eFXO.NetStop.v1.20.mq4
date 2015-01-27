@@ -5,10 +5,10 @@
 //+------------------------------------------------------------------+
 #property copyright "artamir"
 #property link      "http://forum.fxopen.ru"
-#property version   "1.10"
+#property version   "1.20"
 #property strict
 
-//#define DEBUG5
+//#define DEBUG
 //#define DEBUGERR
 //+------------------------------------------------------------------+
 //| Основные дефайны                                                 |
@@ -38,6 +38,7 @@ input double Plus=0;
 input bool LotRevers=true;
 input bool useFixProfit=true;
 input double FixProfit_Amount=500;
+input double TPOnRevers=10;
 
 
 void EXP_EventMNGR_forward(int ti, int event){
@@ -78,7 +79,7 @@ int OnInit()
 void OnDeinit(const int reason)
   {
 //---
-	DAIdPRINTALL5(aTO,"aTO deinit");
+	//DAIdPRINTALL5(aTO,"aTO deinit");
    B_Deinit("NetStop");
   }
 //+------------------------------------------------------------------+
@@ -95,12 +96,12 @@ void startext(){
 	B_Start("NetStop");
 	
 	if(ROWS(aTO)<OrdersTotal()){
-		DAIdPRINTALL5(aTO,"aTO rows less than OrdersTotal");
+		//DAIdPRINTALL5(aTO,"aTO rows less than OrdersTotal");
 		DBREACK;
 	}
 	
 	if(ROWS(aTO)<=0){
-		expert_info.start_pr=(Bid+Ask)/2;
+		expert_info.start_pr=0;
 		expert_info.buy_lot=0;
 		expert_info.buy_tp=0;
 		expert_info.buy_pr=expert_info.start_pr;
@@ -151,25 +152,27 @@ double GetTotalProfit(){
 }
 
 void CheckNet(OE_DIRECTION dty){
-	double start_pr=GetStartPrice(dty);
+	double _start_pr=GetStartPrice(dty);
+	DPRINT("start_pr="+_start_pr);
 	double tp_pr=GetTPPrice(dty);
+	DPRINT("tp_pr="+tp_pr);
 	if(tp_pr==0){
-		DPRINT5("tp_pr="+tp_pr);
+		//DPRINT5("tp_pr="+tp_pr);
 		DBREACK;
 	}
 	double koef=(dty==OE_DTY_BUY)?1:-1;	
-	int cnt=MathAbs(((start_pr-tp_pr)/Point)/S);
-	for(int i=1; i<=cnt; i++){
-		double _lvl_pr=Norm_symb(start_pr+koef*i*S*Point);
+	int cnt=MathAbs(((_start_pr-tp_pr)/Point)/S);
+	for(int i=0; i<cnt; i++){
+		double _lvl_pr=Norm_symb(_start_pr+koef*i*S*Point);
 		CheckLevel(dty,_lvl_pr);
 	}
 }
 
 void CheckLevel(OE_DIRECTION dty, double lvl_pr){
 	string f=OE_DTY+"=="+dty+" AND "+OE_FOOP+"=="+lvl_pr;
-	DAIdPRINTALL5(aTO,"aTO before "+f);
+	//DAIdPRINTALL5(aTO,"aTO before "+f);
 	SELECT(aTO,f);
-	DAIdPRINT5(aTO,aI,"aTO after "+f);
+	//DAIdPRINT5(aTO,aI,"aTO after "+f);
 	if(ROWS(aI)>0) return;
 	
 	int cmd=-1;
@@ -177,10 +180,10 @@ void CheckLevel(OE_DIRECTION dty, double lvl_pr){
 	//-----------------------------------
 	if(dty==OE_DTY_BUY){
 		cmd=OP_BUYSTOP;
-		_tp=expert_info.buy_tp;
+		_tp=GetTPPrice(dty, lvl_pr);//expert_info.buy_tp;
 	}else{
 		cmd=OP_SELLSTOP;
-		_tp=expert_info.sell_tp;
+		_tp=GetTPPrice(dty, lvl_pr);//expert_info.sell_tp;
 	}
 	double d[];
 	TR_SendPending_array(d,cmd,lvl_pr,0,GetLot(dty,lvl_pr),_tp,0,"ns",-1,Symbol(),TR_MODE_PRICE);
@@ -213,60 +216,171 @@ double GetLot(OE_DIRECTION dty, double lvl_pr){
 	return(res);
 }
 
-double GetTPPrice(OE_DIRECTION dty){
-	double _tp=(dty==OE_DTY_BUY)?(expert_info.buy_pr+TP*Point)
-											:(expert_info.sell_pr-TP*Point);
+double GetTPPrice(OE_DIRECTION dty, double lvl_pr=0){
+
+	double _pr=(dty==OE_DTY_BUY)?(expert_info.buy_pr):(expert_info.sell_pr);
+	int _tp_pips=TP;
+	
+	if(TPOnRevers>0 && lvl_pr>0){
+		
+		if((dty==OE_DTY_BUY&&lvl_pr<_pr) || (dty==OE_DTY_SELL&&lvl_pr>_pr)){
+			_tp_pips=TPOnRevers;
+			_pr=lvl_pr;
+		}	
+	}		 
+	
+	double _tp=(dty==OE_DTY_BUY)?(_pr+_tp_pips*Point)
+											:(_pr-_tp_pips*Point);
 	return(_tp);											
+}
+
+double GetReversDTY(OE_DIRECTION dty){
+	if(dty==OE_DTY_BUY){
+		return(OE_DTY_SELL);
+	}else{
+		return(OE_DTY_BUY);
+	}
+	
+	return(-1);
 }
 
 double GetStartPrice(OE_DIRECTION dty){
 	
-	double start_pr=expert_info.start_pr;
+	double _start_pr=expert_info.start_pr;
+	double _pr=(Bid+Ask)/2;
+	
+	//DPRINT("ei.Autostart="+ei.Autostart);
+	DPRINT("expert_info.Autostart="+expert_info.Autostart);
+	
+	if(ROWS(aTO)<=0){
+		//начало новой серии
+		expert_info.start_pr=_pr;
+		
+		expert_info.buy_pr=_pr+S*Point;
+		expert_info.buy_lot=Lot;
+		
+		expert_info.sell_pr=_pr-S*Point;
+		expert_info.sell_lot=Lot;
+		
+	}
 	
 	if(expert_info.Autostart){
 		if(dty==OE_DTY_BUY){
-			expert_info.buy_tp=expert_info.buy_pr+TP*Point;
-			expert_info.buy_lot=Lot;
+			return(expert_info.buy_pr);
 		}else{
-			expert_info.sell_tp=expert_info.sell_pr-TP*Point;
-			expert_info.sell_lot=Lot;
+			return(expert_info.sell_pr);
 		}
-		return(expert_info.start_pr);
 	}
+	
+	//------------------------------------------------------
+	// если дошли сюда, значит у нас есть выставленные ордера.
+	// будем проверять, если было закрытие по тп и есть 
+	// необходимость переместить уровень открытия.
 	
 	string f=OE_DTY+"=="+dty;
 	SELECT(aTO,f);
 	
-	//------------------------------------------------------------
-	if(ROWS(aI)<=0){	
-		double _pr=(Bid+Ask)/2;
-		int _lvl=MathAbs(((_pr-expert_info.start_pr)/Point)/S);
-		double koef=(dty==OE_DTY_BUY)?1:-1;
-		start_pr=expert_info.start_pr+koef*_lvl*S*Point;
-		if(dty==OE_DTY_BUY){
-			expert_info.buy_pr=start_pr;
-			expert_info.buy_lot=expert_info.buy_lot*Multy+Plus;
-			expert_info.buy_tp=expert_info.buy_pr+TP*Point;
-		}else{
-			expert_info.sell_pr=start_pr;
-			expert_info.sell_lot=expert_info.sell_lot*Multy+Plus;
-			expert_info.sell_tp=expert_info.sell_pr-TP*Point;
-		}
-		return(start_pr);
-	}
-	
-	//------------------------------------------------------------
-	OE_DIRECTION rev_dty=(dty==OE_DTY_BUY)?OE_DTY_SELL:OE_DTY_BUY;
-	f=OE_DTY+"=="+rev_dty+" AND "+OE_IM+"==1";
-	SELECT2(aTO,aI,f);
-	if(ROWS(aI)>0){
-		//DAIdPRINT5(aTO, aI, "before sort (dty="+dty+")");
-		AId_InsertSort2(aTO,aI,OE_FOOP);
-		//DAIdPRINT5(aTO, aI, "after sort (dty="+dty+")");
+	if(ROWS(aI)<=0){
+		// в заданном направлении выставленных ордеров нет.
+		// нужно проверить, если они есть в противоположном.
+		f=OE_DTY+"=="+GetReversDTY(dty);
+		SELECT2(aTO,aI,f);
 		
-		start_pr=(dty==OE_DTY_BUY)?AId_Get2(aTO,aI,(0),OE_FOOP)
-											:AId_Get2(aTO,aI,(ROWS(aI)-1),OE_FOOP);
+		if(ROWS(aI)<=0){
+			//хм... странно... выставленных ордеров нет,
+			//но мы попали в данное место.
+			//Выставляем автостарт в тру и вернем то, что нужно
+			return(-1);
+		}
+		
+		//ну вот... тикетов заданного направления нет, а 
+		// в противоположном есть. 
+		// Значит было закрытие по тп или еще как.
+		// найдем уровень, с которого будем выставлять ордере
+		int _l=MathAbs(_pr-expert_info.start_pr)/Point/S;
+		double _k=(dty==OE_DTY_BUY)?1:-1;
+		_start_pr=expert_info.start_pr+_k*_l*S*Point;
+		
+		if(dty==OE_DTY_BUY){
+			expert_info.buy_pr=_start_pr;
+			expert_info.buy_lot=expert_info.buy_lot*Multy+Plus;
+			return(expert_info.buy_pr);
+		}else{
+			expert_info.sell_pr=_start_pr;
+			expert_info.sell_lot=expert_info.sell_lot*Multy+Plus;
+			return(expert_info.sell_pr);
+		}
+		
+	}else{
+		//в заданном направлении ордера есть.
+		//значит нужно просто вернуть цену самого высокого
+		//бая или самого низкого селла.
+		f=OE_DTY+"=="+GetReversDTY(dty)+" AND "+OE_IM+"==1";
+		
+		SELECT2(aTO,aI,f);
+		
+		//проверим, если есть рыночные позиции.
+		if(ROWS(aI)<=0){
+			return((dty==OE_DTY_BUY)?expert_info.buy_pr:expert_info.sell_pr);
+		}
+		
+		AId_InsertSort2(aTO,aI,OE_FOOP);
+		
+		if(dty==OE_DTY_BUY){
+			return(AId_Get2(aTO,aI,0,OE_FOOP));
+			//return(_pr);
+		}else{
+			return(AId_Get2(aTO,aI,(ROWS(aI)-1),OE_FOOP));
+			//return(_pr);
+		}
 	}
 	
-	return(start_pr);
+	return(-1);
+//	//------------------------------------------------------
+//	if(expert_info.Autostart){
+//		if(dty==OE_DTY_BUY){
+//			expert_info.buy_tp=expert_info.buy_pr+TP*Point;
+//			expert_info.buy_lot=Lot;
+//		}else{
+//			expert_info.sell_tp=expert_info.sell_pr-TP*Point;
+//			expert_info.sell_lot=Lot;
+//		}
+//		return(expert_info.start_pr);
+//	}
+//	
+//	string f=OE_DTY+"=="+dty;
+//	SELECT(aTO,f);
+//	
+//	//------------------------------------------------------------
+//	if(ROWS(aI)<=0){	
+//		double _pr=(Bid+Ask)/2;
+//		int _lvl=MathAbs(((_pr-expert_info.start_pr)/Point)/S);
+//		double koef=(dty==OE_DTY_BUY)?1:-1;
+//		start_pr=expert_info.start_pr+koef*_lvl*S*Point;
+//		if(dty==OE_DTY_BUY){
+//			expert_info.buy_pr=start_pr;
+//			expert_info.buy_lot=expert_info.buy_lot*Multy+Plus;
+//			expert_info.buy_tp=expert_info.buy_pr+TP*Point;
+//		}else{
+//			expert_info.sell_pr=start_pr;
+//			expert_info.sell_lot=expert_info.sell_lot*Multy+Plus;
+//			expert_info.sell_tp=expert_info.sell_pr-TP*Point;
+//		}
+//		return(start_pr);
+//	}
+//	
+//	//------------------------------------------------------------
+//	OE_DIRECTION rev_dty=(dty==OE_DTY_BUY)?OE_DTY_SELL:OE_DTY_BUY;
+//	f=OE_DTY+"=="+rev_dty+" AND "+OE_IM+"==1";
+//	SELECT2(aTO,aI,f);
+//	if(ROWS(aI)>0){
+//		//DAIdPRINT5(aTO, aI, "before sort (dty="+dty+")");
+//		AId_InsertSort2(aTO,aI,OE_FOOP);
+//		//DAIdPRINT5(aTO, aI, "after sort (dty="+dty+")");
+//		
+//		start_pr=(dty==OE_DTY_BUY)?AId_Get2(aTO,aI,(0),OE_FOOP)
+//											:AId_Get2(aTO,aI,(ROWS(aI)-1),OE_FOOP);
+//	}
+//	
+//	return(start_pr);
 }

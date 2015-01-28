@@ -27,7 +27,7 @@ string comadd="";
    #define DAIdPRINT(a,aI,text) if(DEBUG){AId_Print2(a,aI,4,__FUNCTION__+"_"+text);}
    #define DAIdPRINTALL(a,text) if(DEBUG){Print("DAIdPRINTALL"); int atI[]; ArrayResize(atI,0,1000); AId_Init2(a,atI); AId_Print2(a,atI,4,__FUNCTION__+"_"+text);}
 #else 
-   #define DPRINT(text)
+   #define DPRINT(text) Print(":(");
    #define DAIdPRINT(a,aI,text)
    #define DAIdPRINTALL(a,text)
 #endif 

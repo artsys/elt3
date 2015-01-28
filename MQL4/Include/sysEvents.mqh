@@ -177,6 +177,7 @@ void EVENT_New(int ti){
 	int idx=AId_AddRow2(aE);
 	aE[idx][E_TI]=ti;
 	aE[idx][E_EVT]=EVT_NEW;
+	
 	EXP_EventMNGR(ti, EVT_NEW);
 }
 

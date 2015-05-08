@@ -17,6 +17,8 @@
    #define DAIdPRINTALL(a,text)
 #endif 
 
+#define SQLITE_ERR Print("FN:"+__FUNCTION__); Print("LN:"+__LINE__); Print("SQL_ERR:"+sql3.ErrorMsg());
+
 //=====================================================================
 string db_file_name="";
 int CntToFile=0;
@@ -175,7 +177,8 @@ CSqlBase::CreateTable(const string tbl_name, CRow &cols){
 	
 	int res=sql3.Query(q);
 	if(res!=SQLITE_DONE){
-		Print(sql3.ErrorMsg());
+		SQLITE_ERR;
+		//Print(sql3.ErrorMsg());
 	}
 	
 	//Ќа вс€кий случай проверим существование колонок
@@ -191,7 +194,8 @@ CSqlBase::AddColumn(const string tbl_name, const string col_name, const string c
 	int res=sql3.Query(q);
 	
 	if(res!=SQLITE_DONE){
-		Print(sql3.ErrorMsg());
+		SQLITE_ERR;
+		//Print(sql3.ErrorMsg());
 	}
 	DPRINT("res="+res);
 }
@@ -233,7 +237,8 @@ CSqlBase::UpdateOrInsert(const string tbl_name, CRow &row){
 	int res=sql3.Query(q);
 	
 	if(res!=SQLITE_DONE){
-		Print(sql3.ErrorMsg());
+		SQLITE_ERR;
+		//Print(sql3.ErrorMsg());
 	}
 }
 
@@ -242,7 +247,8 @@ CSqlBase::DeleteAll(const string tbl_name){
 	int res=sql3.Query("DELETE FROM `"+tbl_name+"`");
 	
 	if(res!=SQLITE_DONE){
-		Print(sql3.ErrorMsg());
+		SQLITE_ERR;
+		//Print(sql3.ErrorMsg());
 	}
 }
 

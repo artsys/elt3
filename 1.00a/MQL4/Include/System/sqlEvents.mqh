@@ -7,13 +7,7 @@
 #property link      ""
 #property strict
 
-#define E_TI	0
-#define E_TY	1
-#define E_OOP	2
-#define E_OOT	3
-#define E_OCT	4
-
-#define E_MAX	5
+int E_aCHTY[];
 
 string E_GetCell(CSQLite3Table &tbl, int irow, string scell){
 	string s="";
@@ -106,35 +100,102 @@ class CSqlEvents: public CSqlBase{
 	
 	public:
 		void UpdateClosed();	
+		void UpdateNew();	
+		void UpdateCHTY();	
 };
 
 CSqlEvents::Start(void){
 	m_rows=GetTiProps();
 	this.DeleteAll(m_tblThis);
 	
-	int res=sql3.Exec("BEGIN");
-	if(res!=SQLITE_DONE){
-		Print(sql3.ErrorMsg());
-	}
-	
-	for(int i=0; i<m_rows.Count();i++){
+	for(int i=0; i<m_rows.Count(); i++){
 		this.UpdateOrInsert(m_tblThis, m_rows.Get(i));
-	}
-	
-	res=sql3.Exec("COMMIT");
-	if(res!=SQLITE_DONE){
-		Print(sql3.ErrorMsg());
-	}
+	}	
 	
 	UpdateClosed();
+	UpdateNew();
+	UpdateCHTY();
+	
+	this.DeleteAll(m_tblOld);
+	
+	for(int i=0;i<m_rows.Count();i++){ 
+		this.UpdateOrInsert(m_tblOld,m_rows.Get(i));
+	}	
 }
+
+CSqlEvents::UpdateNew(void){
+	CSQLite3Table sql_tbl;
+	string q="SELECT `TI` FROM `"+m_tblThis+"` WHERE (TI NOT IN (SELECT TI FROM `"+m_tblOld+"`))";
+	int res=sql3.Query(sql_tbl,q);
+	if(res!=SQLITE_DONE){
+		SQLITE_ERR;
+		//Print(sql3.ErrorMsg());
+	}
+	
+	
+	CTbl tbl;
+	CSqlTickets oTi;
+	
+	int cr=ArrayRange(sql_tbl.m_data,0);
+	for(int i=0; i<cr; i++){
+		int ti=(int)E_GetCell(sql_tbl,i,"TI");
+		
+		if(!OrderSelect(ti,SELECT_BY_TICKET)) continue; // похорошему нужно удалить этот тикет.
+		
+		CRow row=oTi.SetSTD(OrderTicket());
+		
+		double foop=OrderOpenPrice();
+		row.Add("FOOP",foop);
+		
+		if(OrderCloseTime()>0){
+			row.Add("IT",0);
+			row.Add("IC",1);
+			row.Add("OCT",OrderCloseTime());
+		}
+		
+		tbl.Add(row);
+	}
+	
+	this.UpdateOrInsert(m_tblThis,tbl);
+	this.UpdateOrInsert("tickets",tbl);
+	
+}
+
+CSqlEvents::UpdateCHTY(void){
+	ArrayResize(E_aCHTY,0);
+	CSQLite3Table sql_tbl;
+	string q="SELECT t1.TI AS TI,t1.TY,t2.TY FROM "+m_tblThis+" AS t1 LEFT JOIN "+m_tblOld+" AS t2 ON t1.TI=t2.TI WHERE t1.TY <> t2.TY";
+	
+	int res=sql3.Query(sql_tbl,q);
+	if(res!=SQLITE_DONE){
+		SQLITE_ERR;
+	}
+	
+	int cr=ArrayRange(sql_tbl.m_data,0);
+	for(int i=0; i<cr; i++){
+		int ti=E_GetCell(sql_tbl,i,"TI");
+		int size=ArrayRange(E_aCHTY,0)+1;
+		ArrayResize(E_aCHTY,size);
+		E_aCHTY[(size-1)]=ti;
+	}
+	
+}
+
+
+
+enum ENUM_CLOSE_TYPE{
+	ENUM_CLOSED_TYPE_MANUAL=1,
+	ENUM_CLOSED_TYPE_TP=2,
+	ENUM_CLOSED_TYPE_SL=3
+};
 
 CSqlEvents::UpdateClosed(void){
 	CSQLite3Table sql_tbl;
 	string q="SELECT `TI` FROM `"+m_tblOld+"` WHERE (TI NOT IN (SELECT TI FROM `"+m_tblThis+"`))";
 	int res=sql3.Query(sql_tbl,q);
 	if(res!=SQLITE_DONE){
-		Print(sql3.ErrorMsg());
+		SQLITE_ERR;
+		//Print(sql3.ErrorMsg());
 	}
 	
 	
@@ -151,15 +212,25 @@ CSqlEvents::UpdateClosed(void){
 		if(OrderCloseTime()>0){
 			row.Add("IC",1);
 			row.Add("OCT",OrderCloseTime());
+			
+			ENUM_CLOSE_TYPE close_type;
+			if(OrderClosePrice()==OrderStopLoss()){
+				close_type=ENUM_CLOSED_TYPE_SL;
+			}else{
+				if(OrderClosePrice()==OrderTakeProfit()){
+					close_type=ENUM_CLOSED_TYPE_TP;
+				}else{
+					close_type=ENUM_CLOSED_TYPE_MANUAL;
+				}
+			}
+			row.Add("OCTY",close_type);
 		}
 		
 		tbl.Add(row);
 	}
 	
-	int tc=tbl.Count();
-	for(int i=0; i<tc; i++){
-		this.UpdateOrInsert(m_tblThis,tbl.Get(i));
-	}
+	this.UpdateOrInsert(m_tblThis,tbl);
+	this.UpdateOrInsert("tickets",tbl);
 }
 
 CTbl CSqlEvents::GetTiProps(void){

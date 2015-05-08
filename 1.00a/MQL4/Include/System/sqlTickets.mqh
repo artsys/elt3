@@ -41,6 +41,11 @@ CSqlTickets::CSqlTickets(void){
 	TblName="tickets";
 }
 
+enum ENUM_DTY{
+	ENUM_DTY_BUY=100,
+	ENUM_DTY_SELL=101
+};
+
 //=====================================================================
 CRow CSqlTickets::SetSTD(int ti){
 	CRow row;
@@ -48,6 +53,7 @@ CRow CSqlTickets::SetSTD(int ti){
 	
 	row.Add("TI",OrderTicket());
 	row.Add("TY",OrderType());
+	row.Add("MN",OrderMagicNumber());
 	row.Add("OOP",OrderOpenPrice());
 	row.Add("OOT",(int)OrderOpenTime());
 	row.Add("SY","'"+Symbol()+"'");
@@ -55,7 +61,12 @@ CRow CSqlTickets::SetSTD(int ti){
 	row.Add("OPR",OrderProfit()+OrderSwap()+OrderCommission());
 	row.Add("IM",(OrderType()<=1)?1:0);
 	row.Add("IP",(OrderType()>=2)?1:0);
+	row.Add("OCP",OrderClosePrice());
 	
+	ENUM_DTY _dty=(OrderType()==0||OrderType()==2||OrderType()==4)?ENUM_DTY_BUY:ENUM_DTY_SELL;
+	row.Add("DTY",_dty);
+	int _ocp2oop=((_dty==ENUM_DTY_BUY)?(Bid-OrderOpenPrice()):(OrderOpenPrice()-Ask))/Point;
+	row.Add("OCP2OOP",_ocp2oop);
 	return(row);
 }
 
@@ -96,7 +107,8 @@ CSqlTickets::UpdateOrInsert(CRow &row){
 	int res=sql3.Query(q);
 	
 	if(res!=SQLITE_DONE){
-		Print(sql3.ErrorMsg());
+		SQLITE_ERR;
+		//Print(sql3.ErrorMsg());
 	}
 }
 
@@ -106,17 +118,21 @@ CRow CSqlTickets::InitCols(void){
 	CRow _cols;
 	_cols.Add("TI","INTEGER");
 	_cols.Add("TY","INTEGER");
+	_cols.Add("MN","INTEGER");
 	_cols.Add("OOP","FLOAT");
 	_cols.Add("OOT","INTEGER");
 	_cols.Add("SY","TEXT");
 	_cols.Add("COMM","TEXT");
 	_cols.Add("FOOP","FLOAT");//цена по которой тикет впервые попал на рынок
 	_cols.Add("OPR","FLOAT");//профит по позиции+своп
+	_cols.Add("OCP","FLOAT");//÷ена закрыти€ тикета. —уществует всегда
+	_cols.Add("DTY","INTEGER");//Ќаправление тикета
+	_cols.Add("OCP2OOP","INTEGER");// оличество пунктов от цены до цены открыти€ ордера с учетом направлени€.
 	_cols.Add("IM","INTEGER");//рыночный (бай или селл) = 1 иначе 0
 	_cols.Add("IP","INTEGER");//отложенный=1 иначе 0
 	_cols.Add("IC","INTEGER");//закрыт/удален=1 иначе 0
 	_cols.Add("OCT","INTEGER");//¬рем€ закрыти€/удалени€ тикета
-	_cols.Add("OCP","FLOAT");//÷ена закрыти€ тикета. —уществует всегда
+	_cols.Add("OCTY","INTEGER");//тип закрыти€ ордера. если ордер закрыт/удален.
 	return(_cols);
 }
 

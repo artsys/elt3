@@ -9,6 +9,8 @@
 
 #include <SQLite\MQH\Lib\SQLite3\SQLite3Base.mqh>
 
+$Revision$
+
 class CCell: public CSQLite3Cell{
 	public:
 		string ver;

@@ -4,7 +4,7 @@
 //|                                         http://www.FINEXWARE.com |
 //|      programming & development - Alexey Sergeev, Boris Gershanov |
 //+------------------------------------------------------------------+
-#include <MQH\Ctrl\ByteImg.mqh>
+#include <SQLite\MQH\Ctrl\ByteImg.mqh>
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -395,8 +395,6 @@ public:
    bool              Cell(int irow,int icol,CSQLite3Cell &acell);
 
    void              ColumnName(int icol,string aname);
-   int					RowCount(){return(ArrayRange(m_data,0))};
-   int					ColCount(){return(ArrayRange(m_colname,0))};
   };
 //+------------------------------------------------------------------+
 //|                                                                  |

@@ -5,9 +5,9 @@
 //|      programming & development - Alexey Sergeev, Boris Gershanov |
 //+------------------------------------------------------------------+
 
-#include <MQH\Lib\WinApi\msvcrt\memcpy.mqh>
-#include <MQH\Lib\WinApi\msvcrt\strlen.mqh>
-#include <MQH\Lib\WinApi\msvcrt\strcpy.mqh>
+#include <SQLite\MQH\Lib\WinApi\msvcrt\memcpy.mqh>
+#include <SQLite\MQH\Lib\WinApi\msvcrt\strlen.mqh>
+#include <SQLite\MQH\Lib\WinApi\msvcrt\strcpy.mqh>
 
 #define PTR32              int
 #define sqlite3_stmt_p32   PTR32

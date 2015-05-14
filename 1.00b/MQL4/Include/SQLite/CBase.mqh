@@ -8,8 +8,7 @@
 #property strict
 
 #include <SQLite\MQH\Lib\SQLite3\SQLite3Base.mqh>
-
-$Revision$
+#define VER ver="$Revision$"
 
 class CCell: public CSQLite3Cell{
 	public:
@@ -17,11 +16,32 @@ class CCell: public CSQLite3Cell{
 		string key;
 		string val;
 		
-		template<typename T>
-		CCell(string k, T val){
-			ver="$Revision$";
-			key=k;
-			Set(val);
+		CCell(const CCell &c){
+			VER;
+			key=c.key;
+			val=c.val;
+			Set(c.val);
 		};
+		
+		template<typename T>
+		CCell(string k, T v){
+			VER;
+			key=k;
+			val=v;
+			Set(v);
+		};
+		
 		~CCell(){};
 };
+
+class CRow: public CSQLite3Row{
+	public:
+		template<typename T>
+		void Add(string k, T a){
+			CCell c(k,a);
+			Add(c);
+		};
+		
+};
+
+class CTbl: public CSQLite3Table{};

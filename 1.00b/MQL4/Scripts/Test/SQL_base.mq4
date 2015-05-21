@@ -13,54 +13,32 @@
 //| Script program start function                                    |
 //+------------------------------------------------------------------+
 
-class CQuery: public CSQLite3Base{
-	public:
-		string m_query;
-	
-	public:	
-		CQuery(){};
-		
-		void Text(string s){
-			m_query=s;
-		}
-		
-		template<typename T>
-		void SetValue(string p, T val){
-			StringReplace(m_query,p,(string)val);			
-		}
-		
-		int Run(CSQLite3Table &tbl){
-			int r=-1;
-			if(StringLen(m_query)>0){
-				r=Query(tbl,m_query);
-				if(r!=SQLITE_DONE){
-					Print(ErrorMsg());
-				}
-			}
-			return(r);
-		}
-		
-	public:
-		string CalcDbFileName(){
-			string res=MQLInfoString(MQL_PROGRAM_NAME)+"."+AccountNumber()+".sqlite3";
-			return(res);
-		}	
-		
-};
 
 void OnStart()
   {
 //---
-   CQuery q;
-   q.Connect(q.CalcDbFileName());
-   q.Text("SELECT * FROM &tbl WHERE DTY=&dty");
-   q.SetValue("&tbl","Tickets");
-   q.SetValue("&dty",101);
-   Print(q.m_query);
-   CSQLite3Table tbl;
-   q.Run(tbl);
    
-   Print(TablePrint(tbl));
+   
+   KeyVal kv[];
+   ADD(kv);
+   kv[LAST(kv)].key="system_id";
+   kv[LAST(kv)].val="INTEGER";
+   
+   CEvents e;
+   e.Init();
+  // e.Text(e.CreateTable(e.m_tblname,kv));
+   //CTbl tbl;
+   //e.Run(tbl);
+   
+   
+   
+   //q.Text("SELECT * FROM <tbl> WHERE DTY=&dty");
+   //q.SetValue("&tbl","Tickets");
+   //q.SetValue("&dty",101);
+   //Print(q.m_query);
+   //q.Run(tbl);
+   
+   //Print(TablePrint(tbl));
   }
 //+------------------------------------------------------------------+
 //+------------------------------------------------------------------+

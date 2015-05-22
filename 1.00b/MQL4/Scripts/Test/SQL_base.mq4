@@ -17,16 +17,29 @@
 void OnStart()
   {
 //---
-   
-   
-   KeyVal kv[];
-   ADD(kv);
-   kv[LAST(kv)].key="system_id";
-   kv[LAST(kv)].val="INTEGER";
-   
    CEvents e;
    e.Init();
-  // e.Text(e.CreateTable(e.m_tblname,kv));
+   for(int i=0; i<OrdersTotal(); i++){
+   	if(!OrderSelect(i,SELECT_BY_POS,MODE_TRADES)) continue;
+   	
+   	KeyVal kv[];
+   	
+   	e.Exec("BEGIN");
+   	
+   	ADD(kv,"TI",(string)OrderTicket());
+   	ADD(kv,"TY",(string)OrderType());
+   	ADD(kv,"MN",(string)OrderMagicNumber());
+   	ADD(kv,"OOP",(string)OrderOpenPrice());
+   	ADD(kv,"OCP",(string)OrderClosePrice());
+   	
+   	e.m_tblname=e.m_tblthis;
+   	e.UpdateOrInsert(kv);
+   	e.Exec("COMMIT");
+   }
+   
+   e.CopyTable(e.m_tblthis,e.m_tblold);
+  
+  	// e.Text(e.CreateTable(e.m_tblname,kv));
    //CTbl tbl;
    //e.Run(tbl);
    
@@ -39,34 +52,5 @@ void OnStart()
    //q.Run(tbl);
    
    //Print(TablePrint(tbl));
-  }
-//+------------------------------------------------------------------+
-//+------------------------------------------------------------------+
-//| Comment Table                                                    |
-//+------------------------------------------------------------------+
-string TablePrint(CSQLite3Table &tbl)
-  {
-   string str="";
-   int cs=ArraySize(tbl.m_colname);
-   for(int c=0; c<cs; c++)
-      str+=tbl.m_colname[c]+" | ";
-   str+="\n";
-
-   int rs=ArraySize(tbl.m_data);
-   for(int r=0; r<rs; r++)
-     {
-      str+=string(r)+": ";
-      CSQLite3Row *row=tbl.Row(r);
-      if(CheckPointer(row))
-        {
-         str+="----error row----\n";
-         continue;
-        }
-      cs=ArraySize(row.m_data);
-      for(int c=0; c<cs; c++)
-         str+=string(row.m_data[c].GetString())+" | ";
-      str+="\n";
-     }
-   return(str);
   }
 //+------------------------------------------------------------------+

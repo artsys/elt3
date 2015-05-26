@@ -10,31 +10,49 @@
 #include <SQLite\MQH\Lib\SQLite3\SQLite3Base.mqh>
 #define VER ver="$Revision$"
 
+
 #define ROWS(a) ArrayRange(a,0)
 #define LAST(a) ROWS(a)-1
 #define ADDROW(a) ArrayResize(a,(ROWS(a)+1))
 #define ADD(a,k,v) ADDROW(a); a[LAST(a)].key=k; a[LAST(a)].val=v;
 #define DROP(a) ArrayResize(a,0);
 
-class CCell: public CSQLite3Cell{};
+enum ENUM_DTY{
+	ENUM_DTY_BUY=100,
+	ENUM_DTY_SELL=101
+};
 
+enum ENUM_CLOSE_TYPE{
+	ENUM_CLOSED_TYPE_MANUAL=1,
+	ENUM_CLOSED_TYPE_TP=2,
+	ENUM_CLOSED_TYPE_SL=3
+};
+
+class CCell: public CSQLite3Cell{};
 class CRow: public CSQLite3Row{};
 
+//+------------------------------------------------------------------+
+//|CLASS Tbl                                                                  |
+//+------------------------------------------------------------------+
 class CTbl: public CSQLite3Table{
 	public:
+		//--------------------------------------------------------------
 		int ColCount(){
 			return(ArrayRange(m_colname,0));
 		}
 		
+		//--------------------------------------------------------------
 		int RowCount(){
 			return(ArrayRange(m_data,0));
 		}
 	
 	public:
+		//--------------------------------------------------------------
 		string ColName(int icol){
 			return(m_colname[icol]);
 		}
-	
+		
+		//--------------------------------------------------------------
 		int ColName(string scol){
 			int r=-1;
 			for(int i=0; i<ROWS(m_colname); i++){
@@ -46,14 +64,20 @@ class CTbl: public CSQLite3Table{
 			return(r);
 		}
 	
+		//--------------------------------------------------------------	
 		string Cell(int irow, int icell){
 			CSQLite3Row row;
 			row=Row(irow);
+			
+			if(ArrayRange(row.m_data,0)<=icell){
+				return("ERROR");	
+			}
 			
 			string s=row.m_data[icell].GetString();
 			return(s);
 		}
 	
+		//--------------------------------------------------------------
 		string Cell(int irow, string scell){
 			string s="";
 			int cs=ArrayRange(m_colname,0);
@@ -80,8 +104,10 @@ class CTbl: public CSQLite3Table{
 		}
 };
 
+//====================================================================
 struct KeyVal{string key; string val;};
 
+//====================================================================
 string GET(string k,KeyVal &a[]){
 	string r="";
 	for(int i=0;i<ROWS(a);i++){
@@ -92,25 +118,35 @@ string GET(string k,KeyVal &a[]){
 	return(r);
 }
 
+//+------------------------------------------------------------------+
+//|CLSASS QUERY                                                                  |
+//+------------------------------------------------------------------+
 class CQuery: public CSQLite3Base{
 	public:
 		string m_query;
 		string m_tblname;
 	public:	
-		CQuery(){};
+		CQuery(){sf ef};
 		
 		//------------------------------------
 		void Text(string s){
+			sf
 			m_query=s;
+			DPRINT("m_query="+m_query);
+			ef
 		}
+		
 		//------------------------------------
 		template<typename T>
 		void SetValue(string p, T val){
+			sf
 			StringReplace(m_query,p,(string)val);			
+			ef
 		}
+		
 		//------------------------------------
 		int Run(CTbl &tbl){
-			
+			sf
 			int r=-1;
 			if(StringLen(m_query)>0){
 				r=Query(tbl,m_query);
@@ -119,10 +155,13 @@ class CQuery: public CSQLite3Base{
 					Print(ErrorMsg());
 				}
 			}
+			ef
 			return(r);
 		}
+		
 		//------------------------------------
 		int Run(){
+			sf
 			int r=-1;
 			if(StringLen(m_query)>0){
 				r=Query(m_query);
@@ -131,17 +170,33 @@ class CQuery: public CSQLite3Base{
 					Print(ErrorMsg());
 				}
 			}
+			ef
 			return(r);
+		}
+	
+	public:
+		int RowsTotal(){
+			sf
+			CTbl tbl;
+			Text("SELECT * FROM '"+m_tblname+"'");
+			Run(tbl);
+			
+			ef
+			return(tbl.RowCount());
 		}
 		
 	public:
+		//--------------------------------------------------------------
 		string CalcDbFileName(){
+			sf
 			string res=MQLInfoString(MQL_PROGRAM_NAME)+"."+(string)AccountNumber()+".sqlite3";
+			ef
 			return(res);
 		}	
 		
 		//-------------------------------------
 		string CreateTable(string tbl_name, KeyVal &kv[]){
+			sf
 			string q="CREATE TABLE IF NOT EXISTS '"+tbl_name+"'(";
 			for(int i=0;i<ROWS(kv);i++){
 				q+="'"+kv[i].key+"' "+kv[i].val;
@@ -154,11 +209,13 @@ class CQuery: public CSQLite3Base{
 			m_query=q;
 			
 			Run();
-			
+			ef
 			return(q);
 		}
 		
+		//--------------------------------------------------------------
 		void Update(KeyVal &kv[]){
+			sf
 			int ti=GET("TI", kv);
 			
 			string q="UPDATE `"+m_tblname+"` SET ";
@@ -171,9 +228,12 @@ class CQuery: public CSQLite3Base{
 			q=q+" WHERE `TI`="+(string)ti;
 			m_query=q;
 			Run();
+			ef
 		}
 		
+		//--------------------------------------------------------------
 		void Insert(KeyVal &kv[]){
+			sf
 			string q="INSERT INTO `"+m_tblname+"` ";
 			string col_set="(";
 			string val_set="(";
@@ -193,22 +253,25 @@ class CQuery: public CSQLite3Base{
 			q=q+col_set+" VALUES "+val_set;
 			m_query=q;
 			Run();
+			ef
 		}
 		
+		//--------------------------------------------------------------
 		void UpdateOrInsert(KeyVal &kv[]){
 			//должен передаваться массив ключ::значение
 			//где ключ - наименование поля
 			//значение - собственно и есть значение для установки.
 			//для начала поиск будем производить по ключу TI
 			//поэтому, значение тикета должно быть задано
+			sf
 			CTbl tbl;
 			
 			int ti=(int)GET("TI",kv);
-			m_query="SELECT * FROM "+m_tblname+" WHERE TI=&ti";
+			Text("SELECT * FROM '"+m_tblname+"' WHERE TI=&ti");
 			SetValue("&ti",ti);
 			Run(tbl);
 			
-			Comment(TablePrint(tbl));
+			DPRINT(TablePrint(tbl));
 			
 			string q="";
 			if(ROWS(tbl.m_data)<=0){
@@ -216,9 +279,12 @@ class CQuery: public CSQLite3Base{
 			}else{
 				Update(kv);
 			}
+			ef
 		}	
 		
+		//--------------------------------------------------------------
 		void UpdateOrInsert(CTbl &tbl){
+			sf
 			Exec("BEGIN");
 			KeyVal kv[];
 			for(int i=0;i<tbl.RowCount();i++){
@@ -229,14 +295,28 @@ class CQuery: public CSQLite3Base{
 				UpdateOrInsert(kv);
 			}
 			Exec("COMMIT");
+			ef
 		}
 		
+		//--------------------------------------------------------------
 		void CopyTable(string tbl_from, string tbl_to){
-			Text("SELECT * FROM "+tbl_from);
+			sf
+			Text("SELECT * FROM '"+tbl_from+"'");
 			CTbl tbl;
 			Run(tbl);
-			m_tblname=tbl_to;
+			m_tblname=tbl_to;	
+			DeleteAll();
 			UpdateOrInsert(tbl);
+			ef
+		}
+		
+		void DeleteAll(){
+			sf
+			DPRINT("m_tblname="+m_tblname);
+			Text("DELETE FROM '"+m_tblname+"'");
+			Run();
+			DPRINT("RowsTotal()="+RowsTotal());
+			ef
 		}
 };
 
@@ -244,23 +324,36 @@ class CTickets: public CQuery{
 	
 	public:	
 		CTickets(){
-			m_tblname="'TICKETS'";
-			Connect(CalcDbFileName());
+			sf
+			m_tblname="TICKETS";
+			ef
 		};
 		
 	public:
 		void Init(){
+			sf
+			DPRINT("CalcDbFileName()="+CalcDbFileName());
+			Connect(CalcDbFileName());
+			KeyVal kv[];
+			ADD(kv,"system_id","INT");
+			CreateTable(m_tblname,kv);
+		
 			CreateStdFields();
+			ef
 		}	
 		
+		//--------------------------------------------------------------
 		void AddCol(string name){
+			sf
 			string r="ALTER TABLE "+m_tblname+" ADD COLUMN `"+name+"`";
 			Text(r);
 			Run();
+			ef
 		}
 		
 	public:
 		void CreateStdFields(){
+			sf
 			AddCol("TI");
 			AddCol("TY");
 			AddCol("MN");
@@ -275,15 +368,16 @@ class CTickets: public CQuery{
 			AddCol("OCP2OOP");
 			AddCol("IM");
 			AddCol("IP");
+			AddCol("IT");
 			AddCol("IC");
 			AddCol("OCT");
 			AddCol("OCTY");
+			ef
 		}	
 		
 	public:
-		void SetStdData(int ti){
-			KeyVal kv[];
-			
+		void GetStdData(int ti, KeyVal &kv[]){
+			sf
 			if(!OrderSelect(ti, SELECT_BY_TICKET)) return;
 			
 			ADD(kv,"TI",	(string)	OrderTicket());
@@ -294,7 +388,20 @@ class CTickets: public CQuery{
 			ADD(kv,"SY", 				OrderSymbol());
 			ADD(kv,"COMM",				OrderComment());
 			ADD(kv,"OPR",	(string) (OrderProfit()+OrderSwap()+OrderCommission()));
+			ADD(kv,"OCP",	(string) OrderClosePrice());
 			
+			ENUM_DTY _dty=(OrderType()==0||OrderType()==2||OrderType()==4)?ENUM_DTY_BUY:ENUM_DTY_SELL;
+			ADD(kv,"DTY", _dty);
+			
+			ADD(kv,"IM",(OrderType()<=1)?1:0);
+			ADD(kv,"IP",(OrderType()>=2)?1:0);
+			
+			ADD(kv,"IT",(OrderCloseTime()>0)?0:1);
+			ADD(kv,"IC",(OrderCloseTime()>0)?1:0);
+			
+			int _ocp2oop=((_dty==ENUM_DTY_BUY)?(Bid-OrderOpenPrice()):(OrderOpenPrice()-Ask))/Point;
+			ADD(kv,"OCP2OOP",_ocp2oop);
+			ef
 		}	
 };		
 
@@ -304,12 +411,16 @@ class CEvents: public CTickets{
 		string m_tblold;
 	public:
 		CEvents(){
+			sf
 			m_tblthis="THIS_TICKETS";
 			m_tblold="OLD_TICKETS";
-			Connect(CalcDbFileName());
+			ef
 		}
 		
 		void Init(){
+			sf
+			DPRINT("CalcDbFileName()="+CalcDbFileName());
+			Connect(CalcDbFileName());
 			KeyVal kv[];
 			ADD(kv,"system_id","INT");
 			CreateTable(m_tblthis,kv);
@@ -320,6 +431,90 @@ class CEvents: public CTickets{
 			
 			m_tblname=m_tblold;
 			CreateStdFields();
+			ef
+		}
+		
+		void Start(){
+			sf
+			m_tblname=m_tblthis;
+			DeleteAll();
+			
+			KeyVal kv[];
+			
+			Exec("BEGIN");
+			for(int i=0; i<OrdersTotal(); i++){
+				DROP(kv);
+				
+				if(!OrderSelect(i, SELECT_BY_POS,MODE_TRADES)) continue;
+				GetStdData(OrderTicket(),kv);
+				UpdateOrInsert(kv);
+			}
+			Exec("COMMIT");
+			
+			UpdateClosed();
+			//UpdateNew();
+			//UpdateCHTY();
+			m_tblname=m_tblold;
+			DeleteAll();
+			
+			Exec("BEGIN");
+			CopyTable(m_tblthis,m_tblold);
+			Exec("COMMIT");
+			ef
+			
+		}
+		
+		void UpdateClosed(){
+			sf
+			CTickets t;
+			CTbl tbl;
+			string q="SELECT `TI` FROM `"+m_tblold+"` WHERE (TI NOT IN (SELECT TI FROM `"+m_tblthis+"`))";
+			Text(q);
+			Run(tbl);
+			DPRINT("tbl.RowsCount()="+tbl.RowCount());
+			if(tbl.RowCount()>0){
+				DPRINT(TablePrint(tbl));
+			}
+			
+			Exec("BEGIN");
+			int cr=tbl.RowCount();
+			for(int i=0; i<cr; i++){
+				int ti=(int)tbl.Cell(i,"TI");
+				
+				if(!OrderSelect(ti,SELECT_BY_TICKET)) continue; // похорошему нужно удалить этот тикет.
+				
+				KeyVal kv[];
+				DROP(kv);
+				GetStdData(OrderTicket(),kv);
+	
+				if(OrderCloseTime()>0){
+					ADD(kv,"IC",1);
+					ADD(kv,"OCT",(int)OrderCloseTime());
+					
+					ENUM_CLOSE_TYPE close_type;
+					if(OrderClosePrice()==OrderStopLoss()){
+						close_type=ENUM_CLOSED_TYPE_SL;
+					}else{
+						if(OrderClosePrice()==OrderTakeProfit()){
+							close_type=ENUM_CLOSED_TYPE_TP;
+						}else{
+							close_type=ENUM_CLOSED_TYPE_MANUAL;
+						}
+					}
+					ADD(kv,"OCTY",close_type);
+				}
+				
+				m_tblname=m_tblthis;
+				UpdateOrInsert(kv);
+				
+				m_tblname=t.m_tblname;
+				UpdateOrInsert(kv);
+			}
+			Exec("COMMIT");
+			if(cr>0){
+				MessageBox("ticket was deleted");
+			}
+			ef
 		}
 };
 

@@ -160,11 +160,12 @@ bool CSQLite3Base::ReadStatement(sqlite3_stmt_p64 stmt,int column,CSQLite3Cell &
       else
          ptr=::sqlite3_column_blob(stmt,column);
       ::memcpy(dst,ptr,bytes);
-      if(type==SQLITE_TEXT)
+      if(type==SQLITE_TEXT){
          cell.Set(CharArrayToString(dst));
-      else
+         DPRINT("dst="+CharArrayToString(dst));
+      }else
          cell.Set(dst);
-     }
+     } 
    return(true);
   }
 //+------------------------------------------------------------------+
@@ -200,14 +201,21 @@ int CSQLite3Base::Query(string query)
 //+------------------------------------------------------------------+
 int CSQLite3Base::Exec(string query)
   {
+  	sf
+  	DPRINT("query="+query);
    if(!IsConnected())
-      if(!Reconnect())
+      if(!Reconnect()){
+       	ef
          return(SQLITE_ERROR);
-   if(StringLen(query)<=0)
+      }   
+   if(StringLen(query)<=0){
+      ef
       return(SQLITE_DONE);
+   }   
    uchar str[];
    StringToCharArray(query,str);
    int res=::sqlite3_exec(m_db,str,NULL,NULL,NULL);
+  	ef
    return(res);
   }
 //+------------------------------------------------------------------+

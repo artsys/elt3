@@ -147,6 +147,7 @@ class CQuery: public CSQLite3Base{
 		//------------------------------------
 		int Run(CTbl &tbl){
 			sf
+			DPRINT("m_query="+m_query);
 			int r=-1;
 			if(StringLen(m_query)>0){
 				r=Query(tbl,m_query);
@@ -164,7 +165,7 @@ class CQuery: public CSQLite3Base{
 			sf
 			int r=-1;
 			if(StringLen(m_query)>0){
-				r=Query(m_query);
+				r=Exec(m_query);
 				if(r!=SQLITE_DONE){
 					Print(m_query);
 					Print(ErrorMsg());
@@ -220,12 +221,12 @@ class CQuery: public CSQLite3Base{
 			
 			string q="UPDATE `"+m_tblname+"` SET ";
 			for(int i=0; i<ROWS(kv); i++){
-				q=q+"'"+kv[i].key+"'="+kv[i].val;
+				q=q+""+kv[i].key+"='"+kv[i].val+"'";
 				if(i<ROWS(kv)-1){
-					q=q+",";
+					q=q+", ";
 				}
 			}
-			q=q+" WHERE `TI`="+(string)ti;
+			q=q+" WHERE TI='"+(string)ti+"'";
 			m_query=q;
 			Run();
 			ef
@@ -268,7 +269,7 @@ class CQuery: public CSQLite3Base{
 			
 			int ti=(int)GET("TI",kv);
 			Text("SELECT * FROM '"+m_tblname+"' WHERE TI=&ti");
-			SetValue("&ti",ti);
+			SetValue("&ti","'"+ti+"'");
 			Run(tbl);
 			
 			DPRINT(TablePrint(tbl));
@@ -343,9 +344,10 @@ class CTickets: public CQuery{
 		}	
 		
 		//--------------------------------------------------------------
-		void AddCol(string name){
+		void AddCol(string name, string type=""){
 			sf
-			string r="ALTER TABLE "+m_tblname+" ADD COLUMN `"+name+"`";
+			string r="ALTER TABLE "+m_tblname+" ADD COLUMN "+name+" "+type;
+			
 			Text(r);
 			Run();
 			ef
@@ -354,24 +356,24 @@ class CTickets: public CQuery{
 	public:
 		void CreateStdFields(){
 			sf
-			AddCol("TI");
-			AddCol("TY");
-			AddCol("MN");
-			AddCol("OOP");
-			AddCol("OOT");
-			AddCol("SY");
-			AddCol("COMM");
-			AddCol("FOOP");
-			AddCol("OPR");
-			AddCol("OCP");
-			AddCol("DTY");
-			AddCol("OCP2OOP");
-			AddCol("IM");
-			AddCol("IP");
-			AddCol("IT");
-			AddCol("IC");
-			AddCol("OCT");
-			AddCol("OCTY");
+			AddCol("TI","INT");
+			AddCol("TY","INT");
+			AddCol("MN","INT");
+			AddCol("OOP","FLOAT");
+			AddCol("OOT","INT");
+			AddCol("SY","TEXT");
+			AddCol("COMM","TEXT");
+			AddCol("FOOP","FLOAT");
+			AddCol("OPR","FLOAT");
+			AddCol("OCP","FLOAT");
+			AddCol("DTY","INT");
+			AddCol("OCP2OOP","INT");
+			AddCol("IM","INT");
+			AddCol("IP","INT");
+			AddCol("IT","INT");
+			AddCol("IC","INT");
+			AddCol("OCT","INT");
+			AddCol("OCTY","INT");
 			ef
 		}	
 		
@@ -402,6 +404,25 @@ class CTickets: public CQuery{
 			int _ocp2oop=((_dty==ENUM_DTY_BUY)?(Bid-OrderOpenPrice()):(OrderOpenPrice()-Ask))/Point;
 			ADD(kv,"OCP2OOP",_ocp2oop);
 			ef
+		}	
+		
+	public:
+		void UpdateITTickets(){
+			CTbl tbl;
+			Text("SELECT TI FROM '&tbl' WHERE IT=1");
+			SetValue("&tbl",m_tblname);
+			Run(tbl);
+			
+			KeyVal kv[];
+			
+			int rc=tbl.RowCount();
+			for(int i=0; i<rc;i++){
+				DROP(kv);
+				GetStdData(tbl.Cell(i,"TI"),kv);
+				UpdateOrInsert(kv);
+			} 
+			
+			
 		}	
 };		
 
@@ -452,14 +473,14 @@ class CEvents: public CTickets{
 			Exec("COMMIT");
 			
 			UpdateClosed();
-			//UpdateNew();
+			UpdateNew();
 			//UpdateCHTY();
 			m_tblname=m_tblold;
 			DeleteAll();
 			
-			Exec("BEGIN");
 			CopyTable(m_tblthis,m_tblold);
-			Exec("COMMIT");
+			CTickets t;
+			t.UpdateITTickets();
 			ef
 			
 		}
@@ -468,7 +489,9 @@ class CEvents: public CTickets{
 			sf
 			CTickets t;
 			CTbl tbl;
-			string q="SELECT `TI` FROM `"+m_tblold+"` WHERE (TI NOT IN (SELECT TI FROM `"+m_tblthis+"`))";
+			string q="SELECT TI FROM `"+m_tblold+"` WHERE (TI NOT IN (SELECT TI FROM `"+m_tblthis+"`))";
+			q+=" UNION ";
+			q+="SELECT TI FROM '"+t.m_tblname+"' WHERE (IC='0' AND TI NOT IN (SELECT TI FROM `"+m_tblthis+"`))";
 			Text(q);
 			Run(tbl);
 			DPRINT("tbl.RowsCount()="+tbl.RowCount());
@@ -504,17 +527,36 @@ class CEvents: public CTickets{
 					ADD(kv,"OCTY",close_type);
 				}
 				
-				m_tblname=m_tblthis;
-				UpdateOrInsert(kv);
+				//m_tblname=m_tblthis;
+				//UpdateOrInsert(kv);
 				
 				m_tblname=t.m_tblname;
 				UpdateOrInsert(kv);
 			}
 			Exec("COMMIT");
-			if(cr>0){
-				MessageBox("ticket was deleted");
-			}
 			ef
+		}
+		
+		void UpdateNew(){
+			CTickets t;
+			CTbl tbl;
+			string q="SELECT `TI` FROM `"+m_tblthis+"` WHERE (TI NOT IN (SELECT TI FROM `"+m_tblold+"`))";
+			Text(q);
+			Run(tbl);
+			
+			int rc=tbl.RowCount();
+			for(int i=0;i<rc;i++){
+				int ti=(int)tbl.Cell(i,"TI");
+				
+				if(!OrderSelect(ti,SELECT_BY_TICKET)) continue; // похорошему нужно удалить этот тикет.
+				
+				KeyVal kv[];
+				DROP(kv);
+				GetStdData(OrderTicket(),kv);
+				
+				m_tblname=t.m_tblname;
+				UpdateOrInsert(kv);
+			}
 		}
 };
 

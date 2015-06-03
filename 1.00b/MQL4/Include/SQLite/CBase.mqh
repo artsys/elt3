@@ -560,6 +560,13 @@ class CEvents: public CTickets{
 		}
 };
 
+//+------------------------------------------------------------------+
+//|CLASS CTRADES                                                                  |
+//+------------------------------------------------------------------+
+class CTades :public CTickets{
+	
+}
+
 string TablePrint(CSQLite3Table &tbl)
   {
    string str="";

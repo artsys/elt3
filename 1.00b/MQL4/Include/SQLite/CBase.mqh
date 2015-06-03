@@ -359,7 +359,9 @@ class CTickets: public CQuery{
 		void CreateStdFields(){
 			sf
 			AddCol("TI","INT");
+			AddCol("PID","INT");
 			AddCol("TY","INT");
+			AddCol("LOT","FLOAT");
 			AddCol("MN","INT");
 			AddCol("OOP","FLOAT");
 			AddCol("OOT","INT");
@@ -386,6 +388,7 @@ class CTickets: public CQuery{
 			
 			ADD(kv,"TI",	(string)	OrderTicket());
 			ADD(kv,"TY",	(string)	OrderType());
+			ADD(kv,"LOT",	(double) OrderLots());
 			ADD(kv,"MN",	(string)	OrderMagicNumber());
 			ADD(kv,"OOP",	(string)	OrderOpenPrice());
 			ADD(kv,"OOT",	(int)		OrderOpenTime());
@@ -643,6 +646,7 @@ class CTrades :public CTickets{
 				OrderSelect((int)d[i],SELECT_BY_TICKET);
 				ADD(kv,"TI",(int)d[i]);
 				ADD(kv,"FOOP",OrderOpenPrice());
+				ADD(kv,"PID",(int)TimeCurrent());
 				UpdateOrInsert(kv);
 			}
 		}

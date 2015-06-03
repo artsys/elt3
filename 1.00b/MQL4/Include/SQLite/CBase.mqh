@@ -10,6 +10,8 @@
 #include <SQLite\MQH\Lib\SQLite3\SQLite3Base.mqh>
 #define VER ver="$Revision$"
 
+#include <System\sysNormalize.mqh>
+#include <System\sysTrades.mqh>
 
 #define ROWS(a) ArrayRange(a,0)
 #define LAST(a) ROWS(a)-1
@@ -561,10 +563,42 @@ class CEvents: public CTickets{
 };
 
 //+------------------------------------------------------------------+
-//|CLASS CTRADES                                                                  |
+//|CLASS CTRADES                                                     |
 //+------------------------------------------------------------------+
+//»де€:
+//ѕосле трейда, будет сформированный массив выставленных тикетов.
+//ѕо запросу пользовател€ дл€ этих тикетов будет установлено 
+//заданное пользователем значение.
+//
+//ѕример:
+//CTrades tr;
+//SendBuy(tr.d,5);	//тикеты будут выставл€тьс€ до тех пор, пока не получим заданный объем.
+//t.Set("LVL",3);	//после этого дл€ всех выставленных тикетов будет установленно значение LVL=3
 class CTades :public CTickets{
-	
+	public:
+		double d[]; //результат выставлени€ тикетов.
+		
+	public:
+		void Clear(){
+			DROP(d);
+		}
+		
+		template<typename T>
+		void Set(string key, T val){
+			KeyVal kv[];
+			
+			if(ROWS(d)<=0){
+				return;
+			}
+			
+			for(int i=0;i<ROWS(d); i++){
+				ADD(kv,"TI",(int)d[i]);
+				ADD(kv,key,val);
+				
+				//после создани€ объекта, у нас m_tblname="TICKETS"
+				InsertOrUpdate(kv);
+			}
+		}
 }
 
 string TablePrint(CSQLite3Table &tbl)

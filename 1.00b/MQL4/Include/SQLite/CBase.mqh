@@ -10,8 +10,8 @@
 #include <SQLite\MQH\Lib\SQLite3\SQLite3Base.mqh>
 #define VER ver="$Revision$"
 
-#include <System\sysNormalize.mqh>
-#include <System\sysTrades.mqh>
+#include <SQLite\sysNormalize.mqh>
+#include <SQLite\sysTrades.mqh>
 
 #define ROWS(a) ArrayRange(a,0)
 #define LAST(a) ROWS(a)-1
@@ -432,11 +432,19 @@ class CEvents: public CTickets{
 	public:
 		string m_tblthis;
 		string m_tblold;
+		
+	public:
+		bool FilterSymbol;
+		bool FilterMN;
+		
 	public:
 		CEvents(){
 			sf
 			m_tblthis="THIS_TICKETS";
 			m_tblold="OLD_TICKETS";
+			
+			FilterSymbol=true;
+			FilterMN=true;
 			ef
 		}
 		
@@ -469,6 +477,14 @@ class CEvents: public CTickets{
 				DROP(kv);
 				
 				if(!OrderSelect(i, SELECT_BY_POS,MODE_TRADES)) continue;
+				
+				if(FilterSymbol){
+					if(OrderSymbol()!=Symbol())continue;
+				}
+				
+				if(FilterMN){
+					if(OrderMagicNumber()!=TR_MN)continue;
+				}
 				GetStdData(OrderTicket(),kv);
 				UpdateOrInsert(kv);
 			}
@@ -574,7 +590,7 @@ class CEvents: public CTickets{
 //CTrades tr;
 //SendBuy(tr.d,5);	//тикеты будут выставляться до тех пор, пока не получим заданный объем.
 //t.Set("LVL",3);	//после этого для всех выставленных тикетов будет установленно значение LVL=3
-class CTades :public CTickets{
+class CTrades :public CTickets{
 	public:
 		double d[]; //результат выставления тикетов.
 		
@@ -592,14 +608,45 @@ class CTades :public CTickets{
 			}
 			
 			for(int i=0;i<ROWS(d); i++){
+				DROP(kv);
 				ADD(kv,"TI",(int)d[i]);
 				ADD(kv,key,val);
 				
 				//после создания объекта, у нас m_tblname="TICKETS"
-				InsertOrUpdate(kv);
+				UpdateOrInsert(kv);
 			}
 		}
-}
+		
+		void Set(KeyVal &pkv[]){
+			KeyVal kv[];
+			
+			if(ROWS(d)<=0){
+				return;
+			}
+			
+			for(int i=0;i<ROWS(d); i++){
+				DROP(kv);
+				ADD(kv,"TI",(int)d[i]);
+				for(int k=0;k<ROWS(pkv); k++){
+					
+					ADD(kv,pkv[k].key,pkv[k].val);
+				}
+				//после создания объекта, у нас m_tblname="TICKETS"
+				UpdateOrInsert(kv);
+			}
+		}
+		
+		void SetFOOP(){
+			KeyVal kv[];
+			for(int i=0;i<ROWS(d);i++){
+				DROP(kv);
+				OrderSelect((int)d[i],SELECT_BY_TICKET);
+				ADD(kv,"TI",(int)d[i]);
+				ADD(kv,"FOOP",OrderOpenPrice());
+				UpdateOrInsert(kv);
+			}
+		}
+};
 
 string TablePrint(CSQLite3Table &tbl)
   {

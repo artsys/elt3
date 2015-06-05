@@ -741,7 +741,7 @@ int TR_SendPendingLikeOrder(double &d[], int src_ti=0, int AddPips=0){
 	double src_sl=OrderStopLoss();
 	double src_tp=OrderTakeProfit();
 	double src_lot=OrderLots();
-	double src_mn=OrderMagicNumber();
+	int	 src_mn=OrderMagicNumber();
 	string src_sy=OrderSymbol();
 	string src_comm=OrderComment();
 	
@@ -871,7 +871,7 @@ int TR_SendREVERSOrder(double &d[], int src_ti, double vol = 0.01, double lot_mu
 	int dest_ty = -1;
 	double dest_vol = vol;
 	
-	int SPREAD = MarketInfo(Symbol(), MODE_SPREAD);
+	int SPREAD = (int)MarketInfo(Symbol(), MODE_SPREAD);
 	int addSpread = 0;
 	
 	if(!OrderSelect(src_ti, SELECT_BY_TICKET)) return(-1);
@@ -981,7 +981,7 @@ int	_TR_CountOrdersToSend(double all_vol = 0){
 	
 	count = all_vol/TR_TwiseLots;
 	
-	int count_floor = MathRound(count);
+	int count_floor = (int)MathRound(count);
 	
 	if(count - count_floor > 0){
 		count_floor++;
@@ -1809,8 +1809,8 @@ void TR_CloseAll(int mn=-1){
 			>Rev:0
 	*/
 
-	int t=OrdersTotal();
-	for(int i=t;i>=0;i--){
+	int _t=OrdersTotal();
+	for(int i=_t;i>=0;i--){
 		if(!OrderSelect(i,SELECT_BY_POS, MODE_TRADES)){continue;}
 		if(mn>0){
 			if(OrderMagicNumber() != mn){continue;}

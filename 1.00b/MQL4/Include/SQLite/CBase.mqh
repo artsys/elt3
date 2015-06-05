@@ -500,19 +500,19 @@ class CEvents: public CTickets{
 			DeleteAll();
 			
 			CopyTable(m_tblthis,m_tblold);
-			CTickets t;
-			t.UpdateITTickets();
+			CTickets _t;
+			_t.UpdateITTickets();
 			ef
 			
 		}
 		
 		void UpdateClosed(){
 			sf
-			CTickets t;
+			CTickets _t;
 			CTbl tbl;
 			string q="SELECT TI FROM `"+m_tblold+"` WHERE (TI NOT IN (SELECT TI FROM `"+m_tblthis+"`))";
 			q+=" UNION ";
-			q+="SELECT TI FROM '"+t.m_tblname+"' WHERE (IC='0' AND TI NOT IN (SELECT TI FROM `"+m_tblthis+"`))";
+			q+="SELECT TI FROM '"+_t.m_tblname+"' WHERE (IC='0' AND TI NOT IN (SELECT TI FROM `"+m_tblthis+"`))";
 			Text(q);
 			Run(tbl);
 			DPRINT("tbl.RowsCount()="+tbl.RowCount());
@@ -559,7 +559,7 @@ class CEvents: public CTickets{
 		}
 		
 		void UpdateNew(){
-			CTickets t;
+			CTickets _t;
 			CTbl tbl;
 			string q="SELECT `TI` FROM `"+m_tblthis+"` WHERE (TI NOT IN (SELECT TI FROM `"+m_tblold+"`))";
 			Text(q);
@@ -575,7 +575,7 @@ class CEvents: public CTickets{
 				DROP(kv);
 				GetStdData(OrderTicket(),kv);
 				
-				m_tblname=t.m_tblname;
+				m_tblname=_t.m_tblname;
 				UpdateOrInsert(kv);
 			}
 		}
@@ -643,7 +643,7 @@ class CTrades :public CTickets{
 			KeyVal kv[];
 			for(int i=0;i<ROWS(d);i++){
 				DROP(kv);
-				OrderSelect((int)d[i],SELECT_BY_TICKET);
+				if(OrderSelect((int)d[i],SELECT_BY_TICKET)){return;};
 				ADD(kv,"TI",(int)d[i]);
 				ADD(kv,"FOOP",OrderOpenPrice());
 				ADD(kv,"PID",(int)TimeCurrent());

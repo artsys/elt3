@@ -116,7 +116,7 @@ public:  //--- Получение данных о таблице
 CSQLite_Tickets::CSQLite_Tickets()
   {
 //sf
-   rev="$REVISION$";
+   rev="$Revision$";
 
    ProgramInfo info;
    GetProgramInfo(info);

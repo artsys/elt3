@@ -68,8 +68,6 @@ uint sqlite3_exec(
                   );
 uint sqlite3_column_count(uint stmt_h);
 
-string sqlite3_column_name16(uint stmt_h, int icol);
-
 uint sqlite3_step(uint stmt_h);
 
 uint sqlite3_reset(uint sqlite3_stmt);
@@ -96,16 +94,12 @@ int sqlite3_bind_text16(uint sqlite3_stmt,uint colnum,string txt,uint size_in_by
 struct sql_results// sql results export struct
   {
    string            value[];
-   string            colname[];
   };
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 class CSQLite
   {
-public:  
-   string            db_column_names[];  
-  
 public:
    bool              connect(string db_file);
    bool              exec(string query);
@@ -150,7 +144,7 @@ bool CSQLite::connect(string db_file)
 void CSQLite::~CSQLite()
   {
    uint stmt_h_kill;
-   while(stmt_h_kill==sqlite3_next_stmt(db_hwd,NULL))
+   while(stmt_h_kill=sqlite3_next_stmt(db_hwd,NULL))
      {
       if(sqlite3_finalize(stmt_h_kill)!=SQLITE_OK) Print("SQLite finalization failure. Error "+error());
      }
@@ -199,8 +193,7 @@ bool CSQLite::prepare_insert_transaction(string TableName)
      }
    string insq="INSERT INTO "+TableName+" ("+names+") VALUES ("+vals+");";
    StringReplace(insq,",)",")"); //removing last ,s
-                                 //End of Generating transactional insert query
-   Print(insq);                                 
+                                 //End of Generating transactional insert query 
    ArrayFree(columns);
 
    return(prepare(insq));
@@ -219,18 +212,12 @@ string CSQLite::get_cell(string query)
    return(r);
   }
 //+------------------------------------------------------------------+
-//| This function will return string array as *sql_results*
+//| This fanction will return string array as *sql_results*
 //+------------------------------------------------------------------+
 uint CSQLite::get_array(string query,sql_results &out[])
   {
    prepare(query);
    uint column_count=sqlite3_column_count(db_stmt_h);
-   
-   for(uint ic=0;ic<column_count;ic++){
-      ArrayResize(db_column_names,ic+1);
-      db_column_names[ic]=sqlite3_column_name16(db_stmt_h,ic);
-   }
-   
    uint i=0;
    while(step()==SQLITE_ROW)
      {

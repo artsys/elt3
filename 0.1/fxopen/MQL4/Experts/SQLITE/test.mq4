@@ -61,6 +61,44 @@ void OnDeinit(const int reason)
 void OnTick()
   {
 //---
+   KeyVal kv[];
+   for(int i=0; i<OrdersTotal(); i++){
+      if(!OrderSelect(i,SELECT_BY_POS,MODE_TRADES))continue;
+      
+      DROP(kv);
+      db.GetStdData(OrderTicket(),kv);
+      
+      db.table="Tickets";
+      db.UpdateOrInsert(kv);
+   }   
    
+   
+   
+   db.table=db.tbl_tickets;
+   //db.DeleteAll();                                                          //Работает
+   //db.text="select * from "+db.table+" where TI in (95727617.00,95730370)"; //Работает
+   //db.text="select * from "+db.table+" where OPR<0";                        //Работает
+   db.text="select * from "+db.table+" where sy='"+Symbol()+"'";              //Работает
+   db.Query();
+   CommentResult();
   }
 //+------------------------------------------------------------------+
+
+
+void CommentResult(){
+   string s="";
+   s+="db.table : "+db.table+"\n";
+   s+="db.text : "+db.text+"\n";
+   for(int i=0;i<ROWS(db.q_column_names); i++){
+      s+=db.q_column_names[i]+"|";
+   }
+   s+="\n";
+   for(int i=0; i<ROWS(db.q_results);i++){
+      for(int j=0;j<ROWS(db.q_results[i].value); j++){
+         s+=db.q_results[i].value[j]+"|";
+      }
+      s+="\n";
+   }
+   
+   Comment(s);
+}

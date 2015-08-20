@@ -15,6 +15,7 @@
 #define LAST(a) ROWS(a)-1
 #define ADDROW(a) ArrayResize(a,(ROWS(a)+1))
 #define ADD(a,k,v) ADDROW(a); a[LAST(a)].key=k; a[LAST(a)].val=v;
+#define DEL(a,k) int _KeyValIdx=GET_IDX(k,a);if(_KeyValIdx>=0){for(int _idx=_KeyValIdx+1;_idx<ROWS(a);_idx++){a[_idx-1].key=a[_idx].key;a[_idx-1].val=a[_idx].val;} ArrayResize(a,(ROWS(a)-1));} 
 #define DROP(a) ArrayResize(a,0);
 
 //+------------------------------------------------------------------+
@@ -60,6 +61,17 @@ string GET(string k,KeyVal &a[])
      }
    return(r);
   }
+  
+int GET_IDX(string k, KeyVal &kv[]){
+   int r=-1;
+   for(int i=0; i<ROWS(kv); i++){
+      if(kv[i].key==k){
+         return(i);
+      }
+   }
+   
+   return(r);
+}  
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -110,6 +122,8 @@ public:  //--- Конструктор и деструктор
                     ~CSQLite_Tickets();
 
    void              Start(void);
+   void              UpdateClosed(void);
+   void              UpdateNew(void);
    
 public:  //--- Запросы
    void              Query(string q,sql_results &r[]);
@@ -136,9 +150,12 @@ public:  //--- Создание таблиц и колонок
 
 public:  //--- Получение данных о таблице
    bool              IsColumnExists(const string tbl,const string col);
-   
    void              GetTableStruct(KeyVal &kv[]);
-   
+
+public:  //--- Работа с таблицами
+   void              CopyTable(const string tbl_from, const string tbl_to);
+   void              PrintResult(void);
+   void              PrintResult(sql_results &r[]);
 public:  //--- Работа с тикетами
    void              GetStdData(int ti, KeyVal &kv[]);   
   };
@@ -150,6 +167,7 @@ public:  //--- Работа с тикетами
 CSQLite_Tickets::CSQLite_Tickets()
   {
 //sf
+   Print(__FUNCSIG__);
    rev="$Revision$";
 
    ProgramInfo info;
@@ -192,13 +210,14 @@ CSQLite_Tickets::~CSQLite_Tickets()
 //|Start                                                                  |
 //+------------------------------------------------------------------+
 void CSQLite_Tickets::Start(void){
+   Print(__FUNCTION__);
+   
    table=tbl_tickets_new;
    DeleteAll();            //Очистили таблицу текущих тикетов.
    
    KeyVal kv[];
    
-   text="BEGIN";           //Начало транзакции заполнения таблицы текущих тикетов.
-   Query();
+   Exec("BEGIN");           //Начало транзакции заполнения таблицы текущих тикетов.
    
    for(int i=0; i<OrdersTotal(); i++){
       if(!OrderSelect(i, SELECT_BY_POS, MODE_TRADES)) continue;
@@ -208,8 +227,81 @@ void CSQLite_Tickets::Start(void){
       UpdateOrInsert(kv);
    }
    
-   text="COMMIT";          //Запись транзакции таблицы текущих тикетов.
+   Exec("COMMIT");          //Запись транзакции таблицы текущих тикетов.
+   
+   UpdateClosed();
+   UpdateNew();
+   //UpdateIT();
+   
+//   db.reset();
+   table=tbl_tickets_old;
+   DeleteAll();
+   
+   text="select * from "+tbl_tickets_new;
    Query();
+   
+   
+   CopyTable(tbl_tickets_new,tbl_tickets_old);
+}
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void CSQLite_Tickets::UpdateClosed(void){
+   Print(__FUNCSIG__);
+   KeyVal kv[];
+   sql_results r[];
+   //Выборка тикетов, которые есть в таблице старых или в таблице тикетов и нет в таблице текущих тикетов.
+   string q="SELECT TI FROM `"+tbl_tickets_old+"` WHERE (TI NOT IN (SELECT TI FROM `"+tbl_tickets_new+"`))";
+			 q+=" UNION ";
+			 q+="SELECT TI FROM '"+tbl_tickets+"' WHERE (IC='0' AND TI NOT IN (SELECT TI FROM `"+tbl_tickets_new+"`))";
+			
+	Query(q, r);
+	
+	//Результат будет содержать только одну колонку TI
+	Exec("BEGIN");
+	for(int i=0; i<ROWS(r); i++){
+	   int ti=(int)r[i].value[0];
+	   
+	   DROP(kv);          //очищаем массив КлючЗначение
+	   GetStdData(ti,kv); //собираем стандартную инфу по тикету
+	   
+	   table=tbl_tickets;
+	   UpdateOrInsert(kv); //обновляем строку, соответствующую данному тикету в таблице тикетов.
+	}		 
+	Exec("COMMIT");
+}
+
+//+------------------------------------------------------------------+
+//|Update New                                                                  |
+//+------------------------------------------------------------------+
+void CSQLite_Tickets::UpdateNew(){
+   Print(__FUNCSIG__);
+   KeyVal kv[];
+   
+   sql_results r[];
+   string q="SELECT TI,FOOP,OOP FROM `"+tbl_tickets_new+"` WHERE (TI NOT IN (SELECT TI FROM `"+tbl_tickets_old+"`))";
+   
+   Query(q,r);
+   
+   Exec("BEGIN");
+   for(int i=0;i<ROWS(r);i++){
+      int ti      =(int)r[i].value[0];
+      double foop =(double)r[i].value[1];
+      double oop =(double)r[i].value[2];
+            
+      DROP(kv);
+      GetStdData(ti, kv);
+      
+      if(foop==0){
+         DEL(kv, "FOOP");
+         ADD(kv,"FOOP",DoubleToStr(oop,Digits));   
+      }
+      
+      table=tbl_tickets;
+      UpdateOrInsert(kv);
+   }
+   Exec("COMMIT");
 }
 //+------------------------------------------------------------------+
 
@@ -219,11 +311,18 @@ void CSQLite_Tickets::Start(void){
 //+------------------------------------------------------------------+
 void CSQLite_Tickets::Query(string q,sql_results &r[])
   {
+  
+   Print(__FUNCSIG__);
    db.get_array(q,r);
-   for(int i=0; i<ArraySize(db.db_column_names); i++)
+   
+   Print(q);
+   PrintResult(r);
+   if(ROWS(r)>=0)DROP(r[0].colname);
+   
+   for(int i=0; i<ROWS(db.db_column_names); i++)
      {
-      ArrayResize(q_column_names,i+1);
-      q_column_names[i]=db.db_column_names[i];
+      ADDROW(r[0].colname);
+      r[0].colname[i]=db.db_column_names[i];
      }
   }
 
@@ -232,6 +331,7 @@ void CSQLite_Tickets::Query(string q,sql_results &r[])
 //+------------------------------------------------------------------+
 void CSQLite_Tickets::Query(void)
   {
+   Print(__FUNCSIG__);
    if(!CheckProperty(text,"text"))
      {
       return;
@@ -245,6 +345,7 @@ void CSQLite_Tickets::Query(void)
 //|Запрос без возврата результата. Может подходить и для Insert Update Delete                                                                   |
 //+------------------------------------------------------------------+
 void CSQLite_Tickets::Exec(string q){
+   Print(__FUNCSIG__);
    db.exec(q);
 }
 
@@ -252,6 +353,7 @@ void CSQLite_Tickets::Exec(string q){
 //|Должен быть предустановлен текст запроса                                                                  |
 //+------------------------------------------------------------------+
 void CSQLite_Tickets::Exec(void){
+   Print(__FUNCSIG__);
    if(!CheckProperty(text,"text")) return;
    
    Exec(text);
@@ -282,7 +384,7 @@ void CSQLite_Tickets::Insert(KeyVal &kv[])
    val_set=val_set+")";
    q=q+col_set+" VALUES "+val_set;
    text=q;
-   Query();
+   Exec();
   }
 //+------------------------------------------------------------------+
 //|Update                                                                  |
@@ -301,8 +403,8 @@ void CSQLite_Tickets::Update(KeyVal &kv[])
         }
      }
    q=q+" WHERE TI='"+(string)ti+"'";
-   text=q;
-   Query();
+   //text=q;
+   Exec(q);
   }
 //+------------------------------------------------------------------+
 //|Update or insert                                                                  |
@@ -310,18 +412,18 @@ void CSQLite_Tickets::Update(KeyVal &kv[])
 void CSQLite_Tickets::UpdateOrInsert(KeyVal &kv[])
   {
 //CTbl tbl;
-   sql_results r;
+   sql_results r[];
 
    int ti=(int)GET("TI",kv);
-   text="SELECT * FROM '"+table+"' WHERE TI="+(string)ti;
-//SetValue("&ti","'"+ti+"'");
-   Query();
+   string q="SELECT * FROM '"+table+"' WHERE TI="+(string)ti;
 
-   string q="";
-   if(ROWS(q_results)<=0)
+   Query(q, r);
+
+   q="";
+   if(ROWS(r)<=0)
      {
       Insert(kv);
-        }else{
+     }else{
       Update(kv);
      }
   }
@@ -330,11 +432,10 @@ void CSQLite_Tickets::UpdateOrInsert(KeyVal &kv[])
 //|                                                                  |
 //+------------------------------------------------------------------+
 void CSQLite_Tickets::DeleteAll(void){
-   
+   Print(__FUNCSIG__);
    if(!CheckProperty(table,"table"))return;
-   
-   text="DELETE FROM "+table;
-   Query();
+  
+   Exec("DELETE FROM "+table);
 }  
 //+------------------------------------------------------------------+
 //|Проверяет свойство на пустое значение.                                                                  |
@@ -382,7 +483,7 @@ void CSQLite_Tickets::CreateColumn(const string tbl,const string col,const strin
    if(IsColumnExists(tbl, col))return;
 
    string q="ALTER TABLE "+tbl+" ADD COLUMN "+col+" "+type;
-   db.exec(q);
+   Exec(q);
   }
 //+------------------------------------------------------------------+  
 
@@ -447,17 +548,17 @@ bool CSQLite_Tickets::IsColumnExists(const string tbl,const string col)
   {
    bool res=false;
 
-   string query="PRAGMA table_info('"+tbl+"');";
+   string q="PRAGMA table_info('"+tbl+"');";
 
-   sql_results columns[];
-   db.get_array(query,columns);
+   sql_results cols[];
+   Query(q,cols);
 
-   for(int i=0; i<ArraySize(columns) && !res; i++)
+   for(int i=0; i<ROWS(cols) && !res; i++)
      {
       string vals[];
-      ArrayCopy(vals,columns[i].value);
+      ArrayCopy(vals,cols[i].value);
 
-      if(columns[i].value[1]==col)
+      if(cols[i].value[1]==col)
         {
          string s="";
          for(int j=0;j<ROWS(vals); j++)
@@ -479,15 +580,75 @@ bool CSQLite_Tickets::IsColumnExists(const string tbl,const string col)
 void CSQLite_Tickets::GetTableStruct(KeyVal &kv[])
   {
    if(!CheckProperty(table, "table")) return;
-
-   text="PRAGMA table_info('"+table+"');";
-   Query();
-   for(int i=0;i<ROWS(q_results);i++)
+   
+   sql_results r[];
+   string q="PRAGMA table_info('"+table+"');";
+   Query(q,r);
+   
+   for(int i=0;i<ROWS(r);i++)
      {
-      ADD(kv,q_results[i].value[1],q_results[i].value[2]);
+      ADD(kv,r[i].value[1],r[i].value[2]);
      }
   }
 //+------------------------------------------------------------------+
+
+//+------------------------------------------------------------------+
+//|Копирует таблицу из одной в другую                                                                  |
+//+------------------------------------------------------------------+
+void CSQLite_Tickets::CopyTable(const string tbl_from,const string tbl_to){
+   KeyVal kv[];
+   string q="select * from "+tbl_from;
+   text=q;
+   sql_results r[];
+   Query(q,r);
+   
+   string cols[];
+   ArrayCopy(cols,r[0].colname);
+   
+   PrintResult(r);
+   
+   Exec("BEGIN");
+   for(int i=0;i<ROWS(r);i++){
+      DROP(kv);
+      for(int j=0;j<ROWS(r[i].value);j++){
+         ADD(kv, cols[j], r[i].value[j]);
+      }
+      table=tbl_to;
+      UpdateOrInsert(kv);
+   }
+   Exec("COMMIT");
+}
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void CSQLite_Tickets::PrintResult(void){
+   Print("Table : "+table);
+   Print("text  : "+text);
+   for(int i=0;i<ROWS(q_results);i++){
+      string s="";
+      for(int j=0;j<ROWS(q_results[i].value); j++){
+         s+=q_results[i].value[j] +"|";
+      }
+      Print(s);
+   }
+}
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void CSQLite_Tickets::PrintResult(sql_results &r[]){
+   Print("Table : "+table);
+   Print("text  : "+text);
+   for(int i=0;i<ROWS(r);i++){
+      string s="";
+      for(int j=0;j<ROWS(r[i].value); j++){
+         s+=r[i].value[j] +"|";
+      }
+      Print(s);
+   }
+}
+
 
 //+------------------------------------------------------------------+
 //|Получение стандартной инфы о тикете средствами MQL4                                                                  |
@@ -514,9 +675,24 @@ void CSQLite_Tickets::GetStdData(int ti, KeyVal &kv[]){
 			ADD(kv,"IP",   IntegerToString((OrderType()>=2)?1:0));
 			
 			ADD(kv,"IT",   IntegerToString((OrderCloseTime()>0)?0:1));
-			ADD(kv,"IC",   IntegerToString((OrderCloseTime()>0)?1:0));
 			
 			int _ocp2oop=(int)(((_dty==ENUM_DTY_BUY)?(Bid-OrderOpenPrice()):(OrderOpenPrice()-Ask))/Point);
 			ADD(kv,"OCP2OOP",IntegerToString(_ocp2oop));
 			
+			if(OrderCloseTime()>0){
+					ADD(kv,"IC","1");
+					ADD(kv,"OCT",IntegerToString((int)OrderCloseTime()));
+					
+					ENUM_CLOSE_TYPE close_type;
+					if(OrderClosePrice()==OrderStopLoss()){
+						close_type=ENUM_CLOSED_TYPE_SL;
+					}else{
+						if(OrderClosePrice()==OrderTakeProfit()){
+							close_type=ENUM_CLOSED_TYPE_TP;
+						}else{
+							close_type=ENUM_CLOSED_TYPE_MANUAL;
+						}
+					}
+					ADD(kv,"OCTY",(string)close_type);
+				}
 		}	

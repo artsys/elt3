@@ -16,34 +16,6 @@ CSQLite_Tickets db;
 int OnInit()
   {
 //---
-   db.table="Tickets_test";
-   db.CreateTable();
-   
-   Print(db.IsColumnExists(db.table,"_ID"));
-   db.CreateColumn2("TI","INT");
-   db.CreateColumn2("TY","INT");
-   db.CreateColumn2("OOP","FLOAT");
-   
-   KeyVal kv[];
-   db.GetTableStruct(kv); //Получаем структуру таблицы Tickets_test
-   PrintKV(kv);
-   
-   db.table="Tickets_old";
-   db.CreateTable();
-   
-   db.CreateColumns(kv);
-   
-   sql_results r[];
-   string s="";
-   
-   //db.Query("select * from "+db.table,r);
-   db.Query();
-   for(int i=0;i<ArraySize(db.q_column_names);i++)
-   {
-      s+=db.q_column_names[i]+"|";
-   }
-   
-   Print(s);
 //---
    return(INIT_SUCCEEDED);
   }
@@ -61,31 +33,35 @@ void OnDeinit(const int reason)
 void OnTick()
   {
 //---
-   KeyVal kv[];
-   for(int i=0; i<OrdersTotal(); i++){
-      if(!OrderSelect(i,SELECT_BY_POS,MODE_TRADES))continue;
-      
-      DROP(kv);
-      db.GetStdData(OrderTicket(),kv);
-      
-      db.table="Tickets";
-      db.UpdateOrInsert(kv);
-   }   
-   
-   
+   Print(__FUNCSIG__);
+   db.Start();   
    
    db.table=db.tbl_tickets;
    //db.DeleteAll();                                                          //Работает
    //db.text="select * from "+db.table+" where TI in (95727617.00,95730370)"; //Работает
    //db.text="select * from "+db.table+" where OPR<0";                        //Работает
-   db.text="select * from "+db.table+" where sy='"+Symbol()+"'";              //Работает
+   //db.text="select * from "+db.table+" where sy='"+Symbol()+"'";            //Работает
+   
+   db.text="select * from "+db.table;
    db.Query();
-   CommentResult();
+   string s=CommentResult();
+   
+   db.table=db.tbl_tickets_new;
+   db.text="select * from "+db.table;
+   db.Query();
+   s+=CommentResult();
+   
+   db.table=db.tbl_tickets_old;
+   db.text="select * from "+db.table;
+   db.Query();
+   s+=CommentResult();
+   
+   Comment(s);
   }
 //+------------------------------------------------------------------+
 
 
-void CommentResult(){
+string CommentResult(){
    string s="";
    s+="db.table : "+db.table+"\n";
    s+="db.text : "+db.text+"\n";
@@ -100,5 +76,5 @@ void CommentResult(){
       s+="\n";
    }
    
-   Comment(s);
+   return(s);
 }

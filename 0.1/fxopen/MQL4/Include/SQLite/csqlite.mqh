@@ -96,6 +96,7 @@ int sqlite3_bind_text16(uint sqlite3_stmt,uint colnum,string txt,uint size_in_by
 struct sql_results// sql results export struct
   {
    string            value[];
+   string            colname[];
   };
 //+------------------------------------------------------------------+
 //|                                                                  |

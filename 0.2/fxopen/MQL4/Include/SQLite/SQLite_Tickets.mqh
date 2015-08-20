@@ -108,10 +108,6 @@ private: //--- Приватные методы
 
 public:  //--- Публичные свойства 
    string            rev;              //номер ревизии в репозитарии
-   string            q_column_names[]; //массив имен колонок результатов запроса
-   sql_results       q_results[];      //массив результатов запроса
-   string            table;            //Имя текущей таблицы
-   string            text;             //Текст запроса
    
    string            tbl_tickets;
    string            tbl_tickets_old;
@@ -127,34 +123,29 @@ public:  //--- Конструктор и деструктор
    
 public:  //--- Запросы
    void              Query(string q,sql_results &r[]);
-   void              Query(void);
    void              Exec(string q);
-   void              Exec(void);
 
 public:  //--- Insert & Update
-   void              Insert(KeyVal &kv[]);
-   void              Update(KeyVal &kv[]);
-   void              UpdateOrInsert(KeyVal &kv[]);
+   void              Insert(const string tbl, KeyVal &kv[]);
+   void              Update(const string tbl, KeyVal &kv[]);
+   void              UpdateOrInsert(const string tbl, KeyVal &kv[]);
 
 public:  //--- Delete
-   void              DeleteAll(void);
+   void              DeleteAll(const string tbl);
 
 public:  //--- Создание таблиц и колонок
    void              CreateTable(const string tbl);
-   void              CreateTable(void);
 
    void              CreateColumn(const string tbl,const string col,const string type="FLOAT");
-   void              CreateColumn2(const string col,const string type="FLOAT");
-   void              CreateColumns(KeyVal &kv[]);
-   void              CreateStdColumns(void); //создает стандартные поля таблицы
+   void              CreateColumns(const string tbl, KeyVal &kv[]);
+   void              CreateStdColumns(const string tbl); //создает стандартные поля таблицы
 
 public:  //--- Получение данных о таблице
    bool              IsColumnExists(const string tbl,const string col);
-   void              GetTableStruct(KeyVal &kv[]);
+   void              GetTableStruct(const string tbl, KeyVal &kv[]);
 
 public:  //--- Работа с таблицами
    void              CopyTable(const string tbl_from, const string tbl_to);
-   void              PrintResult(void);
    void              PrintResult(sql_results &r[]);
 public:  //--- Работа с тикетами
    void              GetStdData(int ti, KeyVal &kv[]);   
@@ -179,23 +170,18 @@ CSQLite_Tickets::CSQLite_Tickets()
    tbl_tickets="Tickets";
    tbl_tickets_new="Tickets_New";
    tbl_tickets_old="Tickets_Old";
-
-   text="";
    
    //----------------------------------------------------
-   table=tbl_tickets;
-   CreateTable(table);  //создали таблицу тикетов.
-   CreateStdColumns();  //создали стандартные поля таблицы
+   CreateTable(tbl_tickets);  //создали таблицу тикетов.
+   CreateStdColumns(tbl_tickets);  //создали стандартные поля таблицы
    
    //----------------------------------------------------                    
-   table=tbl_tickets_new;  //таблица текущих тикетов
-   CreateTable(table);
-   CreateStdColumns();
+   CreateTable(tbl_tickets_new);
+   CreateStdColumns(tbl_tickets_new);
    
    //----------------------------------------------------
-   table=tbl_tickets_old; //таблица тикетов с прошлого тика.
-   CreateTable(table);
-   CreateStdColumns();                     
+   CreateTable(tbl_tickets_old);
+   CreateStdColumns(tbl_tickets_old);                     
   }
 
 //+------------------------------------------------------------------+
@@ -210,10 +196,8 @@ CSQLite_Tickets::~CSQLite_Tickets()
 //|Start                                                                  |
 //+------------------------------------------------------------------+
 void CSQLite_Tickets::Start(void){
-   Print(__FUNCTION__);
-   
-   table=tbl_tickets_new;
-   DeleteAll();            //Очистили таблицу текущих тикетов.
+   Print(__FUNCSIG__);
+   DeleteAll(tbl_tickets_new);            //Очистили таблицу текущих тикетов.
    
    KeyVal kv[];
    
@@ -224,7 +208,7 @@ void CSQLite_Tickets::Start(void){
       
       DROP(kv);
       GetStdData(OrderTicket(),kv);
-      UpdateOrInsert(kv);
+      UpdateOrInsert(tbl_tickets_new, kv);
    }
    
    Exec("COMMIT");          //Запись транзакции таблицы текущих тикетов.
@@ -232,14 +216,8 @@ void CSQLite_Tickets::Start(void){
    UpdateClosed();
    UpdateNew();
    //UpdateIT();
-   
-//   db.reset();
-   table=tbl_tickets_old;
-   DeleteAll();
-   
-   text="select * from "+tbl_tickets_new;
-   Query();
-   
+
+   DeleteAll(tbl_tickets_old);
    
    CopyTable(tbl_tickets_new,tbl_tickets_old);
 }
@@ -266,8 +244,7 @@ void CSQLite_Tickets::UpdateClosed(void){
 	   DROP(kv);          //очищаем массив КлючЗначение
 	   GetStdData(ti,kv); //собираем стандартную инфу по тикету
 	   
-	   table=tbl_tickets;
-	   UpdateOrInsert(kv); //обновляем строку, соответствующую данному тикету в таблице тикетов.
+	   UpdateOrInsert(tbl_tickets,kv); //обновляем строку, соответствующую данному тикету в таблице тикетов.
 	}		 
 	Exec("COMMIT");
 }
@@ -298,8 +275,7 @@ void CSQLite_Tickets::UpdateNew(){
          ADD(kv,"FOOP",DoubleToStr(oop,Digits));   
       }
       
-      table=tbl_tickets;
-      UpdateOrInsert(kv);
+      UpdateOrInsert(tbl_tickets,kv);
    }
    Exec("COMMIT");
 }
@@ -316,7 +292,6 @@ void CSQLite_Tickets::Query(string q,sql_results &r[])
    db.get_array(q,r);
    
    Print(q);
-   PrintResult(r);
    if(ROWS(r)>=0)DROP(r[0].colname);
    
    for(int i=0; i<ROWS(db.db_column_names); i++)
@@ -326,20 +301,6 @@ void CSQLite_Tickets::Query(string q,sql_results &r[])
      }
   }
 
-//+------------------------------------------------------------------+
-//|Выполнение запроса                                                                  |
-//+------------------------------------------------------------------+
-void CSQLite_Tickets::Query(void)
-  {
-   Print(__FUNCSIG__);
-   if(!CheckProperty(text,"text"))
-     {
-      return;
-     }
-
-   DROP(q_results);
-   Query(text,q_results);
-  }
 
 //+------------------------------------------------------------------+
 //|Запрос без возврата результата. Может подходить и для Insert Update Delete                                                                   |
@@ -347,24 +308,16 @@ void CSQLite_Tickets::Query(void)
 void CSQLite_Tickets::Exec(string q){
    Print(__FUNCSIG__);
    db.exec(q);
-}
-
-//+------------------------------------------------------------------+
-//|Должен быть предустановлен текст запроса                                                                  |
-//+------------------------------------------------------------------+
-void CSQLite_Tickets::Exec(void){
-   Print(__FUNCSIG__);
-   if(!CheckProperty(text,"text")) return;
-   
-   Exec(text);
+   //sql_results r[];
+   //Query(q,r);
 }
 
 //+------------------------------------------------------------------+
 //|Insert                                                                  |
 //+------------------------------------------------------------------+
-void CSQLite_Tickets::Insert(KeyVal &kv[])
+void CSQLite_Tickets::Insert(const string tbl, KeyVal &kv[])
   {
-   string q="INSERT INTO `"+table+"` ";
+   string q="INSERT INTO `"+tbl+"` ";
    string col_set="(";
    string val_set="(";
 
@@ -383,17 +336,16 @@ void CSQLite_Tickets::Insert(KeyVal &kv[])
    col_set=col_set+")";
    val_set=val_set+")";
    q=q+col_set+" VALUES "+val_set;
-   text=q;
-   Exec();
+   Exec(q);
   }
 //+------------------------------------------------------------------+
 //|Update                                                                  |
 //+------------------------------------------------------------------+
-void CSQLite_Tickets::Update(KeyVal &kv[])
+void CSQLite_Tickets::Update(const string tbl, KeyVal &kv[])
   {
    int ti=(int)GET("TI",kv);
 
-   string q="UPDATE `"+table+"` SET ";
+   string q="UPDATE `"+tbl+"` SET ";
    for(int i=0; i<ROWS(kv); i++)
      {
       q=q+""+kv[i].key+"='"+kv[i].val+"'";
@@ -403,39 +355,36 @@ void CSQLite_Tickets::Update(KeyVal &kv[])
         }
      }
    q=q+" WHERE TI='"+(string)ti+"'";
-   //text=q;
    Exec(q);
   }
 //+------------------------------------------------------------------+
 //|Update or insert                                                                  |
 //+------------------------------------------------------------------+
-void CSQLite_Tickets::UpdateOrInsert(KeyVal &kv[])
+void CSQLite_Tickets::UpdateOrInsert(const string tbl, KeyVal &kv[])
   {
 //CTbl tbl;
    sql_results r[];
 
    int ti=(int)GET("TI",kv);
-   string q="SELECT * FROM '"+table+"' WHERE TI="+(string)ti;
+   string q="SELECT * FROM '"+tbl+"' WHERE TI="+(string)ti;
 
    Query(q, r);
 
    q="";
    if(ROWS(r)<=0)
      {
-      Insert(kv);
+      Insert(tbl,kv);
      }else{
-      Update(kv);
+      Update(tbl,kv);
      }
   }
   
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-void CSQLite_Tickets::DeleteAll(void){
+void CSQLite_Tickets::DeleteAll(const string tbl){
    Print(__FUNCSIG__);
-   if(!CheckProperty(table,"table"))return;
-  
-   Exec("DELETE FROM "+table);
+   Exec("DELETE FROM "+tbl);
 }  
 //+------------------------------------------------------------------+
 //|Проверяет свойство на пустое значение.                                                                  |
@@ -463,17 +412,6 @@ void CSQLite_Tickets::CreateTable(const string tbl)
   }
 //+------------------------------------------------------------------+  
 
-//+------------------------------------------------------------------+
-//| Создает таблицу по свойству table.                                                                  |
-//+------------------------------------------------------------------+
-void CSQLite_Tickets::CreateTable(void)
-  {
-
-   if(!CheckProperty(table,"table")) return;
-
-   CreateTable(table);
-  }
-//+------------------------------------------------------------------+  
 
 //+------------------------------------------------------------------+
 //|Создает новый столбец в таблице                                                                  |
@@ -488,35 +426,23 @@ void CSQLite_Tickets::CreateColumn(const string tbl,const string col,const strin
 //+------------------------------------------------------------------+  
 
 //+------------------------------------------------------------------+
-//|Создает столбец в таблице, заданной в свойстве table                                                                  |
-//+------------------------------------------------------------------+
-void CSQLite_Tickets::CreateColumn2(const string col,const string type="FLOAT")
-  {
-   if(!CheckProperty(table,"table")) return;
-
-   CreateColumn(table,col,type);
-  }
-//+------------------------------------------------------------------+  
-
-//+------------------------------------------------------------------+
 //|Создает колонки по переданному массиву КлючЗначение                                                                  |
 //+------------------------------------------------------------------+
-void CSQLite_Tickets::CreateColumns(KeyVal &kv[])
+void CSQLite_Tickets::CreateColumns(const string tbl, KeyVal &kv[])
   {
-   Print(__FUNCTION__);
-   if(!CheckProperty(table,"table"))return;
+   Print(__FUNCSIG__);
 
    for(int i=0;i<ROWS(kv);i++)
      {
-      CreateColumn2(kv[i].key,kv[i].val);
+      CreateColumn(tbl, kv[i].key,kv[i].val);
      }
   }
 //+------------------------------------------------------------------+
 //|Создание стандартных полей таблицы                                                                  |
 //+------------------------------------------------------------------+
-void CSQLite_Tickets::CreateStdColumns(void)
+void CSQLite_Tickets::CreateStdColumns(const string tbl)
   {
-   Print(__FUNCTION__);
+   Print(__FUNCSIG__);
    KeyVal kv[];
    ADD(kv,"TI","INT");  //номер тикета
    ADD(kv,"PID","INT"); //ИД позиции (группы тикетов)
@@ -539,7 +465,7 @@ void CSQLite_Tickets::CreateStdColumns(void)
    ADD(kv,"OCT","INT");    //время закрытия тикета. 
    ADD(kv,"OCTY","INT");   //тип закрытия тикета. тп, сл или с рынка.
 
-   CreateColumns(kv);
+   CreateColumns(tbl, kv);
   }
 //+------------------------------------------------------------------+
 //|Проверяет если существует столбец                                                                  |
@@ -565,7 +491,6 @@ bool CSQLite_Tickets::IsColumnExists(const string tbl,const string col)
            {
             s+=vals[j]+"|";
            }
-         Print(s);
          res=true;
         }
      }
@@ -577,12 +502,11 @@ bool CSQLite_Tickets::IsColumnExists(const string tbl,const string col)
 //+------------------------------------------------------------------+
 //|Получает данные о структуре таблицы                                                                  |
 //+------------------------------------------------------------------+
-void CSQLite_Tickets::GetTableStruct(KeyVal &kv[])
+void CSQLite_Tickets::GetTableStruct(const string tbl, KeyVal &kv[])
   {
-   if(!CheckProperty(table, "table")) return;
    
    sql_results r[];
-   string q="PRAGMA table_info('"+table+"');";
+   string q="PRAGMA table_info('"+tbl+"');";
    Query(q,r);
    
    for(int i=0;i<ROWS(r);i++)
@@ -598,7 +522,6 @@ void CSQLite_Tickets::GetTableStruct(KeyVal &kv[])
 void CSQLite_Tickets::CopyTable(const string tbl_from,const string tbl_to){
    KeyVal kv[];
    string q="select * from "+tbl_from;
-   text=q;
    sql_results r[];
    Query(q,r);
    
@@ -613,8 +536,8 @@ void CSQLite_Tickets::CopyTable(const string tbl_from,const string tbl_to){
       for(int j=0;j<ROWS(r[i].value);j++){
          ADD(kv, cols[j], r[i].value[j]);
       }
-      table=tbl_to;
-      UpdateOrInsert(kv);
+     
+      UpdateOrInsert(tbl_to,kv);
    }
    Exec("COMMIT");
 }
@@ -622,24 +545,8 @@ void CSQLite_Tickets::CopyTable(const string tbl_from,const string tbl_to){
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-void CSQLite_Tickets::PrintResult(void){
-   Print("Table : "+table);
-   Print("text  : "+text);
-   for(int i=0;i<ROWS(q_results);i++){
-      string s="";
-      for(int j=0;j<ROWS(q_results[i].value); j++){
-         s+=q_results[i].value[j] +"|";
-      }
-      Print(s);
-   }
-}
-
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
 void CSQLite_Tickets::PrintResult(sql_results &r[]){
-   Print("Table : "+table);
-   Print("text  : "+text);
+   Print(__FUNCSIG__);
    for(int i=0;i<ROWS(r);i++){
       string s="";
       for(int j=0;j<ROWS(r[i].value); j++){

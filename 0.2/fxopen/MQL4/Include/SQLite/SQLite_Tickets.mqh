@@ -10,14 +10,40 @@
 #property strict
 
 //+------------------------------------------------------------------+
+//|TYPES                                                                  |
+//+------------------------------------------------------------------+
+struct ProgramInfo
+  {
+   string            path;
+   string            name;
+  };
+//+------------------------------------------------------------------+
+//|Структура КлючЗначение и выборка по ключу из массива                                                                  |
+//+------------------------------------------------------------------+
+struct KeyVal
+  {
+   string            key;
+   string            val;
+  };
+
+//+------------------------------------------------------------------+
 //|DEFINES                                                                  |
 //+------------------------------------------------------------------+
+#define zx
+#define xz
 #define ROWS(a) ArrayRange(a,0)
 #define LAST(a) ROWS(a)-1
 #define ADDROW(a) ArrayResize(a,(ROWS(a)+1))
-#define ADD(a,k,v) ADDROW(a); a[LAST(a)].key=k; a[LAST(a)].val=v;
 #define DEL(a,k) int _KeyValIdx=GET_IDX(k,a);if(_KeyValIdx>=0){for(int _idx=_KeyValIdx+1;_idx<ROWS(a);_idx++){a[_idx-1].key=a[_idx].key;a[_idx-1].val=a[_idx].val;} ArrayResize(a,(ROWS(a)-1));} 
 #define DROP(a) ArrayResize(a,0);
+
+void ADD(KeyVal &a[], string k, string v){
+   ADDROW(a); a[LAST(a)].key=k; a[LAST(a)].val=v;
+}
+
+void ADD(double &a[], double v){
+   ADDROW(a); a[LAST(a)]=v;
+}
 
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -33,22 +59,6 @@ enum ENUM_CLOSE_TYPE{
 	ENUM_CLOSED_TYPE_SL=3
 };
 
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-struct ProgramInfo
-  {
-   string            path;
-   string            name;
-  };
-//+------------------------------------------------------------------+
-//|Структура КлючЗначение и выборка по ключу из массива                                                                  |
-//+------------------------------------------------------------------+
-struct KeyVal
-  {
-   string            key;
-   string            val;
-  };
 //====================================================================
 string GET(string k,KeyVal &a[])
   {
@@ -95,6 +105,8 @@ void GetProgramInfo(ProgramInfo &r)
   }
 
 #include <SQLite\csqlite.mqh>
+#include <SQLite\sysNormalize.mqh>
+#include <SQLite\sysTrades.mqh>
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -114,6 +126,9 @@ public:  //--- Публичные свойства
    string            tbl_tickets_old;
    string            tbl_tickets_new;
 
+   double            tr[];             //для хранения результатов торговых операций
+                                       //Например SendBuystop()
+
 public:  //--- Конструктор и деструктор
                      CSQLite_Tickets();
                     ~CSQLite_Tickets();
@@ -128,6 +143,7 @@ public:  //--- Запросы
 
 public:  //--- Insert & Update
    void              Insert(const string tbl, KeyVal &kv[]);
+   void              InsertIfNot(const string tbl, KeyVal &kv[], string q);
    void              Update(const string tbl, KeyVal &kv[]);
    void              UpdateOrInsert(const string tbl, KeyVal &kv[]);
 
@@ -135,7 +151,8 @@ public:  //--- Delete
    void              DeleteAll(const string tbl);
 
 public:  //--- Создание таблиц и колонок
-   void              CreateTable(const string tbl);
+   void              CreateTable(const string tbl, const string s="");
+   void              CreateTable(const string tbl, KeyVal &kv[]);
 
    void              CreateColumn(const string tbl,const string col,const string type="FLOAT");
    void              CreateColumns(const string tbl, KeyVal &kv[]);
@@ -334,7 +351,7 @@ void CSQLite_Tickets::Exec(string q){
    Print(__FUNCSIG__);
    Print(q);
    if(!db.exec(q)){
-      Print("ERROR :: "+db.errcode());
+      Print("ERROR :: "+(string)db.errcode());
       while(db.errcode()==5){
          Sleep(500);
          db.exec(q);
@@ -442,11 +459,23 @@ bool CSQLite_Tickets::CheckProperty(string prop,string name="")
 //+------------------------------------------------------------------+
 //| Создает таблицу базы данных, если таблицы еще не существует.                                                                 |
 //+------------------------------------------------------------------+
-void CSQLite_Tickets::CreateTable(const string tbl)
+void CSQLite_Tickets::CreateTable(const string tbl, const string s="")
   {
    string q="CREATE TABLE IF NOT EXISTS "+tbl+"(_ID INT)";
-   db.exec(q);
+   Exec(q);
   }
+  
+void CSQLite_Tickets::CreateTable(const string tbl, KeyVal &kv[]){
+   string s=" (";
+   for(int i=0; i<ROWS(kv); i++){
+      s+=kv[i].key+" "+kv[i].val+",";
+   }
+   s+=")";
+   StringReplace(s,",)",")"); //Убрали лишнюю запятую
+   
+   string q="CREATE TABLE IF NOT EXISTS "+tbl+s;
+   Exec(q);
+}  
 //+------------------------------------------------------------------+  
 
 

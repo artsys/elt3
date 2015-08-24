@@ -16,6 +16,7 @@ CSQLite_Tickets db;
 int OnInit()
   {
 //---
+db.Start();
 //---
    return(INIT_SUCCEEDED);
   }
@@ -34,7 +35,10 @@ void OnTick()
   {
 //---
    Print(__FUNCSIG__);
-   db.Start();   
+   Print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+   db.Start();
+   //return;
+   
    
    //db.DeleteAll();                                                          //Работает
    //db.text="select * from "+db.table+" where TI in (95727617.00,95730370)"; //Работает

@@ -2,6 +2,7 @@
 //|                                               SQLite_Tickets.mqh |
 //|                                          Copyright 2015, artamir |
 //|                                             https://www.mql5.com |
+//|                                                  $Revision$|
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2015, artamir"
 #property link      "https://www.mql5.com"
@@ -120,7 +121,7 @@ public:  //--- Конструктор и деструктор
    void              Start(void);
    void              UpdateClosed(void);
    void              UpdateNew(void);
-   
+   void              UpdateIT(void);
 public:  //--- Запросы
    void              Query(string q,sql_results &r[]);
    void              Exec(string q);
@@ -179,7 +180,7 @@ CSQLite_Tickets::CSQLite_Tickets()
    CreateTable(tbl_tickets_new);
    CreateStdColumns(tbl_tickets_new);
    
-   //----------------------------------------------------
+   //--------------- -------------------------------------
    CreateTable(tbl_tickets_old);
    CreateStdColumns(tbl_tickets_old);                     
   }
@@ -215,7 +216,7 @@ void CSQLite_Tickets::Start(void){
    
    UpdateClosed();
    UpdateNew();
-   //UpdateIT();
+   UpdateIT();
 
    DeleteAll(tbl_tickets_old);
    
@@ -282,6 +283,30 @@ void CSQLite_Tickets::UpdateNew(){
 //+------------------------------------------------------------------+
 
 //+------------------------------------------------------------------+
+//|UpdateIT                                                                  |
+//+------------------------------------------------------------------+
+void CSQLite_Tickets::UpdateIT(void){
+   Print(__FUNCSIG__);
+   
+   KeyVal kv[];
+   
+   sql_results r[];
+   string q="SELECT TI FROM "+tbl_tickets+" WHERE IT=1";
+   Query(q,r);
+   
+   Exec("BEGIN");
+   for(int i=0;i<ROWS(r);i++){
+      int ti      =(int)r[i].value[0];
+            
+      DROP(kv);
+      GetStdData(ti, kv);
+      
+      UpdateOrInsert(tbl_tickets,kv);
+   }
+   Exec("COMMIT");
+}
+
+//+------------------------------------------------------------------+
 //|Выполнение запроса с возвращением результата
 //|Заодно заполняем названия колонок результата.                                                                  |
 //+------------------------------------------------------------------+
@@ -292,13 +317,13 @@ void CSQLite_Tickets::Query(string q,sql_results &r[])
    db.get_array(q,r);
    
    Print(q);
-   if(ROWS(r)>0)DROP(r[0].colname);
+   //if(ROWS(r)>0)DROP(r[0].colname);
    
-   for(int i=0; i<ROWS(db.db_column_names); i++)
-     {
-      ADDROW(r[0].colname);
-      r[0].colname[i]=db.db_column_names[i];
-     }
+   //for(int i=0; i<ROWS(db.db_column_names); i++)
+   //  {
+   //   ADDROW(r[0].colname);
+   //   r[0].colname[i]=db.db_column_names[i];
+   //  }
   }
 
 
@@ -307,7 +332,14 @@ void CSQLite_Tickets::Query(string q,sql_results &r[])
 //+------------------------------------------------------------------+
 void CSQLite_Tickets::Exec(string q){
    Print(__FUNCSIG__);
-   db.exec(q);
+   Print(q);
+   if(!db.exec(q)){
+      Print("ERROR :: "+db.errcode());
+      while(db.errcode()==5){
+         Sleep(500);
+         db.exec(q);
+      }
+   }
    //sql_results r[];
    //Query(q,r);
 }
@@ -317,6 +349,7 @@ void CSQLite_Tickets::Exec(string q){
 //+------------------------------------------------------------------+
 void CSQLite_Tickets::Insert(const string tbl, KeyVal &kv[])
   {
+   Print(__FUNCSIG__);
    string q="INSERT INTO `"+tbl+"` ";
    string col_set="(";
    string val_set="(";
@@ -343,6 +376,7 @@ void CSQLite_Tickets::Insert(const string tbl, KeyVal &kv[])
 //+------------------------------------------------------------------+
 void CSQLite_Tickets::Update(const string tbl, KeyVal &kv[])
   {
+   Print(__FUNCSIG__);
    int ti=(int)GET("TI",kv);
 
    string q="UPDATE `"+tbl+"` SET ";
@@ -363,8 +397,9 @@ void CSQLite_Tickets::Update(const string tbl, KeyVal &kv[])
 void CSQLite_Tickets::UpdateOrInsert(const string tbl, KeyVal &kv[])
   {
 //CTbl tbl;
+   
+   Print(__FUNCSIG__);
    sql_results r[];
-
    int ti=(int)GET("TI",kv);
    string q="SELECT * FROM '"+tbl+"' WHERE TI="+(string)ti;
 
@@ -384,7 +419,9 @@ void CSQLite_Tickets::UpdateOrInsert(const string tbl, KeyVal &kv[])
 //+------------------------------------------------------------------+
 void CSQLite_Tickets::DeleteAll(const string tbl){
    Print(__FUNCSIG__);
+   Exec("BEGIN");
    Exec("DELETE FROM "+tbl);
+   Exec("COMMIT");
 }  
 //+------------------------------------------------------------------+
 //|Проверяет свойство на пустое значение.                                                                  |

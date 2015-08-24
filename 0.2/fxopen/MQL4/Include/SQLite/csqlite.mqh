@@ -2,7 +2,7 @@
 //|                                                      csqlite.mqh |
 //|                                            s.cornushov aka Graff |
 //|                                              http://www.mql5.com |
-//|                                                    $Revision$|
+//|                                                  $Revision$|
 //+------------------------------------------------------------------+
 #property copyright "Graff"
 #property link      "http://www.mql5.com"
@@ -69,6 +69,8 @@ uint sqlite3_exec(
                   );
 uint sqlite3_column_count(uint stmt_h);
 
+string sqlite3_column_name16(uint stmt_h, int icol);
+
 uint sqlite3_step(uint stmt_h);
 
 uint sqlite3_reset(uint sqlite3_stmt);
@@ -78,6 +80,8 @@ uint sqlite3_finalize(uint sqlite3_stmt);
 string sqlite3_column_text16(uint stmt_h,uint iCol);
 
 string sqlite3_errmsg16(uint h); // error message
+
+uint sqlite3_extended_errcode(uint db);
 
 uint sqlite3_next_stmt(uint h,uint stmt_h); /* 2nd param can be NULL*/
 
@@ -102,6 +106,9 @@ struct sql_results// sql results export struct
 //+------------------------------------------------------------------+
 class CSQLite
   {
+public:  
+   string            db_column_names[];  
+  
 public:
    bool              connect(string db_file);
    bool              exec(string query);
@@ -121,6 +128,7 @@ public:
    bool              finalize(void){ return(sqlite3_finalize(db_stmt_h)==SQLITE_OK ? true : false);} /*http://www.sqlite.org/c3ref/finalize.html*/
    uint              memory_used(void) {return(sqlite3_memory_used());} /*http://www.sqlite.org/c3ref/memory_highwater.html*/
    string            error(void){return(sqlite3_errmsg16(db_hwd));}
+   uint              errcode(void){return(sqlite3_extended_errcode(db_hwd));}
    void             ~CSQLite(); // destructor
 private:
    uchar             db_stmt[];
@@ -146,7 +154,7 @@ bool CSQLite::connect(string db_file)
 void CSQLite::~CSQLite()
   {
    //uint stmt_h_kill;
-   //while(stmt_h_kill=sqlite3_next_stmt(db_hwd,NULL))
+   //while(stmt_h_kill==sqlite3_next_stmt(db_hwd,NULL))
    //  {
    //   if(sqlite3_finalize(stmt_h_kill)!=SQLITE_OK) Print("SQLite finalization failure. Error "+error());
    //  }
@@ -195,7 +203,8 @@ bool CSQLite::prepare_insert_transaction(string TableName)
      }
    string insq="INSERT INTO "+TableName+" ("+names+") VALUES ("+vals+");";
    StringReplace(insq,",)",")"); //removing last ,s
-                                 //End of Generating transactional insert query 
+                                 //End of Generating transactional insert query
+   Print(insq);                                 
    ArrayFree(columns);
 
    return(prepare(insq));
@@ -214,12 +223,13 @@ string CSQLite::get_cell(string query)
    return(r);
   }
 //+------------------------------------------------------------------+
-//| This fanction will return string array as *sql_results*
+//| This function will return string array as *sql_results*
 //+------------------------------------------------------------------+
 uint CSQLite::get_array(string query,sql_results &out[])
   {
    prepare(query);
    uint column_count=sqlite3_column_count(db_stmt_h);
+   
    uint i=0;
    while(step()==SQLITE_ROW)
      {
@@ -231,6 +241,15 @@ uint CSQLite::get_array(string query,sql_results &out[])
         }
       i++;
      }
+
+   if(ArrayRange(out,0)>0){
+      for(uint ic=0;ic<column_count;ic++){
+         ArrayResize(db_column_names,ic+1);
+         ArrayResize(out[0].colname,ic+1);
+         db_column_names[ic]=sqlite3_column_name16(db_stmt_h,ic);
+         out[0].colname[ic]=db_column_names[ic];
+      }
+   }
 
    reset();
    finalize();

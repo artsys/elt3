@@ -2,6 +2,7 @@
 //|                                                      csqlite.mqh |
 //|                                            s.cornushov aka Graff |
 //|                                              http://www.mql5.com |
+//|                                                    $Revision$|
 //+------------------------------------------------------------------+
 #property copyright "Graff"
 #property link      "http://www.mql5.com"
@@ -94,6 +95,7 @@ int sqlite3_bind_text16(uint sqlite3_stmt,uint colnum,string txt,uint size_in_by
 struct sql_results// sql results export struct
   {
    string            value[];
+   string            colname[];
   };
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -143,11 +145,11 @@ bool CSQLite::connect(string db_file)
 //+------------------------------------------------------------------+
 void CSQLite::~CSQLite()
   {
-   uint stmt_h_kill;
-   while(stmt_h_kill=sqlite3_next_stmt(db_hwd,NULL))
-     {
-      if(sqlite3_finalize(stmt_h_kill)!=SQLITE_OK) Print("SQLite finalization failure. Error "+error());
-     }
+   //uint stmt_h_kill;
+   //while(stmt_h_kill=sqlite3_next_stmt(db_hwd,NULL))
+   //  {
+   //   if(sqlite3_finalize(stmt_h_kill)!=SQLITE_OK) Print("SQLite finalization failure. Error "+error());
+   //  }
 
    if(sqlite3_close(db_hwd)!=SQLITE_OK) Print("SQLite close failure. Error "+error());
   }

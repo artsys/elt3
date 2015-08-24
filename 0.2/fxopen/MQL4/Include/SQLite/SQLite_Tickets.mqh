@@ -292,7 +292,7 @@ void CSQLite_Tickets::Query(string q,sql_results &r[])
    db.get_array(q,r);
    
    Print(q);
-   if(ROWS(r)>=0)DROP(r[0].colname);
+   if(ROWS(r)>0)DROP(r[0].colname);
    
    for(int i=0; i<ROWS(db.db_column_names); i++)
      {
